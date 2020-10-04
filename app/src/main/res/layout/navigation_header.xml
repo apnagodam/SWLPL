@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <com.apnagodam.staff.utils.CircularImageView
+            android:id="@+id/headerImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:src="@drawable/user_shape"
+            app:civ_border_width="@dimen/_minus5sdp" />
+
+        <TextView
+            android:id="@+id/headerName"
+            style="@style/Base.TextAppearance.AppCompat.Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_toRightOf="@id/headerImage"
+            android:maxLines="1"
+            android:textColor="@color/dark_gray_shade" />
+
+
+        <TextView
+            android:id="@+id/versionName"
+            style="@style/TextStyleBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:maxLines="1"
+            android:text="1.0"
+            android:textColor="@color/colorWhite"
+            android:visibility="visible" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@color/lightGray" />
+
+
+    </RelativeLayout>
+
+
+
+
+</layout>

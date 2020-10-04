@@ -1,0 +1,140 @@
+<resources>
+    <string name="app_name" >SWLPL</string>
+    <string name="need_permission">Need Permissions</string>
+    <string name="msg_permission">This app needs permission to use this feature. You can grant them in app settings.</string>
+    <string name="permission_alert">GOTO SETTINGS</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">ok</string>
+    <string name="logout_alert">Do you want to logout?</string>
+    <string name="alert">Alert</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="error_request">Some error occurred. Please try again</string>
+    <string name="phone_number">Enter your phone number</string>
+    <string name="otp_number">Enter your OTP</string>
+    <string name="otp">Send OTP</string>
+    <string name="verify">Verify OTP</string>
+    <string name="resend">Resend OTP</string>
+    <string name="error_validateMobile">Enter your Mobile Number</string>
+    <string name="error_validateotp">Enter your OTP Number</string>
+    <string name="error_validateMobileChar">Mobile Number must contain min 10 Digits.</string>
+    <string name="select_language">Select Language</string>
+    <string name="done">Done</string>
+    <string name="select_any_one" translatable="false">SELECT ANY ONE</string>
+    <string name="general">General</string>
+    <string name="seller">Seller</string>
+    <string name="buyer">Buyer</string>
+    <string name="KYC">KYC</string>
+    <string name="user_number">Enter your Name</string>
+    <string name="account_number">Enter your Account Number</string>
+    <string name="ifsc_code">Enter your IFSC Code</string>
+    <string name="branch_name">Enter your branch_name</string>
+    <string name="bank_name">Select Bank Name</string>
+    <string name="lang_pref" translatable="false">language_pref</string>
+    <string name="document">Document</string>
+    <string name="aadhar_number">Aadhar number</string>
+    <string name="pancard_number">PanCard number</string>
+    <string name="welcome_msgf">Welcome\n\n Apna Godam Staff.\n\nNew Features\n\nComing Soon....</string>
+    <string name="passbook_photo">Bank Passbook Photo</string>
+    <string name="upload_picture">Upload your PassBook  picture</string>
+    <string name="home">Staff Dashboard</string>
+    <string name="home_vlc">VLC Dashboard</string>
+    <string name="logout">Logout</string>
+    <string name="notification">Notification</string>
+    <string name="settings" translatable="false">Settings</string>
+    <string name="referral_code">Refer &amp;Earn</string>
+    <string name="order">Your Order</string>
+    <string name="exist_app">Press again to close Apna Staff Application</string>
+    <string name="ivr">IVR</string>
+    // for live
+    <string name="map_key" translatable="false">AIzaSyDXbv-fzxHMW2SmIsX7MZPtf7XP-hZuGfM</string>
+   <!-- // for local
+    <string name="map_key" translatable="false">AIzaSyBKxnZOQWBgbdo2VxWF5nsayVJu5rrowY4</string>-->
+    <string name="suggestion_email">Suggestion Emails</string>
+    <string name="activity_notification">Activity Notification Email</string>
+    <string name="change_language">Change Language</string>
+    <string name="change_mobile_no">Change Mobile Number</string>
+    <string name="commodity_price">commodity Price</string>
+    <string name="commodity_quinity">commodity Quantity</string>
+    <string name="commodity_name">commodity Name</string>
+    <string name="upload_aadhar_picture"> Aadhar card  picture</string>
+    <string name="rc_number">Registration Certificate(RC) Photo</string>
+    <string name="dl_number">Driving License Photo</string>
+    <string name="upload_rc_picture">Upload your RC  picture</string>
+    <string name="upload_dl_picture">Upload your DL  picture</string>
+    <string name="hint_otp">Please type varification code sent to </string>
+    <string name="Profile_Screen">Profile Screen</string>
+    <string name="submit">Submit</string>
+    <string name="booking">Sell</string>
+    <string name="blank_msg">Data Not Found !!!</string>
+    <string name="setting_title">Setting Screen</string>
+    <string name="no_internet_connection" >No Internet Connection.</string>
+    <string name="farmer" >Farmer</string>
+    <string name="Trtader" >Trader</string>
+
+    // employee login
+    <string name="emp_id">Enter Your Employee ID</string>
+    <string name="error_validateempChar"> Employee ID must contain min 6 Digits.</string>
+    <string name="my_profile">My Profile</string>
+    <string name="update_now">Update now</string>
+    <string name="msg_update_app">New version of this app is available. For better user experience please update now.</string>
+
+    <string name="running_in">Running IN Cases</string>
+    <string name="running_out">Running OUT Cases</string>
+    <string name="current_month_present">Current Month present</string>
+    <string name="quick_response">Quick Access</string>
+    <string name="reports">Reports</string>
+    <string name="inventory">Inventory</string>
+    <string name="labour_payment">Labour Payment</string>
+    <string name="case_status">Cases Status</string>
+    <string name="in">IN</string>
+    <string name="out">OUT</string>
+    <string name="clock_in">Clock In</string>
+    <string name="clock_out">Clock OUT</string>
+    <string name="upload_selfi">Upload Selfie</string>
+    <string name="chosen_selfi_image">Chosen Selfie Image</string>
+    <string name="close">Close</string>
+
+    <string name="commudity_name">Select Commodity Name</string>
+    <string name="terminal_name">Select Terminal Name</string>
+    <string name="select_in_out">Select IN/OUT.</string>
+    <string name="select_purposee">Select Purpose</string>
+    <string name="select_employee">Select Employee Name</string>
+    <string name="select_coustomer">Select Customer Name</string>
+    // leads
+    <string name="lead_generate">Generate Lead</string>
+    <string name="coustomer_name">Enter Customer Name</string>
+    <string name="mobile_no">mobile No</string>
+    <string name="quanity">Enter Quantity in Quintal</string>
+    <string name="commitment_datee">Commitment Date</string>
+    <string name="genrate_btn">Generate</string>
+    <string name="lead_listing">Leads List</string>
+    <string-array name="array_pupose">
+        <item>Purpose</item>
+        <item>For Sale</item>
+        <item>For Storage</item>
+    </string-array>
+    <string name="terminal_name1">Terminal Name</string>
+
+    // case id
+    <string name="case_id">Create Case ID</string>
+    <string name="weight_kg">Enter Weight in KG</string>
+    <string name="vehicle_no">ENTER VEHICLE/TRUCK NO.</string>
+    <string name="location">Enter Location</string>
+    <string name="weight_quintal">Weight(Quintal)</string>
+    <string name="gate_pass">Enter Gate Pass No.</string>
+    <string name="fpo_sub_useername">Enter FPO Sub User Name </string>
+    <string name="create_case">Create Case</string>
+
+    <string-array name="array_in_out">
+        <item>IN/OUT</item>
+        <item>IN</item>
+        <item>OUT</item>
+    </string-array>
+
+    <string name="lead_id">Lead ID</string>
+    <string name="coustomer_name1">Customer Name</string>
+    <string name="phone_no">Phone No.</string>
+    <string name="more_view">More View</string>
+
+</resources>
