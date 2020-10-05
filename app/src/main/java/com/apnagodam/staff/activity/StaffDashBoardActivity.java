@@ -374,7 +374,8 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivityAndClear(StaffDashBoardActivity.class);
                     break;
                 case 2:
-                    String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
+                    startActivity(InPricingListingActivity.class);
+                    /*String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
                     String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -382,7 +383,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     sendIntent.setType("text/plain");
                     Intent.createChooser(sendIntent, "Share via");
                     startActivity(sendIntent);
-                    Log.e("refer url :", "" + sharedUrl);
+                    Log.e("refer url :", "" + sharedUrl);*/
                     break;
                 case 3:
                     startActivity(LanguageActivity.class);

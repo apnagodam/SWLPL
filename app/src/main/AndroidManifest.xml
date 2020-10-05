@@ -58,6 +58,8 @@
         <activity android:name=".activity.LeadGenerateClass" />
         <activity android:name=".activity.CaseIDGenerateClass" />
         <activity android:name=".activity.LeadListingActivity" />
+        <activity android:name=".activity.CaseListingActivity" />
+        <activity android:name=".activity.InPricingListingActivity" />
 
         <receiver
             android:name=".reciever.SMSReceiver"

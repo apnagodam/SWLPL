@@ -38,6 +38,7 @@
                         android:padding="8dp" />
 
                     <TextView
+                        android:id="@+id/title_header"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
@@ -81,7 +82,7 @@
                 android:padding="@dimen/_4sdp"
                 android:text="@string/lead_id"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_12ssp" />
+                android:textSize="@dimen/_10ssp" />
 
             <include layout="@layout/layout_divider_horizontal" />
 
@@ -95,7 +96,7 @@
                 android:padding="@dimen/_4sdp"
                 android:text="@string/coustomer_name1"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_12ssp" />
+                android:textSize="@dimen/_10ssp" />
 
             <include layout="@layout/layout_divider_horizontal" />
 
@@ -109,7 +110,7 @@
                 android:padding="@dimen/_4sdp"
                 android:text="@string/phone_no"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_12ssp" />
+                android:textSize="@dimen/_10ssp" />
 
             <include layout="@layout/layout_divider_horizontal" />
 
@@ -123,7 +124,7 @@
                 android:padding="@dimen/_4sdp"
                 android:text="@string/more_view"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_12ssp" />
+                android:textSize="@dimen/_10ssp" />
         </LinearLayout>
 
         <ScrollView
