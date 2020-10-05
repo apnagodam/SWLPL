@@ -2,6 +2,7 @@ package com.apnagodam.staff.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
@@ -9,19 +10,22 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.CaseListingActivity;
 import com.apnagodam.staff.activity.LeadListingActivity;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
+import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
 
 import java.util.Collection;
 import java.util.List;
 
-public class CaseLeadsTopAdapter extends BaseRecyclerViewAdapter {
-    private List<AllLeadsResponse.Lead> Leads;
+public class CasesTopAdapter extends BaseRecyclerViewAdapter {
+    private List<AllCaseIDResponse.Case> Leads;
     private Context context;
-    public CaseLeadsTopAdapter(List<AllLeadsResponse.Lead> leads, LeadListingActivity leadListingActivity) {
+
+    public CasesTopAdapter(List<AllCaseIDResponse.Case> leads, CaseListingActivity caseListingActivity) {
         this.Leads = leads;
-        this.context = leadListingActivity;
+        this.context = caseListingActivity;
     }
 
     @Override
@@ -61,21 +65,33 @@ public class CaseLeadsTopAdapter extends BaseRecyclerViewAdapter {
 
         @Override
         public void onBind(int position) {
+            binding.moreView.setVisibility(View.GONE);
+            binding.moreCase.setVisibility(View.VISIBLE);
            /* if (position==0){
 
             }else {*/
-                if (position % 2 == 0) {
-                    binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
-                } else {
-                    binding.getRoot().setBackgroundColor(Color.WHITE);
-                }
-                binding.tvId.setText("" + Leads.get(position).getId());
-                binding.tvName.setText(Leads.get(position).getCustomerName());
-                binding.tvPhone.setText(Leads.get(position).getPhone());
-                binding.tvId.setTextColor(Color.BLACK);
-                binding.tvName.setTextColor(Color.BLACK);
-                binding.tvPhone.setTextColor(Color.BLACK);
+            if (position % 2 == 0) {
+                binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
+            } else {
+                binding.getRoot().setBackgroundColor(Color.WHITE);
             }
+            binding.tvId.setText("" + Leads.get(position).getCaseId());
+            binding.tvName.setText(Leads.get(position).getCustFname());
+            binding.tvPhone.setText(Leads.get(position).getPhone());
+            binding.tvStatus.setText("In Process");
+            binding.tvId.setTextColor(Color.BLACK);
+            binding.tvName.setTextColor(Color.BLACK);
+            binding.tvPhone.setTextColor(Color.BLACK);
+            binding.viewCase.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (context instanceof CaseListingActivity) {
+                        ((CaseListingActivity) context).ViewData(position);
+                    }
+                }
+            });
+
+        }
         //}
     }
 

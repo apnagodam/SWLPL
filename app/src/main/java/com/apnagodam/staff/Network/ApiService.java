@@ -10,7 +10,9 @@ import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.Network.Response.VersionCodeResponse;
+import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
+import com.apnagodam.staff.module.AllpricingResponse;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.DashBoardData;
 import com.apnagodam.staff.module.GetPassID;
@@ -57,14 +59,16 @@ public interface ApiService {
     Call<LoginResponse> updateLeads(@Body CreateLeadsPostData createLeadsPostData);
     @GET("api/apna_default_list")
     Call<CommudityResponse> getcommuydity_terminal_user_emp_listing();
-    @GET("api/apna_terminals")
-    Call<TerminalResponse> getTerminalList();
 
     @POST("emp_api/apna_emp_create_caseid")
     Call<LoginResponse> doCreateCaseID(@Body CreateCaseIDPostData createCaseIDPostData);
-
+    @GET("emp_api/apna_emp_get_caseid")
+    Call<AllCaseIDResponse> getAllCase();
     @GET("emp_api/apna_emp_getpass_no")
     Call<GetPassID> getGatePass(@Query("terminal_id") String terminal_id);
+    // pricing
+    @GET("emp_api/apna_emp_get_pricing")
+    Call<AllpricingResponse> getAllpricingList();
 }
 
 

@@ -12,9 +12,9 @@ public class CreateCaseIDPostData {
     @Expose
     private String in_out;
 
-    @SerializedName("customer_weight")
+    @SerializedName("weight")
     @Expose
-    private String customer_weight;
+    private String weight;
     @SerializedName("location")
     @Expose
     private String location;
@@ -41,11 +41,11 @@ public class CreateCaseIDPostData {
     @Expose
     private String fpo_users;
 
-    public CreateCaseIDPostData(String gate_pass, String in_out, String customer_weight, String location,
+    public CreateCaseIDPostData(String gate_pass, String in_out, String weight, String location,
                                 String customer_phone, String commodity_id, String terminal_id, String vehicle_no, String purpose, String fpo_users) {
         this.gate_pass = gate_pass;
         this.in_out = in_out;
-        this.customer_weight = customer_weight;
+        this.weight = weight;
         this.location = location;
         this.customer_phone = customer_phone;
         this.commodity_id = commodity_id;

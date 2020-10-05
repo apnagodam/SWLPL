@@ -56,6 +56,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -75,7 +76,20 @@ public class Utility {
 
     private static File path = ApnaGodamApp.getApp().getCacheDir();
 
+    public static String timeFromdateTime(String inputDateStr) {
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Date date = null;
+        try {
+            date = inputFormat.parse(inputDateStr);
+            String outputDateStr = outputFormat.format(date);
+            return outputDateStr;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
 
+    }
     public static void copyAssets(String fileName) {
         AssetManager assetManager = ApnaGodamApp.getApp().getAssets();
         InputStream in = null;

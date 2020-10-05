@@ -39,7 +39,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     List<String> CommudityID;
     List<String> TerminalName;
     List<String> TerminalsID;
-
     List<String> CustomerName;
     List<String> CustomerID;
     List<String> LeadGenerateOtherName;
@@ -84,7 +83,10 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
         }
         for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-            LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() + "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
+            if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
+                    SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
+                LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() + "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
+            }
         }
         // UserList listing
         SpinnerUserListAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CustomerName) {
@@ -279,19 +281,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 // can leave this empty
             }
         });
-        // spinner selectCustomer
-        binding.spinnerUserName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0)
-                    seleectCoustomer = parent.getItemAtPosition(position).toString();
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // can leave this empty
-            }
-        });
         // spinner select other generated
         binding.spinnerLeadConvertOther.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -323,6 +313,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     private void clickListner() {
         binding.ivClose.setOnClickListener(this);
         binding.btnCreateeCase.setOnClickListener(this);
+        binding.tvDone.setOnClickListener(this);
     }
 
     @Override
@@ -337,7 +328,10 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             case R.id.iv_close:
                 finish();
                 break;
-            case R.id.btn_login:
+            case R.id.tv_done:
+                startActivityAndClear(CaseListingActivity.class);
+                break;
+            case R.id.btn_createe_case:
                 if (isValid()) {
                     if (commudityID == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
