@@ -1,7 +1,9 @@
 package com.apnagodam.staff.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -12,14 +14,20 @@ import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.LeadListingActivity;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
+import com.apnagodam.staff.interfaces.LeadsEditClickListener;
 import com.apnagodam.staff.module.AllLeadsResponse;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
     private List<AllLeadsResponse.Lead> Leads;
     private Context context;
+
     public LeadsTopAdapter(List<AllLeadsResponse.Lead> leads, LeadListingActivity leadListingActivity) {
         this.Leads = leads;
         this.context = leadListingActivity;
@@ -65,27 +73,68 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
            /* if (position==0){
 
             }else {*/
-                if (position % 2 == 0) {
-                    binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
-                } else {
-                    binding.getRoot().setBackgroundColor(Color.WHITE);
-                }
-                binding.tvId.setText("" + Leads.get(position).getId());
-                binding.tvName.setText(Leads.get(position).getCustomerName());
-                binding.tvPhone.setText(Leads.get(position).getPhone());
-                binding.tvId.setTextColor(Color.BLACK);
-                binding.tvName.setTextColor(Color.BLACK);
-                binding.tvPhone.setTextColor(Color.BLACK);
-                binding.view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (context instanceof LeadListingActivity) {
-                            ((LeadListingActivity) context).ViewData(position);
-                        }
-                    }
-                });
-
+            if (position % 2 == 0) {
+                binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
+            } else {
+                binding.getRoot().setBackgroundColor(Color.WHITE);
             }
+            binding.tvId.setText("" + Leads.get(position).getId());
+            binding.tvName.setText(Leads.get(position).getCustomerName());
+            binding.tvPhone.setText(Leads.get(position).getPhone());
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh", Locale.ENGLISH);
+            Date strDate = null;
+            try {
+                strDate = sdf.parse(Leads.get(position).getCreatedAt());
+
+                String previousDate = format.format(strDate);
+                String currentDate = format.format(new Date());
+
+//                String timePrevious = timeFormat.format(strDate);
+//                String timeCurrent = timeFormat.format(new Date());
+//                Integer timePreviousInt,timeCurrentInt;
+//                timePreviousInt= Integer.valueOf(timePrevious);
+//                timeCurrentInt= Integer.valueOf(timeCurrent);
+
+                if (currentDate.compareTo(previousDate) == 0) {
+                    long difference = strDate.getTime() - new Date().getTime();
+                    int days = (int) (difference / (1000*60*60*24));
+                    int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
+                    hours = (hours < 0 ? -hours : hours);
+                    if (hours<=1){
+                        binding.update.setVisibility(View.VISIBLE);
+                    }else {
+                        binding.update.setVisibility(View.GONE);
+                    }
+                }else {
+                    binding.update.setVisibility(View.GONE);
+                }
+
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            binding.tvId.setTextColor(Color.BLACK);
+            binding.tvName.setTextColor(Color.BLACK);
+            binding.tvPhone.setTextColor(Color.BLACK);
+            binding.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (context instanceof LeadListingActivity) {
+                        ((LeadListingActivity) context).ViewData(position);
+                    }
+                }
+            });
+            binding.update.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+        }
         //}
     }
 

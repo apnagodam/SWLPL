@@ -13,6 +13,7 @@ import com.apnagodam.staff.ApnaGodamApp;
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.BuildConfig;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.Network.Response.VersionCodeResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.databinding.ActivitySplashBinding;
@@ -27,6 +28,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     String market_uri = "https://play.google.com/store/apps/details?id=com.apnagodam.staff&hl=en";
     @Override
     protected int getLayoutResId() {
+
         Utility.changeLanguage(this, SharedPreferencesRepository.getDataManagerInstance().getSelectedLanguage());
         return R.layout.activity_splash;
     }
@@ -71,7 +73,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     }*/
 
     private void getappVersion() {
-        apiService.getversionCode("Emp").enqueue(new NetworkCallback<VersionCodeResponse>(getActivity()) {
+        apiService.getversionCode("Emp").enqueue( new NetworkCallbackWProgress<VersionCodeResponse>(getActivity()) {
             @Override
             protected void onSuccess(VersionCodeResponse body) {
                 if (BuildConfig.APPLICATION_ID!=null) {
@@ -130,21 +132,21 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         dialogue.show();
     }
     private void getCommditityList() {
-        apiService.getcommuydity_terminal_user_emp_listing().enqueue(new NetworkCallback<CommudityResponse>(getActivity()) {
+        apiService.getcommuydity_terminal_user_emp_listing().enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
             @Override
             protected void onSuccess(CommudityResponse body) {
-                for (int i = 0; i < body.getCategories().size(); i++) {
+//                for (int i = 0; i < body.getCategories().size(); i++) {
                     SharedPreferencesRepository.getDataManagerInstance().setCommdity(body.getCategories());
-                }
-                for (int i = 0; i < body.getTerminals().size(); i++) {
+//                }
+//                for (int i = 0; i < body.getTerminals().size(); i++) {
                     SharedPreferencesRepository.getDataManagerInstance().SETTerminal(body.getTerminals());
-                }
-                for (int i = 0; i < body.getEmployee().size(); i++) {
+//                }
+//                for (int i = 0; i < body.getEmployee().size(); i++) {
                     SharedPreferencesRepository.getDataManagerInstance().setEmployee(body.getEmployee());
-                }
-                for (int i = 0; i < body.getUsers().size(); i++) {
+//                }
+//                for (int i = 0; i < body.getUsers().size(); i++) {
                     SharedPreferencesRepository.getDataManagerInstance().setUser(body.getUsers());
-                }
+//                }
                 nextMClass();
             }
         });

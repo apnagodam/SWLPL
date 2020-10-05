@@ -185,7 +185,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 finish();
                 break;
             case R.id.tv_done:
-               startActivityAndClear(LeadListingActivity.class);
+                startActivity(LeadListingActivity.class);
                 break;
             case R.id.lp_commite_date:
                 popUpDatePicker();
@@ -209,7 +209,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                             @Override
                             protected void onSuccess(LoginResponse body) {
                                 Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                startActivityAndClear(LeadListingActivity.class);
+                                startActivity(LeadListingActivity.class);
                             }
                         });
                     }
