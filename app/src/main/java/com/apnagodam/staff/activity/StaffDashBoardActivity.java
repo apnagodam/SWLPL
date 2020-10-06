@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -30,6 +29,10 @@ import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.AttendancePostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
+import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
+import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.activity.lead.LeadGenerateClass;
 import com.apnagodam.staff.adapter.NavigationAdapter;
 import com.apnagodam.staff.databinding.StaffDashboardBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
@@ -48,7 +51,6 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> implements View.OnClickListener, OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener, AdapterView.OnItemSelectedListener,
@@ -396,6 +398,9 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(CaseIDGenerateClass.class);
                     break;
                 case 6:
+                    startActivity(TruckBookListingActivity.class);
+                    break;
+                case 7:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;

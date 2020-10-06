@@ -1,9 +1,7 @@
 package com.apnagodam.staff.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -12,9 +10,8 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.LeadListingActivity;
+import com.apnagodam.staff.activity.lead.LeadListingActivity;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
-import com.apnagodam.staff.interfaces.LeadsEditClickListener;
 import com.apnagodam.staff.module.AllLeadsResponse;
 
 import java.text.ParseException;

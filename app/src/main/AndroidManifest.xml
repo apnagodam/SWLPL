@@ -55,11 +55,14 @@
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.BrowserPage" />
         <activity android:name=".activity.StaffProfileActivity" />
-        <activity android:name=".activity.LeadGenerateClass" />
-        <activity android:name=".activity.CaseIDGenerateClass" />
-        <activity android:name=".activity.LeadListingActivity" />
-        <activity android:name=".activity.CaseListingActivity" />
-        <activity android:name=".activity.InPricingListingActivity" />
+        <activity android:name=".activity.lead.LeadGenerateClass" />
+        <activity android:name=".activity.caseid.CaseIDGenerateClass" />
+        <activity android:name=".activity.lead.LeadListingActivity" />
+        <activity android:name=".activity.caseid.CaseListingActivity" />
+        <activity android:name=".activity.in.pricing.InPricingListingActivity" />
+        <activity android:name=".activity.in.pricing.SetPricingClass" />
+        <activity android:name=".activity.in.truckbook.TruckBookListingActivity" />
+        <activity android:name=".activity.in.truckbook.TruckUploadDetailsClass" />
 
         <receiver
             android:name=".reciever.SMSReceiver"

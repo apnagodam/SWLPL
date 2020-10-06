@@ -1,4 +1,4 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity.caseid;
 
 import android.app.Activity;
 import android.graphics.Rect;
@@ -16,11 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.adapter.CasesTopAdapter;
-import com.apnagodam.staff.adapter.LeadsTopAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
-import com.apnagodam.staff.utils.Utility;
 
 import java.util.List;
 

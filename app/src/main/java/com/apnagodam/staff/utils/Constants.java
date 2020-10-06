@@ -5,27 +5,21 @@ package com.apnagodam.staff.utils;
  */
 
 public class Constants {
+    /*  // for local server
+    public static final String IMAGE_BASE_URL = "http://192.168.0.24/apna_godam/trunk//resources/assets/upload/employyes/";
+    public static final String IMAGE_BASE_URL_user_photo = "http://192.168.101.21/apna_godam/trunk//resources/frontend_assets/uploads/";
+    public static final String API_BASE_URL = "http://192.168.0.24/apna_godam/trunk/";*/
 
-// image Base URl FOR LOCAL HOST
-// public static final String IMAGE_BASE_URL = "http://192.168.0.97/apna_godam/trunk/resources/assets/upload/category/";
- // for live server
- // public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employyes/";
-    // api Base URl
-   //public static final String API_BASE_URL = "http://192.168.101.21/apna_godam/trunk/";
-  // live server  url
-  //  public static final String API_BASE_URL = "https://apnagodam.in/demo/";
-    //local End Poitns
-  //  public static final String ENDPOINT = API_BASE_URL + "/apna_godam/trunk/api/";
     // live server
     /*// for live server
     public static final String IMAGE_BASE_URL = "https://apnagodam.in/resources/assets/upload/employyes/";
     public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.in/resources/frontend_assets/uploads/";
     public static final String API_BASE_URL = "https://apnagodam.in/";*/
-// for demo server
-public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employyes/";
+      // for demo server
+    public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employyes/";
     public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.in/demo/resources/frontend_assets/uploads/";
     public static final String API_BASE_URL = "https://apnagodam.in/demo/";
-    public static final String ENDPOINT = API_BASE_URL ;
+    public static final String ENDPOINT = API_BASE_URL;
     public static final String RES_SUCCESS = "Success";
     public static final String RES_ERROR = "Error";
     public static final String CONNECT_TO_WIFI = "WIFI";

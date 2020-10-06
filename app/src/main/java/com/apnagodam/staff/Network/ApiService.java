@@ -2,22 +2,27 @@ package com.apnagodam.staff.Network;
 
 
 import com.apnagodam.staff.Network.Request.AttendancePostData;
+import com.apnagodam.staff.Network.Request.ClosedCasesPostData;
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData;
 import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
+import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
+import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.Network.Response.VersionCodeResponse;
 import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
+import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.DashBoardData;
 import com.apnagodam.staff.module.GetPassID;
 import com.apnagodam.staff.module.InventoryRespionse;
 import com.apnagodam.staff.module.TerminalResponse;
+import com.apnagodam.staff.module.VehcilePricingCheeck;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -69,6 +74,18 @@ public interface ApiService {
     // pricing
     @GET("emp_api/apna_emp_get_pricing")
     Call<AllpricingResponse> getAllpricingList();
+    @GET("emp_api/apna_emp_check_vehicleno")
+    Call<VehcilePricingCheeck> cheeckvehiclePricicng(@Query("case_id") String case_id);
+    @POST("emp_api/apna_emp_close_case")
+    Call<LoginResponse> doClosedCase(@Body ClosedCasesPostData closedCasesPostData);
+    @POST("emp_api/apna_emp_addPrice")
+    Call<LoginResponse> setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
+
+    // tuck book
+    @GET("emp_api/apna_emp_get_truckbook")
+    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page_no") String page_no);
+    @POST("emp_api/apna_emp_update_truckbook")
+    Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
 }
 
 

@@ -1,34 +1,28 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity.caseid;
 
-import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData;
-import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.databinding.ActivityCaseIdBinding;
-import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.GetPassID;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Utility;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     ArrayAdapter<String> SpinnerCommudityAdapter, spinnerTeerminalAdpter, SpinnerUserListAdapter, spinnerEmployeeAdpter;

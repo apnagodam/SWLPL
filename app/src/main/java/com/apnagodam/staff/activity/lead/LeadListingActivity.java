@@ -1,8 +1,6 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity.lead;
 
-import android.app.Activity;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -16,17 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.adapter.LeadsTopAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.interfaces.LeadsEditClickListener;
 import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.utils.Utility;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {

@@ -36,4 +36,5 @@
     <color name="colorTransparentDarkBlack">#c8000000</color>
     <color name="showcasebackgroundCircleColor">#D4D4D4</color>
     <color name="lead_btn">#1ab394</color>
+    <color name="yellow">#f0ad4e</color>
 </resources>

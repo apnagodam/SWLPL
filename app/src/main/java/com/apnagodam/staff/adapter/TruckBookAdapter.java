@@ -11,19 +11,21 @@ import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
+import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 
 import java.util.Collection;
 import java.util.List;
 
-public class PricingAdapter extends BaseRecyclerViewAdapter {
-    private List<AllpricingResponse.CaseGen> Leads;
+public class TruckBookAdapter extends BaseRecyclerViewAdapter {
+    private List<AllTruckBookListResponse.TruckBookCollection> Leads;
     private Context context;
 
-    public PricingAdapter(List<AllpricingResponse.CaseGen> leads, InPricingListingActivity inPricingListingActivity) {
+    public TruckBookAdapter(List<AllTruckBookListResponse.TruckBookCollection> leads, TruckBookListingActivity truckBookListingActivity) {
         this.Leads = leads;
-        this.context = inPricingListingActivity;
+        this.context = truckBookListingActivity;
     }
 
     @Override
@@ -63,6 +65,8 @@ public class PricingAdapter extends BaseRecyclerViewAdapter {
 
         @Override
         public void onBind(int position) {
+            binding.tvActionDone.setVisibility(View.GONE);
+            binding.tvAction.setVisibility(View.GONE);
            /* if (position==0){
 
             }else {*/
@@ -73,13 +77,15 @@ public class PricingAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getPCaseId()!=null){
+            if (Leads.get(position).getTBCaseId()!=null){
                 binding.tvAction.setVisibility(View.GONE);
-                binding.tvActionDone.setVisibility(View.VISIBLE);
+                binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
                 binding.tvPhoneDone.setVisibility(View.VISIBLE);
             }else {
-                binding.tvAction.setVisibility(View.VISIBLE);
+                binding.tvAction.setVisibility(View.GONE);
+                binding.tvPhone.setText(context.getResources().getString(R.string.upload_details));
+                binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
                 binding.tvPhone.setVisibility(View.VISIBLE);
             }
             binding.tvId.setTextColor(Color.BLACK);
@@ -88,30 +94,20 @@ public class PricingAdapter extends BaseRecyclerViewAdapter {
             binding.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof InPricingListingActivity) {
-                        ((InPricingListingActivity) context).ViewData(position);
+                    if (context instanceof TruckBookListingActivity) {
+                        ((TruckBookListingActivity) context).ViewData(position);
                     }
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof InPricingListingActivity) {
-                        ((InPricingListingActivity) context).checkVeehicleNo(position);
+                    if (context instanceof TruckBookListingActivity) {
+                        ((TruckBookListingActivity) context).checkVeehicleNo(position);
                     }
                 }
             });
-            binding.tvAction.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (context instanceof InPricingListingActivity) {
-                        ((InPricingListingActivity) context).closedPricing(position);
-                    }
-                }
-            });
-
         }
-        //}
     }
 
 }

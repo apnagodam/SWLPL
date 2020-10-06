@@ -10,11 +10,9 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.CaseListingActivity;
-import com.apnagodam.staff.activity.LeadListingActivity;
+import com.apnagodam.staff.activity.caseid.CaseListingActivity;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
-import com.apnagodam.staff.module.AllLeadsResponse;
 
 import java.util.Collection;
 import java.util.List;

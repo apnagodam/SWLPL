@@ -161,7 +161,55 @@
     <string name="inteerset_rate">Interest Rate(%)</string>
     <string name="loan">Loan per Total Amount(%)</string>
     <string name="price">Price</string>
-    <string name="labour">Rent</string>
+    <string name="rent1">Rent</string>
     <string name="labour_rent">Labour Rent</string>
     <string name="notes">Notes</string>
+    <string name="telly">Details_in_Telly</string>
+    <string name="rent_mt">Rent (MT/Month)</string>
+    <string-array name="array_transaction_type">
+        <item>Transaction Type</item>
+        <item>Case (14-2)</item>
+        <item>E-Mandi</item>
+        <item>FPO</item>
+        <item>Rent</item>
+    </string-array>
+    <string name="labour_rent_bag">Labour Rent (50KG /Bag)</string>
+    <string name="gatepass_cdf">User Name for GatePass / CDF</string>
+    <string name="cold_win">User Name for Coldwin</string>
+    <string name="tally_purchasee">Details for Tally (Purchase)</string>
+    <string name="tally_loan">Details for Tally (Loan)</string>
+    <string name="tally_sale">Details for Tally (Sale)</string>
+
+    // Truck Book
+    <string name="truck_book">Truck Book</string>
+    <string name="more_view_truck">View</string>
+    <string name="upload_details">Upload Details</string>
+    <string name="transporter">Transporter</string>
+    <string name="transporter_name">Enter Transporter</string>
+    <string name="driver_name">Driver Name</string>
+    <string name="driver_phone_no">Driver Phone No</string>
+    <string name="transport_rate">Transport Rate/KM</string>
+    <string name="min_weight">Min Weight (Qtl.)</string>
+    <string name="max_weight">Max Weight (Qtl.)</string>
+    <string name="turnaround_time">Turnaround Time</string>
+    <string name="total_weight">Total Weight(Qtl.)</string>
+    <string name="bags">Bags</string>
+    <string name="gate_passs">Gate Pass</string>
+    <string name="total_trans_cost">Total Trans. Cost</string>
+    <string name="advance_patyment">Advance Payment</string>
+    <string name="start_date_time">Start Date Time</string>
+    <string name="end_date_time">End Date Time</string>
+    <string name="settleememt_amount">Settlement Amount</string>
+    <string name="upload_truck_book">Upload Truck Book</string>
+
+    <string name="driver_name_validation">Enter Driver Name</string>
+    <string name="driver_phone_no_enter">Enter Driver Phone No</string>
+    <string name="transport_rate_validation">Enter Transport Rate/KM</string>
+    <string name="min_weight_val">Enter Min Weight (Qtl.)</string>
+    <string name="max_weight_val">Enter Max Weight (Qtl.)</string>
+    <string name="turnaround_time_val">Enter Turnaround Time(In Hours)</string>
+    <string name="total_weight_val">EnterTotal Weight(Qtl.)</string>
+    <string name="bags_val">Enter No of Bags</string>
+    <string name="total_trans_cost_val">Enter Total Transport. Cost(INR)</string>
+    <string name="advance_patyment_val">Enter Advance Payment(INR)</string>
 </resources>
