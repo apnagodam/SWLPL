@@ -8,6 +8,7 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
+import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
@@ -70,7 +71,7 @@ public interface ApiService {
     Call<LoginResponse> doCreateLeads(@Body CreateLeadsPostData createLeadsPostData);
 
     @POST("emp_api/apna_emp_update_lead")
-    Call<LoginResponse> updateLeads(@Body CreateLeadsPostData createLeadsPostData);
+    Call<LoginResponse> updateLeads(@Body UpdateLeadsPostData createLeadsPostData);
 
     //caseID
     @POST("emp_api/apna_emp_create_caseid")
