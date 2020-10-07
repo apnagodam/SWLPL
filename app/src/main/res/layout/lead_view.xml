@@ -65,12 +65,14 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/view0"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@color/view_color" />
 
             <LinearLayout
+                android:id="@+id/ll2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10ssp"
@@ -399,12 +401,14 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/viewcreate"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@color/view_color" />
 
             <LinearLayout
+                android:id="@+id/llcreate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10ssp"

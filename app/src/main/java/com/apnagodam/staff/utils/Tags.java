@@ -4,7 +4,7 @@ import android.Manifest;
 
 public interface Tags {
 
-    String SUCCESS = "success";
+    String Contractor = "Contractor";
     String BUNDLE = "bundle";
     String DATA = "ApnaGodham";
     String LANG = "language_pref";

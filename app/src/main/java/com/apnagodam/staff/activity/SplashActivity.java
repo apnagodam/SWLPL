@@ -147,6 +147,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 //                for (int i = 0; i < body.getUsers().size(); i++) {
                     SharedPreferencesRepository.getDataManagerInstance().setUser(body.getUsers());
 //                }
+                SharedPreferencesRepository.getDataManagerInstance().setContractor(body.getContractor_result());
                 nextMClass();
             }
         });

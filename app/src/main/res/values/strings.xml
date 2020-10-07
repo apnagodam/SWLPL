@@ -212,4 +212,33 @@
     <string name="bags_val">Enter No of Bags</string>
     <string name="total_trans_cost_val">Enter Total Transport. Cost(INR)</string>
     <string name="advance_patyment_val">Enter Advance Payment(INR)</string>
+    <string name="start_date_time_val">Start Date Time</string>
+    <string name="end_date_time_val">End Date Time</string>
+    <string name="settleememt_amount_val">Enter Final Settlement Amount(INR)</string>
+
+    // labour book
+    <string name="labour_book">Labour Book</string>
+    <string name="upload_labour">Upload Labour</string>
+    <string name="labour_contractor">Labour Contractor</string>
+    <string name="contractor_phone">Contractor Phone</string>
+    <string name="labour_rate">Labour Rate / Bag</string>
+    <string name="labour_total">Total Labour</string>
+    <string name="booking_date">Booking Date</string>
+    <string name="total_bags">Total Bags</string>
+    <string name="contractor_phone_val">Enter Contractor Phone No.</string>
+    <string name="labour_rate_val">Enter Labour Rate Per Bag</string>
+    <string name="labour_total_val">Enter Total No.of Labours</string>
+    <string name="booking_date_val">Enter Booking Date</string>
+    <string name="total_bags_val">Enter Total No. of  Bags</string>
+    <string name="contractor_select">Select Contractor</string>
+
+    //kanta parchi list
+    <string name="firstkanta_parchi">First Kanta Parchi</string>
+    <string name="firstkanta_parchi_title">Kanta Parchi List</string>
+    <string name="kanta_parchi">Kanta Parchi</string>
+    <string name="upload_kantha_parchi">Upload Kanta Parchi</string>
+    <string name="kanta_parchi_file">Kanta Parchi File</string>
+    <string name="truck_image">Truck File</string>
+    <string name="upload_kanta_parchi_file">Upload Kanta Parchi File</string>
+    <string name="upload_truck_image">Upload Truck File</string>
 </resources>

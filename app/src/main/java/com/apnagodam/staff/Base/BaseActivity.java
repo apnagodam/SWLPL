@@ -292,8 +292,12 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem5);
         MenuItem menuItem6 = new MenuItem(getResources().getString(R.string.truck_book), R.drawable.ic_baseline_notifications_24);
         menuItems.add(menuItem6);
-        MenuItem menuIte7 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
-        menuItems.add(menuIte7);
+        MenuItem menuItem7 = new MenuItem(getResources().getString(R.string.labour_book), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem7);
+        MenuItem menuItem8 = new MenuItem(getResources().getString(R.string.firstkanta_parchi), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem8);
+        MenuItem menuIte9 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
+        menuItems.add(menuIte9);
         return menuItems;
     }
 

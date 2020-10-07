@@ -168,6 +168,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     private void clickListner() {
         binding.ivClose.setOnClickListener(this);
         binding.lpCommiteDate.setOnClickListener(this);
+        binding.userCommitmentDate.setOnClickListener(this);
         binding.btnLogin.setOnClickListener(this);
         binding.tvDone.setOnClickListener(this);
     }
@@ -188,6 +189,9 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 startActivity(LeadListingActivity.class);
                 break;
             case R.id.lp_commite_date:
+                popUpDatePicker();
+                break;
+            case R.id.userCommitmentDate:
                 popUpDatePicker();
                 break;
             case R.id.btn_login:
@@ -236,8 +240,6 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 .get(Calendar.YEAR), calender.get(Calendar.MONTH),
                 calender.get(Calendar.DAY_OF_MONTH));
         dateDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-      /*  long now = System.currentTimeMillis() - 1000;
-        dateDialog.getDatePicker().setMaxDate(now+(1000*60*60*24*900)); //After 900 Days from Now*/
         dateDialog.show();
     }
 
