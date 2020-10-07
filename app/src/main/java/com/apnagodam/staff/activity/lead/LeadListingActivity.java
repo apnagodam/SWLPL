@@ -1,6 +1,8 @@
 package com.apnagodam.staff.activity.lead;
 
+import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -18,8 +20,10 @@ import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.adapter.LeadsTopAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllLeadsResponse;
+import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Utility;
 
+import java.io.Serializable;
 import java.util.List;
 
 
@@ -106,5 +110,12 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
             }
         });
         alertDialog.show();
+    }
+
+    public void editLead(AllLeadsResponse.Lead lead){
+        Intent intent=new Intent();
+        intent.putExtra(Constants.LeadListData, (Serializable) lead);
+        setResult(2,intent);
+        finish();//finishing activity
     }
 }

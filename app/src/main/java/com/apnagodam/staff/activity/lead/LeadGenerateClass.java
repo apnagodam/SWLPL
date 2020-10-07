@@ -1,28 +1,39 @@
 package com.apnagodam.staff.activity.lead;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
+import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
+import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.module.UserDetails;
+import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Utility;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +46,8 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     List<String> TerminalName;
     List<String> TerminalsID;
     private Calendar calender;
+    private boolean isUpdate=false;
+    private String getLeadId;
 
     @Override
     protected int getLayoutResId() {
@@ -185,7 +198,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 finish();
                 break;
             case R.id.tv_done:
-                startActivity(LeadListingActivity.class);
+                callLeadListActivity();
                 break;
             case R.id.lp_commite_date:
                 popUpDatePicker();
@@ -201,23 +214,89 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                     } else if (selectPurpose == null) {
                         Toast.makeText(LeadGenerateClass.this,  getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
                     } else {
-                        UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
-                        apiService.doCreateLeads(new CreateLeadsPostData(
-                                userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
-                                stringFromView(binding.etCustomerLocation), stringFromView(binding.etCustomerNumber), commudityID, TerminalID, stringFromView(binding.userCommitmentDate),
-                                selectPurpose)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-                            @Override
-                            protected void onSuccess(LoginResponse body) {
-                                Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                startActivity(LeadListingActivity.class);
-                            }
-                        });
+                        if (isUpdate){
+                            UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
+                            apiService.updateLeads(new UpdateLeadsPostData(
+                                    getLeadId,userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
+                                    stringFromView(binding.etCustomerLocation), stringFromView(binding.etCustomerNumber), commudityID, TerminalID, stringFromView(binding.userCommitmentDate),
+                                    selectPurpose)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                @Override
+                                protected void onSuccess(LoginResponse body) {
+                                    Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
+//                                    callLeadListActivity();
+
+                                }
+                            });
+                        }else {
+                            UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
+                            apiService.doCreateLeads(new CreateLeadsPostData(
+                                    userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
+                                    stringFromView(binding.etCustomerLocation), stringFromView(binding.etCustomerNumber), commudityID, TerminalID, stringFromView(binding.userCommitmentDate),
+                                    selectPurpose)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                @Override
+                                protected void onSuccess(LoginResponse body) {
+                                    Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                                    callLeadListActivity();
+
+                                }
+                            });
+                        }
                     }
                 }
                 break;
         }
     }
 
+    private void callLeadListActivity() {
+        Intent intent=new Intent(LeadGenerateClass.this,LeadListingActivity.class);
+        startActivityForResult(intent, 2);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==2  && data!=null)
+        {
+            AllLeadsResponse.Lead lead= (AllLeadsResponse.Lead) data.getSerializableExtra(Constants.LeadListData);
+            isUpdate=true;
+            getLeadId=lead.getId();
+            setLeadData(lead);
+        }
+    }
+
+    private void setLeadData(AllLeadsResponse.Lead lead) {
+        binding.etCustomerName.setText(lead.getCustomerName());
+        binding.etCustomerNumber.setText(lead.getPhone());
+        binding.etCustomerQuantity.setText(lead.getQuantity());
+        binding.etCustomerLocation.setText(lead.getLocation());
+
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+
+        try {
+            Date date = simpleDateFormat.parse(lead.getCommodityDate());
+            binding.userCommitmentDate.setText(simpleDateFormat.format(date));
+        }
+        catch(ParseException pe) {
+            Log.e("getValueException",pe.toString());
+        }
+
+        binding.spinnerPurpose.setSelection(getIndex(binding.spinnerPurpose, lead.getPurpose()));
+        binding.spinnerCommudity.setSelection(getIndex(binding.spinnerCommudity, lead.getCateName()));
+        binding.spinnerTerminal.setSelection(getIndex(binding.spinnerTerminal, lead.getTerminalName()+"("+lead.getWarehouseCode()+")"));
+
+    }
+
+    private int getIndex(Spinner spinner, String myString){
+
+        int index = 0;
+
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).equals(myString)){
+                index = i;
+            }
+        }
+        return index;
+    }
     boolean isValid() {
         if (TextUtils.isEmpty(stringFromView(binding.etCustomerName))) {
             return Utility.showEditTextError(binding.tilCustomerName, R.string.coustomer_name);

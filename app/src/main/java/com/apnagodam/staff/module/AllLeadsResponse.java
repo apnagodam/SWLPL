@@ -4,9 +4,10 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AllLeadsResponse extends BaseResponse {
+public class AllLeadsResponse extends BaseResponse implements Serializable {
     @SerializedName("leads")
     @Expose
     private List<Lead> leads = null;
@@ -19,7 +20,7 @@ public class AllLeadsResponse extends BaseResponse {
         this.leads = leads;
     }
 
-    public class Lead {
+    public class Lead implements Serializable{
 
         @SerializedName("id")
         @Expose

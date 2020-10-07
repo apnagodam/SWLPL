@@ -127,7 +127,9 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
             binding.update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if (context instanceof LeadListingActivity) {
+                        ((LeadListingActivity) context).editLead(Leads.get(position));
+                    }
                 }
             });
 

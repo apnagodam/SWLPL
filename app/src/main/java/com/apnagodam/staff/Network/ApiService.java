@@ -8,6 +8,7 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
+import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
@@ -60,8 +61,10 @@ public interface ApiService {
 
     @POST("emp_api/apna_emp_create_lead")
     Call<LoginResponse> doCreateLeads(@Body CreateLeadsPostData createLeadsPostData);
+
     @POST("emp_api/apna_emp_update_lead")
-    Call<LoginResponse> updateLeads(@Body CreateLeadsPostData createLeadsPostData);
+    Call<LoginResponse> updateLeads(@Body UpdateLeadsPostData createLeadsPostData);
+
     @GET("api/apna_default_list")
     Call<CommudityResponse> getcommuydity_terminal_user_emp_listing();
 

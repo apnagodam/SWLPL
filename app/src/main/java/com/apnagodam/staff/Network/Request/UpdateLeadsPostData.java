@@ -3,7 +3,10 @@ package com.apnagodam.staff.Network.Request;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class CreateLeadsPostData {
+public class UpdateLeadsPostData {
+    @SerializedName("id")
+    @Expose
+    private String id;
 
     @SerializedName("user_id")
     @Expose
@@ -39,9 +42,10 @@ public class CreateLeadsPostData {
     @Expose
     private String purpose;
 
-    public CreateLeadsPostData(String user_id, String customer_name, String quantity, String location,
-                               String phone, String commodity_id, String terminal_id, String commodity_date, String purpose) {
+    public UpdateLeadsPostData(String id, String user_id, String customer_name, String quantity, String location,
+                                    String phone, String commodity_id, String terminal_id, String commodity_date, String purpose) {
         this.user_id = user_id;
+        this.id = id;
         this.customer_name = customer_name;
         this.quantity = quantity;
         this.location = location;
