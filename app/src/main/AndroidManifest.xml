@@ -63,6 +63,10 @@
         <activity android:name=".activity.in.pricing.SetPricingClass" />
         <activity android:name=".activity.in.truckbook.TruckBookListingActivity" />
         <activity android:name=".activity.in.truckbook.TruckUploadDetailsClass" />
+        <activity android:name=".activity.in.labourbook.LabourBookListingActivity" />
+        <activity android:name=".activity.in.labourbook.LabourBookUploadClass" />
+        <activity android:name=".activity.in.first_kantaparchi.FirstkanthaParchiListingActivity" />
+        <activity android:name=".activity.in.first_kantaparchi.UploadFirstkantaParchiClass" />
 
         <receiver
             android:name=".reciever.SMSReceiver"

@@ -159,6 +159,19 @@ public class SharedPreferencesRepository implements Tags {
         ArrayList<CommudityResponse.Employee> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
+    public void setContractor(List<CommudityResponse.Contractor> datumMonthlyLedger) {
+        String data = new Gson().toJson(datumMonthlyLedger);
+        sharedPrefEditor.putString(Contractor, data).commit();
+    }
+    public List<CommudityResponse.Contractor> getContractorList() {
+        String userMonthlyLedger = sharedPreferences.getString(Contractor, null);
+        Gson gson = new Gson();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.Contractor>>(){}.getType();
+        ArrayList<CommudityResponse.Contractor> userArray = gson.fromJson(userMonthlyLedger, userListType);
+        return userArray;
+    }
+
+
   public void setUser(List<CommudityResponse.User> datumMonthlyLedger) {
       String data = new Gson().toJson(datumMonthlyLedger);
       sharedPrefEditor.putString(User, data).commit();

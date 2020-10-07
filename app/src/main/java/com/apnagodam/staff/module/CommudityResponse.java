@@ -30,6 +30,17 @@ public class CommudityResponse extends BaseResponse {
     @Expose
     private List<Terminals> terminals = null;
 
+    public List<Contractor> getContractor_result() {
+        return contractor_result;
+    }
+
+    public void setContractor_result(List<Contractor> contractor_result) {
+        this.contractor_result = contractor_result;
+    }
+
+    @SerializedName("contractor_result")
+    @Expose
+    private List<Contractor> contractor_result = null;
 
     public List<User> getUsers() {
         return users;
@@ -1466,5 +1477,150 @@ public class CommudityResponse extends BaseResponse {
             this.roleId = roleId;
         }
 
+    }
+    public class Contractor{
+        @SerializedName("id")
+        @Expose
+        private String id;
+        @SerializedName("contractor_name")
+        @Expose
+        private String contractorName;
+        @SerializedName("contractor_phone")
+        @Expose
+        private String contractorPhone;
+        @SerializedName("location")
+        @Expose
+        private String location;
+        @SerializedName("bank_name")
+        @Expose
+        private String bankName;
+        @SerializedName("bank_ifsc")
+        @Expose
+        private String bankIfsc;
+        @SerializedName("account_no")
+        @Expose
+        private String accountNo;
+        @SerializedName("rate")
+        @Expose
+        private String rate;
+        @SerializedName("pan_number")
+        @Expose
+        private String panNumber;
+        @SerializedName("gst_number")
+        @Expose
+        private String gstNumber;
+        @SerializedName("status")
+        @Expose
+        private String status;
+        @SerializedName("created_at")
+        @Expose
+        private String createdAt;
+        @SerializedName("updated_at")
+        @Expose
+        private String updatedAt;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getContractorName() {
+            return contractorName;
+        }
+
+        public void setContractorName(String contractorName) {
+            this.contractorName = contractorName;
+        }
+
+        public String getContractorPhone() {
+            return contractorPhone;
+        }
+
+        public void setContractorPhone(String contractorPhone) {
+            this.contractorPhone = contractorPhone;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public String getBankName() {
+            return bankName;
+        }
+
+        public void setBankName(String bankName) {
+            this.bankName = bankName;
+        }
+
+        public String getBankIfsc() {
+            return bankIfsc;
+        }
+
+        public void setBankIfsc(String bankIfsc) {
+            this.bankIfsc = bankIfsc;
+        }
+
+        public String getAccountNo() {
+            return accountNo;
+        }
+
+        public void setAccountNo(String accountNo) {
+            this.accountNo = accountNo;
+        }
+
+        public String getRate() {
+            return rate;
+        }
+
+        public void setRate(String rate) {
+            this.rate = rate;
+        }
+
+        public String getPanNumber() {
+            return panNumber;
+        }
+
+        public void setPanNumber(String panNumber) {
+            this.panNumber = panNumber;
+        }
+
+        public String getGstNumber() {
+            return gstNumber;
+        }
+
+        public void setGstNumber(String gstNumber) {
+            this.gstNumber = gstNumber;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
     }
 }

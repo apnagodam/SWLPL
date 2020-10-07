@@ -1,8 +1,11 @@
 package com.apnagodam.staff.Network;
 
+import android.content.Intent;
+
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.LoginActivity;
 import com.apnagodam.staff.utils.ResponseCode;
 import com.apnagodam.staff.utils.Utility;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +25,16 @@ public abstract class NetworkCallback<T extends BaseResponse> implements Callbac
         if (response.body() != null) {
              if (response.body().getStatus().equals(ResponseCode.CODE_1000)) {
                 onSuccess(response.body());
-            } else {
+            }
+             else   if (response.body().getStatus()==3) {
+              /*   SharedPreferencesRepository.getDataManagerInstance().clear();
+                 SharedPreferencesRepository.getDataManagerInstance().setIsUserName(false);
+                 SharedPreferencesRepository.getDataManagerInstance().saveSessionToken("");*/
+                 Intent intent = new Intent(activity, LoginActivity.class);
+                 intent.putExtra("setting"," ");
+                 activity.startActivity(intent);
+                 activity.finish();
+             }else {
                 Utility.showAlertDialog(activity, activity.getString(R.string.alert), response.body().getMessage());
             }
         } else {

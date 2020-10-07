@@ -8,18 +8,20 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
-import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
+import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.Network.Response.VersionCodeResponse;
 import com.apnagodam.staff.module.AllCaseIDResponse;
+import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.DashBoardData;
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
 import com.apnagodam.staff.module.GetPassID;
 import com.apnagodam.staff.module.InventoryRespionse;
 import com.apnagodam.staff.module.TerminalResponse;
@@ -35,12 +37,16 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface ApiService {
+    @GET("api/apna_default_list")
+    Call<CommudityResponse> getcommuydity_terminal_user_emp_listing();
+
     @POST("api/apna_send_otp")
     Call<LoginResponse> doLogin(@Body LoginPostData loginPostData);
 
     @POST("api/apna_verify_otp")
     Call<OTPvarifedResponse> doOTPVerify(@Body OTPData otpData);
 
+    // for attendance Employee
     @GET("emp_api/apna_emp_clock_status")
     Call<AttendanceResponse> getattendanceStatus();
 
@@ -56,6 +62,7 @@ public interface ApiService {
     @GET("api/app_version")
     Call<VersionCodeResponse> getversionCode(@Query("app_type") String appType);
 
+    // leads
     @GET("emp_api/apna_emp_leads")
     Call<AllLeadsResponse> getAllLeads();
 
@@ -63,32 +70,47 @@ public interface ApiService {
     Call<LoginResponse> doCreateLeads(@Body CreateLeadsPostData createLeadsPostData);
 
     @POST("emp_api/apna_emp_update_lead")
-    Call<LoginResponse> updateLeads(@Body UpdateLeadsPostData createLeadsPostData);
+    Call<LoginResponse> updateLeads(@Body CreateLeadsPostData createLeadsPostData);
 
-    @GET("api/apna_default_list")
-    Call<CommudityResponse> getcommuydity_terminal_user_emp_listing();
-
+    //caseID
     @POST("emp_api/apna_emp_create_caseid")
     Call<LoginResponse> doCreateCaseID(@Body CreateCaseIDPostData createCaseIDPostData);
+
     @GET("emp_api/apna_emp_get_caseid")
     Call<AllCaseIDResponse> getAllCase();
+
     @GET("emp_api/apna_emp_getpass_no")
     Call<GetPassID> getGatePass(@Query("terminal_id") String terminal_id);
+
     // pricing
     @GET("emp_api/apna_emp_get_pricing")
     Call<AllpricingResponse> getAllpricingList();
+
     @GET("emp_api/apna_emp_check_vehicleno")
     Call<VehcilePricingCheeck> cheeckvehiclePricicng(@Query("case_id") String case_id);
+
     @POST("emp_api/apna_emp_close_case")
     Call<LoginResponse> doClosedCase(@Body ClosedCasesPostData closedCasesPostData);
+
     @POST("emp_api/apna_emp_addPrice")
     Call<LoginResponse> setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
 
     // tuck book
     @GET("emp_api/apna_emp_get_truckbook")
     Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page_no") String page_no);
+
     @POST("emp_api/apna_emp_update_truckbook")
     Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
+
+    // labour book
+    @GET("emp_api/apna_emp_get_labourbook")
+    Call<AllLabourBookListResponse> getLabourBookList(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_update_labour")
+    Call<LoginResponse> uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
+    // first kantha parchi
+    @GET("emp_api/apna_emp_get_kanta_prachi")
+    Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page_no") String page_no);
 }
 
 

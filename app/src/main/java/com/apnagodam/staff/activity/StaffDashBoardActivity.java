@@ -30,6 +30,8 @@ import com.apnagodam.staff.Network.Request.AttendancePostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
+import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.activity.lead.LeadGenerateClass;
@@ -401,6 +403,12 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(TruckBookListingActivity.class);
                     break;
                 case 7:
+                    startActivity(LabourBookListingActivity.class);
+                    break;
+                case 8:
+                    startActivity(FirstkanthaParchiListingActivity.class);
+                    break;
+                case 9:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;
