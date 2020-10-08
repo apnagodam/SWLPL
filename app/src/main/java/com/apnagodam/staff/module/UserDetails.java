@@ -39,7 +39,19 @@ public class UserDetails {
     @SerializedName("designation")
     @Expose
     private String designation;
-    @SerializedName("role_id")
+
+    public String getLevel_id() {
+        return level_id;
+    }
+
+    public void setLevel_id(String level_id) {
+        this.level_id = level_id;
+    }
+
+    @SerializedName("level_id")
+    @Expose
+    private String level_id;
+    @SerializedName("designation_id")
     @Expose
     private String role_id;
     @SerializedName("personal_phone")
@@ -102,10 +114,10 @@ public class UserDetails {
     @SerializedName("power")
     @Expose
     private String power;
-    @SerializedName("aadhar_no")
+    @SerializedName("aadhar_card")
     @Expose
     private String aadharNo;
-    @SerializedName("pancard_no")
+    @SerializedName("pan_card")
     @Expose
     private String pancardNo;
     @SerializedName("bank_name")
@@ -114,13 +126,13 @@ public class UserDetails {
     @SerializedName("bank_branch")
     @Expose
     private String bankBranch;
-    @SerializedName("bank_acc_no")
+    @SerializedName("account_no")
     @Expose
     private String bankAccNo;
     @SerializedName("bank_ifsc_code")
     @Expose
     private String bankIfscCode;
-    @SerializedName("profile_image")
+    @SerializedName("passport_image")
     @Expose
     private String profileImage;
     @SerializedName("aadhar_image")

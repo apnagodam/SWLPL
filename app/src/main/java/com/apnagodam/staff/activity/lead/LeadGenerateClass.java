@@ -46,7 +46,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     List<String> TerminalName;
     List<String> TerminalsID;
     private Calendar calender;
-    private boolean isUpdate=false;
+    private boolean isUpdate = false;
     private String getLeadId;
 
     @Override
@@ -72,8 +72,8 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     private void setValueOnSpinner() {
         // spinner meter obj
         // layout resource and list of items.
-       // commudityID = "" + SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(0).getId();
-     //   TerminalID = "" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(0).getId();
+        // commudityID = "" + SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(0).getId();
+        //   TerminalID = "" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(0).getId();
 
         for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
             CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
@@ -212,26 +212,25 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                     if (commudityID == null) {
                         Toast.makeText(LeadGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
                     } else if (TerminalID == null) {
-                        Toast.makeText(LeadGenerateClass.this,  getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LeadGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
                     } else if (TextUtils.isEmpty(stringFromView(binding.userCommitmentDate))) {
                         Toast.makeText(LeadGenerateClass.this, "Select Commitment Date", Toast.LENGTH_LONG).show();
                     } else if (selectPurpose == null) {
-                        Toast.makeText(LeadGenerateClass.this,  getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LeadGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
                     } else {
-                        if (isUpdate){
+                        if (isUpdate) {
                             UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
                             apiService.updateLeads(new UpdateLeadsPostData(
-                                    getLeadId,userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
+                                    getLeadId, userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
                                     stringFromView(binding.etCustomerLocation), stringFromView(binding.etCustomerNumber), commudityID, TerminalID, stringFromView(binding.userCommitmentDate),
                                     selectPurpose)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                                 @Override
                                 protected void onSuccess(LoginResponse body) {
                                     Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
 //                                    callLeadListActivity();
-
                                 }
                             });
-                        }else {
+                        } else {
                             UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
                             apiService.doCreateLeads(new CreateLeadsPostData(
                                     userDetails.getUserId(), stringFromView(binding.etCustomerName), stringFromView(binding.etCustomerQuantity),
@@ -252,18 +251,17 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     }
 
     private void callLeadListActivity() {
-        Intent intent=new Intent(LeadGenerateClass.this,LeadListingActivity.class);
+        Intent intent = new Intent(LeadGenerateClass.this, LeadListingActivity.class);
         startActivityForResult(intent, 2);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==2  && data!=null)
-        {
-            AllLeadsResponse.Lead lead= (AllLeadsResponse.Lead) data.getSerializableExtra(Constants.LeadListData);
-            isUpdate=true;
-            getLeadId=lead.getId();
+        if (requestCode == 2 && data != null) {
+            AllLeadsResponse.Lead lead = (AllLeadsResponse.Lead) data.getSerializableExtra(Constants.LeadListData);
+            isUpdate = true;
+            getLeadId = lead.getId();
             setLeadData(lead);
         }
     }
@@ -274,33 +272,33 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         binding.etCustomerQuantity.setText(lead.getQuantity());
         binding.etCustomerLocation.setText(lead.getLocation());
 
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
         try {
             Date date = simpleDateFormat.parse(lead.getCommodityDate());
             binding.userCommitmentDate.setText(simpleDateFormat.format(date));
-        }
-        catch(ParseException pe) {
-            Log.e("getValueException",pe.toString());
+        } catch (ParseException pe) {
+            Log.e("getValueException", pe.toString());
         }
 
         binding.spinnerPurpose.setSelection(getIndex(binding.spinnerPurpose, lead.getPurpose()));
         binding.spinnerCommudity.setSelection(getIndex(binding.spinnerCommudity, lead.getCateName()));
-        binding.spinnerTerminal.setSelection(getIndex(binding.spinnerTerminal, lead.getTerminalName()+"("+lead.getWarehouseCode()+")"));
+        binding.spinnerTerminal.setSelection(getIndex(binding.spinnerTerminal, lead.getTerminalName() + "(" + lead.getWarehouseCode() + ")"));
 
     }
 
-    private int getIndex(Spinner spinner, String myString){
+    private int getIndex(Spinner spinner, String myString) {
 
         int index = 0;
 
-        for (int i=0;i<spinner.getCount();i++){
-            if (spinner.getItemAtPosition(i).equals(myString)){
+        for (int i = 0; i < spinner.getCount(); i++) {
+            if (spinner.getItemAtPosition(i).equals(myString)) {
                 index = i;
             }
         }
         return index;
     }
+
     boolean isValid() {
         if (TextUtils.isEmpty(stringFromView(binding.etCustomerName))) {
             return Utility.showEditTextError(binding.tilCustomerName, R.string.coustomer_name);

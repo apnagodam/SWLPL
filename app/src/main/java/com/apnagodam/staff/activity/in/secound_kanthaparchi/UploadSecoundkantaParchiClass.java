@@ -1,28 +1,21 @@
-package com.apnagodam.staff.activity.in.first_kantaparchi;
+package com.apnagodam.staff.activity.in.secound_kanthaparchi;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData;
+import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 import com.apnagodam.staff.utils.Utility;
@@ -31,14 +24,9 @@ import com.fxn.pix.Pix;
 import com.fxn.utility.PermUtil;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 
-public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUploadBinding> {
-
+public class UploadSecoundkantaParchiClass extends BaseActivity<KanthaParchiUploadBinding> {
     // role of image
     String UserName, CaseID = "";
     public File fileKantha, fileTruck;
@@ -49,6 +37,7 @@ public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUpload
     protected int getLayoutResId() {
         return R.layout.kantha_parchi_upload;
     }
+
 
     @Override
     protected void setUp() {
@@ -68,7 +57,7 @@ public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUpload
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityAndClear(FirstkanthaParchiListingActivity.class);
+                startActivityAndClear(SecoundkanthaParchiListingActivity.class);
             }
         });
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -103,13 +92,13 @@ public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUpload
         binding.KanthaImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PhotoFullPopupWindow(UploadFirstkantaParchiClass.this, R.layout.popup_photo_full, view, firstkantaParchiFile, null);
+                new PhotoFullPopupWindow(UploadSecoundkantaParchiClass.this, R.layout.popup_photo_full, view, firstkantaParchiFile, null);
             }
         });
         binding.TruckImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PhotoFullPopupWindow(UploadFirstkantaParchiClass.this, R.layout.popup_photo_full, view, TruckImage, null);
+                new PhotoFullPopupWindow(UploadSecoundkantaParchiClass.this, R.layout.popup_photo_full, view, TruckImage, null);
             }
         });
 
@@ -125,7 +114,7 @@ public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUpload
                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
                 .setPath("/apnagodam/lp/images");                                       //Custom Path For media Storage
 
-        Pix.start(UploadFirstkantaParchiClass.this, options.setRequestCode(REQUEST_CAMERA_PICTURE));
+        Pix.start(UploadSecoundkantaParchiClass.this, options.setRequestCode(REQUEST_CAMERA_PICTURE));
     }
 
 
@@ -139,11 +128,11 @@ public class UploadFirstkantaParchiClass extends BaseActivity<KanthaParchiUpload
             truckImageImage = "" + Utility.transferImageToBase64(fileTruck);
         }
         //else {
-            apiService.uploadFirstkantaParchi(new UploadFirstkantaParchiPostData(CaseID, stringFromView(binding.notes), KanthaImage, truckImageImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+            apiService.uploadSecoundkantaParchi(new UploadSecoundkantaParchiPostData(CaseID, stringFromView(binding.notes), KanthaImage, truckImageImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                 @Override
                 protected void onSuccess(LoginResponse body) {
-                    Toast.makeText(UploadFirstkantaParchiClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                    startActivityAndClear(FirstkanthaParchiListingActivity.class);
+                    Toast.makeText(UploadSecoundkantaParchiClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                    startActivityAndClear(SecoundkanthaParchiListingActivity.class);
                 }
             });
        // }

@@ -296,8 +296,16 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem7);
         MenuItem menuItem8 = new MenuItem(getResources().getString(R.string.firstkanta_parchi), R.drawable.ic_baseline_notifications_24);
         menuItems.add(menuItem8);
-        MenuItem menuIte9 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
-        menuItems.add(menuIte9);
+        MenuItem menuItem9 = new MenuItem(getResources().getString(R.string.f_quality_repots), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem9);
+        MenuItem menuItem10 = new MenuItem(getResources().getString(R.string.secoundkanta_parchi), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem10);
+        MenuItem menuItem11 = new MenuItem(getResources().getString(R.string.s_quality_repots), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem11);
+        MenuItem menuItem12 = new MenuItem(getResources().getString(R.string.gate_passs), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem12);
+        MenuItem menuIte13 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
+        menuItems.add(menuIte13);
         return menuItems;
     }
 
@@ -448,8 +456,8 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
 //      max Height and width values of the compressed image is taken as 816x612
 
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
+        float maxHeight = 916.0f;
+        float maxWidth = 712.0f;
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 

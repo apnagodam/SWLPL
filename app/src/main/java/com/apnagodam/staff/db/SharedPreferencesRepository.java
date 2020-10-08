@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.apnagodam.staff.ApnaGodamApp;
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.Bank;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.TerminalResponse;
@@ -115,7 +116,15 @@ public class SharedPreferencesRepository implements Tags {
         String userData = loginSharedPreferences.getString(USER_NAME, null);
         return userData != null ? new Gson().fromJson(userData, UserDetails.class) : null;
     }
+    public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
+        String data = new Gson().toJson(user, UserDetails.class);
+        loginPrefEditor.putString(Permission, data).commit();
+    }
 
+    public UserDetails getUserPermission() {
+        String userData = loginSharedPreferences.getString(Permission, null);
+        return userData != null ? new Gson().fromJson(userData, UserDetails.class) : null;
+    }
     // login prefs
     public String getSelectedLanguage() {
         return loginSharedPreferences.getString(SELECTED_LANGUAGE, "en");

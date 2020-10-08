@@ -1,4 +1,4 @@
-package com.apnagodam.staff.activity.in.first_kantaparchi;
+package com.apnagodam.staff.activity.in.secound_kanthaparchi;
 
 import android.app.Activity;
 import android.graphics.Rect;
@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,20 +17,20 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
+import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
 import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter;
-import com.apnagodam.staff.adapter.LaabourBookAdapter;
+import com.apnagodam.staff.adapter.SecoundkanthaparchiAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
+import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 
 import java.util.List;
 
 
-public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<FirstkanthaParchiListResponse.FirstKataParchiDatum> AllCases;
+public class SecoundkanthaParchiListingActivity extends BaseActivity<ActivityListingBinding> {
+    private List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> AllCases;
     private String firstkantaParchiFile, TruckImage;
 
     @Override
@@ -42,13 +41,13 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
     @Override
     protected void setUp() {
         setSupportActionBar(binding.toolbar);
-        binding.titleHeader.setText(getResources().getString(R.string.firstkanta_parchi_title));
+        binding.titleHeader.setText(getResources().getString(R.string.secoundkanta_parchi));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
         binding.tvPhone.setText(getResources().getString(R.string.kanta_parchi));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
@@ -60,15 +59,15 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
     }
 
     private void getAllCases() {
-        apiService.getf_kanthaParchiList("15", "1").enqueue(new NetworkCallback<FirstkanthaParchiListResponse>(getActivity()) {
+        apiService.getS_kanthaParchiList("15", "1").enqueue(new NetworkCallback<SecoundkanthaParchiListResponse>(getActivity()) {
             @Override
-            protected void onSuccess(FirstkanthaParchiListResponse body) {
-                if (body.getFirstKataParchiData() == null || body.getFirstKataParchiData().isEmpty()) {
+            protected void onSuccess(SecoundkanthaParchiListResponse body) {
+                if (body.getData() == null || body.getData().isEmpty()) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
                 } else {
-                    AllCases = body.getFirstKataParchiData();
-                    binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
+                    AllCases = body.getData();
+                    binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
                 }
             }
         });
@@ -78,8 +77,8 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
         Rect displayRectangle = new Rect();
         Window window = this.getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(FirstkanthaParchiListingActivity.this, R.style.CustomAlertDialog);
-        LayoutInflater inflater = ((Activity) FirstkanthaParchiListingActivity.this).getLayoutInflater();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(SecoundkanthaParchiListingActivity.this, R.style.CustomAlertDialog);
+        LayoutInflater inflater = ((Activity) SecoundkanthaParchiListingActivity.this).getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dilog_kanta_parchi, null);
         dialogView.setMinimumWidth((int) (displayRectangle.width() * 1f));
         dialogView.setMinimumHeight((int) (displayRectangle.height() * 1f));
@@ -116,18 +115,18 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
         loan_details.setText("Loan Details : " + ((AllCases.get(position).getLoanName()) != null ? AllCases.get(position).getLoanName() : "N/A"));
         selas_details.setText("Sale Details : " + ((AllCases.get(position).getSaleName()) != null ? AllCases.get(position).getSaleName() : "N/A"));
         /////
-        firstkantaParchiFile = Constants.First_kata + AllCases.get(position).getFile();
-        TruckImage = Constants.First_kata + AllCases.get(position).getFile2();
+        firstkantaParchiFile = Constants.Secound_kata + AllCases.get(position).getFile();
+        TruckImage = Constants.Secound_kata + AllCases.get(position).getFile2();
         kanta_parchi_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PhotoFullPopupWindow(FirstkanthaParchiListingActivity.this, R.layout.popup_photo_full, view, firstkantaParchiFile, null);
+                new PhotoFullPopupWindow(SecoundkanthaParchiListingActivity.this, R.layout.popup_photo_full, view, firstkantaParchiFile, null);
             }
         });
         truck_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new PhotoFullPopupWindow(FirstkanthaParchiListingActivity.this, R.layout.popup_photo_full, view, TruckImage, null);
+                new PhotoFullPopupWindow(SecoundkanthaParchiListingActivity.this, R.layout.popup_photo_full, view, TruckImage, null);
             }
         });
         cancel_btn.setOnClickListener(new View.OnClickListener() {
@@ -143,7 +142,7 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
         Bundle bundle = new Bundle();
         bundle.putString("user_name", AllCases.get(postion).getCustFname());
         bundle.putString("case_id", AllCases.get(postion).getCaseId());
-        startActivity(UploadFirstkantaParchiClass.class, bundle);
+        startActivity(UploadSecoundkantaParchiClass.class, bundle);
     }
 
 }

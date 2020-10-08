@@ -31,8 +31,11 @@ import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
+import com.apnagodam.staff.activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.secound_quality_reports.SecoundQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.activity.lead.LeadGenerateClass;
 import com.apnagodam.staff.adapter.NavigationAdapter;
@@ -409,6 +412,18 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(FirstkanthaParchiListingActivity.class);
                     break;
                 case 9:
+                   startActivity(FirstQualityReportListingActivity.class);
+                    break;
+                case 10:
+                    startActivity(SecoundkanthaParchiListingActivity.class);
+                    break;
+                case 11:
+                    startActivity(SecoundQualityReportListingActivity.class);
+                    break;
+                case 12:
+                //    startActivity(FirstkanthaParchiListingActivity.class);
+                    break;
+                case 13:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;
