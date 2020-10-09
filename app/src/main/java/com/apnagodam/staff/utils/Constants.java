@@ -27,6 +27,7 @@ public class Constants {
     public static final String Secound_kata = IMAGE_BASE_URL_kanta_photo + "second_kanta_parchi/";
     public static final String First_quality = IMAGE_BASE_URL_kanta_photo + "quality_report/";
     public static final String Secound__quality = IMAGE_BASE_URL_kanta_photo + "second_quality_report/";
+    public static final String gate_pass = IMAGE_BASE_URL_kanta_photo + "gate_pass/";
     public static final String RES_SUCCESS = "Success";
     public static final String RES_ERROR = "Error";
     public static final String CONNECT_TO_WIFI = "WIFI";

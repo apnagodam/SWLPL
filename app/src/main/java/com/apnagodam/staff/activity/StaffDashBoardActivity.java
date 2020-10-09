@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
+import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity;
@@ -42,6 +44,7 @@ import com.apnagodam.staff.adapter.NavigationAdapter;
 import com.apnagodam.staff.databinding.StaffDashboardBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.interfaces.OnProfileClickListener;
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.DashBoardData;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.RecyclerItemClickListener;
@@ -71,6 +74,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     boolean OnOfffAttendance;
     String attendanceINOUTStatus = "2";
     public File fileSelfie;
+    UserDetails userDetails;
 
     @Override
     protected int getLayoutResId() {
@@ -81,7 +85,8 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     protected void setUp() {
         // setBackBtn(binding.mainHeader.toolbar);
         setSupportActionBar(binding.mainHeader.toolbar);
-        UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
+        userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
+        getAllPermission();
         binding.drawerLayout.addDrawerListener(this);
         binding.mainHeader.toogleIcon.setOnClickListener(this);
         toggle = new ActionBarDrawerToggle(StaffDashBoardActivity.this, binding.drawerLayout, toolbar,
@@ -90,12 +95,6 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         binding.menuList.setLayoutManager(new LinearLayoutManager(this));
-        binding.menuList.setAdapter(new NavigationAdapter(getMenuList(), userDetails, this));
-        NavigationAdapter navigationVLCAdapter = new NavigationAdapter(getMenuList(), userDetails, this);
-        navigationVLCAdapter.setOnProfileClickInterface(StaffDashBoardActivity.this);
-        binding.menuList.setAdapter(navigationVLCAdapter);
-
-
         binding.menuList.addOnItemTouchListener(new RecyclerItemClickListener(StaffDashBoardActivity.this, this));
         binding.mainHeader.tvIvr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +127,23 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         getAttendanceStatus();
     }
 
+    private void getAllPermission() {
+        apiService.getPermission(userDetails.getRole_id(), userDetails.getLevel_id()).enqueue(new NetworkCallback<AllUserPermissionsResultListResponse>(getActivity()) {
+            @Override
+            protected void onSuccess(AllUserPermissionsResultListResponse body) {
+                if (body.getUserPermissionsResult() == null || body.getUserPermissionsResult().isEmpty()) {
+
+                } else {
+                    SharedPreferencesRepository.getDataManagerInstance().saveUserPermissionData(body.getUserPermissionsResult());
+                    binding.menuList.setAdapter(new NavigationAdapter(getMenuList(), userDetails, StaffDashBoardActivity.this));
+                    NavigationAdapter navigationVLCAdapter = new NavigationAdapter(getMenuList(), userDetails, StaffDashBoardActivity.this);
+                    navigationVLCAdapter.setOnProfileClickInterface(StaffDashBoardActivity.this);
+                    binding.menuList.setAdapter(navigationVLCAdapter);
+                }
+            }
+        });
+    }
+
     private void getAttendanceStatus() {
         apiService.getattendanceStatus().enqueue(new NetworkCallback<AttendanceResponse>(getActivity()) {
             @Override
@@ -150,15 +166,15 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         apiService.getDashboardData().enqueue(new NetworkCallback<DashBoardData>(getActivity()) {
             @Override
             protected void onSuccess(DashBoardData body) {
-               if (body!=null){
-                   binding.incase.setText(""+body.getIn_case());
-                   binding.outcase.setText(""+body.getOut_case());
-                   binding.trotalAttend.setText(""+body.getAtten_month_data());
-                   SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                   Date date = new Date();
-                   binding.date.setText(""+formatter.format(date));
+                if (body != null) {
+                    binding.incase.setText("" + body.getIn_case());
+                    binding.outcase.setText("" + body.getOut_case());
+                    binding.trotalAttend.setText("" + body.getAtten_month_data());
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                    Date date = new Date();
+                    binding.date.setText("" + formatter.format(date));
 
-               }
+                }
             }
         });
     }
@@ -374,6 +390,101 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     public void onItemClick(View view, int position) {
         binding.drawerLayout.postDelayed(() -> {
             toggleDrawer();
+         /*   if (position == 0) {
+            }
+            if (position == 1) {
+                startActivityAndClear(StaffDashBoardActivity.class);
+            }
+            if (position == 2) {
+                startActivity(LanguageActivity.class);
+            }
+            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                if (position == 3) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("11")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(LeadGenerateClass.class);
+                        }
+                    }
+                }
+                if (position == 4) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("12")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(CaseIDGenerateClass.class);
+                        }
+                    }
+                }
+                if (position == 5) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("13")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(InPricingListingActivity.class);
+                        }
+                    }
+                }
+                if (position == 6) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(TruckBookListingActivity.class);
+                        }else {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("16")) {
+                            if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                startActivityAndClear(LabourBookListingActivity.class);
+                            }
+                        }
+                    }
+                    }
+                }
+                if (position == 7) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(FirstkanthaParchiListingActivity.class);
+                        }
+                    }else {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("16")) {
+                            if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                startActivityAndClear(LabourBookListingActivity.class);
+                            }
+                        }
+                    }
+                }
+                if (position == 8) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(FirstkanthaParchiListingActivity.class);
+                        }
+                    }
+                }
+                if (position == 9) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(FirstQualityReportListingActivity.class);
+                        }
+                    }
+                }
+                if (position == 10) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(SecoundkanthaParchiListingActivity.class);
+                        }
+                    }
+                }
+                if (position == 11) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            startActivity(SecoundQualityReportListingActivity.class);
+                        }
+                    }
+                }
+                if (position == 12) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("19")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                            // startActivity(FirstkanthaParchiListingActivity.class);
+                        }
+                    }
+                }
+            }
+            if (position == 13) {
+                logout((getResources().getString(R.string.logout_alert)), "Logout");
+            }*/
             switch (position) {
                 case 0:
                     break;
@@ -381,8 +492,8 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivityAndClear(StaffDashBoardActivity.class);
                     break;
                 case 2:
-                    startActivity(InPricingListingActivity.class);
-                    /*String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
+                    startActivity(LanguageActivity.class);
+                  /*  String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
                     String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -392,37 +503,37 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(sendIntent);
                     Log.e("refer url :", "" + sharedUrl);*/
                     break;
-                case 3:
-                    startActivity(LanguageActivity.class);
-                    //   startActivity(OrderListClass.class);
-                    break;
-                case 4:
-                    startActivity(LeadGenerateClass.class);
-                    break;
-                case 5:
-                    startActivity(CaseIDGenerateClass.class);
-                    break;
-                case 6:
-                    startActivity(TruckBookListingActivity.class);
-                    break;
-                case 7:
-                    startActivity(LabourBookListingActivity.class);
-                    break;
-                case 8:
-                    startActivity(FirstkanthaParchiListingActivity.class);
-                    break;
-                case 9:
-                   startActivity(FirstQualityReportListingActivity.class);
-                    break;
-                case 10:
-                    startActivity(SecoundkanthaParchiListingActivity.class);
-                    break;
-                case 11:
-                    startActivity(SecoundQualityReportListingActivity.class);
-                    break;
-                case 12:
-                //    startActivity(FirstkanthaParchiListingActivity.class);
-                    break;
+                    case 3:
+                        startActivity(LeadGenerateClass.class);
+                        break;
+                    case 4:
+                        startActivity(CaseIDGenerateClass.class);
+                        break;
+                    case 5:
+                        startActivity(InPricingListingActivity.class);
+                        break;
+                    case 6:
+                        startActivity(TruckBookListingActivity.class);
+                        break;
+                    case 7:
+                        startActivity(LabourBookListingActivity.class);
+                        break;
+                    case 8:
+                        startActivity(FirstkanthaParchiListingActivity.class);
+                        break;
+                    case 9:
+                        startActivity(FirstQualityReportListingActivity.class);
+                        break;
+                    case 10:
+                        startActivity(SecoundkanthaParchiListingActivity.class);
+                        break;
+                    case 11:
+                        startActivity(SecoundQualityReportListingActivity.class);
+                        break;
+                    case 12:
+                           startActivity(GatePassListingActivity.class);
+                        break;
+
                 case 13:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");

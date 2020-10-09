@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData;
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData;
+import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
@@ -53,6 +55,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
         binding.caseId.setText(CaseID);
         clickListner();
         // spinner purpose
+        binding.spinnerPackagingtype.setVisibility(View.GONE);
         binding.spinnerPackagingtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -78,15 +81,16 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             @Override
             public void onClick(View v) {
                 if (isValid()) {
-                    if (fileReport == null) {
+
+                   /* if (fileReport == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
                     } else if (fileCommudity == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_commodity_file, Toast.LENGTH_LONG).show();
                     } else if (packagingTypeID == null) {
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
-                    } else {
+                    } else {*/
                         onNext();
-                    }
+                   // }
                 }
             }
         });
@@ -145,11 +149,13 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity);
         }
         //else {
-            apiService.uploadFirstkantaParchi(new UploadFirstkantaParchiPostData(CaseID, stringFromView(binding.notes), KanthaImage, CommudityFileSelectImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-                @Override
-                protected void onSuccess(LoginResponse body) {
+        apiService.uploadSecoundQualityReports(new UploadSecoundQualityPostData(CaseID,KanthaImage, stringFromView(binding.etMoistureLevel),stringFromView(binding.etTcw),stringFromView(binding.etFmLevel),stringFromView(binding.etThin)
+                ,stringFromView(binding.etDehuck),stringFromView(binding.etDiscolor),stringFromView(binding.etBroken),stringFromView(binding.etInfested)
+                ,stringFromView(binding.etLive),stringFromView(binding.notes),CommudityFileSelectImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+            @Override
+            protected void onSuccess(LoginResponse body) {
                     Toast.makeText(UploadSecoundQualtityReportsClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                    startActivityAndClear(FirstQualityReportListingActivity.class);
+                    startActivityAndClear(SecoundQualityReportListingActivity.class);
                 }
             });
        // }
@@ -158,7 +164,8 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
     boolean isValid() {
         if (TextUtils.isEmpty(stringFromView(binding.etMoistureLevel))) {
             return Utility.showEditTextError(binding.tilMoistureLevel, R.string.moisture_level);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
+        }
+       /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
             return Utility.showEditTextError(binding.tilTcw, R.string.tcw);
         } else if (TextUtils.isEmpty(stringFromView(binding.etBroken))) {
             return Utility.showEditTextError(binding.tilBroken, R.string.broken);
@@ -174,7 +181,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             return Utility.showEditTextError(binding.tilInfested, R.string.infested);
         } else if (TextUtils.isEmpty(stringFromView(binding.etLive))) {
             return Utility.showEditTextError(binding.tilLive, R.string.live_count);
-        }
+        }*/
         return true;
     }
     @Override

@@ -116,15 +116,7 @@ public class SharedPreferencesRepository implements Tags {
         String userData = loginSharedPreferences.getString(USER_NAME, null);
         return userData != null ? new Gson().fromJson(userData, UserDetails.class) : null;
     }
-    public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
-        String data = new Gson().toJson(user, UserDetails.class);
-        loginPrefEditor.putString(Permission, data).commit();
-    }
 
-    public UserDetails getUserPermission() {
-        String userData = loginSharedPreferences.getString(Permission, null);
-        return userData != null ? new Gson().fromJson(userData, UserDetails.class) : null;
-    }
     // login prefs
     public String getSelectedLanguage() {
         return loginSharedPreferences.getString(SELECTED_LANGUAGE, "en");
@@ -157,6 +149,18 @@ public class SharedPreferencesRepository implements Tags {
         return userArray;
     }
 */
+  public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
+      String data = new Gson().toJson(user);
+      sharedPrefEditor.putString(Permission, data).commit();
+  }
+
+    public List<AllUserPermissionsResultListResponse.UserPermissionsResult> getUserPermission() {
+        String userMonthlyLedger = sharedPreferences.getString(Permission, null);
+        Gson gson = new Gson();
+        Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>(){}.getType();
+        ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult> userArray = gson.fromJson(userMonthlyLedger, userListType);
+        return userArray;
+    }
   public void setEmployee(List<CommudityResponse.Employee> datumMonthlyLedger) {
       String data = new Gson().toJson(datumMonthlyLedger);
       sharedPrefEditor.putString(Employee, data).commit();

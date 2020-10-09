@@ -131,13 +131,12 @@ public class FirstQualityReportListingActivity extends BaseActivity<ActivityList
        /////////////////////////////////////////////
         if (AllCases.get(position).getImge() == null || AllCases.get(position).getImge().isEmpty()) {
             reports_file.setVisibility(View.GONE);
+        }
+        if (AllCases.get(position).getCommodity_img() == null || AllCases.get(position).getCommodity_img().isEmpty()) {
             commodity_file.setVisibility(View.GONE);
         }
-        /*if (AllCases.get(position).getFile2() == null || AllCases.get(position).getFile2().isEmpty()) {
-            commodity_file.setVisibility(View.GONE);
-        }*/
         ReportsFile = Constants.First_quality + AllCases.get(position).getImge();
-       // CommudityImage = Constants.IMAGE_BASE_URL_kanta_photo + AllCases.get(position).getFile2();
+        CommudityImage = Constants.First_quality + AllCases.get(position).getCommodity_img();
         reports_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

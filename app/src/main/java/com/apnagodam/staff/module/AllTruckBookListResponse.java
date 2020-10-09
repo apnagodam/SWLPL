@@ -189,6 +189,18 @@ public class AllTruckBookListResponse extends BaseResponse {
         @Expose
         private String userPriceLname;
 
+        public String getP_case_id() {
+            return p_case_id;
+        }
+
+        public void setP_case_id(String p_case_id) {
+            this.p_case_id = p_case_id;
+        }
+
+        @SerializedName("p_case_id")
+        @Expose
+        private String p_case_id;
+
         public Integer getId() {
             return id;
         }

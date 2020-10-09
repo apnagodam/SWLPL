@@ -147,12 +147,19 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
                 SharedPreferencesRepository.getDataManagerInstance().saveUserData(body.getUserDetails());
                 Toast.makeText(OtpActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
                 SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true);
-                getAllPermission();
+                if (setting.equalsIgnoreCase("changeMobileNumber")) {
+                    startActivityAndClear(SettingActivity.class);
+                }
+                else {
+                    // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                    startActivityAndClear(StaffDashBoardActivity.class);
+                }
+               // getAllPermission();
             }
         });
     }
     private void getAllPermission() {
-        apiService.getPermission(userInfo.getUserDetails().getRole_id(),userInfo.getUserDetails().getEmp_id()).enqueue(new NetworkCallback<AllUserPermissionsResultListResponse>(getActivity()) {
+        apiService.getPermission(userInfo.getUserDetails().getRole_id(),userInfo.getUserDetails().getLevel_id()).enqueue(new NetworkCallback<AllUserPermissionsResultListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllUserPermissionsResultListResponse body) {
                 if (body.getUserPermissionsResult() == null || body.getUserPermissionsResult().isEmpty()) {

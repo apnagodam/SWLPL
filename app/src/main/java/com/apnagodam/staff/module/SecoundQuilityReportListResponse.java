@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class FirstQuilityReportListResponse extends BaseResponse {
+public class SecoundQuilityReportListResponse extends BaseResponse {
     @SerializedName("total_rows")
     @Expose
     private Integer totalRows;
@@ -132,9 +132,18 @@ public class FirstQuilityReportListResponse extends BaseResponse {
         @SerializedName("cust_lname")
         @Expose
         private String custLname;
-        @SerializedName("q_r_case_id")
+
+        public String getS_q_r_case_id() {
+            return s_q_r_case_id;
+        }
+
+        public void setS_q_r_case_id(String s_q_r_case_id) {
+            this.s_q_r_case_id = s_q_r_case_id;
+        }
+
+        @SerializedName("s_q_r_case_id")
         @Expose
-        private String qRCaseId;
+        private String s_q_r_case_id;
         @SerializedName("moisture_level")
         @Expose
         private String moistureLevel;
@@ -189,9 +198,18 @@ public class FirstQuilityReportListResponse extends BaseResponse {
         @SerializedName("user_price_lname")
         @Expose
         private String userPriceLname;
-        @SerializedName("f_k_p_case_id")
+
+        public String getS_k_p_case_id() {
+            return s_k_p_case_id;
+        }
+
+        public void setS_k_p_case_id(String s_k_p_case_id) {
+            this.s_k_p_case_id = s_k_p_case_id;
+        }
+
+        @SerializedName("s_k_p_case_id")
         @Expose
-        private String fKPCaseId;
+        private String s_k_p_case_id;
 
         public Integer getId() {
             return id;
@@ -425,13 +443,7 @@ public class FirstQuilityReportListResponse extends BaseResponse {
             this.custLname = custLname;
         }
 
-        public String getQRCaseId() {
-            return qRCaseId;
-        }
 
-        public void setQRCaseId(String qRCaseId) {
-            this.qRCaseId = qRCaseId;
-        }
 
         public String getMoistureLevel() {
             return moistureLevel;
@@ -545,11 +557,5 @@ public class FirstQuilityReportListResponse extends BaseResponse {
             this.userPriceLname = userPriceLname;
         }
 
-        public String getFKPCaseId() {
-            return fKPCaseId;
-        }
-
-        public void setFKPCaseId(String fKPCaseId) {
-            this.fKPCaseId = fKPCaseId;
-        }    }
+          }
 }

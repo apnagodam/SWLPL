@@ -18,6 +18,7 @@ import com.apnagodam.staff.GlideApp;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.StaffProfileActivity;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.interfaces.OnProfileClickListener;
 import com.apnagodam.staff.module.MenuItem;
 import com.apnagodam.staff.module.UserDetails;
@@ -39,9 +40,11 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int VIEW_TYPE_NORMAL = 1;
     private static final int VIEW_TYPE_HEADER = 0;
     private String pendingBillConnection, ofData, syndataServer;
+
     public void setOnProfileClickInterface(OnProfileClickListener onProfileClickInterface) {
         this.onProfileClickInterface = onProfileClickInterface;
     }
+
     public NavigationAdapter(ArrayList<MenuItem> menuItems, UserDetails userDetails, StaffDashBoardActivity dashboardClass) {
         this.menuItems = menuItems;
         this.userDetailsValues = userDetails;
@@ -55,7 +58,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         View inflate;
         if (viewType == VIEW_TYPE_HEADER) {
             inflate = from.inflate(R.layout.navigation_header, parent, false);
-            return new HeaderViewHolder(inflate,onProfileClickInterface);
+            return new HeaderViewHolder(inflate, onProfileClickInterface);
         } else {
             inflate = from.inflate(R.layout.navigation_item, parent, false);
             return new NavigationViewHolder(inflate);
@@ -74,7 +77,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .circleCrop()
                         .into(headerViewHolder.profileImage);
             }
-            headerViewHolder.userName.setText(userDetailsValues.getFname()+" "+userDetailsValues.getLname());
+            headerViewHolder.userName.setText(userDetailsValues.getFname() + " " + userDetailsValues.getLname());
             if (BuildConfig.DEBUG) {
                 headerViewHolder.versionName.setText("V " + BuildConfig.VERSION_NAME);
             }
@@ -106,9 +109,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
                 navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
             }
-
         }
-
     }
 
     @Override
@@ -130,7 +131,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ImageView profileImage;
         TextView userName, sdo_code, last_login;
         TextView versionName;
-        RelativeLayout root,rl;
+        RelativeLayout root, rl;
 
         @SuppressLint("ClickableViewAccessibility")
         public HeaderViewHolder(View view, OnProfileClickListener onProfileClickInterface) {

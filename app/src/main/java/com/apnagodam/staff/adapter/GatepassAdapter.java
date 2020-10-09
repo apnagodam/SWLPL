@@ -10,23 +10,23 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
-import com.apnagodam.staff.module.FirstQuilityReportListResponse;
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
+import com.apnagodam.staff.module.GatePassListResponse;
 
 import java.util.Collection;
 import java.util.List;
 
-public class FirstQualityReportAdapter extends BaseRecyclerViewAdapter {
-    private List<FirstQuilityReportListResponse.QuilityReport> Leads;
+public class GatepassAdapter extends BaseRecyclerViewAdapter {
+    private List<GatePassListResponse.GatePassData> Leads;
     private Context context;
 
-    public FirstQualityReportAdapter(List<FirstQuilityReportListResponse.QuilityReport> leads, FirstQualityReportListingActivity firstQualityReportListingActivity) {
+    public GatepassAdapter(List<GatePassListResponse.GatePassData> leads, GatePassListingActivity gatePassListingActivity) {
         this.Leads = leads;
-        this.context = firstQualityReportListingActivity;
+        this.context = gatePassListingActivity;
     }
 
     @Override
@@ -78,17 +78,17 @@ public class FirstQualityReportAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getQRCaseId()!=null){
+            if (Leads.get(position).getGPCaseId()!=null){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
                 binding.tvPhoneDone.setVisibility(View.VISIBLE);
             }else {
                 binding.tvAction.setVisibility(View.GONE);
-                binding.tvPhone.setText(context.getResources().getString(R.string.update_quality));
-                binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.lead_btn));
+                binding.tvPhone.setText(context.getResources().getString(R.string.update_gate_pass));
+                binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
                 for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("19")) {
                         if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
                             binding.tvPhone.setVisibility(View.VISIBLE);
                         }else {
@@ -96,6 +96,7 @@ public class FirstQualityReportAdapter extends BaseRecyclerViewAdapter {
                         }
                     }
                 }
+
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
@@ -103,16 +104,16 @@ public class FirstQualityReportAdapter extends BaseRecyclerViewAdapter {
             binding.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof FirstQualityReportListingActivity) {
-                        ((FirstQualityReportListingActivity) context).ViewData(position);
+                    if (context instanceof GatePassListingActivity) {
+                        ((GatePassListingActivity) context).ViewData(position);
                     }
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof FirstQualityReportListingActivity) {
-                        ((FirstQualityReportListingActivity) context).checkVeehicleNo(position);
+                    if (context instanceof GatePassListingActivity) {
+                        ((GatePassListingActivity) context).checkVeehicleNo(position);
                     }
                 }
             });

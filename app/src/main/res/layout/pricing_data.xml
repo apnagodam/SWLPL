@@ -94,6 +94,7 @@
             android:background="@drawable/btn_background"
             android:padding="@dimen/_4sdp"
             android:text="@string/close"
+
             android:textColor="@color/colorWhite"
             android:textSize="@dimen/_10ssp" />
         <TextView

@@ -13,6 +13,7 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
 
@@ -86,7 +87,15 @@ public class FirstkanthaparchiAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_kantha_parchi));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                binding.tvPhone.setVisibility(View.VISIBLE);
+                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                            binding.tvPhone.setVisibility(View.VISIBLE);
+                        }else {
+                            binding.tvPhone.setVisibility(View.GONE);
+                        }
+                    }
+                }
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);

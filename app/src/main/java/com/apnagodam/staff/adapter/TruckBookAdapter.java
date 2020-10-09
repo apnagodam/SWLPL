@@ -1,5 +1,6 @@
 package com.apnagodam.staff.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 
@@ -63,6 +65,7 @@ public class TruckBookAdapter extends BaseRecyclerViewAdapter {
             super(itemBinding);
         }
 
+        @SuppressLint("SetTextI18n")
         @Override
         public void onBind(int position) {
             binding.tvActionDone.setVisibility(View.GONE);
@@ -86,7 +89,25 @@ public class TruckBookAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_details));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                binding.tvPhone.setVisibility(View.VISIBLE);
+                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                            if (Leads.get(position).getP_case_id()!=null){
+                                binding.tvPhone.setVisibility(View.VISIBLE);
+                            }else {
+                                binding.tvPhone.setVisibility(View.GONE);
+                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                                binding.tvPhoneDone.setText("Processing...");
+                                binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
+                            }
+                        }else {
+                            binding.tvPhone.setVisibility(View.GONE);
+                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                            binding.tvPhoneDone.setText("In Process");
+                            binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
+                        }
+                    }
+                }
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);

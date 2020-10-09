@@ -13,16 +13,18 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.secound_quality_reports.SecoundQualityReportListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.FirstQuilityReportListResponse;
+import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
 
 import java.util.Collection;
 import java.util.List;
 
 public class SecoundQualityReportAdapter extends BaseRecyclerViewAdapter {
-    private List<FirstQuilityReportListResponse.QuilityReport> Leads;
+    private List<SecoundQuilityReportListResponse.QuilityReport> Leads;
     private Context context;
 
-    public SecoundQualityReportAdapter(List<FirstQuilityReportListResponse.QuilityReport> leads, SecoundQualityReportListingActivity secoundQualityReportListingActivity) {
+    public SecoundQualityReportAdapter(List<SecoundQuilityReportListResponse.QuilityReport> leads, SecoundQualityReportListingActivity secoundQualityReportListingActivity) {
         this.Leads = leads;
         this.context = secoundQualityReportListingActivity;
     }
@@ -76,7 +78,7 @@ public class SecoundQualityReportAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getQRCaseId()!=null){
+            if (Leads.get(position).getS_q_r_case_id()!=null){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
@@ -85,7 +87,15 @@ public class SecoundQualityReportAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.update_quality));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.lead_btn));
-                binding.tvPhone.setVisibility(View.VISIBLE);
+                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                            binding.tvPhone.setVisibility(View.VISIBLE);
+                        }else {
+                            binding.tvPhone.setVisibility(View.GONE);
+                        }
+                    }
+                }
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);

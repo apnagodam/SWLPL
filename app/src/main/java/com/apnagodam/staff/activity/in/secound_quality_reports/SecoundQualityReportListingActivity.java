@@ -9,28 +9,23 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
-import com.apnagodam.staff.adapter.FirstQualityReportAdapter;
 import com.apnagodam.staff.adapter.SecoundQualityReportAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.module.FirstQuilityReportListResponse;
+import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
-
 import java.util.List;
 
 
 public class SecoundQualityReportListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<FirstQuilityReportListResponse.QuilityReport> AllCases;
+    private List<SecoundQuilityReportListResponse.QuilityReport> AllCases;
     private String ReportsFile, CommudityImage;
 
     @Override
@@ -59,9 +54,9 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
     }
 
     private void getAllCases() {
-        apiService.getf_qualityReportsList("15","1").enqueue(new NetworkCallback<FirstQuilityReportListResponse>(getActivity()) {
+        apiService.getS_qualityReportsList("15","1").enqueue(new NetworkCallback<SecoundQuilityReportListResponse>(getActivity()) {
             @Override
-            protected void onSuccess(FirstQuilityReportListResponse body) {
+            protected void onSuccess(SecoundQuilityReportListResponse body) {
                 if (body.getData() == null || body.getData().isEmpty()) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
@@ -129,13 +124,12 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
        /////////////////////////////////////////////
         if (AllCases.get(position).getImge() == null || AllCases.get(position).getImge().isEmpty()) {
             reports_file.setVisibility(View.GONE);
+        }
+        if (AllCases.get(position).getCommodity_img() == null || AllCases.get(position).getCommodity_img().isEmpty()) {
             commodity_file.setVisibility(View.GONE);
         }
-        /*if (AllCases.get(position).getFile2() == null || AllCases.get(position).getFile2().isEmpty()) {
-            commodity_file.setVisibility(View.GONE);
-        }*/
-        ReportsFile = Constants.First_quality + AllCases.get(position).getImge();
-       // CommudityImage = Constants.IMAGE_BASE_URL_kanta_photo + AllCases.get(position).getFile2();
+        ReportsFile = Constants.Secound__quality + AllCases.get(position).getImge();
+       CommudityImage = Constants.Secound__quality + AllCases.get(position).getCommodity_img();
         reports_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

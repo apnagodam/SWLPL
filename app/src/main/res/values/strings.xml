@@ -269,7 +269,11 @@
     </string-array>
     <string name="reports_file">Reports File</string>
     <string name="upload_reports_file">Upload Reports File</string>
-
     <string name="commudity_file">Commodity File</string>
     <string name="upload_commodity_file">Upload Commodity File</string>
+    <string name="gate_pass_list">Gate Pass List</string>
+    <string name="gate_passs_file">Gate Pass File</string>
+    <string name="bags_gatepass">No of Bags</string>
+    <string name="update_gate_pass">Update Gate Pass</string>
+    <string name="upload_gatepass_file">Upload Gate Pass File</string>
 </resources>

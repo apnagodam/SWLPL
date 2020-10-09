@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class FirstQuilityReportListResponse extends BaseResponse {
+public class GatePassListResponse extends BaseResponse {
     @SerializedName("total_rows")
     @Expose
     private Integer totalRows;
@@ -31,19 +31,19 @@ public class FirstQuilityReportListResponse extends BaseResponse {
     }
 
 
-    public List<QuilityReport> getData() {
+    public List<GatePassData> getData() {
         return data;
     }
 
-    public void setData(List<QuilityReport> data) {
+    public void setData(List<GatePassData> data) {
         this.data = data;
     }
 
     @SerializedName("data")
     @Expose
-    private List<QuilityReport> data = null;
+    private List<GatePassData> data = null;
 
-    public class QuilityReport {
+    public class GatePassData {
 
         @SerializedName("id")
         @Expose
@@ -132,54 +132,27 @@ public class FirstQuilityReportListResponse extends BaseResponse {
         @SerializedName("cust_lname")
         @Expose
         private String custLname;
-        @SerializedName("q_r_case_id")
+        @SerializedName("g_p_case_id")
         @Expose
-        private String qRCaseId;
-        @SerializedName("moisture_level")
+        private String gPCaseId;
+        @SerializedName("gate_pass_no")
         @Expose
-        private String moistureLevel;
-        @SerializedName("thousand_crown_w")
+        private String gatePassNo;
+        @SerializedName("bags")
         @Expose
-        private String thousandCrownW;
-        @SerializedName("broken")
+        private String bags;
+        @SerializedName("stack_no")
         @Expose
-        private String broken;
-        @SerializedName("foreign_matter")
+        private String stackNo;
+        @SerializedName("lot_no")
         @Expose
-        private String foreignMatter;
-        @SerializedName("thin")
+        private String lotNo;
+        @SerializedName("update_weight")
         @Expose
-        private String thin;
-        @SerializedName("damage")
+        private String updateWeight;
+        @SerializedName("file")
         @Expose
-        private String damage;
-        @SerializedName("black_smith")
-        @Expose
-        private String blackSmith;
-        @SerializedName("infested")
-        @Expose
-        private String infested;
-        @SerializedName("live_insects")
-        @Expose
-        private String liveInsects;
-        @SerializedName("packaging_type")
-        @Expose
-        private String packagingType;
-        @SerializedName("imge")
-        @Expose
-        private String imge;
-
-        public String getCommodity_img() {
-            return commodity_img;
-        }
-
-        public void setCommodity_img(String commodity_img) {
-            this.commodity_img = commodity_img;
-        }
-
-        @SerializedName("commodity_img")
-        @Expose
-        private String commodity_img;
+        private String file;
         @SerializedName("notes")
         @Expose
         private String notes;
@@ -189,9 +162,12 @@ public class FirstQuilityReportListResponse extends BaseResponse {
         @SerializedName("user_price_lname")
         @Expose
         private String userPriceLname;
-        @SerializedName("f_k_p_case_id")
+        @SerializedName("transaction_type")
         @Expose
-        private String fKPCaseId;
+        private String transactionType;
+        @SerializedName("s_q_case_id")
+        @Expose
+        private String sQCaseId;
 
         public Integer getId() {
             return id;
@@ -425,100 +401,60 @@ public class FirstQuilityReportListResponse extends BaseResponse {
             this.custLname = custLname;
         }
 
-        public String getQRCaseId() {
-            return qRCaseId;
+        public String getGPCaseId() {
+            return gPCaseId;
         }
 
-        public void setQRCaseId(String qRCaseId) {
-            this.qRCaseId = qRCaseId;
+        public void setGPCaseId(String gPCaseId) {
+            this.gPCaseId = gPCaseId;
         }
 
-        public String getMoistureLevel() {
-            return moistureLevel;
+        public String getGatePassNo() {
+            return gatePassNo;
         }
 
-        public void setMoistureLevel(String moistureLevel) {
-            this.moistureLevel = moistureLevel;
+        public void setGatePassNo(String gatePassNo) {
+            this.gatePassNo = gatePassNo;
         }
 
-        public String getThousandCrownW() {
-            return thousandCrownW;
+        public String getBags() {
+            return bags;
         }
 
-        public void setThousandCrownW(String thousandCrownW) {
-            this.thousandCrownW = thousandCrownW;
+        public void setBags(String bags) {
+            this.bags = bags;
         }
 
-        public String getBroken() {
-            return broken;
+        public String getStackNo() {
+            return stackNo;
         }
 
-        public void setBroken(String broken) {
-            this.broken = broken;
+        public void setStackNo(String stackNo) {
+            this.stackNo = stackNo;
         }
 
-        public String getForeignMatter() {
-            return foreignMatter;
+        public String getLotNo() {
+            return lotNo;
         }
 
-        public void setForeignMatter(String foreignMatter) {
-            this.foreignMatter = foreignMatter;
+        public void setLotNo(String lotNo) {
+            this.lotNo = lotNo;
         }
 
-        public String getThin() {
-            return thin;
+        public String getUpdateWeight() {
+            return updateWeight;
         }
 
-        public void setThin(String thin) {
-            this.thin = thin;
+        public void setUpdateWeight(String updateWeight) {
+            this.updateWeight = updateWeight;
         }
 
-        public String getDamage() {
-            return damage;
+        public String getFile() {
+            return file;
         }
 
-        public void setDamage(String damage) {
-            this.damage = damage;
-        }
-
-        public String getBlackSmith() {
-            return blackSmith;
-        }
-
-        public void setBlackSmith(String blackSmith) {
-            this.blackSmith = blackSmith;
-        }
-
-        public String getInfested() {
-            return infested;
-        }
-
-        public void setInfested(String infested) {
-            this.infested = infested;
-        }
-
-        public String getLiveInsects() {
-            return liveInsects;
-        }
-
-        public void setLiveInsects(String liveInsects) {
-            this.liveInsects = liveInsects;
-        }
-
-        public String getPackagingType() {
-            return packagingType;
-        }
-
-        public void setPackagingType(String packagingType) {
-            this.packagingType = packagingType;
-        }
-
-        public String getImge() {
-            return imge;
-        }
-
-        public void setImge(String imge) {
-            this.imge = imge;
+        public void setFile(String file) {
+            this.file = file;
         }
 
         public String getNotes() {
@@ -545,11 +481,21 @@ public class FirstQuilityReportListResponse extends BaseResponse {
             this.userPriceLname = userPriceLname;
         }
 
-        public String getFKPCaseId() {
-            return fKPCaseId;
+        public String getTransactionType() {
+            return transactionType;
         }
 
-        public void setFKPCaseId(String fKPCaseId) {
-            this.fKPCaseId = fKPCaseId;
-        }    }
+        public void setTransactionType(String transactionType) {
+            this.transactionType = transactionType;
+        }
+
+        public String getSQCaseId() {
+            return sQCaseId;
+        }
+
+        public void setSQCaseId(String sQCaseId) {
+            this.sQCaseId = sQCaseId;
+        }
+
+    }
 }

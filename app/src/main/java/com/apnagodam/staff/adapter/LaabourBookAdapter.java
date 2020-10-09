@@ -13,6 +13,7 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 
@@ -86,7 +87,25 @@ public class LaabourBookAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_labour));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                binding.tvPhone.setVisibility(View.VISIBLE);
+                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("16")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                            if (Leads.get(position).getTrukBookCaseId()!=null){
+                                binding.tvPhone.setVisibility(View.VISIBLE);
+                            }else {
+                                binding.tvPhone.setVisibility(View.GONE);
+                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                                binding.tvPhoneDone.setText("Processing...");
+                                binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
+                            }
+                        }else {
+                            binding.tvPhone.setVisibility(View.GONE);
+                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                            binding.tvPhoneDone.setText("In Process");
+                            binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
+                        }
+                    }
+                }
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
