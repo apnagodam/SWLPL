@@ -66,10 +66,10 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
+            android:id="@+id/cell_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_top100"
-            android:id="@+id/cell_container"
             android:weightSum="4">
 
             <TextView
@@ -130,18 +130,20 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/_10ssp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_defaulters_status"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <include layout="@layout/layout_pagination_loader"
+                    android:id="@+id/layoutLoader"/>
 
                 <TextView
                     android:id="@+id/txtempty_msg"
