@@ -241,4 +241,39 @@
     <string name="truck_image">Truck File</string>
     <string name="upload_kanta_parchi_file">Upload Kanta Parchi File</string>
     <string name="upload_truck_image">Upload Truck File</string>
+    // first Quality Reports
+    <string name="f_quality_repots">First Quality Report</string>
+    <string name="s_quality_repots">Second Quality Report</string>
+    <string name="secoundkanta_parchi">Second Kanta Parchi</string>
+    <string name="quality_repots">Quality Report</string>
+    <string name="update_quality">Update Quality</string>
+    <string name="update_quality_reports">Update Quality Report</string>
+    <string name="moisture_level">Moisture Level(%)</string>
+    <string name="tcw">TCW</string>
+    <string name="broken">Broken (BK)</string>
+    <string name="fm_level">FM Level (%)</string>
+
+    <string name="thin">Thin(%)</string>
+    <string name="dehuck">Dehusk(%)</string>
+    <string name="discolor">Discolor (%)</string>
+
+    <string name="infested">Infested(%)</string>
+    <string name="live">live Insects</string>
+    <string name="live_count">live Insects (In Count)</string>
+    <string name="packaging">Packaging Type</string>
+    <string-array name="array_packaging_type">
+        <item>Packaging Type</item>
+        <item>Loose</item>
+        <item>Jute Bag</item>
+        <item>Plastic Bag</item>
+    </string-array>
+    <string name="reports_file">Reports File</string>
+    <string name="upload_reports_file">Upload Reports File</string>
+    <string name="commudity_file">Commodity File</string>
+    <string name="upload_commodity_file">Upload Commodity File</string>
+    <string name="gate_pass_list">Gate Pass List</string>
+    <string name="gate_passs_file">Gate Pass File</string>
+    <string name="bags_gatepass">No of Bags</string>
+    <string name="update_gate_pass">Update Gate Pass</string>
+    <string name="upload_gatepass_file">Upload Gate Pass File</string>
 </resources>

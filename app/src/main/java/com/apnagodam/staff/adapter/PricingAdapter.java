@@ -12,6 +12,7 @@ import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllpricingResponse;
 
 import java.util.Collection;
@@ -80,7 +81,15 @@ public class PricingAdapter extends BaseRecyclerViewAdapter {
                 binding.tvPhoneDone.setVisibility(View.VISIBLE);
             }else {
                 binding.tvAction.setVisibility(View.VISIBLE);
-                binding.tvPhone.setVisibility(View.VISIBLE);
+                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("13")) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                            binding.tvPhone.setVisibility(View.VISIBLE);
+                        }else {
+                            binding.tvPhone.setVisibility(View.GONE);
+                        }
+                    }
+                }
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);

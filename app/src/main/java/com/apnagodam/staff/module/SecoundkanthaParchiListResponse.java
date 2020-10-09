@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class AllTruckBookListResponse extends BaseResponse {
+public class SecoundkanthaParchiListResponse extends BaseResponse {
     @SerializedName("total_rows")
     @Expose
     private Integer totalRows;
@@ -30,19 +30,20 @@ public class AllTruckBookListResponse extends BaseResponse {
         this.totalNoPages = totalNoPages;
     }
 
-    public List<TruckBookCollection> getTruckBookCollection() {
-        return truckBookCollection;
+
+    public List<SecoundKataParchiDatum> getData() {
+        return data;
     }
 
-    public void setTruckBookCollection(List<TruckBookCollection> truckBookCollection) {
-        this.truckBookCollection = truckBookCollection;
+    public void setData(List<SecoundKataParchiDatum> data) {
+        this.data = data;
     }
 
-    @SerializedName("truck_book_collection")
+    @SerializedName("data")
     @Expose
-    private List<TruckBookCollection> truckBookCollection = null;
+    private List<SecoundKataParchiDatum> data = null;
 
-    public class TruckBookCollection {
+    public class SecoundKataParchiDatum {
 
         @SerializedName("id")
         @Expose
@@ -64,7 +65,7 @@ public class AllTruckBookListResponse extends BaseResponse {
         private String location;
         @SerializedName("commodity_id")
         @Expose
-        private String commodityId;
+        private Integer commodityId;
         @SerializedName("terminal_id")
         @Expose
         private Integer terminalId;
@@ -131,54 +132,54 @@ public class AllTruckBookListResponse extends BaseResponse {
         @SerializedName("cust_lname")
         @Expose
         private String custLname;
-        @SerializedName("t_b_case_id")
+
+        public String getS_k_p_case_id() {
+            return s_k_p_case_id;
+        }
+
+        public void setS_k_p_case_id(String s_k_p_case_id) {
+            this.s_k_p_case_id = s_k_p_case_id;
+        }
+
+        @SerializedName("s_k_p_case_id")
         @Expose
-        private String tBCaseId;
-        @SerializedName("transporter")
+        private String s_k_p_case_id;
+        @SerializedName("rst_no")
         @Expose
-        private String transporter;
-        @SerializedName("vehicle")
+        private String rstNo;
+        @SerializedName("bags")
         @Expose
-        private String vehicle;
-        @SerializedName("driver_name")
+        private String bags;
+        @SerializedName("gross_weight")
         @Expose
-        private String driverName;
-        @SerializedName("driver_phone")
+        private String grossWeight;
+        @SerializedName("tare_weight")
         @Expose
-        private String driverPhone;
-        @SerializedName("rate_per_km")
+        private String tareWeight;
+        @SerializedName("net_weight")
         @Expose
-        private String ratePerKm;
-        @SerializedName("min_weight")
+        private String netWeight;
+        @SerializedName("gross_date_time")
         @Expose
-        private String minWeight;
-        @SerializedName("max_weight")
+        private String grossDateTime;
+        @SerializedName("tare_date_time")
         @Expose
-        private String maxWeight;
-        @SerializedName("turnaround_time")
+        private String tareDateTime;
+        @SerializedName("charges")
         @Expose
-        private String turnaroundTime;
-        @SerializedName("kanta_parchi_no")
+        private String charges;
+        @SerializedName("kanta_name")
         @Expose
-        private String kantaParchiNo;
-        @SerializedName("gate_pass_no")
+        private String kantaName;
+        @SerializedName("kanta_place")
         @Expose
-        private String gatePassNo;
-        @SerializedName("total_transport_cost")
+        private String kantaPlace;
+        @SerializedName("file")
         @Expose
-        private String totalTransportCost;
-        @SerializedName("advance_payment")
+        private String file;
+        @SerializedName("file_2")
         @Expose
-        private String advancePayment;
-        @SerializedName("start_date_time")
-        @Expose
-        private String startDateTime;
-        @SerializedName("final_settlement_amount")
-        @Expose
-        private String finalSettlementAmount;
-        @SerializedName("end_date_time")
-        @Expose
-        private String endDateTime;
+        private String file2;
         @SerializedName("notes")
         @Expose
         private String notes;
@@ -189,17 +190,17 @@ public class AllTruckBookListResponse extends BaseResponse {
         @Expose
         private String userPriceLname;
 
-        public String getP_case_id() {
-            return p_case_id;
+        public String getF_k_p_case_id() {
+            return f_k_p_case_id;
         }
 
-        public void setP_case_id(String p_case_id) {
-            this.p_case_id = p_case_id;
+        public void setF_k_p_case_id(String f_k_p_case_id) {
+            this.f_k_p_case_id = f_k_p_case_id;
         }
 
-        @SerializedName("p_case_id")
+        @SerializedName("f_k_p_case_id")
         @Expose
-        private String p_case_id;
+        private String f_k_p_case_id;
 
         public Integer getId() {
             return id;
@@ -249,11 +250,11 @@ public class AllTruckBookListResponse extends BaseResponse {
             this.location = location;
         }
 
-        public String getCommodityId() {
+        public Integer getCommodityId() {
             return commodityId;
         }
 
-        public void setCommodityId(String commodityId) {
+        public void setCommodityId(Integer commodityId) {
             this.commodityId = commodityId;
         }
 
@@ -433,132 +434,100 @@ public class AllTruckBookListResponse extends BaseResponse {
             this.custLname = custLname;
         }
 
-        public String getTBCaseId() {
-            return tBCaseId;
+        public String getRstNo() {
+            return rstNo;
         }
 
-        public void setTBCaseId(String tBCaseId) {
-            this.tBCaseId = tBCaseId;
+        public void setRstNo(String rstNo) {
+            this.rstNo = rstNo;
         }
 
-        public String getTransporter() {
-            return transporter;
+        public String getBags() {
+            return bags;
         }
 
-        public void setTransporter(String transporter) {
-            this.transporter = transporter;
+        public void setBags(String bags) {
+            this.bags = bags;
         }
 
-        public String getVehicle() {
-            return vehicle;
+        public String getGrossWeight() {
+            return grossWeight;
         }
 
-        public void setVehicle(String vehicle) {
-            this.vehicle = vehicle;
+        public void setGrossWeight(String grossWeight) {
+            this.grossWeight = grossWeight;
         }
 
-        public String getDriverName() {
-            return driverName;
+        public String getTareWeight() {
+            return tareWeight;
         }
 
-        public void setDriverName(String driverName) {
-            this.driverName = driverName;
+        public void setTareWeight(String tareWeight) {
+            this.tareWeight = tareWeight;
         }
 
-        public String getDriverPhone() {
-            return driverPhone;
+        public String getNetWeight() {
+            return netWeight;
         }
 
-        public void setDriverPhone(String driverPhone) {
-            this.driverPhone = driverPhone;
+        public void setNetWeight(String netWeight) {
+            this.netWeight = netWeight;
         }
 
-        public String getRatePerKm() {
-            return ratePerKm;
+        public String getGrossDateTime() {
+            return grossDateTime;
         }
 
-        public void setRatePerKm(String ratePerKm) {
-            this.ratePerKm = ratePerKm;
+        public void setGrossDateTime(String grossDateTime) {
+            this.grossDateTime = grossDateTime;
         }
 
-        public String getMinWeight() {
-            return minWeight;
+        public String getTareDateTime() {
+            return tareDateTime;
         }
 
-        public void setMinWeight(String minWeight) {
-            this.minWeight = minWeight;
+        public void setTareDateTime(String tareDateTime) {
+            this.tareDateTime = tareDateTime;
         }
 
-        public String getMaxWeight() {
-            return maxWeight;
+        public String getCharges() {
+            return charges;
         }
 
-        public void setMaxWeight(String maxWeight) {
-            this.maxWeight = maxWeight;
+        public void setCharges(String charges) {
+            this.charges = charges;
         }
 
-        public String getTurnaroundTime() {
-            return turnaroundTime;
+        public String getKantaName() {
+            return kantaName;
         }
 
-        public void setTurnaroundTime(String turnaroundTime) {
-            this.turnaroundTime = turnaroundTime;
+        public void setKantaName(String kantaName) {
+            this.kantaName = kantaName;
         }
 
-        public String getKantaParchiNo() {
-            return kantaParchiNo;
+        public String getKantaPlace() {
+            return kantaPlace;
         }
 
-        public void setKantaParchiNo(String kantaParchiNo) {
-            this.kantaParchiNo = kantaParchiNo;
+        public void setKantaPlace(String kantaPlace) {
+            this.kantaPlace = kantaPlace;
         }
 
-        public String getGatePassNo() {
-            return gatePassNo;
+        public String getFile() {
+            return file;
         }
 
-        public void setGatePassNo(String gatePassNo) {
-            this.gatePassNo = gatePassNo;
+        public void setFile(String file) {
+            this.file = file;
         }
 
-        public String getTotalTransportCost() {
-            return totalTransportCost;
+        public String getFile2() {
+            return file2;
         }
 
-        public void setTotalTransportCost(String totalTransportCost) {
-            this.totalTransportCost = totalTransportCost;
-        }
-
-        public String getAdvancePayment() {
-            return advancePayment;
-        }
-
-        public void setAdvancePayment(String advancePayment) {
-            this.advancePayment = advancePayment;
-        }
-
-        public String getStartDateTime() {
-            return startDateTime;
-        }
-
-        public void setStartDateTime(String startDateTime) {
-            this.startDateTime = startDateTime;
-        }
-
-        public String getFinalSettlementAmount() {
-            return finalSettlementAmount;
-        }
-
-        public void setFinalSettlementAmount(String finalSettlementAmount) {
-            this.finalSettlementAmount = finalSettlementAmount;
-        }
-
-        public String getEndDateTime() {
-            return endDateTime;
-        }
-
-        public void setEndDateTime(String endDateTime) {
-            this.endDateTime = endDateTime;
+        public void setFile2(String file2) {
+            this.file2 = file2;
         }
 
         public String getNotes() {
@@ -584,6 +553,5 @@ public class AllTruckBookListResponse extends BaseResponse {
         public void setUserPriceLname(String userPriceLname) {
             this.userPriceLname = userPriceLname;
         }
-
     }
 }

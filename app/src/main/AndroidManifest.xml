@@ -67,6 +67,14 @@
         <activity android:name=".activity.in.labourbook.LabourBookUploadClass" />
         <activity android:name=".activity.in.first_kantaparchi.FirstkanthaParchiListingActivity" />
         <activity android:name=".activity.in.first_kantaparchi.UploadFirstkantaParchiClass" />
+        <activity android:name=".activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity" />
+        <activity android:name=".activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass" />
+        <activity android:name=".activity.in.first_quality_reports.FirstQualityReportListingActivity" />
+        <activity android:name=".activity.in.secound_quality_reports.SecoundQualityReportListingActivity" />
+        <activity android:name=".activity.in.first_quality_reports.UploadFirstQualtityReportsClass" />
+        <activity android:name=".activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass" />
+        <activity android:name=".activity.in.gatepass.GatePassListingActivity" />
+        <activity android:name=".activity.in.gatepass.UploadGatePassClass" />
 
         <receiver
             android:name=".reciever.SMSReceiver"

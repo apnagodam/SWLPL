@@ -79,7 +79,8 @@
                 android:gravity="center"
                 android:text="@string/set_pricing"
                 android:textColor="@color/lead_btn"
-                android:textSize="14sp"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/app_bar" />
@@ -91,7 +92,7 @@
                 android:gravity="center"
                 android:text="@string/set_pricing"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="@dimen/_12ssp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/case_id" />
@@ -239,7 +240,6 @@
                                         <ImageView
                                             android:id="@+id/TruckImage"
                                             android:layout_width="match_parent"
-
                                             android:layout_height="match_parent"
                                             android:scaleType="fitXY" />
 

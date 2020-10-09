@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class AllTruckBookListResponse extends BaseResponse {
+public class SecoundQuilityReportListResponse extends BaseResponse {
     @SerializedName("total_rows")
     @Expose
     private Integer totalRows;
@@ -30,19 +30,20 @@ public class AllTruckBookListResponse extends BaseResponse {
         this.totalNoPages = totalNoPages;
     }
 
-    public List<TruckBookCollection> getTruckBookCollection() {
-        return truckBookCollection;
+
+    public List<QuilityReport> getData() {
+        return data;
     }
 
-    public void setTruckBookCollection(List<TruckBookCollection> truckBookCollection) {
-        this.truckBookCollection = truckBookCollection;
+    public void setData(List<QuilityReport> data) {
+        this.data = data;
     }
 
-    @SerializedName("truck_book_collection")
+    @SerializedName("data")
     @Expose
-    private List<TruckBookCollection> truckBookCollection = null;
+    private List<QuilityReport> data = null;
 
-    public class TruckBookCollection {
+    public class QuilityReport {
 
         @SerializedName("id")
         @Expose
@@ -64,7 +65,7 @@ public class AllTruckBookListResponse extends BaseResponse {
         private String location;
         @SerializedName("commodity_id")
         @Expose
-        private String commodityId;
+        private Integer commodityId;
         @SerializedName("terminal_id")
         @Expose
         private Integer terminalId;
@@ -131,54 +132,63 @@ public class AllTruckBookListResponse extends BaseResponse {
         @SerializedName("cust_lname")
         @Expose
         private String custLname;
-        @SerializedName("t_b_case_id")
+
+        public String getS_q_r_case_id() {
+            return s_q_r_case_id;
+        }
+
+        public void setS_q_r_case_id(String s_q_r_case_id) {
+            this.s_q_r_case_id = s_q_r_case_id;
+        }
+
+        @SerializedName("s_q_r_case_id")
         @Expose
-        private String tBCaseId;
-        @SerializedName("transporter")
+        private String s_q_r_case_id;
+        @SerializedName("moisture_level")
         @Expose
-        private String transporter;
-        @SerializedName("vehicle")
+        private String moistureLevel;
+        @SerializedName("thousand_crown_w")
         @Expose
-        private String vehicle;
-        @SerializedName("driver_name")
+        private String thousandCrownW;
+        @SerializedName("broken")
         @Expose
-        private String driverName;
-        @SerializedName("driver_phone")
+        private String broken;
+        @SerializedName("foreign_matter")
         @Expose
-        private String driverPhone;
-        @SerializedName("rate_per_km")
+        private String foreignMatter;
+        @SerializedName("thin")
         @Expose
-        private String ratePerKm;
-        @SerializedName("min_weight")
+        private String thin;
+        @SerializedName("damage")
         @Expose
-        private String minWeight;
-        @SerializedName("max_weight")
+        private String damage;
+        @SerializedName("black_smith")
         @Expose
-        private String maxWeight;
-        @SerializedName("turnaround_time")
+        private String blackSmith;
+        @SerializedName("infested")
         @Expose
-        private String turnaroundTime;
-        @SerializedName("kanta_parchi_no")
+        private String infested;
+        @SerializedName("live_insects")
         @Expose
-        private String kantaParchiNo;
-        @SerializedName("gate_pass_no")
+        private String liveInsects;
+        @SerializedName("packaging_type")
         @Expose
-        private String gatePassNo;
-        @SerializedName("total_transport_cost")
+        private String packagingType;
+        @SerializedName("imge")
         @Expose
-        private String totalTransportCost;
-        @SerializedName("advance_payment")
+        private String imge;
+
+        public String getCommodity_img() {
+            return commodity_img;
+        }
+
+        public void setCommodity_img(String commodity_img) {
+            this.commodity_img = commodity_img;
+        }
+
+        @SerializedName("commodity_img")
         @Expose
-        private String advancePayment;
-        @SerializedName("start_date_time")
-        @Expose
-        private String startDateTime;
-        @SerializedName("final_settlement_amount")
-        @Expose
-        private String finalSettlementAmount;
-        @SerializedName("end_date_time")
-        @Expose
-        private String endDateTime;
+        private String commodity_img;
         @SerializedName("notes")
         @Expose
         private String notes;
@@ -189,17 +199,17 @@ public class AllTruckBookListResponse extends BaseResponse {
         @Expose
         private String userPriceLname;
 
-        public String getP_case_id() {
-            return p_case_id;
+        public String getS_k_p_case_id() {
+            return s_k_p_case_id;
         }
 
-        public void setP_case_id(String p_case_id) {
-            this.p_case_id = p_case_id;
+        public void setS_k_p_case_id(String s_k_p_case_id) {
+            this.s_k_p_case_id = s_k_p_case_id;
         }
 
-        @SerializedName("p_case_id")
+        @SerializedName("s_k_p_case_id")
         @Expose
-        private String p_case_id;
+        private String s_k_p_case_id;
 
         public Integer getId() {
             return id;
@@ -249,11 +259,11 @@ public class AllTruckBookListResponse extends BaseResponse {
             this.location = location;
         }
 
-        public String getCommodityId() {
+        public Integer getCommodityId() {
             return commodityId;
         }
 
-        public void setCommodityId(String commodityId) {
+        public void setCommodityId(Integer commodityId) {
             this.commodityId = commodityId;
         }
 
@@ -433,132 +443,94 @@ public class AllTruckBookListResponse extends BaseResponse {
             this.custLname = custLname;
         }
 
-        public String getTBCaseId() {
-            return tBCaseId;
+
+
+        public String getMoistureLevel() {
+            return moistureLevel;
         }
 
-        public void setTBCaseId(String tBCaseId) {
-            this.tBCaseId = tBCaseId;
+        public void setMoistureLevel(String moistureLevel) {
+            this.moistureLevel = moistureLevel;
         }
 
-        public String getTransporter() {
-            return transporter;
+        public String getThousandCrownW() {
+            return thousandCrownW;
         }
 
-        public void setTransporter(String transporter) {
-            this.transporter = transporter;
+        public void setThousandCrownW(String thousandCrownW) {
+            this.thousandCrownW = thousandCrownW;
         }
 
-        public String getVehicle() {
-            return vehicle;
+        public String getBroken() {
+            return broken;
         }
 
-        public void setVehicle(String vehicle) {
-            this.vehicle = vehicle;
+        public void setBroken(String broken) {
+            this.broken = broken;
         }
 
-        public String getDriverName() {
-            return driverName;
+        public String getForeignMatter() {
+            return foreignMatter;
         }
 
-        public void setDriverName(String driverName) {
-            this.driverName = driverName;
+        public void setForeignMatter(String foreignMatter) {
+            this.foreignMatter = foreignMatter;
         }
 
-        public String getDriverPhone() {
-            return driverPhone;
+        public String getThin() {
+            return thin;
         }
 
-        public void setDriverPhone(String driverPhone) {
-            this.driverPhone = driverPhone;
+        public void setThin(String thin) {
+            this.thin = thin;
         }
 
-        public String getRatePerKm() {
-            return ratePerKm;
+        public String getDamage() {
+            return damage;
         }
 
-        public void setRatePerKm(String ratePerKm) {
-            this.ratePerKm = ratePerKm;
+        public void setDamage(String damage) {
+            this.damage = damage;
         }
 
-        public String getMinWeight() {
-            return minWeight;
+        public String getBlackSmith() {
+            return blackSmith;
         }
 
-        public void setMinWeight(String minWeight) {
-            this.minWeight = minWeight;
+        public void setBlackSmith(String blackSmith) {
+            this.blackSmith = blackSmith;
         }
 
-        public String getMaxWeight() {
-            return maxWeight;
+        public String getInfested() {
+            return infested;
         }
 
-        public void setMaxWeight(String maxWeight) {
-            this.maxWeight = maxWeight;
+        public void setInfested(String infested) {
+            this.infested = infested;
         }
 
-        public String getTurnaroundTime() {
-            return turnaroundTime;
+        public String getLiveInsects() {
+            return liveInsects;
         }
 
-        public void setTurnaroundTime(String turnaroundTime) {
-            this.turnaroundTime = turnaroundTime;
+        public void setLiveInsects(String liveInsects) {
+            this.liveInsects = liveInsects;
         }
 
-        public String getKantaParchiNo() {
-            return kantaParchiNo;
+        public String getPackagingType() {
+            return packagingType;
         }
 
-        public void setKantaParchiNo(String kantaParchiNo) {
-            this.kantaParchiNo = kantaParchiNo;
+        public void setPackagingType(String packagingType) {
+            this.packagingType = packagingType;
         }
 
-        public String getGatePassNo() {
-            return gatePassNo;
+        public String getImge() {
+            return imge;
         }
 
-        public void setGatePassNo(String gatePassNo) {
-            this.gatePassNo = gatePassNo;
-        }
-
-        public String getTotalTransportCost() {
-            return totalTransportCost;
-        }
-
-        public void setTotalTransportCost(String totalTransportCost) {
-            this.totalTransportCost = totalTransportCost;
-        }
-
-        public String getAdvancePayment() {
-            return advancePayment;
-        }
-
-        public void setAdvancePayment(String advancePayment) {
-            this.advancePayment = advancePayment;
-        }
-
-        public String getStartDateTime() {
-            return startDateTime;
-        }
-
-        public void setStartDateTime(String startDateTime) {
-            this.startDateTime = startDateTime;
-        }
-
-        public String getFinalSettlementAmount() {
-            return finalSettlementAmount;
-        }
-
-        public void setFinalSettlementAmount(String finalSettlementAmount) {
-            this.finalSettlementAmount = finalSettlementAmount;
-        }
-
-        public String getEndDateTime() {
-            return endDateTime;
-        }
-
-        public void setEndDateTime(String endDateTime) {
-            this.endDateTime = endDateTime;
+        public void setImge(String imge) {
+            this.imge = imge;
         }
 
         public String getNotes() {
@@ -585,5 +557,5 @@ public class AllTruckBookListResponse extends BaseResponse {
             this.userPriceLname = userPriceLname;
         }
 
-    }
+          }
 }

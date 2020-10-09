@@ -9,7 +9,12 @@ import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
+import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData;
+import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData;
+import com.apnagodam.staff.Network.Request.UploadGatePassPostData;
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
+import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
+import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData;
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
@@ -19,12 +24,17 @@ import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.DashBoardData;
+import com.apnagodam.staff.module.FirstQuilityReportListResponse;
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
+import com.apnagodam.staff.module.GatePassListResponse;
 import com.apnagodam.staff.module.GetPassID;
 import com.apnagodam.staff.module.InventoryRespionse;
+import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
+import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
 import com.apnagodam.staff.module.TerminalResponse;
 import com.apnagodam.staff.module.VehcilePricingCheeck;
 
@@ -62,6 +72,10 @@ public interface ApiService {
 
     @GET("api/app_version")
     Call<VersionCodeResponse> getversionCode(@Query("app_type") String appType);
+
+    // permission all
+    @GET("emp_api/apna_emp_permissions")
+    Call<AllUserPermissionsResultListResponse> getPermission(@Query("designation_id") String designation_id, @Query("emp_level_id") String emp_level_id);
 
     // leads
     @GET("emp_api/apna_emp_leads")
@@ -109,9 +123,41 @@ public interface ApiService {
 
     @POST("emp_api/apna_emp_update_labour")
     Call<LoginResponse> uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
-    // first kantha parchi
+
+    // first katha parchi
     @GET("emp_api/apna_emp_get_kanta_prachi")
     Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_kanta_parchi")
+    Call<LoginResponse> uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
+
+    // first quality reports
+    @GET("emp_api/apna_emp_get_quality")
+    Call<FirstQuilityReportListResponse> getf_qualityReportsList(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_f_quality")
+    Call<LoginResponse> uploadFirstQualityReports(@Body UploadFirstQualityPostData uploadFirstQualityPostData);
+
+    // Second katha parchi
+    @GET("emp_api/apna_emp_get_s_k_p")
+    Call<SecoundkanthaParchiListResponse> getS_kanthaParchiList(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_s_kanta_parchi")
+    Call<LoginResponse> uploadSecoundkantaParchi(@Body UploadSecoundkantaParchiPostData uploadSecoundkantaParchiPostData);
+
+    // Second quality reports
+    @GET("emp_api/apna_emp_get_s_quality")
+    Call<SecoundQuilityReportListResponse> getS_qualityReportsList(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_s_quality")
+    Call<LoginResponse> uploadSecoundQualityReports(@Body UploadSecoundQualityPostData uploadSecoundQualityPostData);
+
+    // gate pass
+    @GET("emp_api/apna_emp_get_gatepass")
+    Call<GatePassListResponse> getGatePass(@Query("limit") String limit, @Query("page_no") String page_no);
+
+    @POST("emp_api/apna_emp_gatepass")
+    Call<LoginResponse> uploadGatePass(@Body UploadGatePassPostData uploadGatePassPostData);
 }
 
 

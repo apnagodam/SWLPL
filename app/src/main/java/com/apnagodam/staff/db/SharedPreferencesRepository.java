@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.apnagodam.staff.ApnaGodamApp;
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.Bank;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.TerminalResponse;
@@ -148,6 +149,18 @@ public class SharedPreferencesRepository implements Tags {
         return userArray;
     }
 */
+  public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
+      String data = new Gson().toJson(user);
+      sharedPrefEditor.putString(Permission, data).commit();
+  }
+
+    public List<AllUserPermissionsResultListResponse.UserPermissionsResult> getUserPermission() {
+        String userMonthlyLedger = sharedPreferences.getString(Permission, null);
+        Gson gson = new Gson();
+        Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>(){}.getType();
+        ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult> userArray = gson.fromJson(userMonthlyLedger, userListType);
+        return userArray;
+    }
   public void setEmployee(List<CommudityResponse.Employee> datumMonthlyLedger) {
       String data = new Gson().toJson(datumMonthlyLedger);
       sharedPrefEditor.putString(Employee, data).commit();

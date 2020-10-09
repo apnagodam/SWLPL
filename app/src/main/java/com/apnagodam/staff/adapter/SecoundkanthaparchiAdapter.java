@@ -10,23 +10,23 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity;
 import com.apnagodam.staff.databinding.PricingDataBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.AllLabourBookListResponse;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
+import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
 
 import java.util.Collection;
 import java.util.List;
 
-public class LaabourBookAdapter extends BaseRecyclerViewAdapter {
-    private List<AllLabourBookListResponse.CurrentPageCollection> Leads;
+public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
+    private List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> Leads;
     private Context context;
 
-    public LaabourBookAdapter(List<AllLabourBookListResponse.CurrentPageCollection> leads, LabourBookListingActivity labourBookListingActivity) {
+    public SecoundkanthaparchiAdapter(List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> leads, SecoundkanthaParchiListingActivity secoundkanthaParchiListingActivity) {
         this.Leads = leads;
-        this.context = labourBookListingActivity;
+        this.context = secoundkanthaParchiListingActivity;
     }
 
     @Override
@@ -78,31 +78,21 @@ public class LaabourBookAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getLBCaseId()!=null){
+            if (Leads.get(position).getS_k_p_case_id()!=null){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
                 binding.tvPhoneDone.setVisibility(View.VISIBLE);
             }else {
                 binding.tvAction.setVisibility(View.GONE);
-                binding.tvPhone.setText(context.getResources().getString(R.string.upload_labour));
+                binding.tvPhone.setText(context.getResources().getString(R.string.upload_kantha_parchi));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
                 for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("16")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
                         if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                            if (Leads.get(position).getTrukBookCaseId()!=null){
-                                binding.tvPhone.setVisibility(View.VISIBLE);
-                            }else {
-                                binding.tvPhone.setVisibility(View.GONE);
-                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                                binding.tvPhoneDone.setText("Processing...");
-                                binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
-                            }
+                            binding.tvPhone.setVisibility(View.VISIBLE);
                         }else {
                             binding.tvPhone.setVisibility(View.GONE);
-                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                            binding.tvPhoneDone.setText("In Process");
-                            binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
                         }
                     }
                 }
@@ -113,16 +103,16 @@ public class LaabourBookAdapter extends BaseRecyclerViewAdapter {
             binding.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof LabourBookListingActivity) {
-                        ((LabourBookListingActivity) context).ViewData(position);
+                    if (context instanceof SecoundkanthaParchiListingActivity) {
+                        ((SecoundkanthaParchiListingActivity) context).   ViewData(position);
                     }
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (context instanceof LabourBookListingActivity) {
-                        ((LabourBookListingActivity) context).checkVeehicleNo(position);
+                    if (context instanceof SecoundkanthaParchiListingActivity) {
+                        ((SecoundkanthaParchiListingActivity) context).checkVeehicleNo(position);
                     }
                 }
             });

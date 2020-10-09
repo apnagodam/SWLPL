@@ -17,8 +17,12 @@ import com.apnagodam.staff.Network.Request.OTPData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityOtpBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
+import com.apnagodam.staff.module.AllTruckBookListResponse;
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.reciever.SMSReceiver;
 import com.apnagodam.staff.utils.Utility;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
@@ -27,6 +31,8 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
     private SMSReceiver smsReceiver;
     String mobileNumbewr,empID,setting = "";
     public int counter;
+    private OTPvarifedResponse userInfo;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_otp;
@@ -135,6 +141,7 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
         apiService.doOTPVerify(new OTPData(stringFromView(binding.etOtpNumber), mobileNumbewr)).enqueue(new NetworkCallback<OTPvarifedResponse>(getActivity()) {
             @Override
             protected void onSuccess(OTPvarifedResponse body) {
+                userInfo =body;
                 SharedPreferencesRepository.getDataManagerInstance().saveSessionToken(body.getAccessToken());
                 SharedPreferencesRepository.getDataManagerInstance().setBankNameList(body.getBanks());
                 SharedPreferencesRepository.getDataManagerInstance().saveUserData(body.getUserDetails());
@@ -144,8 +151,28 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
                     startActivityAndClear(SettingActivity.class);
                 }
                 else {
-                   // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
-                       startActivityAndClear(StaffDashBoardActivity.class);
+                    // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                    startActivityAndClear(StaffDashBoardActivity.class);
+                }
+               // getAllPermission();
+            }
+        });
+    }
+    private void getAllPermission() {
+        apiService.getPermission(userInfo.getUserDetails().getRole_id(),userInfo.getUserDetails().getLevel_id()).enqueue(new NetworkCallback<AllUserPermissionsResultListResponse>(getActivity()) {
+            @Override
+            protected void onSuccess(AllUserPermissionsResultListResponse body) {
+                if (body.getUserPermissionsResult() == null || body.getUserPermissionsResult().isEmpty()) {
+
+                } else {
+                    SharedPreferencesRepository.getDataManagerInstance().saveUserPermissionData(body.getUserPermissionsResult());
+                    if (setting.equalsIgnoreCase("changeMobileNumber")) {
+                        startActivityAndClear(SettingActivity.class);
+                    }
+                    else {
+                        // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                        startActivityAndClear(StaffDashBoardActivity.class);
+                    }
                 }
             }
         });
