@@ -35,7 +35,8 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
 
     @Override
     protected void setUp() {
-        getappVersion();
+        //getappVersion();
+        getCommditityList();
       // nextMClass();
     }
     private void nextMClass() {
@@ -132,23 +133,30 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
         dialogue.show();
     }
     private void getCommditityList() {
-        apiService.getcommuydity_terminal_user_emp_listing().enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
+        apiService.getcommuydity_terminal_user_emp_listing("Emp").enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
             @Override
             protected void onSuccess(CommudityResponse body) {
+                if (BuildConfig.APPLICATION_ID!=null) {
+                    if (Integer.parseInt(body.getVersion()) > (BuildConfig.VERSION_CODE)) {
+                        showUpdateDialogue();
+                    } else {
+
 //                for (int i = 0; i < body.getCategories().size(); i++) {
-                    SharedPreferencesRepository.getDataManagerInstance().setCommdity(body.getCategories());
+                        SharedPreferencesRepository.getDataManagerInstance().setCommdity(body.getCategories());
 //                }
 //                for (int i = 0; i < body.getTerminals().size(); i++) {
-                    SharedPreferencesRepository.getDataManagerInstance().SETTerminal(body.getTerminals());
+                        SharedPreferencesRepository.getDataManagerInstance().SETTerminal(body.getTerminals());
 //                }
 //                for (int i = 0; i < body.getEmployee().size(); i++) {
-                    SharedPreferencesRepository.getDataManagerInstance().setEmployee(body.getEmployee());
+                        SharedPreferencesRepository.getDataManagerInstance().setEmployee(body.getEmployee());
 //                }
 //                for (int i = 0; i < body.getUsers().size(); i++) {
-                    SharedPreferencesRepository.getDataManagerInstance().setUser(body.getUsers());
+                        SharedPreferencesRepository.getDataManagerInstance().setUser(body.getUsers());
 //                }
-                SharedPreferencesRepository.getDataManagerInstance().setContractor(body.getContractor_result());
-                nextMClass();
+                        SharedPreferencesRepository.getDataManagerInstance().setContractor(body.getContractor_result());
+                        nextMClass();
+                    }
+                }
             }
         });
     }

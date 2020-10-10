@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.in.truckbook;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,11 +9,9 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
@@ -21,6 +20,7 @@ import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.utils.PaginationScrollListener;
+
 import java.util.List;
 
 
@@ -32,7 +32,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
     private int totalPage = 0;
     private Boolean isLastPage = false;
     private Boolean isLoading = false;
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -46,9 +45,10 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
         binding.tvPhone.setText(getResources().getString(R.string.truck_book));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+       /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         setAdapter();
-
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +57,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
             }
         });
     }
-
     private void setAdapter() {
         binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
         binding.rvDefaultersStatus.setHasFixedSize(true);
@@ -68,7 +67,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         pagination(horizontalLayoutManager);
 
     }
-
     private void pagination(LinearLayoutManager horizontalLayoutManager) {
         binding.rvDefaultersStatus.addOnScrollListener(new PaginationScrollListener(horizontalLayoutManager) {
             @Override
@@ -99,19 +97,19 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
             binding.layoutLoader.setVisibility(View.GONE);
         }
     }
-
-
     private void getAllCases() {
-        apiService.getTruckBookList("15",pageOffset).enqueue(new NetworkCallback<AllTruckBookListResponse>(getActivity()) {
+        apiService.getTruckBookList("15",pageOffset,"IN").enqueue(new NetworkCallback<AllTruckBookListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllTruckBookListResponse body) {
                 if (body.getTruckBookCollection() == null || body.getTruckBookCollection().isEmpty()) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
-                    binding.layoutLoader.setVisibility(View.GONE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.layoutLoader.setVisibility(View.GONE);
                 } else {
                     AllCases.addAll(body.getTruckBookCollection());
                     truckBookAdapter.notifyDataSetChanged();
+                    AllCases = body.getTruckBookCollection();
+                 //   binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                 }
             }
         });
@@ -122,58 +120,58 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         Window window = this.getWindow();
         window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
         final AlertDialog.Builder builder = new AlertDialog.Builder(TruckBookListingActivity.this, R.style.CustomAlertDialog);
-        LayoutInflater inflater = TruckBookListingActivity.this.getLayoutInflater();
+        LayoutInflater inflater = ((Activity) TruckBookListingActivity.this).getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.lead_view, null);
         dialogView.setMinimumWidth((int) (displayRectangle.width() * 1f));
         dialogView.setMinimumHeight((int) (displayRectangle.height() * 1f));
         builder.setView(dialogView);
         final AlertDialog alertDialog = builder.create();
-        ImageView cancel_btn = dialogView.findViewById(R.id.cancel_btn);
-        TextView lead_id = dialogView.findViewById(R.id.lead_id);
-        TextView genrated_by = dialogView.findViewById(R.id.genrated_by);
-        TextView customer_name = dialogView.findViewById(R.id.customer_name);
-        TextView phone_no = dialogView.findViewById(R.id.phone_no);
-        TextView location_title = dialogView.findViewById(R.id.location_title);
-        TextView commodity_name = dialogView.findViewById(R.id.commodity_name);
-        TextView est_quantity_nmae = dialogView.findViewById(R.id.est_quantity_nmae);
-        TextView terminal_name = dialogView.findViewById(R.id.terminal_name);
-        TextView purpose_name = dialogView.findViewById(R.id.purpose_name);
-        TextView commitemate_date = dialogView.findViewById(R.id.commitemate_date);
-        TextView total_weights = dialogView.findViewById(R.id.vehicle_no);
-        TextView total_bags = dialogView.findViewById(R.id.in_out);
-        TextView create_date = dialogView.findViewById(R.id.create_date);
-        TextView case_id = dialogView.findViewById(R.id.a1);
-        TextView username = dialogView.findViewById(R.id.a2);
-        TextView vehicle_no = dialogView.findViewById(R.id.a4);
-        TextView processing_fees = dialogView.findViewById(R.id.a5);
-        TextView inteerset_rate = dialogView.findViewById(R.id.a6);
-        TextView transport_rate = dialogView.findViewById(R.id.a7);
-        TextView loan = dialogView.findViewById(R.id.a8);
-        TextView price = dialogView.findViewById(R.id.a9);
-        TextView rent = dialogView.findViewById(R.id.a10);
-        TextView labour_rent = dialogView.findViewById(R.id.a11);
-        TextView total_weight = dialogView.findViewById(R.id.a12);
-        TextView notes = dialogView.findViewById(R.id.a13);
-        TextView bags = dialogView.findViewById(R.id.a14);
-        LinearLayout price_extra = dialogView.findViewById(R.id.price_extra);
+        ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
+        TextView lead_id = (TextView) dialogView.findViewById(R.id.lead_id);
+        TextView genrated_by = (TextView) dialogView.findViewById(R.id.genrated_by);
+        TextView customer_name = (TextView) dialogView.findViewById(R.id.customer_name);
+        TextView phone_no = (TextView) dialogView.findViewById(R.id.phone_no);
+        TextView location_title = (TextView) dialogView.findViewById(R.id.location_title);
+        TextView commodity_name = (TextView) dialogView.findViewById(R.id.commodity_name);
+        TextView est_quantity_nmae = (TextView) dialogView.findViewById(R.id.est_quantity_nmae);
+        TextView terminal_name = (TextView) dialogView.findViewById(R.id.terminal_name);
+        TextView purpose_name = (TextView) dialogView.findViewById(R.id.purpose_name);
+        TextView commitemate_date = (TextView) dialogView.findViewById(R.id.commitemate_date);
+        TextView total_weights = (TextView) dialogView.findViewById(R.id.vehicle_no);
+        TextView total_bags = (TextView) dialogView.findViewById(R.id.in_out);
+        TextView create_date = (TextView) dialogView.findViewById(R.id.create_date);
+        TextView case_id = (TextView) dialogView.findViewById(R.id.a1);
+        TextView username = (TextView) dialogView.findViewById(R.id.a2);
+        TextView vehicle_no = (TextView) dialogView.findViewById(R.id.a4);
+        TextView processing_fees = (TextView) dialogView.findViewById(R.id.a5);
+        TextView inteerset_rate = (TextView) dialogView.findViewById(R.id.a6);
+        TextView transport_rate = (TextView) dialogView.findViewById(R.id.a7);
+        TextView loan = (TextView) dialogView.findViewById(R.id.a8);
+        TextView price = (TextView) dialogView.findViewById(R.id.a9);
+        TextView rent = (TextView) dialogView.findViewById(R.id.a10);
+        TextView labour_rent = (TextView) dialogView.findViewById(R.id.a11);
+        TextView total_weight = (TextView) dialogView.findViewById(R.id.a12);
+        TextView notes = (TextView) dialogView.findViewById(R.id.a13);
+        TextView bags = (TextView) dialogView.findViewById(R.id.a14);
+        LinearLayout price_extra = (LinearLayout) dialogView.findViewById(R.id.price_extra);
         price_extra.setVisibility(View.VISIBLE);
-        LinearLayout case_extra = dialogView.findViewById(R.id.case_extra);
+        LinearLayout case_extra = (LinearLayout) dialogView.findViewById(R.id.case_extra);
         case_extra.setVisibility(View.VISIBLE);
-        LinearLayout truck_extra = dialogView.findViewById(R.id.truck_extra);
+        LinearLayout truck_extra = (LinearLayout) dialogView.findViewById(R.id.truck_extra);
         truck_extra.setVisibility(View.VISIBLE);
-        TextView converted_by = dialogView.findViewById(R.id.converted_by);
-        TextView gate_pass = dialogView.findViewById(R.id.gate_pass);
-        TextView user = dialogView.findViewById(R.id.user);
-        TextView coldwin = dialogView.findViewById(R.id.coldwin);
-        TextView purchase_details = dialogView.findViewById(R.id.purchase_details);
-        TextView loan_details = dialogView.findViewById(R.id.loan_details);
-        TextView selas_details = dialogView.findViewById(R.id.selas_details);
-        TextView gate_passs = dialogView.findViewById(R.id.gate_passs);
-        TextView total_trans_cost = dialogView.findViewById(R.id.total_trans_cost);
-        TextView advance_patyment = dialogView.findViewById(R.id.advance_patyment);
-        TextView start_date_time = dialogView.findViewById(R.id.start_date_time);
-        TextView end_date_time = dialogView.findViewById(R.id.end_date_time);
-        TextView settleememt_amount = dialogView.findViewById(R.id.settleememt_amount);
+        TextView converted_by = (TextView) dialogView.findViewById(R.id.converted_by);
+        TextView gate_pass = (TextView) dialogView.findViewById(R.id.gate_pass);
+        TextView user = (TextView) dialogView.findViewById(R.id.user);
+        TextView coldwin = (TextView) dialogView.findViewById(R.id.coldwin);
+        TextView purchase_details = (TextView) dialogView.findViewById(R.id.purchase_details);
+        TextView loan_details = (TextView) dialogView.findViewById(R.id.loan_details);
+        TextView selas_details = (TextView) dialogView.findViewById(R.id.selas_details);
+        TextView gate_passs = (TextView) dialogView.findViewById(R.id.gate_passs);
+        TextView total_trans_cost = (TextView) dialogView.findViewById(R.id.total_trans_cost);
+        TextView advance_patyment = (TextView) dialogView.findViewById(R.id.advance_patyment);
+        TextView start_date_time = (TextView) dialogView.findViewById(R.id.start_date_time);
+        TextView end_date_time = (TextView) dialogView.findViewById(R.id.end_date_time);
+        TextView settleememt_amount = (TextView) dialogView.findViewById(R.id.settleememt_amount);
         gate_passs.setText("" + ((AllCases.get(position).getGatePass()) != null ? AllCases.get(position).getGatePass() : "N/A"));
         total_trans_cost.setText("" + ((AllCases.get(position).getTotalTransportCost()) != null ? AllCases.get(position).getTotalTransportCost() : "N/A"));
         advance_patyment.setText("" + ((AllCases.get(position).getAdvancePayment()) != null ? AllCases.get(position).getAdvancePayment() : "N/A"));
@@ -181,8 +179,8 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         end_date_time.setText("" + ((AllCases.get(position).getEndDateTime()) != null ? AllCases.get(position).getEndDateTime() : "N/A"));
         settleememt_amount.setText("" + ((AllCases.get(position).getFinalSettlementAmount()) != null ? AllCases.get(position).getFinalSettlementAmount() : "N/A"));
         total_bags.setText("" + ((AllCases.get(position).getNoOfBags()) != null ? AllCases.get(position).getNoOfBags() : "N/A"));
-        total_weights.setText("" + ((AllCases.get(position).getTotalWeight()) != null ? AllCases.get(position).getTotalWeight() : "N/A"));
-        converted_by.setText("" + ((AllCases.get(position).getNotes()) != null ? AllCases.get(position).getNotes() : "N/A"));
+        total_weights.setText("" + ((AllCases.get(position).getNotes()) != null ? AllCases.get(position).getNotes() : "N/A"));
+        converted_by.setText("" + ((AllCases.get(position).getTotalWeight()) != null ? AllCases.get(position).getTotalWeight() : "N/A"));
         gate_pass.setText("Gaatepass/CDF Name : " + ((AllCases.get(position).getGatePassCdfUserName()) != null ? AllCases.get(position).getGatePassCdfUserName() : "N/A"));
         coldwin.setText("ColdWin Name: " + ((AllCases.get(position).getColdwinName()) != null ? AllCases.get(position).getColdwinName() : "N/A"));
         user.setText("User : " + ((AllCases.get(position).getFpoUserId()) != null ? AllCases.get(position).getFpoUserId() : "N/A"));
@@ -207,7 +205,7 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         customer_name.setText("" + AllCases.get(position).getCustFname());
         location_title.setText("" + ((AllCases.get(position).getDriverName()) != null ? AllCases.get(position).getDriverName() : "N/A"));
         phone_no.setText("" + ((AllCases.get(position).getVehicleNo()) != null ? AllCases.get(position).getVehicleNo() : "N/A"));
-       commodity_name.setText("" + ((AllCases.get(position).getDriverPhone()) != null ? AllCases.get(position).getDriverPhone() : "N/A"));
+        commodity_name.setText("" + ((AllCases.get(position).getDriverPhone()) != null ? AllCases.get(position).getDriverPhone() : "N/A"));
         est_quantity_nmae.setText("" + ((AllCases.get(position).getRatePerKm()) != null ? AllCases.get(position).getRatePerKm() : "N/A"));
         terminal_name.setText("" + ((AllCases.get(position).getMinWeight()) != null ? AllCases.get(position).getMinWeight() : "N/A"));
         purpose_name.setText("" + ((AllCases.get(position).getMaxWeight()) != null ? AllCases.get(position).getMaxWeight() : "N/A"));

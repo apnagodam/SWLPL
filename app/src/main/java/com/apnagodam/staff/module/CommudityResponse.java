@@ -14,7 +14,17 @@ public class CommudityResponse extends BaseResponse {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
+    public String getVersion() {
+        return version;
+    }
 
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    @SerializedName("version")
+    @Expose
+    protected String version;
     @SerializedName("commodites")
     @Expose
     private List<Category> categories = null;

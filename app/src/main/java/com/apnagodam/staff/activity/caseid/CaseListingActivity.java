@@ -53,7 +53,7 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
     }
 
     private void getAllCases() {
-        apiService.getAllCase().enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
+        apiService.getAllCase("15",1,"1").enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllCaseIDResponse body) {
                 if (body.getCases() == null || body.getCases().isEmpty()) {

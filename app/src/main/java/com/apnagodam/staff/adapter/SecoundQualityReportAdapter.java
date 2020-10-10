@@ -90,9 +90,19 @@ public class SecoundQualityReportAdapter extends BaseRecyclerViewAdapter {
                 for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
                         if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                            binding.tvPhone.setVisibility(View.VISIBLE);
+                            if (Leads.get(position).getS_k_p_case_id()!=null){
+                                binding.tvPhone.setVisibility(View.VISIBLE);
+                            }else {
+                                binding.tvPhone.setVisibility(View.GONE);
+                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                                binding.tvPhoneDone.setText("Processing...");
+                                binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
+                            }
                         }else {
                             binding.tvPhone.setVisibility(View.GONE);
+                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                            binding.tvPhoneDone.setText("In Process");
+                            binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
                         }
                     }
                 }

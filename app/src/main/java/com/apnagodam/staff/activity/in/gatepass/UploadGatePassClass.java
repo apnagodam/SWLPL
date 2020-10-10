@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -55,6 +57,25 @@ public class UploadGatePassClass extends BaseActivity<ActivityGatePassBinding> {
         binding.customerName.setText(UserName);
         binding.caseId.setText(CaseID);
         clickListner();
+        binding.etWeightKg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length()!=0&&!charSequence.equals("")){
+                    double finalWeightQTl = Double.parseDouble(charSequence.toString().trim()) / 100;
+                    binding.etWeightQt.setText(""+finalWeightQTl);
+                }else {
+                    binding.etWeightQt.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
     private void clickListner() {

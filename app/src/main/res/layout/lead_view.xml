@@ -790,90 +790,133 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
                 </LinearLayout>
             </LinearLayout>
-        <LinearLayout
-            android:id="@+id/photo_extra"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/view_color" />
 
             <LinearLayout
+                android:id="@+id/photo_extra"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10ssp"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <TextView
-                    android:id="@+id/a24"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:text="@string/reports"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.01"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/view_color" />
-                <ImageView
-                    android:id="@+id/reports_file"
-                    android:layout_width="0dp"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    android:layout_weight="0.6"
-                    android:layout_height="@dimen/_20ssp"
-                    android:src="@drawable/ic_baseline_remove_red_eye_24"
-                    />
-            </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/view_color" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5ssp"
-                android:orientation="horizontal"
-                android:weightSum="1">
-
-                <TextView
-                    android:id="@+id/a25"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:text="@string/commodity"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+                    android:layout_marginTop="@dimen/_10ssp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/a24"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="@string/reports"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.01"
+                        android:background="@color/view_color" />
+
+                    <ImageView
+                        android:id="@+id/reports_file"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_20ssp"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:layout_weight="0.6"
+                        android:src="@drawable/ic_baseline_remove_red_eye_24" />
+                </LinearLayout>
 
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.01"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/view_color" />
 
-                <ImageView
-                    android:id="@+id/commodity_file"
-                    android:layout_width="0dp"
-                    android:layout_marginLeft="@dimen/_20sdp"
-                    android:layout_weight="0.6"
-                    android:layout_height="@dimen/_20ssp"
-                    android:src="@drawable/ic_baseline_remove_red_eye_24"
-                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5ssp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:id="@+id/a25"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="@string/commodity"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.01"
+                        android:background="@color/view_color" />
+
+                    <ImageView
+                        android:id="@+id/commodity_file"
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_20ssp"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:layout_weight="0.6"
+                        android:src="@drawable/ic_baseline_remove_red_eye_24" />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/price_extra"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:visibility="gone">
+
+                <View
+                    android:id="@+id/view12"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/view_color"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/ll12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5ssp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="@string/notes"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.01"
+                        android:background="@color/view_color" />
+
+                    <TextView
+                        android:id="@+id/notes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:layout_weight="0.6"
+                        android:text="123456787787"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"

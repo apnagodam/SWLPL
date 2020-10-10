@@ -124,7 +124,8 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             }
         });
         binding.clockInOut.setOnClickListener(v -> callServer());
-        getAttendanceStatus();
+    //    getAttendanceStatus();
+        getdashboardData();
     }
 
     private void getAllPermission() {
@@ -167,6 +168,14 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             @Override
             protected void onSuccess(DashBoardData body) {
                 if (body != null) {
+                    attendanceINOUTStatus = "" + body.getClock_status();
+                    if (attendanceINOUTStatus.equalsIgnoreCase("1")) {
+                        OnOfffAttendance = true;
+                        binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
+                    } else {
+                        binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
+                        OnOfffAttendance = false;
+                    }
                     binding.incase.setText("" + body.getIn_case());
                     binding.outcase.setText("" + body.getOut_case());
                     binding.trotalAttend.setText("" + body.getAtten_month_data());

@@ -15,7 +15,7 @@ public class AllCaseIDResponse extends BaseResponse {
         this.cases = cases;
     }
 
-    @SerializedName("case_gen")
+    @SerializedName("data")
     @Expose
     private List<Case> cases = null;
 

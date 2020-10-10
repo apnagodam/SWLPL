@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -44,6 +45,7 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     String contractorsID = null;
     // droup down  of meter status
     List<String> contractorName;
+    boolean checked = false;
 
     @Override
     protected int getLayoutResId() {
@@ -101,7 +103,7 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // selected item in the list
                 if (position != 0) {
-                     contractorsID = parentView.getItemAtPosition(position).toString();
+                    contractorsID = parentView.getItemAtPosition(position).toString();
                     /*for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
                         if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName())) {
                             contractorsID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getId());
@@ -123,6 +125,28 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
         binding.btnLogin.setOnClickListener(this);
         binding.etStartDateTime.setOnClickListener(this);
         binding.lpCommiteDate.setOnClickListener(this);
+        binding.checkNotRequried.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                                @Override
+                                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                                                    if (buttonView.isChecked()) {
+                                                                        // checked
+                                                                        checked = true;
+                                                                        binding.etLocation.setEnabled(false);
+                                                                        binding.etLocation.setClickable(false);
+                                                                        binding.etLocation.setFocusable(false);
+                                                                        binding.etLocation.setText("");
+                                                                    } else {
+                                                                        // not checked
+                                                                        checked = false;
+                                                                        binding.etLocation.setEnabled(true);
+                                                                        binding.etLocation.setClickable(true);
+                                                                        binding.etLocation.setFocusable(true);
+                                                                        binding.etLocation.setFocusableInTouchMode(true);
+                                                                    }
+                                                                }
+                                                            }
+        );
     }
 
     @Override
@@ -146,13 +170,12 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
             case R.id.btn_login:
                 if (isValid()) {
                     if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
-                        Toast.makeText(this, getResources().getString(R.string.start_date_time_val), Toast.LENGTH_LONG).show();
-                    }
-                    else if (contractorsID == null) {
-                        Toast.makeText(this,  getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
-                    }else {
+                        Toast.makeText(this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
+                    } else if (contractorsID == null) {
+                        Toast.makeText(this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
+                    } else {
                         apiService.uploadLabourDetails(new UploadLabourDetailsPostData(
-                                CaseID,contractorsID, stringFromView(binding.etContractorPhone), stringFromView(binding.etLocation),
+                                CaseID, contractorsID, stringFromView(binding.etContractorPhone), stringFromView(binding.etLocation),
                                 stringFromView(binding.etLabourRate), stringFromView(binding.etLabourTotal), stringFromView(binding.etTotalBags),
                                 stringFromView(binding.notes), stringFromView(binding.etStartDateTime))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                             @Override
@@ -168,9 +191,14 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     }
 
     boolean isValid() {
-        if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
-            return Utility.showEditTextError(binding.tilLocation, R.string.location);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
+        if (checked){
+
+        }else {
+            if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
+                return Utility.showEditTextError(binding.tilLocation, R.string.location);
+            }
+        }
+         if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
             return Utility.showEditTextError(binding.tilContractorPhone, R.string.contractor_phone_val);
         } else if (TextUtils.isEmpty(stringFromView(binding.etLabourRate))) {
             return Utility.showEditTextError(binding.tilLabourRate, R.string.labour_rate_val);

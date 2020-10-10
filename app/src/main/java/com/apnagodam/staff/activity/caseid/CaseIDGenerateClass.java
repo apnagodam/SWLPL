@@ -1,7 +1,9 @@
 package com.apnagodam.staff.activity.caseid;
 
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -64,6 +66,25 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         CustomerName.add(getResources().getString(R.string.select_coustomer));
         LeadGenerateOtherName.add(getResources().getString(R.string.select_employee));
         setValueOnSpinner();
+        binding.etCustomerWeight.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length()!=0&&!charSequence.equals("")){
+                    double finalWeightQTl = Double.parseDouble(charSequence.toString().trim()) / 100;
+                    binding.etCustomerWeightQuintal.setText(""+finalWeightQTl);
+                }else {
+                    binding.etCustomerWeightQuintal.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
     private void setValueOnSpinner() {
@@ -300,6 +321,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 binding.etCustomerGatepass.setEnabled(true);
                 binding.etCustomerGatepass.setFocusable(true);
                 binding.etCustomerGatepass.setClickable(true);
+                binding.etCustomerGatepass.setFocusableInTouchMode(true);
             }
         });
     }

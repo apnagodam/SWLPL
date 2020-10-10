@@ -43,8 +43,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
-            android:text="@string/phone_no"
-            android:textColor="@color/colorWhite"
+            android:text="8949422632"
+            android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_10ssp" />
 
         <include layout="@layout/layout_divider_horizontal" />

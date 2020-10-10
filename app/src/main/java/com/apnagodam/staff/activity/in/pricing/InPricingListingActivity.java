@@ -59,7 +59,7 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
     }
 
     private void getAllCases() {
-        apiService.getAllpricingList().enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
+        apiService.getAllpricingList("20",1,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllpricingResponse body) {
                 if (body.getCases() == null || body.getCases().isEmpty()) {
@@ -108,6 +108,12 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
         TextView notes = (TextView) dialogView.findViewById(R.id.a12);
         LinearLayout price_extra = (LinearLayout) dialogView.findViewById(R.id.price_extra);
         price_extra.setVisibility(View.VISIBLE);
+        TextView Notes = (TextView) dialogView.findViewById(R.id.notes);
+        TextView view = (TextView) dialogView.findViewById(R.id.a12);
+        View view12 = (View) dialogView.findViewById(R.id.view12);
+        LinearLayout ll12 = (LinearLayout) dialogView.findViewById(R.id.ll12);
+        ll12.setVisibility(View.VISIBLE);
+        view12.setVisibility(View.VISIBLE);
         TextView converted_by = (TextView) dialogView.findViewById(R.id.converted_by);
         TextView gate_pass = (TextView) dialogView.findViewById(R.id.gate_pass);
         TextView user = (TextView) dialogView.findViewById(R.id.user);
@@ -115,7 +121,7 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
         TextView purchase_details = (TextView) dialogView.findViewById(R.id.purchase_details);
         TextView loan_details = (TextView) dialogView.findViewById(R.id.loan_details);
         TextView selas_details = (TextView) dialogView.findViewById(R.id.selas_details);
-        converted_by.setText("" + ((AllCases.get(position).getNotes()) != null ? AllCases.get(position).getNotes() : "N/A"));
+        Notes.setText("" + ((AllCases.get(position).getNotes()) != null ? AllCases.get(position).getNotes() : "N/A"));
         gate_pass.setText("Gaatepass/CDF Name : " + ((AllCases.get(position).getGatePassCdfUserName()) != null ? AllCases.get(position).getGatePassCdfUserName() : "N/A"));
         coldwin.setText("ColdWin Name: " + ((AllCases.get(position).getColdwinName()) != null ? AllCases.get(position).getColdwinName() : "N/A"));
         user.setText("User : " + ((AllCases.get(position).getFpoUserId()) != null ? AllCases.get(position).getFpoUserId() : "N/A"));

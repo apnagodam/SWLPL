@@ -64,7 +64,17 @@
 
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
-
+        <TextView
+            android:id="@+id/_title_waititng_edititng"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="@dimen/_5sdp"
+            android:background="@android:color/transparent"
+            android:text="You have 60 Minutes to Edit or Update Leads."
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="@dimen/_12sdp" />
         <LinearLayout
             android:id="@+id/cell_container"
             android:layout_width="match_parent"

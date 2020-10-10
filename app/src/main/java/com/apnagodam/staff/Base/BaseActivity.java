@@ -346,14 +346,14 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
      menuItems.add(menuItem1);
       /*  MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24);
         menuItems.add(menuItem2);*/
-     MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.pricing_title), R.drawable.ic_baseline_group_add_24);
+     MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_group_add_24);
      menuItems.add(menuItem2);
-     MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_settings_24);
+     MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.lead_generate), R.drawable.ic_baseline_settings_24);
      menuItems.add(menuItem3);
-     MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.lead_generate), R.drawable.ic_baseline_settings_24);
+     MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.create_case), R.drawable.ic_baseline_settings_24);
      menuItems.add(menuItem4);
 
-     MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.create_case), R.drawable.ic_baseline_notifications_24);
+     MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.pricing_title), R.drawable.ic_baseline_notifications_24);
      menuItems.add(menuItem5);
      MenuItem menuItem6 = new MenuItem(getResources().getString(R.string.truck_book), R.drawable.ic_baseline_notifications_24);
      menuItems.add(menuItem6);
