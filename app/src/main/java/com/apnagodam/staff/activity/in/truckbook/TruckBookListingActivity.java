@@ -20,7 +20,6 @@ import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.utils.PaginationScrollListener;
-
 import java.util.List;
 
 
