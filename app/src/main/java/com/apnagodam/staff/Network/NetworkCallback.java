@@ -21,8 +21,9 @@ public abstract class NetworkCallback<T extends BaseResponse> implements Callbac
     }
     @Override
     public void onResponse(@NotNull Call<T> call, Response<T> response) {
-        activity.hideDialog();
+//        activity.hideDialog();
         if (response.body() != null) {
+            activity.hideDialog();
              if (response.body().getStatus().equals(ResponseCode.CODE_1000)) {
                 onSuccess(response.body());
             }

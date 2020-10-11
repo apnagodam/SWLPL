@@ -276,4 +276,6 @@
     <string name="bags_gatepass">No of Bags</string>
     <string name="update_gate_pass">Update Gate Pass</string>
     <string name="upload_gatepass_file">Upload Gate Pass File</string>
+    <string name="previous">Previous </string>
+    <string name="next">Next</string>
 </resources>

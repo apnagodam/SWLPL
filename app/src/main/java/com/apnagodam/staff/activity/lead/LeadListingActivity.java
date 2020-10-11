@@ -44,7 +44,7 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LeadListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
         binding.TitleWaititngEdititng.setVisibility(View.VISIBLE);
-        binding.layoutLoader.setVisibility(View.GONE);
+//        binding.layoutLoader.setVisibility(View.GONE);
         getLeadsListing();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override

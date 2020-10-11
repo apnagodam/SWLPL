@@ -73,10 +73,10 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length()!=0&&!charSequence.equals("")){
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
                     double finalWeightQTl = Double.parseDouble(charSequence.toString().trim()) / 100;
-                    binding.etCustomerWeightQuintal.setText(""+finalWeightQTl);
-                }else {
+                    binding.etCustomerWeightQuintal.setText("" + finalWeightQTl);
+                } else {
                     binding.etCustomerWeightQuintal.setText("");
                 }
             }
@@ -87,22 +87,33 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         });
     }
 
+
     private void setValueOnSpinner() {
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-            CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
-        }
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
-            TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName() + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
-        }
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
-            CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
-        }
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-            if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
-                    SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
-                LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() + "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
-            }
-        }
+        setAllData();
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
+//                    CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
+//                }
+//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
+//                    TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName()
+//                            + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
+//                }
+//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
+//                    CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
+//                }
+//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
+//                            SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
+//                        LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
+//                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
+//                                "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
+//                    }
+//                }
+//            }
+//        });
+
         // UserList listing
         SpinnerUserListAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CustomerName) {
             //By using this method we will define how
@@ -311,6 +322,46 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             }
         });
 
+    }
+
+    private void setAllData() {
+        new Thread() {
+            public void run() {
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new Thread() {
+                                public void run() {
+                                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
+                                        CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
+                                    }
+                                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
+                                        TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName()
+                                                + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
+                                    }
+                                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
+                                        CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
+                                    }
+                                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
+                                        if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
+                                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
+                                            LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
+                                                    SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
+                                                    "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
+                                        }
+                                    }
+                                }
+                            }.start();
+                        }
+                    });
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
     }
 
     private void getGatepass(String terminalID) {
