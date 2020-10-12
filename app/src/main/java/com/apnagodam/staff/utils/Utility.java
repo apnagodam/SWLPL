@@ -542,7 +542,7 @@ public class Utility {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
                     dialog.dismiss();
-                    alertCallback.onOkClick();
+                    alertCallback.callback();
                 }
             });
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -604,7 +604,9 @@ public class Utility {
         }
 
     }*/
-
+   public interface AlertCallback {
+       void callback();
+   }
     public static void showDecisionDialog(Context context, String title, String message, final AlertCallback callbackListener) {
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -614,11 +616,11 @@ public class Utility {
             alertDialogBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
-                    callbackListener.onOkClick();
+                    callbackListener.callback();
                     dialog.dismiss();
                 }
             });
-            alertDialogBuilder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
                     dialog.dismiss();

@@ -59,7 +59,7 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
     }
 
     private void getAllCases() {
-        apiService.getAllpricingList("20",1,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
+        apiService.getAllpricingList("25",1,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllpricingResponse body) {
                 if (body.getCases() == null || body.getCases().isEmpty()) {

@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 
+import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
@@ -20,10 +21,11 @@ import java.util.List;
 public class CasesTopAdapter extends BaseRecyclerViewAdapter {
     private List<AllCaseIDResponse.Case> Leads;
     private Context context;
-
+    private BaseActivity activity;
     public CasesTopAdapter(List<AllCaseIDResponse.Case> leads, CaseListingActivity caseListingActivity) {
         this.Leads = leads;
         this.context = caseListingActivity;
+
     }
 
     @Override

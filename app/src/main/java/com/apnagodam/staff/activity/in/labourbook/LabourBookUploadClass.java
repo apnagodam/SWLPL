@@ -22,6 +22,7 @@ import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.gatepass.UploadGatePassClass;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.activity.lead.LeadGenerateClass;
@@ -104,11 +105,12 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                 // selected item in the list
                 if (position != 0) {
                     contractorsID = parentView.getItemAtPosition(position).toString();
-                    /*for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
-                        if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName())) {
-                            contractorsID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getId());
+                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
+                        if (contractorsID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName())) {
+                            binding.etContractorPhone.setText(String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorPhone()));
+                            binding.etLabourRate.setText(String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getRate()));
                         }
-                    }*/
+                    }
                 }
             }
 
@@ -152,7 +154,7 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        //  finish();
     }
 
     @Override
@@ -168,37 +170,42 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                 popUpDatePicker();
                 break;
             case R.id.btn_login:
-                if (isValid()) {
-                    if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
-                        Toast.makeText(this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
-                    } else if (contractorsID == null) {
-                        Toast.makeText(this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
-                    } else {
-                        apiService.uploadLabourDetails(new UploadLabourDetailsPostData(
-                                CaseID, contractorsID, stringFromView(binding.etContractorPhone), stringFromView(binding.etLocation),
-                                stringFromView(binding.etLabourRate), stringFromView(binding.etLabourTotal), stringFromView(binding.etTotalBags),
-                                stringFromView(binding.notes), stringFromView(binding.etStartDateTime))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-                            @Override
-                            protected void onSuccess(LoginResponse body) {
-                                Toast.makeText(LabourBookUploadClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                startActivityAndClear(LabourBookListingActivity.class);
+                Utility.showDecisionDialog(LabourBookUploadClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
+                        if (isValid()) {
+                            if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
+                                Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
+                            } else if (contractorsID == null) {
+                                Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
+                            } else {
+                                apiService.uploadLabourDetails(new UploadLabourDetailsPostData(
+                                        CaseID, contractorsID, stringFromView(binding.etContractorPhone), stringFromView(binding.etLocation),
+                                        stringFromView(binding.etLabourRate), stringFromView(binding.etLabourTotal), stringFromView(binding.etTotalBags),
+                                        stringFromView(binding.notes), stringFromView(binding.etStartDateTime))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                    @Override
+                                    protected void onSuccess(LoginResponse body) {
+                                        Toast.makeText(LabourBookUploadClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                                        startActivityAndClear(LabourBookListingActivity.class);
+                                    }
+                                });
                             }
-                        });
+                        }
                     }
-                }
+                });
                 break;
         }
     }
 
     boolean isValid() {
-        if (checked){
+        if (checked) {
 
-        }else {
+        } else {
             if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
                 return Utility.showEditTextError(binding.tilLocation, R.string.location);
             }
         }
-         if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
+        if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
             return Utility.showEditTextError(binding.tilContractorPhone, R.string.contractor_phone_val);
         } else if (TextUtils.isEmpty(stringFromView(binding.etLabourRate))) {
             return Utility.showEditTextError(binding.tilLabourRate, R.string.labour_rate_val);

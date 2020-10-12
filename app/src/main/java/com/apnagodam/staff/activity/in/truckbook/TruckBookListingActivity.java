@@ -42,9 +42,9 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
 
     @Override
     protected void setUp() {
+       // binding.pageNextPrivious.setVisibility(View.VISIBLE);
         AllCases = new ArrayList();
         setAdapter();
-
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.truck_book));
         binding.tvId.setText(getResources().getString(R.string.case_idd));

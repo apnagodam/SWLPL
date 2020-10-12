@@ -19,7 +19,7 @@ public class Constants {
     public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.in/resources/frontend_assets/uploads/";
     public static final String API_BASE_URL = "https://apnagodam.in/";*/
     // for demo server
-    public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employyes/";
+    public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employees/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.in/demo/resources/assets/upload/";
     public static final String API_BASE_URL = "https://apnagodam.in/demo/";
     public static final String ENDPOINT = API_BASE_URL;

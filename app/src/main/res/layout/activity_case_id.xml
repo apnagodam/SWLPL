@@ -75,49 +75,44 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_weight"
-                    style="@style/TextInputStyle"
+                <Spinner
+                    android:id="@+id/spinner_userName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/weight_kg">
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_weight"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_vehicle"
-                    style="@style/TextInputStyle"
+                <Spinner
+                    android:id="@+id/spinner_in_out"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_in_out"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
 
-                    android:hint="@string/vehicle_no"
-                  >
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_vehicle"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+                <Spinner
+                    android:id="@+id/spinner_purpose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_customer_fpo" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_location"
@@ -143,34 +138,31 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_fpo"
+                    android:id="@+id/til_customer_weight"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/fpo_sub_useername"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_location">
+                    android:hint="@string/weight_kg">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_fpo"
+                        android:id="@+id/et_customer_weight"
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="true"
                         android:focusedByDefault="true"
                         android:imeOptions="actionNext"
-                        android:inputType="text"
+                        android:inputType="numberDecimal"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_weight_quintal"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/weight_quintal"
-                    >
+                    android:hint="@string/weight_quintal">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_customer_weight_quintal"
@@ -186,6 +178,34 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <Spinner
+                    android:id="@+id/spinner_commudity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out" />
+
+                <Spinner
+                    android:id="@+id/spinner_terminal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_commudity" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_gatepass"
@@ -210,81 +230,62 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <Spinner
-                    android:id="@+id/spinner_purpose"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_fpo" />
 
-                <Spinner
-                    android:id="@+id/spinner_in_out"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_customer_vehicle"
+                    style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_in_out"
-                    android:gravity="right"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
 
-                <Spinner
-                    android:id="@+id/spinner_commudity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out" />
+                    android:hint="@string/vehicle_no">
 
-                <Spinner
-                    android:id="@+id/spinner_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_commudity" />
-                <Spinner
-                    android:id="@+id/spinner_userName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_customer_vehicle"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <Spinner
                     android:id="@+id/spinner_lead_convert_other"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/white_back_black_border"
                     android:entries="@array/array_pupose"
                     android:gravity="right"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:padding="@dimen/_10sdp"
                     android:spinnerMode="dropdown" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_customer_fpo"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/fpo_sub_useername"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_customer_location">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_customer_fpo"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_createe_case"
                     style="@style/ButtonStyle"

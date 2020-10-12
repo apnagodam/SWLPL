@@ -12,6 +12,7 @@ import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
 import com.apnagodam.staff.databinding.ActivitySetPricingBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.UserDetails;
@@ -193,7 +194,7 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+
     }
 
     @Override
@@ -203,19 +204,24 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
                 finish();
                 break;
             case R.id.btn_login:
-                if (isValid()) {
-                    if (checked) {
-                        if (binding.notes.getText().toString().trim().isEmpty()) {
-                            Toast.makeText(SetPricingClass.this, "Enter Notes Here!!", Toast.LENGTH_LONG).show();
-                        } else {
-                            callApi();
+                Utility.showDecisionDialog(SetPricingClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
+                        if (isValid()) {
+                            if (checked) {
+                                if (binding.notes.getText().toString().trim().isEmpty()) {
+                                    Toast.makeText(SetPricingClass.this, "Enter Notes Here!!", Toast.LENGTH_LONG).show();
+                                } else {
+                                    callApi();
+                                }
+                            } else if (selectPurpose == null) {
+                                Toast.makeText(SetPricingClass.this, "Select Transaction Type", Toast.LENGTH_LONG).show();
+                            } else {
+                                callApi();
+                            }
                         }
-                    } else if (selectPurpose == null) {
-                        Toast.makeText(SetPricingClass.this, "Select Transaction Type", Toast.LENGTH_LONG).show();
-                    } else {
-                        callApi();
                     }
-                }
+                });
                 break;
         }
     }

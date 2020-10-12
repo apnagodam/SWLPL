@@ -57,7 +57,7 @@ public class LabourBookListingActivity extends BaseActivity<ActivityListingBindi
     }
 
     private void getAllCases() {
-        apiService.getLabourBookList("15", "1","IN").enqueue(new NetworkCallback<AllLabourBookListResponse>(getActivity()) {
+        apiService.getLabourBookList("25", "1","IN").enqueue(new NetworkCallback<AllLabourBookListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllLabourBookListResponse body) {
                 if (body.getCurrentPageCollection() == null || body.getCurrentPageCollection().isEmpty()) {

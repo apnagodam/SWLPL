@@ -340,7 +340,29 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_advance_patyment"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/advance_patyment_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_total_trans_cost">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_advance_patyment"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_total_trans_cost"
                     style="@style/TextInputStyle"
@@ -365,53 +387,9 @@
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_advance_patyment"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:hint="@string/advance_patyment_val"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_total_trans_cost">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_advance_patyment"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_final_settalement_amount"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:hint="@string/settleememt_amount_val"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_advance_patyment">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_final_settalement_amount"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
                 <RelativeLayout
                     android:id="@+id/lp_commite_date"
                     android:layout_width="match_parent"
@@ -452,6 +430,7 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_start_date_time"
                     style="@style/TextInputStyle"
@@ -516,6 +495,29 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_final_settalement_amount"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/settleememt_amount_val"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_advance_patyment">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_final_settalement_amount"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_end_date_time"
                     style="@style/TextInputStyle"

@@ -99,29 +99,20 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/_10ssp"
                 android:orientation="vertical">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_location"
-                    style="@style/TextInputStyle"
+                <Spinner
+                    android:id="@+id/spinner_contractor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/location"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_7sdp"
+                    android:spinnerMode="dropdown"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/customer_name">
+                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_location"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_contractor_phone"
@@ -195,35 +186,28 @@
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_total_bags"
+                    android:id="@+id/til_location"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:hint="@string/total_bags_val"
+                    android:hint="@string/location"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_driver_phone_no">
+                    app:layout_constraintTop_toBottomOf="@id/customer_name">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_total_bags"
+                        android:id="@+id/et_location"
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="true"
                         android:focusedByDefault="true"
                         android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
+                        android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
                 <RelativeLayout
                     android:id="@+id/lp_commite_date"
                     android:layout_width="match_parent"
@@ -264,20 +248,36 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
-
-                <Spinner
-                    android:id="@+id/spinner_contractor"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_total_bags"
+                    style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_7sdp"
-                    android:spinnerMode="dropdown"
+                    android:hint="@string/total_bags_val"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
+                    app:layout_constraintTop_toBottomOf="@id/til_driver_phone_no">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_total_bags"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+
+
                 <EditText
                     android:id="@+id/notes"
                     style="@style/TextStyleBold"

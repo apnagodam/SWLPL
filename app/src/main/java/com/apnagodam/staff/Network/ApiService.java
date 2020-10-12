@@ -112,7 +112,7 @@ public interface ApiService {
 
     // tuck book
     @GET("emp_api/apna_emp_get_truckbook")
-    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page_no") int page_no,@Query("in_out") String in_out);
+    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page_no") int page,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_update_truckbook")
     Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);

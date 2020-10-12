@@ -77,20 +77,27 @@ public class UploadFirstQualtityReportsClass extends BaseActivity<ActivityUpdate
                 startActivityAndClear(FirstQualityReportListingActivity.class);
             }
         });
+
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValid()) {
+                Utility.showDecisionDialog(UploadFirstQualtityReportsClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
+                        if (isValid()) {
                  /*   if (fileReport == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
                     } else if (fileCommudity == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_commodity_file, Toast.LENGTH_LONG).show();
                     } else*/ if (packagingTypeID == null) {
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
-                    } else {
-                        onNext();
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
+                            } else {
+                                onNext();
+                            }
+                        }
                     }
-                }
+                });
+
             }
         });
         binding.uploadReport.setOnClickListener(new View.OnClickListener() {

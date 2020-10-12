@@ -61,7 +61,7 @@ public class FirstQualityReportListingActivity extends BaseActivity<ActivityList
     }
 
     private void getAllCases() {
-        apiService.getf_qualityReportsList("15","1","IN").enqueue(new NetworkCallback<FirstQuilityReportListResponse>(getActivity()) {
+        apiService.getf_qualityReportsList("25","1","IN").enqueue(new NetworkCallback<FirstQuilityReportListResponse>(getActivity()) {
             @Override
             protected void onSuccess(FirstQuilityReportListResponse body) {
                 if (body.getData() == null || body.getData().isEmpty()) {

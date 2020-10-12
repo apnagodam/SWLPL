@@ -22,6 +22,7 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
 import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllLeadsResponse;
@@ -208,6 +209,9 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 popUpDatePicker();
                 break;
             case R.id.btn_login:
+                Utility.showDecisionDialog(LeadGenerateClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (isValid()) {
                     if (commudityID == null) {
                         Toast.makeText(LeadGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
@@ -246,6 +250,8 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                         }
                     }
                 }
+                    }
+                });
                 break;
         }
     }

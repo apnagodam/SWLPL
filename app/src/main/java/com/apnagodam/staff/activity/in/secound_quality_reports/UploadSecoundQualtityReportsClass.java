@@ -19,6 +19,7 @@ import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
+import com.apnagodam.staff.activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass;
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 import com.apnagodam.staff.utils.Utility;
@@ -80,6 +81,9 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utility.showDecisionDialog(UploadSecoundQualtityReportsClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (isValid()) {
 
                    /* if (fileReport == null) {
@@ -92,6 +96,8 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
                         onNext();
                    // }
                 }
+                    }
+                });
             }
         });
         binding.uploadReport.setOnClickListener(new View.OnClickListener() {

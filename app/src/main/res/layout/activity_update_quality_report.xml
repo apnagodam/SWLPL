@@ -32,10 +32,10 @@
 
                     <ImageView
                         android:id="@+id/iv_close"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
                         android:background="@drawable/ic_arrow_back"
-                        android:padding="8dp" />
+                        android:padding="@dimen/_5sdp" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -74,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/case_id"
                     android:layout_width="match_parent"
@@ -99,6 +100,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/case_id" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_moisture_level"
                     style="@style/TextInputStyle"

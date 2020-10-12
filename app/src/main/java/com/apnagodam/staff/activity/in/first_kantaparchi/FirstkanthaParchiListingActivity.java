@@ -60,7 +60,7 @@ public class FirstkanthaParchiListingActivity extends BaseActivity<ActivityListi
     }
 
     private void getAllCases() {
-        apiService.getf_kanthaParchiList("15", "1","IN").enqueue(new NetworkCallback<FirstkanthaParchiListResponse>(getActivity()) {
+        apiService.getf_kanthaParchiList("25", "1","IN").enqueue(new NetworkCallback<FirstkanthaParchiListResponse>(getActivity()) {
             @Override
             protected void onSuccess(FirstkanthaParchiListResponse body) {
                 if (body.getFirstKataParchiData() == null || body.getFirstKataParchiData().isEmpty()) {

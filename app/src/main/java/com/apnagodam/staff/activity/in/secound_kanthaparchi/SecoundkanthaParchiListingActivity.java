@@ -59,7 +59,7 @@ public class SecoundkanthaParchiListingActivity extends BaseActivity<ActivityLis
     }
 
     private void getAllCases() {
-        apiService.getS_kanthaParchiList("15", "1","IN").enqueue(new NetworkCallback<SecoundkanthaParchiListResponse>(getActivity()) {
+        apiService.getS_kanthaParchiList("25", "1","IN").enqueue(new NetworkCallback<SecoundkanthaParchiListResponse>(getActivity()) {
             @Override
             protected void onSuccess(SecoundkanthaParchiListResponse body) {
                 if (body.getData() == null || body.getData().isEmpty()) {

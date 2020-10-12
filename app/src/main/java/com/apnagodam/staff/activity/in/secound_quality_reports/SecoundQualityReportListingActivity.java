@@ -54,7 +54,7 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
     }
 
     private void getAllCases() {
-        apiService.getS_qualityReportsList("15","1","IN").enqueue(new NetworkCallback<SecoundQuilityReportListResponse>(getActivity()) {
+        apiService.getS_qualityReportsList("25","1","IN").enqueue(new NetworkCallback<SecoundQuilityReportListResponse>(getActivity()) {
             @Override
             protected void onSuccess(SecoundQuilityReportListResponse body) {
                 if (body.getData() == null || body.getData().isEmpty()) {

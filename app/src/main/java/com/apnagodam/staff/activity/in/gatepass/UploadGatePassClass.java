@@ -20,6 +20,7 @@ import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
+import com.apnagodam.staff.activity.in.first_quality_reports.UploadFirstQualtityReportsClass;
 import com.apnagodam.staff.activity.in.secound_quality_reports.SecoundQualityReportListingActivity;
 import com.apnagodam.staff.databinding.ActivityGatePassBinding;
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding;
@@ -88,6 +89,9 @@ public class UploadGatePassClass extends BaseActivity<ActivityGatePassBinding> {
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utility.showDecisionDialog(UploadGatePassClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (isValid()) {
                     if (fileGatePass == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_gatepass_file, Toast.LENGTH_LONG).show();
@@ -95,6 +99,8 @@ public class UploadGatePassClass extends BaseActivity<ActivityGatePassBinding> {
                         onNext();
                     }
                 }
+                    }
+                });
             }
         });
         binding.uploadGatePass.setOnClickListener(new View.OnClickListener() {

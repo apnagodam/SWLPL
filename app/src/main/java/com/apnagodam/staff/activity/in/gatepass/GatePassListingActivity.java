@@ -60,7 +60,7 @@ public class GatePassListingActivity extends BaseActivity<ActivityListingBinding
     }
 
     private void getAllCases() {
-        apiService.getGatePass("15", "1","IN").enqueue(new NetworkCallback<GatePassListResponse>(getActivity()) {
+        apiService.getGatePass("25", "1","IN").enqueue(new NetworkCallback<GatePassListResponse>(getActivity()) {
             @Override
             protected void onSuccess(GatePassListResponse body) {
                 if (body.getData() == null || body.getData().isEmpty()) {

@@ -47,7 +47,7 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               startActivityAndClear(StaffDashBoardActivity.class);
+                startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
     }

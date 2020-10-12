@@ -140,9 +140,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/page_next_privious"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
+            android:visibility="gone"
             android:layout_marginEnd="@dimen/_5sdp">
 
             <Button

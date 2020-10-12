@@ -19,6 +19,7 @@ import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.activity.in.pricing.SetPricingClass;
+import com.apnagodam.staff.activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass;
 import com.apnagodam.staff.activity.lead.LeadGenerateClass;
 import com.apnagodam.staff.databinding.ActivitySetPricingBinding;
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding;
@@ -250,21 +251,26 @@ public class TruckUploadDetailsClass extends BaseActivity<ActivityUploadDetailsB
                 EnddatePicker();
                 break;
             case R.id.btn_login:
+                Utility.showDecisionDialog(TruckUploadDetailsClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (isValid()) {
                     if (checked) {
                         if (binding.notes.getText().toString().trim().isEmpty()) {
-                            Toast.makeText(this, "Enter Notes Here!!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(TruckUploadDetailsClass.this, "Enter Notes Here!!", Toast.LENGTH_LONG).show();
                         } else {
                             callApi();
                         }
                     } else  if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
-                        Toast.makeText(this, getResources().getString(R.string.start_date_time_val), Toast.LENGTH_LONG).show();
+                        Toast.makeText(TruckUploadDetailsClass.this, getResources().getString(R.string.start_date_time_val), Toast.LENGTH_LONG).show();
                     } else if (TextUtils.isEmpty(stringFromView(binding.etEndDateTime))) {
-                        Toast.makeText(this, getResources().getString(R.string.end_date_time_val), Toast.LENGTH_LONG).show();
+                        Toast.makeText(TruckUploadDetailsClass.this, getResources().getString(R.string.end_date_time_val), Toast.LENGTH_LONG).show();
                     }  else {
                         callApi();
                     }
                 }
+                    }
+                });
                 break;
         }
     }

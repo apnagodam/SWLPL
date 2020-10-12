@@ -17,6 +17,7 @@ import com.apnagodam.staff.Network.Request.CreateCaseIDPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass;
 import com.apnagodam.staff.databinding.ActivityCaseIdBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.GetPassID;
@@ -399,6 +400,9 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 startActivityAndClear(CaseListingActivity.class);
                 break;
             case R.id.btn_createe_case:
+                Utility.showDecisionDialog(CaseIDGenerateClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (isValid()) {
                     if (commudityID == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
@@ -408,9 +412,9 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_in_out), Toast.LENGTH_LONG).show();
                     } else if (selectPurpose == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
-                    } else if (selectConvertOther == null) {
+                    } /*else if (selectConvertOther == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_employee), Toast.LENGTH_LONG).show();
-                    } else if (seleectCoustomer == null) {
+                    }*/ else if (seleectCoustomer == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
                     } else {
                         UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
@@ -426,6 +430,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                         });
                     }
                 }
+                    }
+                });
                 break;
         }
     }
@@ -435,13 +441,14 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             return Utility.showEditTextError(binding.tilCustomerWeight, R.string.weight_kg);
         } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerGatepass))) {
             return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerVehicle))) {
-            return Utility.showEditTextError(binding.tilCustomerVehicle, R.string.vehicle_no);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
+        }else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
             return Utility.showEditTextError(binding.tilCustomerLocation, R.string.location);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
-            return Utility.showEditTextError(binding.tilCustomerFpo, R.string.fpo_sub_useername);
         }
+       /* else if (TextUtils.isEmpty(stringFromView(binding.etCustomerVehicle))) {
+            return Utility.showEditTextError(binding.tilCustomerVehicle, R.string.vehicle_no);
+        }  else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
+            return Utility.showEditTextError(binding.tilCustomerFpo, R.string.fpo_sub_useername);
+        }*/
         return true;
     }
 

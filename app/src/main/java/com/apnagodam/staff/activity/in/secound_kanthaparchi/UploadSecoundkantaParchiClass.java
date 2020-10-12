@@ -16,6 +16,7 @@ import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 import com.apnagodam.staff.utils.Utility;
@@ -63,6 +64,9 @@ public class UploadSecoundkantaParchiClass extends BaseActivity<KanthaParchiUplo
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utility.showDecisionDialog(UploadSecoundkantaParchiClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
                 if (fileKantha == null) {
                     Toast.makeText(getApplicationContext(), R.string.upload_kanta_parchi_file, Toast.LENGTH_LONG).show();
                 } else if (fileTruck == null) {
@@ -70,7 +74,8 @@ public class UploadSecoundkantaParchiClass extends BaseActivity<KanthaParchiUplo
                 } else {
                     onNext();
                 }
-
+                    }
+                });
             }
         });
         binding.uploadKantha.setOnClickListener(new View.OnClickListener() {
