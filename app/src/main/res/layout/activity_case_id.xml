@@ -178,7 +178,15 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+<!--                <Spinner-->
+<!--                    android:id="@+id/spinner_userName"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@android:color/transparent"-->
+<!--                    android:entries="@array/array_pupose"-->
+<!--                    android:gravity="right"-->
+<!--                    android:padding="@dimen/_10sdp"-->
+<!--                    android:spinnerMode="dropdown" />-->
                 <TextView
                     android:id="@+id/spinner_userName"
                     android:layout_width="match_parent"
