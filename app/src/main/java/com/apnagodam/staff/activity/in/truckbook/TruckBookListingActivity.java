@@ -35,9 +35,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
     private Boolean isLastPage = false;
     private Boolean isLoading = false;
 
-
-
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;

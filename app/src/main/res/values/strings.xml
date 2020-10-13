@@ -278,4 +278,5 @@
     <string name="upload_gatepass_file">Upload Gate Pass File</string>
     <string name="previous">Previous </string>
     <string name="next">Next</string>
+    <string name="search">Search</string>
 </resources>
