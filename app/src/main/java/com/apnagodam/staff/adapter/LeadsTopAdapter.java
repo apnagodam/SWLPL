@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 
+import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
@@ -22,12 +23,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
-    private List<AllLeadsResponse.Lead> Leads;
+    private List<AllLeadsResponse.Datum> Leads;
     private Context context;
-
-    public LeadsTopAdapter(List<AllLeadsResponse.Lead> leads, LeadListingActivity leadListingActivity) {
+    private List<AllLeadsResponse.Lead> Lead;
+    private BaseActivity activity;
+    public LeadsTopAdapter(List<AllLeadsResponse.Datum> leads, LeadListingActivity leadListingActivity,BaseActivity activity) {
         this.Leads = leads;
         this.context = leadListingActivity;
+        this.activity = activity;
     }
 
     @Override
@@ -116,6 +119,7 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);
+            activity.hideDialog();
             binding.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -128,7 +132,7 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
                 @Override
                 public void onClick(View view) {
                     if (context instanceof LeadListingActivity) {
-                        ((LeadListingActivity) context).editLead(Leads.get(position));
+                  //      ((LeadListingActivity) context).editLeads(Lead.get(position).getData());
                     }
                 }
             });

@@ -79,7 +79,7 @@ public interface ApiService {
 
     // leads
     @GET("emp_api/apna_emp_leads")
-    Call<AllLeadsResponse> getAllLeads();
+    Call<AllLeadsResponse> getAllLeads(@Query("limit") String limit, @Query("page") int page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_create_lead")
     Call<LoginResponse> doCreateLeads(@Body CreateLeadsPostData createLeadsPostData);
@@ -92,14 +92,14 @@ public interface ApiService {
     Call<LoginResponse> doCreateCaseID(@Body CreateCaseIDPostData createCaseIDPostData);
 
     @GET("emp_api/apna_emp_get_caseid")
-    Call<AllCaseIDResponse> getAllCase(@Query("limit") String limit, @Query("page_no") int page_no,@Query("status") String status);
+    Call<AllCaseIDResponse> getAllCase(@Query("limit") String limit, @Query("page") int page_no,@Query("status") String status);
 
     @GET("emp_api/apna_emp_getpass_no")
     Call<GetPassID> getGatePass(@Query("terminal_id") String terminal_id);
 
     // pricing
     @GET("emp_api/apna_emp_get_pricing")
-    Call<AllpricingResponse> getAllpricingList(@Query("limit") String limit, @Query("page_no") int page_no,@Query("in_out") String in_out);
+    Call<AllpricingResponse> getAllpricingList(@Query("limit") String limit, @Query("page") int page_no,@Query("in_out") String in_out);
 
     @GET("emp_api/apna_emp_check_vehicleno")
     Call<VehcilePricingCheeck> cheeckvehiclePricicng(@Query("case_id") String case_id);
@@ -112,49 +112,49 @@ public interface ApiService {
 
     // tuck book
     @GET("emp_api/apna_emp_get_truckbook")
-    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page_no") int page,@Query("in_out") String in_out);
+    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page") int page,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_update_truckbook")
     Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
 
     // labour book
     @GET("emp_api/apna_emp_get_labourbook")
-    Call<AllLabourBookListResponse> getLabourBookList(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<AllLabourBookListResponse> getLabourBookList(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_update_labour")
     Call<LoginResponse> uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
 
     // first katha parchi
     @GET("emp_api/apna_emp_get_kanta_prachi")
-    Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_kanta_parchi")
     Call<LoginResponse> uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
 
     // first quality reports
     @GET("emp_api/apna_emp_get_quality")
-    Call<FirstQuilityReportListResponse> getf_qualityReportsList(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<FirstQuilityReportListResponse> getf_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_f_quality")
     Call<LoginResponse> uploadFirstQualityReports(@Body UploadFirstQualityPostData uploadFirstQualityPostData);
 
     // Second katha parchi
     @GET("emp_api/apna_emp_get_s_k_p")
-    Call<SecoundkanthaParchiListResponse> getS_kanthaParchiList(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<SecoundkanthaParchiListResponse> getS_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_s_kanta_parchi")
     Call<LoginResponse> uploadSecoundkantaParchi(@Body UploadSecoundkantaParchiPostData uploadSecoundkantaParchiPostData);
 
     // Second quality reports
     @GET("emp_api/apna_emp_get_s_quality")
-    Call<SecoundQuilityReportListResponse> getS_qualityReportsList(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<SecoundQuilityReportListResponse> getS_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_s_quality")
     Call<LoginResponse> uploadSecoundQualityReports(@Body UploadSecoundQualityPostData uploadSecoundQualityPostData);
 
     // gate pass
     @GET("emp_api/apna_emp_get_gatepass")
-    Call<GatePassListResponse> getGatePass(@Query("limit") String limit, @Query("page_no") String page_no,@Query("in_out") String in_out);
+    Call<GatePassListResponse> getGatePass(@Query("limit") String limit, @Query("page") String page_no,@Query("in_out") String in_out);
 
     @POST("emp_api/apna_emp_gatepass")
     Call<LoginResponse> uploadGatePass(@Body UploadGatePassPostData uploadGatePassPostData);

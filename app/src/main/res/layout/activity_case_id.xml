@@ -76,13 +76,14 @@
                 android:orientation="vertical">
 
                 <Spinner
-                    android:id="@+id/spinner_userName"
+                    android:id="@+id/spinner_userNameold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/white_back_black_border"
                     android:entries="@array/array_pupose"
                     android:gravity="right"
+                    android:visibility="gone"
                     android:padding="@dimen/_10sdp"
                     android:spinnerMode="dropdown" />
 
@@ -178,7 +179,16 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
+                <Spinner
+                    android:id="@+id/spinner_userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/white_back_black_border"
+                    android:entries="@array/array_pupose"
+                    android:gravity="right"
+                    android:padding="@dimen/_10sdp"
+                    android:spinnerMode="dropdown" />
                 <Spinner
                     android:id="@+id/spinner_commudity"
                     android:layout_width="match_parent"

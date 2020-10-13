@@ -18,21 +18,27 @@ import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
+import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
+import com.apnagodam.staff.adapter.FirstQualityReportAdapter;
 import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter;
 import com.apnagodam.staff.adapter.SecoundkanthaparchiAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
+import com.apnagodam.staff.module.FirstQuilityReportListResponse;
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class SecoundkanthaParchiListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> AllCases;
     private String firstkantaParchiFile, TruckImage;
-
+    private SecoundkanthaparchiAdapter secoundkanthaparchiAdapter;
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<SecoundkanthaParchiListResponse.Datum> AllCases;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -40,15 +46,18 @@ public class SecoundkanthaParchiListingActivity extends BaseActivity<ActivityLis
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.secoundkanta_parchi));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
         binding.tvPhone.setText(getResources().getString(R.string.kanta_parchi));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
+      /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,18 +65,51 @@ public class SecoundkanthaParchiListingActivity extends BaseActivity<ActivityLis
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getAllCases();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getAllCases();
+                }
+            }
+        });
     }
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        secoundkanthaparchiAdapter = new SecoundkanthaparchiAdapter(AllCases, SecoundkanthaParchiListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(secoundkanthaparchiAdapter);
 
+    }
     private void getAllCases() {
-        apiService.getS_kanthaParchiList("25", "1","IN").enqueue(new NetworkCallback<SecoundkanthaParchiListResponse>(getActivity()) {
+        showDialog();
+        apiService.getS_kanthaParchiList("25", ""+pageOffset,"IN").enqueue(new NetworkCallback<SecoundkanthaParchiListResponse>(getActivity()) {
             @Override
             protected void onSuccess(SecoundkanthaParchiListResponse body) {
-                if (body.getData() == null || body.getData().isEmpty()) {
+                if (body.getSecoundKataParchiDatum() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
-                    AllCases = body.getData();
-                    binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getSecoundKataParchiDatum().getLastPage();
+                    AllCases.addAll(body.getSecoundKataParchiDatum().getData());
+                    secoundkanthaparchiAdapter.notifyDataSetChanged();
+                  //  AllCases = body.getData();
+                  //  binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
                 }
             }
         });

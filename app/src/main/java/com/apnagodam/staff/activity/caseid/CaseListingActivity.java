@@ -17,17 +17,23 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.adapter.CasesTopAdapter;
+import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
+import com.apnagodam.staff.module.AllTruckBookListResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
 
-    private List<AllCaseIDResponse.Case> AllCases;
-
+    private CasesTopAdapter casesTopAdapter;
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<AllCaseIDResponse.Datum> AllCases;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -35,14 +41,14 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.case_list));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.status_title));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(CaseListingActivity.this, LinearLayoutManager.VERTICAL));
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(CaseListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,18 +56,51 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getAllCases();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getAllCases();
+                }
+            }
+        });
     }
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(CaseListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(CaseListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        casesTopAdapter = new CasesTopAdapter(AllCases, CaseListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(casesTopAdapter);
 
+    }
     private void getAllCases() {
-        apiService.getAllCase("15",1,"1").enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
+        showDialog();
+        apiService.getAllCase("15",pageOffset,"1").enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllCaseIDResponse body) {
-                if (body.getCases() == null || body.getCases().isEmpty()) {
+                if (body.getaCase() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 }else {
-                    AllCases=body.getCases();
-                    binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getaCase().getLastPage();
+                    AllCases.addAll(body.getaCase().getData());
+                    casesTopAdapter.notifyDataSetChanged();
+                  //  AllCases=body.getCases();
+                   // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
                 }
             }
         });

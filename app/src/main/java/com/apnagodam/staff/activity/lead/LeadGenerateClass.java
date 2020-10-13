@@ -267,29 +267,29 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         if (requestCode == 2 && data != null) {
             AllLeadsResponse.Lead lead = (AllLeadsResponse.Lead) data.getSerializableExtra(Constants.LeadListData);
             isUpdate = true;
-            getLeadId = lead.getId();
+            getLeadId = lead.getData().get(0).getId();
             setLeadData(lead);
         }
     }
 
     private void setLeadData(AllLeadsResponse.Lead lead) {
-        binding.etCustomerName.setText(lead.getCustomerName());
-        binding.etCustomerNumber.setText(lead.getPhone());
-        binding.etCustomerQuantity.setText(lead.getQuantity());
-        binding.etCustomerLocation.setText(lead.getLocation());
+        binding.etCustomerName.setText(lead.getData().get(0).getCustomerName());
+        binding.etCustomerNumber.setText(lead.getData().get(0).getPhone());
+        binding.etCustomerQuantity.setText(lead.getData().get(0).getQuantity());
+        binding.etCustomerLocation.setText(lead.getData().get(0).getLocation());
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
         try {
-            Date date = simpleDateFormat.parse(lead.getCommodityDate());
+            Date date = simpleDateFormat.parse(lead.getData().get(0).getCommodityDate());
             binding.userCommitmentDate.setText(simpleDateFormat.format(date));
         } catch (ParseException pe) {
             Log.e("getValueException", pe.toString());
         }
 
-        binding.spinnerPurpose.setSelection(getIndex(binding.spinnerPurpose, lead.getPurpose()));
-        binding.spinnerCommudity.setSelection(getIndex(binding.spinnerCommudity, lead.getCateName()));
-        binding.spinnerTerminal.setSelection(getIndex(binding.spinnerTerminal, lead.getTerminalName() + "(" + lead.getWarehouseCode() + ")"));
+        binding.spinnerPurpose.setSelection(getIndex(binding.spinnerPurpose, lead.getData().get(0).getPurpose()));
+        binding.spinnerCommudity.setSelection(getIndex(binding.spinnerCommudity, lead.getData().get(0).getCateName()));
+        binding.spinnerTerminal.setSelection(getIndex(binding.spinnerTerminal, lead.getData().get(0).getTerminalName() + "(" + lead.getData().get(0).getWarehouseCode() + ")"));
 
     }
 

@@ -25,11 +25,11 @@ import java.util.List;
 
 public class TruckBookAdapter extends BaseRecyclerViewAdapter {
 
-    private List<AllTruckBookListResponse.TruckBookCollection> Leads;
+    private List<AllTruckBookListResponse.Datum> Leads;
     private Context context;
     private BaseActivity activity;
 
-    public TruckBookAdapter(List<AllTruckBookListResponse.TruckBookCollection> leads, TruckBookListingActivity
+    public TruckBookAdapter(List<AllTruckBookListResponse.Datum> leads, TruckBookListingActivity
             truckBookListingActivity, BaseActivity activity) {
         this.Leads = leads;
         this.context = truckBookListingActivity;
@@ -92,8 +92,8 @@ public class TruckBookAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_details));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                //setAllData(binding.tvPhone,binding.tvPhoneDone,position);
-                 for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+               setAllData(binding.tvPhone,binding.tvPhoneDone,position);
+             /*    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
                      if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
                          if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
                              if (Leads.get(position).getP_case_id()!=null){
@@ -111,7 +111,7 @@ public class TruckBookAdapter extends BaseRecyclerViewAdapter {
                              binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
                          }
                      }
-                 }
+                 }*/
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);

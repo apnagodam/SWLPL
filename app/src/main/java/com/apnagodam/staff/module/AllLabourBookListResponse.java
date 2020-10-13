@@ -7,43 +7,154 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class AllLabourBookListResponse extends BaseResponse {
-    @SerializedName("total_rows")
+    public CurrentPageCollection getLabour() {
+        return labour;
+    }
+
+    public void setLabour(CurrentPageCollection labour) {
+        this.labour = labour;
+    }
+
+    @SerializedName("data")
     @Expose
-    private Integer totalRows;
-    @SerializedName("total_no_pages")
-    @Expose
-    private Integer totalNoPages;
-
-    public Integer getTotalRows() {
-        return totalRows;
-    }
-
-    public void setTotalRows(Integer totalRows) {
-        this.totalRows = totalRows;
-    }
-
-    public Integer getTotalNoPages() {
-        return totalNoPages;
-    }
-
-    public void setTotalNoPages(Integer totalNoPages) {
-        this.totalNoPages = totalNoPages;
-    }
-
-
-    public List<CurrentPageCollection> getCurrentPageCollection() {
-        return currentPageCollection;
-    }
-
-    public void setCurrentPageCollection(List<CurrentPageCollection> currentPageCollection) {
-        this.currentPageCollection = currentPageCollection;
-    }
-
-    @SerializedName("currentPageCollection")
-    @Expose
-    private List<CurrentPageCollection> currentPageCollection = null;
-
+    private CurrentPageCollection labour;
     public class CurrentPageCollection {
+        @SerializedName("current_page")
+        @Expose
+        private Integer currentPage;
+        @SerializedName("data")
+        @Expose
+        private List<Datum> data = null;
+        @SerializedName("first_page_url")
+        @Expose
+        private String firstPageUrl;
+        @SerializedName("from")
+        @Expose
+        private Integer from;
+        @SerializedName("last_page")
+        @Expose
+        private Integer lastPage;
+        @SerializedName("last_page_url")
+        @Expose
+        private String lastPageUrl;
+        @SerializedName("next_page_url")
+        @Expose
+        private String nextPageUrl;
+        @SerializedName("path")
+        @Expose
+        private String path;
+        @SerializedName("per_page")
+        @Expose
+        private String perPage;
+        @SerializedName("prev_page_url")
+        @Expose
+        private String prevPageUrl;
+        @SerializedName("to")
+        @Expose
+        private Integer to;
+        @SerializedName("total")
+        @Expose
+        private Integer total;
+
+        public Integer getCurrentPage() {
+            return currentPage;
+        }
+
+        public void setCurrentPage(Integer currentPage) {
+            this.currentPage = currentPage;
+        }
+
+        public List<Datum> getData() {
+            return data;
+        }
+
+        public void setData(List<Datum> data) {
+            this.data = data;
+        }
+
+        public String getFirstPageUrl() {
+            return firstPageUrl;
+        }
+
+        public void setFirstPageUrl(String firstPageUrl) {
+            this.firstPageUrl = firstPageUrl;
+        }
+
+        public Integer getFrom() {
+            return from;
+        }
+
+        public void setFrom(Integer from) {
+            this.from = from;
+        }
+
+        public Integer getLastPage() {
+            return lastPage;
+        }
+
+        public void setLastPage(Integer lastPage) {
+            this.lastPage = lastPage;
+        }
+
+        public String getLastPageUrl() {
+            return lastPageUrl;
+        }
+
+        public void setLastPageUrl(String lastPageUrl) {
+            this.lastPageUrl = lastPageUrl;
+        }
+
+        public String getNextPageUrl() {
+            return nextPageUrl;
+        }
+
+        public void setNextPageUrl(String nextPageUrl) {
+            this.nextPageUrl = nextPageUrl;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getPerPage() {
+            return perPage;
+        }
+
+        public void setPerPage(String perPage) {
+            this.perPage = perPage;
+        }
+
+        public String getPrevPageUrl() {
+            return prevPageUrl;
+        }
+
+        public void setPrevPageUrl(String prevPageUrl) {
+            this.prevPageUrl = prevPageUrl;
+        }
+
+        public Integer getTo() {
+            return to;
+        }
+
+        public void setTo(Integer to) {
+            this.to = to;
+        }
+
+        public Integer getTotal() {
+            return total;
+        }
+
+        public void setTotal(Integer total) {
+            this.total = total;
+        }
+    }
+
+
+    public class Datum {
 
         @SerializedName("id")
         @Expose

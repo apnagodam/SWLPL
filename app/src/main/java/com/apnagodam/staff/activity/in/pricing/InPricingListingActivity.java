@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
@@ -23,16 +24,22 @@ import com.apnagodam.staff.Network.Request.ClosedCasesPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.caseid.CaseListingActivity;
+import com.apnagodam.staff.adapter.CasesTopAdapter;
 import com.apnagodam.staff.adapter.PricingAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
+import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllpricingResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class InPricingListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<AllpricingResponse.CaseGen> AllCases;
-
+    private PricingAdapter pricingAdapter;
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<AllpricingResponse.Datum> AllCases;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -40,15 +47,18 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.pricing_title));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.action));
         binding.tvPhone.setText(getResources().getString(R.string.set_pricing));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.VERTICAL));
+     /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(InPricingListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,18 +66,67 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getAllCases();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getAllCases();
+                }
+            }
+        });
+       /* binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                AllCases.clear();
+                getAllCases();
+            }
+        });*/
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivityAndClear(StaffDashBoardActivity.class);
+    }
+
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(InPricingListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        pricingAdapter = new PricingAdapter(AllCases, InPricingListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(pricingAdapter);
+
+    }
     private void getAllCases() {
-        apiService.getAllpricingList("25",1,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
+        showDialog();
+        apiService.getAllpricingList("25",pageOffset,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllpricingResponse body) {
-                if (body.getCases() == null || body.getCases().isEmpty()) {
+               // binding.swipeRefresherStock.setRefreshing(false);
+                if (body.getPricing() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
-                    AllCases = body.getCases();
-                    binding.rvDefaultersStatus.setAdapter(new PricingAdapter(body.getCases(), InPricingListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getPricing().getLastPage();
+                    AllCases.addAll(body.getPricing().getData());
+                    pricingAdapter.notifyDataSetChanged();
+
+                   // AllCases = body.getCases();
+                 ///   binding.rvDefaultersStatus.setAdapter(new PricingAdapter(body.getCases(), InPricingListingActivity.this));
                 }
             }
         });

@@ -21,18 +21,24 @@ import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.adapter.FirstQualityReportAdapter;
+import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter;
 import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.FirstQuilityReportListResponse;
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class FirstQualityReportListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<FirstQuilityReportListResponse.QuilityReport> AllCases;
+    private FirstQualityReportAdapter firstQualityReportAdapter;
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<FirstQuilityReportListResponse.Datum> AllCases;
     private String ReportsFile, CommudityImage;
 
     @Override
@@ -42,15 +48,18 @@ public class FirstQualityReportListingActivity extends BaseActivity<ActivityList
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.f_quality_repots));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
         binding.tvPhone.setText(getResources().getString(R.string.quality_repots));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
+     /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,18 +67,51 @@ public class FirstQualityReportListingActivity extends BaseActivity<ActivityList
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getAllCases();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getAllCases();
+                }
+            }
+        });
     }
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        firstQualityReportAdapter = new FirstQualityReportAdapter(AllCases, FirstQualityReportListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(firstQualityReportAdapter);
 
+    }
     private void getAllCases() {
-        apiService.getf_qualityReportsList("25","1","IN").enqueue(new NetworkCallback<FirstQuilityReportListResponse>(getActivity()) {
+        showDialog();
+        apiService.getf_qualityReportsList("25",""+pageOffset,"IN").enqueue(new NetworkCallback<FirstQuilityReportListResponse>(getActivity()) {
             @Override
             protected void onSuccess(FirstQuilityReportListResponse body) {
-                if (body.getData() == null || body.getData().isEmpty()) {
+                if (body.getQuilityReport() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
-                    AllCases = body.getData();
-                    binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getQuilityReport().getLastPage();
+                    AllCases.addAll(body.getQuilityReport().getData());
+                    firstQualityReportAdapter.notifyDataSetChanged();
+                   // AllCases = body.getData();
+                   // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
                 }
             }
         });

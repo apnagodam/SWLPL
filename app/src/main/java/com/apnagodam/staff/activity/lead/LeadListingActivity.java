@@ -17,20 +17,25 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
+import com.apnagodam.staff.adapter.LaabourBookAdapter;
 import com.apnagodam.staff.adapter.LeadsTopAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
+import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Utility;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
     private LeadsTopAdapter leadsTopAdapter;
-    private List<AllLeadsResponse.Lead> LeadListData;
-
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<AllLeadsResponse.Datum> AllCases;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -38,11 +43,14 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LeadListingActivity.this, LinearLayoutManager.VERTICAL));
+       /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LeadListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LeadListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding.TitleWaititngEdititng.setVisibility(View.VISIBLE);
 //        binding.layoutLoader.setVisibility(View.GONE);
         getLeadsListing();
@@ -52,19 +60,50 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getLeadsListing();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getLeadsListing();
+                }
+            }
+        });
     }
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LeadListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LeadListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        leadsTopAdapter = new LeadsTopAdapter(AllCases, LeadListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(leadsTopAdapter);
 
+    }
     private void getLeadsListing() {
-        apiService.getAllLeads().enqueue(new NetworkCallback<AllLeadsResponse>(getActivity()) {
+        apiService.getAllLeads("25", pageOffset,"IN").enqueue(new NetworkCallback<AllLeadsResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllLeadsResponse body) {
-                LeadListData = body.getLeads();
 
-                if (body.getLeads() == null || body.getLeads().isEmpty()) {
+                if (body.getLeads() == null) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
-                    binding.rvDefaultersStatus.setAdapter(new LeadsTopAdapter(body.getLeads(), LeadListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getLeads().getLastPage();
+                    AllCases.addAll(body.getLeads().getData());
+                    leadsTopAdapter.notifyDataSetChanged();
+                 //   binding.rvDefaultersStatus.setAdapter(new LeadsTopAdapter(body.getLeads(), LeadListingActivity.this));
                 }
             }
         });
@@ -93,17 +132,17 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
         TextView purpose_name = dialogView.findViewById(R.id.purpose_name);
         TextView commitemate_date = dialogView.findViewById(R.id.commitemate_date);
         TextView create_date = dialogView.findViewById(R.id.create_date);
-        lead_id.setText(""+LeadListData.get(position).getId());
-        genrated_by.setText(""+LeadListData.get(position).getFirstName()+" "+LeadListData.get(position).getLastName());
-        customer_name.setText(""+LeadListData.get(position).getCustomerName());
-        location_title.setText(""+LeadListData.get(position).getLocation());
-        phone_no.setText(""+LeadListData.get(position).getPhone());
-        commodity_name.setText(LeadListData.get(position).getCateName()+"("+LeadListData.get(position).getCommodityType()+")");
-        est_quantity_nmae.setText(""+LeadListData.get(position).getQuantity());
-        terminal_name.setText(""+LeadListData.get(position).getTerminalName());
-        purpose_name.setText(""+LeadListData.get(position).getPurpose());
-        commitemate_date.setText(Utility.timeFromdateTime(LeadListData.get(position).getCommodityDate()));
-        create_date.setText(""+LeadListData.get(position).getCreatedAt());
+        lead_id.setText(""+AllCases.get(position).getId());
+        genrated_by.setText(""+AllCases.get(position).getFirstName()+" "+AllCases.get(position).getLastName());
+        customer_name.setText(""+AllCases.get(position).getCustomerName());
+        location_title.setText(""+AllCases.get(position).getLocation());
+        phone_no.setText(""+AllCases.get(position).getPhone());
+        commodity_name.setText(AllCases.get(position).getCateName()+"("+AllCases.get(position).getCommodityType()+")");
+        est_quantity_nmae.setText(""+AllCases.get(position).getQuantity());
+        terminal_name.setText(""+AllCases.get(position).getTerminalName());
+        purpose_name.setText(""+AllCases.get(position).getPurpose());
+        commitemate_date.setText(Utility.timeFromdateTime(AllCases.get(position).getCommodityDate()));
+        create_date.setText(""+AllCases.get(position).getCreatedAt());
 
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,11 +152,22 @@ public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
         });
         alertDialog.show();
     }
-
-    public void editLead(AllLeadsResponse.Lead lead){
+   /* public void editLead(int postion) {
+        Intent intent=new Intent();
+        intent.putExtra(Constants.LeadListData,  AllCases.get(postion));
+        setResult(2,intent);
+        finish();//finishing activity
+    }*/
+    public void editLeads(AllLeadsResponse.Datum lead){
         Intent intent=new Intent();
         intent.putExtra(Constants.LeadListData, (Serializable) lead);
         setResult(2,intent);
         finish();//finishing activity
     }
+  /*  public void editLead(AllLeadsResponse.Lead lead){
+        Intent intent=new Intent();
+        intent.putExtra(Constants.LeadListData, (Serializable) lead);
+        setResult(2,intent);
+        finish();//finishing activity
+    }*/
 }

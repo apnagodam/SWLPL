@@ -19,13 +19,13 @@ import java.util.Collection;
 import java.util.List;
 
 public class CasesTopAdapter extends BaseRecyclerViewAdapter {
-    private List<AllCaseIDResponse.Case> Leads;
+    private List<AllCaseIDResponse.Datum> Leads;
     private Context context;
     private BaseActivity activity;
-    public CasesTopAdapter(List<AllCaseIDResponse.Case> leads, CaseListingActivity caseListingActivity) {
+    public CasesTopAdapter(List<AllCaseIDResponse.Datum> leads, CaseListingActivity caseListingActivity, BaseActivity activity) {
         this.Leads = leads;
         this.context = caseListingActivity;
-
+        this.activity = activity;
     }
 
     @Override
@@ -82,6 +82,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);
+            activity.hideDialog();
             binding.viewCase.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

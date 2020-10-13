@@ -27,13 +27,16 @@ import java.util.List;
 
 
 public class TruckBookListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<AllTruckBookListResponse.TruckBookCollection> AllCases;
-    private TruckBookAdapter truckBookAdapter;
 
+    private TruckBookAdapter truckBookAdapter;
     private int pageOffset = 1;
     private int totalPage = 0;
+    private List<AllTruckBookListResponse.Datum> AllCases;
     private Boolean isLastPage = false;
     private Boolean isLoading = false;
+
+
+
 
     @Override
     protected int getLayoutResId() {
@@ -42,7 +45,7 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
 
     @Override
     protected void setUp() {
-       // binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
         AllCases = new ArrayList();
         setAdapter();
         setSupportActionBar(binding.toolbar);
@@ -131,14 +134,16 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         apiService.getTruckBookList("15", pageOffset, "IN").enqueue(new NetworkCallbackWProgress<AllTruckBookListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllTruckBookListResponse body) {
-                totalPage = body.getTotalNoPages();
-                if (body.getTruckBookCollection() == null || body.getTruckBookCollection().isEmpty()) {
+
+                if (body.getTruckBookCollection() == null) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
-//                    binding.layoutLoader.setVisibility(View.GONE);
+                   binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
+                   // AllCases=body.getTruckBookCollection().getData();
                     AllCases.clear();
-                    AllCases.addAll(body.getTruckBookCollection());
+                    totalPage = body.getTruckBookCollection().getLastPage();
+                    AllCases.addAll(body.getTruckBookCollection().getData());
                     truckBookAdapter.notifyDataSetChanged();
 //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                 }
@@ -235,7 +240,7 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         genrated_by.setText("" + ((AllCases.get(position).getTransporter()) != null ? AllCases.get(position).getTransporter() : "N/A"));
         customer_name.setText("" + AllCases.get(position).getCustFname());
         location_title.setText("" + ((AllCases.get(position).getDriverName()) != null ? AllCases.get(position).getDriverName() : "N/A"));
-        phone_no.setText("" + ((AllCases.get(position).getVehicleNo()) != null ? AllCases.get(position).getVehicleNo() : "N/A"));
+        phone_no.setText("" + ((AllCases.get(position).getVehicle()) != null ? AllCases.get(position).getVehicle() : "N/A"));
         commodity_name.setText("" + ((AllCases.get(position).getDriverPhone()) != null ? AllCases.get(position).getDriverPhone() : "N/A"));
         est_quantity_nmae.setText("" + ((AllCases.get(position).getRatePerKm()) != null ? AllCases.get(position).getRatePerKm() : "N/A"));
         terminal_name.setText("" + ((AllCases.get(position).getMinWeight()) != null ? AllCases.get(position).getMinWeight() : "N/A"));

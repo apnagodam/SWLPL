@@ -3,10 +3,12 @@ package com.apnagodam.staff.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 
+import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
@@ -21,12 +23,13 @@ import java.util.Collection;
 import java.util.List;
 
 public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
-    private List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> Leads;
+    private List<SecoundkanthaParchiListResponse.Datum> Leads;
     private Context context;
-
-    public SecoundkanthaparchiAdapter(List<SecoundkanthaParchiListResponse.SecoundKataParchiDatum> leads, SecoundkanthaParchiListingActivity secoundkanthaParchiListingActivity) {
+    private BaseActivity activity;
+    public SecoundkanthaparchiAdapter(List<SecoundkanthaParchiListResponse.Datum> leads, SecoundkanthaParchiListingActivity secoundkanthaParchiListingActivity, BaseActivity activity) {
         this.Leads = leads;
         this.context = secoundkanthaParchiListingActivity;
+        this.activity = activity;
     }
 
     @Override
@@ -87,29 +90,13 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_kantha_parchi));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                            if (Leads.get(position).getF_q_case_id()!=null){
-                                binding.tvPhone.setVisibility(View.VISIBLE);
-                            }else {
-                                binding.tvPhone.setVisibility(View.GONE);
-                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                                binding.tvPhoneDone.setText("Processing...");
-                                binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
-                            }
-                        }else {
-                            binding.tvPhone.setVisibility(View.GONE);
-                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                            binding.tvPhoneDone.setText("In Process");
-                            binding.tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
-                        }
-                    }
-                }
+                setAllData(binding.tvPhone,binding.tvPhoneDone,position);
+
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);
+            activity.hideDialog();
             binding.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -128,5 +115,45 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             });
         }
     }
+    private void setAllData(TextView tvPhone, TextView tvPhoneDone, int position) {
+        new Thread() {
+            public void run() {
+                try {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                          /*  new Thread() {
+                                public void run() {*/
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                                        if (Leads.get(position).getF_q_case_id()!=null){
+                                            tvPhone.setVisibility(View.VISIBLE);
+                                        }else {
+                                            tvPhone.setVisibility(View.GONE);
+                                            tvPhoneDone.setVisibility(View.VISIBLE);
+                                            tvPhoneDone.setText("Processing...");
+                                            tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
+                                        }
+                                    }else {
+                                        tvPhone.setVisibility(View.GONE);
+                                        tvPhoneDone.setVisibility(View.VISIBLE);
+                                        tvPhoneDone.setText("In Process");
+                                        tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
+                                    }
+                                }
+                            }
 
+                            /*    }
+                            }.start();*/
+                        }
+                    });
+                    Thread.sleep(30);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+    }
 }

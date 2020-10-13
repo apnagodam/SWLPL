@@ -18,19 +18,25 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.adapter.LaabourBookAdapter;
+import com.apnagodam.staff.adapter.PricingAdapter;
 import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
+import com.apnagodam.staff.module.AllpricingResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class LabourBookListingActivity extends BaseActivity<ActivityListingBinding> {
-    private List<AllLabourBookListResponse.CurrentPageCollection> AllCases;
-
+    private LaabourBookAdapter laabourBookAdapter;
+    private int pageOffset = 1;
+    private int totalPage = 0;
+    private List<AllLabourBookListResponse.Datum> AllCases;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -38,15 +44,18 @@ public class LabourBookListingActivity extends BaseActivity<ActivityListingBindi
 
     @Override
     protected void setUp() {
+        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+        AllCases = new ArrayList();
+        setAdapter();
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.labour_book));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
         binding.tvPhone.setText(getResources().getString(R.string.labour_book));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL));
+      /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         getAllCases();
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,18 +63,52 @@ public class LabourBookListingActivity extends BaseActivity<ActivityListingBindi
                 startActivityAndClear(StaffDashBoardActivity.class);
             }
         });
+        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pageOffset != 1) {
+                    pageOffset--;
+                    getAllCases();
+                }
+            }
+        });
+        binding.tvNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (totalPage != pageOffset) {
+                    pageOffset++;
+                    getAllCases();
+                }
+            }
+        });
     }
+    private void setAdapter() {
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.setHasFixedSize(true);
+        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
+        laabourBookAdapter = new LaabourBookAdapter(AllCases, LabourBookListingActivity.this,getActivity());
+        binding.rvDefaultersStatus.setAdapter(laabourBookAdapter);
 
+    }
     private void getAllCases() {
-        apiService.getLabourBookList("25", "1","IN").enqueue(new NetworkCallback<AllLabourBookListResponse>(getActivity()) {
+        showDialog();
+        apiService.getLabourBookList("25", ""+pageOffset,"IN").enqueue(new NetworkCallback<AllLabourBookListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllLabourBookListResponse body) {
-                if (body.getCurrentPageCollection() == null || body.getCurrentPageCollection().isEmpty()) {
+                if (body.getLabour() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
-                    AllCases = body.getCurrentPageCollection();
-                    binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
+                    AllCases.clear();
+                    totalPage = body.getLabour().getLastPage();
+                    AllCases.addAll(body.getLabour().getData());
+                    laabourBookAdapter.notifyDataSetChanged();
+
+                   // AllCases = body.getCurrentPageCollection();
+                   // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
                 }
             }
         });

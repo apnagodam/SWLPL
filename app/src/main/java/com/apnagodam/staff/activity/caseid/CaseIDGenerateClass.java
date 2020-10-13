@@ -31,6 +31,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     ArrayAdapter<String> SpinnerCommudityAdapter, spinnerTeerminalAdpter, SpinnerUserListAdapter, spinnerEmployeeAdpter;
     String commudityID = null, TerminalID = null, selectPurpose = null,
             selectInOUt = null, seleectCoustomer = null, selectConvertOther = null;
+    String UserID;
     // droup down
     List<String> CommudityName;
     List<String> CommudityID;
@@ -66,7 +67,11 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         TerminalName.add(getResources().getString(R.string.terminal_name1));
         CustomerName.add(getResources().getString(R.string.select_coustomer));
         LeadGenerateOtherName.add(getResources().getString(R.string.select_employee));
-        setValueOnSpinner();
+        try {
+            setValueOnSpinner();
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
         binding.etCustomerWeight.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -142,13 +147,13 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // selected item in the list
                 if (position != 0) {
-                    String UserID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
-                        if (UserID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname())) {
-                            seleectCoustomer = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getPhone());
-                        }
+                    try {
+                        UserID = parentView.getItemAtPosition(position).toString();
+                    }catch (Exception e){
+                        e.getStackTrace();
                     }
                 }
+               // SpinnerUserListAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -403,33 +408,39 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 Utility.showDecisionDialog(CaseIDGenerateClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
                     @Override
                     public void callback() {
-                if (isValid()) {
-                    if (commudityID == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
-                    } else if (TerminalID == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
-                    } else if (selectInOUt == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_in_out), Toast.LENGTH_LONG).show();
-                    } else if (selectPurpose == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
-                    } /*else if (selectConvertOther == null) {
+                        if (isValid()) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
+                                if (UserID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname())) {
+                                    seleectCoustomer = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getPhone());
+                                }
+                            }
+                            if (commudityID == null) {
+                                Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.commudity_name), Toast.LENGTH_LONG).show();
+                            } else if (TerminalID == null) {
+                                Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
+                            } else if (selectInOUt == null) {
+                                Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_in_out), Toast.LENGTH_LONG).show();
+                            } else if (selectPurpose == null) {
+                                Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
+                            } /*else if (selectConvertOther == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_employee), Toast.LENGTH_LONG).show();
                     }*/ else if (seleectCoustomer == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
-                    } else {
-                        UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
-                        apiService.doCreateCaseID(new CreateCaseIDPostData(
-                                stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), stringFromView(binding.etCustomerLocation),
-                                seleectCoustomer, commudityID, TerminalID, stringFromView(binding.etCustomerVehicle),
-                                selectPurpose, stringFromView(binding.etCustomerFpo))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-                            @Override
-                            protected void onSuccess(LoginResponse body) {
-                                Toast.makeText(CaseIDGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                startActivity(StaffDashBoardActivity.class);
+                                Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
+                            } else {
+
+                                UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
+                                apiService.doCreateCaseID(new CreateCaseIDPostData(
+                                        stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), stringFromView(binding.etCustomerLocation),
+                                        seleectCoustomer, commudityID, TerminalID, stringFromView(binding.etCustomerVehicle),
+                                        selectPurpose, stringFromView(binding.etCustomerFpo))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                    @Override
+                                    protected void onSuccess(LoginResponse body) {
+                                        Toast.makeText(CaseIDGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                                        startActivity(StaffDashBoardActivity.class);
+                                    }
+                                });
                             }
-                        });
-                    }
-                }
+                        }
                     }
                 });
                 break;
@@ -441,7 +452,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             return Utility.showEditTextError(binding.tilCustomerWeight, R.string.weight_kg);
         } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerGatepass))) {
             return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
-        }else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
+        } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
             return Utility.showEditTextError(binding.tilCustomerLocation, R.string.location);
         }
        /* else if (TextUtils.isEmpty(stringFromView(binding.etCustomerVehicle))) {
