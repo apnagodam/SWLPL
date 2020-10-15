@@ -1,6 +1,9 @@
 package com.apnagodam.staff.activity.caseid;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
 import android.text.Editable;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,8 +45,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     ArrayAdapter<String> SpinnerCommudityAdapter, spinnerTeerminalAdpter, SpinnerUserListAdapter, spinnerEmployeeAdpter;
     String commudityID = null, TerminalID = null, selectPurpose = null,
             selectInOUt = null, seleectCoustomer = null, selectConvertOther = null;
+
     String UserID;
-    // droup down
     List<String> CommudityName;
     List<String> CommudityID;
     List<String> TerminalName;
@@ -60,6 +64,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 
     @Override
     protected void setUp() {
+
         binding.etCustomerGatepass.setEnabled(false);
         binding.etCustomerGatepass.setFocusable(false);
         binding.etCustomerGatepass.setClickable(false);
@@ -350,37 +355,27 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 
     }
     private void showCustomerNamePopup(List<String> getList) {
+
         try {
-            dialogMyBooking = new Dialog(this);
-            dialogMyBooking.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialogMyBooking.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
-            dialogMyBooking.getWindow().setLayout(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            dialogMyBooking.setCanceledOnTouchOutside(false);
-            dialogMyBooking.setContentView(R.layout.customer_list_popup);
-            RecyclerView recyclerViewCustomerPopup = dialogMyBooking.findViewById(R.id.recyclerViewCustomerPopup);
-            ImageView closeImg = dialogMyBooking.findViewById(R.id.closeImg);
-            LinearLayoutManager layoutManager =new LinearLayoutManager(this);
+            Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            dialog.setContentView(R.layout.customer_list_popup);
+            dialog.setCanceledOnTouchOutside(false);
+
+            RecyclerView recyclerViewCustomerPopup = dialog.findViewById(R.id.recyclerViewCustomerPopup);
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
             recyclerViewCustomerPopup.setLayoutManager(layoutManager);
 
             recyclerViewCustomerPopup.setHasFixedSize(true);
-            ViewCompat.setNestedScrollingEnabled(recyclerViewCustomerPopup, false);
+            recyclerViewCustomerPopup.setNestedScrollingEnabled(false);
             CustomerNameAdapter customerNameAdapter =new CustomerNameAdapter(getList, this);
             recyclerViewCustomerPopup.setAdapter(customerNameAdapter);
-            closeImg.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dialogMyBooking.dismiss();
-                }
-            });
-            dialogMyBooking.show();
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     private void setAllData() {

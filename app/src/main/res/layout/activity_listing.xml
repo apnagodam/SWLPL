@@ -60,8 +60,6 @@
                         android:textStyle="bold"
                         android:visibility="gone" />
                 </LinearLayout>
-
-
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -149,17 +147,17 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        <!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/swipeRefresherStock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">-->
+            <!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/swipeRefresherStock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">-->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_defaulters_status"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/page_next_privious"
                 android:visibility="visible" />
-          <!--  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+            <!--  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
             <TextView
                 android:id="@+id/txtempty_msg"
                 android:layout_width="match_parent"
