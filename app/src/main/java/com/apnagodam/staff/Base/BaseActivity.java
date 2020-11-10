@@ -339,13 +339,13 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuIte13);
         return menuItems;
     }*/
- public ArrayList<MenuItem> getMenuList() {
+/* public ArrayList<MenuItem> getMenuList() {
      ArrayList<MenuItem> menuItems = new ArrayList<>();
      menuItems.add(new MenuItem("", 0));
      MenuItem menuItem1 = new MenuItem(getResources().getString(R.string.home), R.drawable.ic_home_solid);
      menuItems.add(menuItem1);
-      /*  MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24);
-        menuItems.add(menuItem2);*/
+      *//*  MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24);
+        menuItems.add(menuItem2);*//*
      MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_group_add_24);
      menuItems.add(menuItem2);
      MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.lead_generate), R.drawable.ic_baseline_settings_24);
@@ -372,7 +372,43 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
      MenuItem menuIte13 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
      menuItems.add(menuIte13);
      return menuItems;
- }
+ }*/
+    public ArrayList<MenuItem> getMenuList() {
+        ArrayList<MenuItem> menuItems = new ArrayList<>();
+        menuItems.add(new MenuItem("", 0));
+        MenuItem menuItem1 = new MenuItem(getResources().getString(R.string.home), R.drawable.ic_home_solid);
+        menuItems.add(menuItem1);
+        MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24);
+        menuItems.add(menuItem2);
+        MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_group_add_24);
+        menuItems.add(menuItem3);
+       /* MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.lead_generate), R.drawable.ic_baseline_settings_24);
+        menuItems.add(menuItem3);
+        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.create_case), R.drawable.ic_baseline_settings_24);
+        menuItems.add(menuItem4);
+
+        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.pricing_title), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem5);
+        MenuItem menuItem6 = new MenuItem(getResources().getString(R.string.truck_book), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem6);
+        MenuItem menuItem7 = new MenuItem(getResources().getString(R.string.labour_book), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem7);
+        MenuItem menuItem8 = new MenuItem(getResources().getString(R.string.firstkanta_parchi), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem8);
+        MenuItem menuItem9 = new MenuItem(getResources().getString(R.string.f_quality_repots), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem9);
+        MenuItem menuItem10 = new MenuItem(getResources().getString(R.string.secoundkanta_parchi), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem10);
+        MenuItem menuItem11 = new MenuItem(getResources().getString(R.string.s_quality_repots), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem11);
+        MenuItem menuItem12 = new MenuItem(getResources().getString(R.string.gate_passs), R.drawable.ic_baseline_notifications_24);
+        menuItems.add(menuItem12);*/
+        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
+        menuItems.add(menuItem4);
+        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
+        menuItems.add(menuItem5);
+        return menuItems;
+    }
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(LocaleHelper.onAttach(newBase)));

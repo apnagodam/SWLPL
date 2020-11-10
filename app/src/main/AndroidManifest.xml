@@ -98,6 +98,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.in.gatepass.UploadGatePassClass"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.SpotDealTrackListActivity" />
+        <activity android:name=".activity.ContractFormBillPrintClass" />
 
         <receiver
             android:name=".reciever.SMSReceiver"

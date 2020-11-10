@@ -35,6 +35,7 @@ import com.apnagodam.staff.module.GetPassID;
 import com.apnagodam.staff.module.InventoryRespionse;
 import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
+import com.apnagodam.staff.module.SpotSellDealTrackPojo;
 import com.apnagodam.staff.module.TerminalResponse;
 import com.apnagodam.staff.module.VehcilePricingCheeck;
 
@@ -158,6 +159,11 @@ public interface ApiService {
 
     @POST("emp_api/apna_emp_gatepass")
     Call<LoginResponse> uploadGatePass(@Body UploadGatePassPostData uploadGatePassPostData);
-}
+
+    // contract form Data spot sell
+    // deal track on spot sell
+    @GET("emp_api/apna_emp_get_spot_deals")
+    Call<SpotSellDealTrackPojo> getSpotSellDealTrackList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
+  }
 
 

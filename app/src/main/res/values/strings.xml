@@ -208,7 +208,7 @@
     <string name="min_weight_val">Enter Min Weight (Qtl.) *</string>
     <string name="max_weight_val">Enter Max Weight (Qtl.) *</string>
     <string name="turnaround_time_val">Enter Turnaround Time(In Hours) *</string>
-    <string name="total_weight_val">EnterTotal Weight(Qtl.) *</string>
+    <string name="total_weight_val">Enter Total Weight(Qtl.) *</string>
     <string name="bags_val">Enter No of Bags *</string>
     <string name="total_trans_cost_val">Enter Total Transport. Cost(INR) *</string>
     <string name="advance_patyment_val">Enter Advance Payment(INR) *</string>
@@ -278,4 +278,15 @@
     <string name="upload_gatepass_file">Upload Gate Pass File</string>
     <string name="previous">Previous </string>
     <string name="next">Next</string>
+
+    // spot sell contract form page
+    <string name="spot_sell">Spot Deal</string>
+    <string name="contract_form">Contract Form</string>
+    <string name="view">View</string>
+    <string name="net_Weight">Net Weight(Qtl.)</string>
+    <string name="serach_key">Search</string>
+    <string name="total_weight_qtl">Price (Rs/Qtl.)</string>
+    <string name="creadte_date">Create Date</string>
+    <string name="buyer_seller">Buyer/Seller</string>
+    <string name="type">Type</string>
 </resources>

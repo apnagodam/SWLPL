@@ -32,12 +32,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
     private int pageOffset = 1;
     private int totalPage = 0;
     private List<AllTruckBookListResponse.Datum> AllCases;
-    private Boolean isLastPage = false;
-    private Boolean isLoading = false;
-
-
-
-
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;

@@ -394,12 +394,74 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     public void onDrawerStateChanged(int newState) {
 
     }
-
     @Override
     public void onItemClick(View view, int position) {
         binding.drawerLayout.postDelayed(() -> {
             toggleDrawer();
-         /*   if (position == 0) {
+            switch (position) {
+                case 0:
+                    break;
+                case 1:
+                    startActivityAndClear(StaffDashBoardActivity.class);
+                    break;
+                case 2:
+                //    startActivity(LanguageActivity.class);
+                    String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
+                    String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, sharedUrl);
+                    sendIntent.setType("text/plain");
+                    Intent.createChooser(sendIntent, "Share via");
+                    startActivity(sendIntent);
+                    Log.e("refer url :", "" + sharedUrl);
+                    break;
+                case 3:
+                    startActivity(LanguageActivity.class);
+                    break;
+             /*   case 4:
+                    startActivity(CaseIDGenerateClass.class);
+                    break;
+                case 5:
+                    startActivity(InPricingListingActivity.class);
+                    break;
+                case 6:
+                    startActivity(TruckBookListingActivity.class);
+                    break;
+                case 7:
+                    startActivity(LabourBookListingActivity.class);
+                    break;
+                case 8:
+                    startActivity(FirstkanthaParchiListingActivity.class);
+                    break;
+                case 9:
+                    startActivity(FirstQualityReportListingActivity.class);
+                    break;
+                case 10:
+                    startActivity(SecoundkanthaParchiListingActivity.class);
+                    break;
+                case 11:
+                    startActivity(SecoundQualityReportListingActivity.class);
+                    break;
+                case 12:
+                    startActivity(GatePassListingActivity.class);
+                    break;
+*/
+                case 4:
+                    startActivity(SpotDealTrackListActivity.class);
+                    break;
+                case 5:
+                    //call logout api
+                    logout((getResources().getString(R.string.logout_alert)), "Logout");
+                    break;
+            }
+        }, 100);
+    }
+   /* @Override
+    public void onItemClick(View view, int position) {
+        binding.drawerLayout.postDelayed(() -> {
+            toggleDrawer();
+         *//*   if (position == 0) {
             }
             if (position == 1) {
                 startActivityAndClear(StaffDashBoardActivity.class);
@@ -493,7 +555,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             }
             if (position == 13) {
                 logout((getResources().getString(R.string.logout_alert)), "Logout");
-            }*/
+            }*//*
             switch (position) {
                 case 0:
                     break;
@@ -502,7 +564,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     break;
                 case 2:
                     startActivity(LanguageActivity.class);
-                  /*  String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
+                  *//*  String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
                     String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
@@ -510,7 +572,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     sendIntent.setType("text/plain");
                     Intent.createChooser(sendIntent, "Share via");
                     startActivity(sendIntent);
-                    Log.e("refer url :", "" + sharedUrl);*/
+                    Log.e("refer url :", "" + sharedUrl);*//*
                     break;
                     case 3:
                         startActivity(LeadGenerateClass.class);
@@ -549,7 +611,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     break;
             }
         }, 100);
-    }
+    }*/
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
