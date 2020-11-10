@@ -1,15 +1,28 @@
 package com.apnagodam.staff.activity.caseid;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
@@ -18,6 +31,7 @@ import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass;
+import com.apnagodam.staff.adapter.CustomerNameAdapter;
 import com.apnagodam.staff.databinding.ActivityCaseIdBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.GetPassID;
@@ -31,8 +45,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     ArrayAdapter<String> SpinnerCommudityAdapter, spinnerTeerminalAdpter, SpinnerUserListAdapter, spinnerEmployeeAdpter;
     String commudityID = null, TerminalID = null, selectPurpose = null,
             selectInOUt = null, seleectCoustomer = null, selectConvertOther = null;
+
     String UserID;
-    // droup down
     List<String> CommudityName;
     List<String> CommudityID;
     List<String> TerminalName;
@@ -41,6 +55,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     List<String> CustomerID;
     List<String> LeadGenerateOtherName;
     List<String> LeadGenerateOtheID;
+    private Dialog dialogMyBooking;
 
     @Override
     protected int getLayoutResId() {
@@ -49,6 +64,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 
     @Override
     protected void setUp() {
+
         binding.etCustomerGatepass.setEnabled(false);
         binding.etCustomerGatepass.setFocusable(false);
         binding.etCustomerGatepass.setClickable(false);
@@ -121,46 +137,48 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 //        });
 
         // UserList listing
-        SpinnerUserListAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CustomerName) {
-            //By using this method we will define how
-            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
 
-            //By using this method we will define
-            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        SpinnerUserListAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        // Set Adapter in the spinner
-        binding.spinnerUserName.setAdapter(SpinnerUserListAdapter);
-        binding.spinnerUserName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // selected item in the list
-                if (position != 0) {
-                    try {
-                        UserID = parentView.getItemAtPosition(position).toString();
-                    }catch (Exception e){
-                        e.getStackTrace();
-                    }
-                }
-               // SpinnerUserListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
+//        SpinnerUserListAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CustomerName) {
+//            //By using this method we will define how
+//            // the text appears before clicking a spinner
+//            public View getView(int position, View convertView, ViewGroup parent) {
+//                View v = super.getView(position, convertView, parent);
+//                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+//                return v;
+//            }
+//
+//            //By using this method we will define
+//            //how the listview appears after clicking a spinner
+//            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+//                View v = super.getDropDownView(position, convertView, parent);
+//                v.setBackgroundColor(Color.parseColor("#05000000"));
+//                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+//                return v;
+//            }
+//        };
+//
+//        SpinnerUserListAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+//        // Set Adapter in the spinner
+//        binding.spinnerUserName.setAdapter(SpinnerUserListAdapter);
+//        binding.spinnerUserName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+//                // selected item in the list
+//                if (position != 0) {
+//                    try {
+//                        UserID = parentView.getItemAtPosition(position).toString();
+//                    } catch (Exception e) {
+//                        e.getStackTrace();
+//                    }
+//                }
+//                // SpinnerUserListAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parentView) {
+//                // your code here
+//            }
+//        });
 
         // Employee listing
         spinnerEmployeeAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, LeadGenerateOtherName) {
@@ -328,6 +346,36 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             }
         });
 
+        binding.spinnerUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showCustomerNamePopup(CustomerName);
+            }
+        });
+
+    }
+    private void showCustomerNamePopup(List<String> getList) {
+
+        try {
+            Dialog dialog = new Dialog(this);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().getDecorView().setBackgroundResource(android.R.color.transparent);
+            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            dialog.setContentView(R.layout.customer_list_popup);
+            dialog.setCanceledOnTouchOutside(false);
+
+            RecyclerView recyclerViewCustomerPopup = dialog.findViewById(R.id.recyclerViewCustomerPopup);
+            final LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+            recyclerViewCustomerPopup.setLayoutManager(layoutManager);
+
+            recyclerViewCustomerPopup.setHasFixedSize(true);
+            recyclerViewCustomerPopup.setNestedScrollingEnabled(false);
+            CustomerNameAdapter customerNameAdapter =new CustomerNameAdapter(getList, this);
+            recyclerViewCustomerPopup.setAdapter(customerNameAdapter);
+            dialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setAllData() {

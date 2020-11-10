@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/root"
@@ -59,8 +58,6 @@
                         android:textStyle="bold"
                         android:visibility="visible" />
                 </LinearLayout>
-
-
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -68,6 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/_10ssp"
+            android:scrollbars="none"
             android:orientation="vertical">
 
             <LinearLayout
@@ -83,9 +81,9 @@
                     android:background="@drawable/white_back_black_border"
                     android:entries="@array/array_pupose"
                     android:gravity="right"
-                    android:visibility="gone"
                     android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown" />
+                    android:spinnerMode="dropdown"
+                    android:visibility="gone" />
 
                 <Spinner
                     android:id="@+id/spinner_in_out"
@@ -179,29 +177,59 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-                <Spinner
+<!--                <Spinner-->
+<!--                    android:id="@+id/spinner_userName"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:background="@android:color/transparent"-->
+<!--                    android:entries="@array/array_pupose"-->
+<!--                    android:gravity="right"-->
+<!--                    android:padding="@dimen/_10sdp"-->
+<!--                    android:spinnerMode="dropdown" />-->
+                <TextView
                     android:id="@+id/spinner_userName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown" />
-                <Spinner
-                    android:id="@+id/spinner_commudity"
+                    android:text="@string/select_coustomer"
+                    android:padding="@dimen/_10sdp"/>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_commudity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
 
                 <Spinner
                     android:id="@+id/spinner_terminal"
@@ -222,7 +250,6 @@
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:hint="@string/gate_pass"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

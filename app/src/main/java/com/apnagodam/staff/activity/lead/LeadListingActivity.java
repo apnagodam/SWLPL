@@ -2,40 +2,35 @@ package com.apnagodam.staff.activity.lead;
 
 import android.content.Intent;
 import android.graphics.Rect;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
-import com.apnagodam.staff.adapter.LaabourBookAdapter;
 import com.apnagodam.staff.adapter.LeadsTopAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.module.AllLabourBookListResponse;
 import com.apnagodam.staff.module.AllLeadsResponse;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Utility;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class LeadListingActivity extends BaseActivity<ActivityListingBinding> {
+
     private LeadsTopAdapter leadsTopAdapter;
     private int pageOffset = 1;
     private int totalPage = 0;
     private List<AllLeadsResponse.Datum> AllCases;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
