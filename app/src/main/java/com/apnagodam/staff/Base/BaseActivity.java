@@ -373,7 +373,9 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
      menuItems.add(menuIte13);
      return menuItems;
  }*/
+
     public ArrayList<MenuItem> getMenuList() {
+
         ArrayList<MenuItem> menuItems = new ArrayList<>();
         menuItems.add(new MenuItem("", 0));
         MenuItem menuItem1 = new MenuItem(getResources().getString(R.string.home), R.drawable.ic_home_solid);
@@ -403,10 +405,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem11);
         MenuItem menuItem12 = new MenuItem(getResources().getString(R.string.gate_passs), R.drawable.ic_baseline_notifications_24);
         menuItems.add(menuItem12);*/
-        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
+      /*  MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
+        menuItems.add(menuItem4);*/
+        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
         menuItems.add(menuItem4);
-        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
-        menuItems.add(menuItem5);
         return menuItems;
     }
     @Override

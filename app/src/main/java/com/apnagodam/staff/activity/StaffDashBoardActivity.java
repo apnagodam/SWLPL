@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
@@ -47,8 +48,12 @@ import com.apnagodam.staff.interfaces.OnProfileClickListener;
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.DashBoardData;
 import com.apnagodam.staff.module.UserDetails;
+import com.apnagodam.staff.utils.LocationUtils;
 import com.apnagodam.staff.utils.RecyclerItemClickListener;
 import com.apnagodam.staff.utils.Utility;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -62,19 +67,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> implements View.OnClickListener, OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener, AdapterView.OnItemSelectedListener,
-        DrawerLayout.DrawerListener {
+        DrawerLayout.DrawerListener , GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     private ActionBarDrawerToggle toggle;
     private Toolbar toolbar;
     boolean doubleBackToExitPressedOnce = false;
-    private static final int REQUEST_CODE = 101;
     // for location
     private static final int REQUEST_LOCATION = 1;
     LocationManager locationManager;
-    String latitude, longitude;
+    private String latitude, longitude;
     boolean OnOfffAttendance;
     String attendanceINOUTStatus = "2";
     public File fileSelfie;
     UserDetails userDetails;
+
+
+    // for location
+    private LocationUtils locationUtils;
+   private int REQUEST_CODE = 1000;
+    GoogleApiClient mGoogleApiClient;
 
     @Override
     protected int getLayoutResId() {
@@ -126,6 +137,21 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         binding.clockInOut.setOnClickListener(v -> callServer());
     //    getAttendanceStatus();
         getdashboardData();
+        locationUtils = new LocationUtils(getActivity(), 1000, 2000, (location, address) -> {
+            //   showToast(location.getLatitude() + " : " + location.getLongitude());
+            Log.d("location", "" + location.getLatitude() + "," + "" + location.getLongitude());
+            latitude = "" + location.getLatitude();
+            longitude = "" + location.getLongitude();
+            LocationUtils.LocationAddress locationAddress = new LocationUtils.LocationAddress();
+            String geolocation = String.valueOf(locationAddress.getAddressFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), StaffDashBoardActivity.this));
+            Log.e("geolocationLogin", " " + geolocation);
+        }, REQUEST_CODE);
+        //set google api client for hint request
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
     }
 
     private void getAllPermission() {
@@ -228,7 +254,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             attendanceINOUTStatus = "1";
             binding.cardAttandance.setVisibility(View.VISIBLE);
             binding.WelcomeMsg.setVisibility(View.GONE);
-            locationget();
+          //  locationget();
           /*  binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
             OnOfffAttendance = true;*/
         } else {
@@ -236,7 +262,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             binding.WelcomeMsg.setVisibility(View.GONE);
             binding.clockIn.setText(getResources().getString(R.string.clock_out));
             binding.clockInOut.setText(getResources().getString(R.string.clock_out));
-            locationget();
+          //  locationget();
             attendanceINOUTStatus = "2";
            /* binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
             OnOfffAttendance = false;*/
@@ -447,10 +473,10 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(GatePassListingActivity.class);
                     break;
 */
-                case 4:
+              /*  case 4:
                     startActivity(SpotDealTrackListActivity.class);
-                    break;
-                case 5:
+                    break;*/
+                case 4:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;
@@ -636,6 +662,9 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             if (resultCode == UCrop.RESULT_ERROR) {
                 handleCropError(data);
             }
+            if (requestCode == REQUEST_CODE) {
+                locationUtils.startLocationUpdates();
+            }
         } catch (Exception e) {
         }
     }
@@ -644,5 +673,20 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     public void onProfileImgClick() {
         Intent intent = new Intent(this, StaffProfileActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }

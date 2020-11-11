@@ -190,10 +190,10 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
     public void onOTPReceived(String otp) {
       //  Toast.makeText(this, "Otp Received " + otp, Toast.LENGTH_LONG).show();
         binding.etOtpNumber.setText(otp);
-        if (isValid()) {
+        /*if (isValid()) {
             /// apply otp varifed api here
             varifedOTP();
-        }
+        }*/
         if (smsReceiver != null) {
             unregisterReceiver(smsReceiver);
             smsReceiver = null;

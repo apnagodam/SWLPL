@@ -157,6 +157,7 @@ public class SpotSellDealTrackPojo extends BaseResponse  implements Serializable
     }
 
     public class Datum  implements Serializable{
+
         public String getBuyer_phone() {
             return buyer_phone;
         }
@@ -181,6 +182,17 @@ public class SpotSellDealTrackPojo extends BaseResponse  implements Serializable
             this.buyer_pancard_no = buyer_pancard_no;
         }
 
+        public String getBorker_charge() {
+            return borker_charge;
+        }
+
+        public void setBorker_charge(String borker_charge) {
+            this.borker_charge = borker_charge;
+        }
+
+        @SerializedName("borker_charge")
+        @Expose
+        private String borker_charge;
         @SerializedName("buyer_phone")
         @Expose
         private String buyer_phone;

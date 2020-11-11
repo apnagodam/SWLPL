@@ -126,8 +126,8 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         String roundedNumberFinalPrice = ""+ Utility.round(AG_commission, 2);
 
            return printer.setTextToPrint(
-                  /* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*/
-                           "[L]\n" +
+              /*    *//* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*//*
+                           "[L]\n" +*/
                            "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.bill_company_logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
                            "[L]\n" +
                            "[L]<b>Bid Date</b>[R]<font size='small'>" +  order.getUpdatedAt() + "</font>\n" +

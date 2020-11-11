@@ -52,7 +52,7 @@
             android:background="@drawable/white_back_black_border"
             android:drawableEnd="@drawable/ic_search_icon"
             android:drawablePadding="@dimen/_10sdp"
-            android:hint="@string/search"
+            android:hint="@string/search_hint"
             android:padding="@dimen/_3sdp" />
 
         <androidx.recyclerview.widget.RecyclerView
