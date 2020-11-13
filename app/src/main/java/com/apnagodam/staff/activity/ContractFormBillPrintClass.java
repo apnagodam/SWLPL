@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,7 @@ import com.apnagodam.staff.utils.Utility;
 import com.dantsu.escposprinter.connection.DeviceConnection;
 import com.dantsu.escposprinter.connection.usb.UsbConnection;
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -70,7 +72,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
 
     @Override
     protected void setUp() {
-       // bookingID = intent.getExtras().getString("bookingid");
+        // bookingID = intent.getExtras().getString("bookingid");
         order = (SpotSellDealTrackPojo.Datum) getIntent().getSerializableExtra("serialzable");
         printBluetooth();
     }
@@ -121,19 +123,19 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 48f, 32);
         String buyerPhone = order.getBuyer_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
         String sellerPhone = order.getSeller_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-        Double totalAmount =Double.parseDouble(order.getQuantity())*Double.parseDouble(order.getPrice());
-        double AG_commission =(1*(totalAmount))/100;
-        String roundedNumberFinalPrice = ""+ Utility.round(AG_commission, 2);
-
-           return printer.setTextToPrint(
-              /*    *//* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*//*
-                           "[L]\n" +*/
+        Double totalAmount = Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice());
+        double AG_commission = (1 * (totalAmount)) / 100;
+        String roundedNumberFinalPrice = "" + Utility.round(AG_commission, 2);
+        // old Printer data
+        /* return printer.setTextToPrint(
+         *//*    *//**//* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*//**//*
+                           "[L]\n" +*//*
                            "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.bill_company_logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
                            "[L]\n" +
                            "[L]<b>Bid Date</b>[R]<font size='small'>" +  order.getUpdatedAt() + "</font>\n" +
-                           /* "[C]<u><font size='big'>CIN :"+userDetails.getAadhar_no()+"</font></u>\n" +*/
+                           *//* "[C]<u><font size='big'>CIN :"+userDetails.getAadhar_no()+"</font></u>\n" +*//*
                            "[L]<b>CIN :U63030RJ2016PTC055509</font></b>\n" +
-                           /*  "[L]<b>CIN:-</b>[R]<u>U12345678565PT</u>\n" +*/
+                           *//*  "[L]<b>CIN:-</b>[R]<u>U12345678565PT</u>\n" +*//*
                            "[C]--------------------------------\n" +
                            "[L]<b>Contract Note No:-</b>[R]" + order.getContractId() + "\n" +
                            "[C]--------------------------------\n" +
@@ -147,7 +149,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                            "[L]<b>Commodity:-</b>[R]" + order.getCategory() + "\n" +
                            "[L]<b>Net.Weight:-</b>[R]" + order.getQuantity() + " Qtl\n" +
                            "[L]<b>Terminal:-</b>[R]" + order.getLocation() + "  \n" +
-                          /* "[L]<b>Bags:-</b>[R]" + order.getNo_of_bags() + "\n" +*/
+                          *//* "[L]<b>Bags:-</b>[R]" + order.getNo_of_bags() + "\n" +*//*
                            "[L]<b>Selling Price:-</b>[R]" + order.getPrice() + "/Qtl.\n" +
                            "[C]--------------------------------\n" +
                            "[L]<b>Total Amount:-</b>[R]" + totalAmount + " RS\n" +
@@ -167,11 +169,48 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                            "[C]<font size='small'>hence not be signed</font>\n" +
                            "[C]--------------------------------\n" +
                            "[L]\n" +
-                           "[C]<qrcode size='25'>Contact Note =" + order.getContractId() + ",ApnaGodam.in,CIN=U63030RJ2016PTC055509,Buyer Name=" + order.getFname() + ",Seller Name= " + order.getSellerName() + ",Date=" +order.getUpdatedAt() + ",Commodity =" + order.getCategory() + ",Location =" + order.getLocation() + ",Net Weight=" + order.getQuantity() + ",Price=" + order.getPrice() /*+ ",bags=" + order.getNo_of_bags()*/ + ",Final Amount:-" + totalAmount + " RS/</qrcode>\n" +
+                           "[C]<qrcode size='25'>Contact Note =" + order.getContractId() + ",ApnaGodam.in,CIN=U63030RJ2016PTC055509,Buyer Name=" + order.getFname() + ",Seller Name= " + order.getSellerName() + ",Date=" +order.getUpdatedAt() + ",Commodity =" + order.getCategory() + ",Location =" + order.getLocation() + ",Net Weight=" + order.getQuantity() + ",Price=" + order.getPrice() *//*+ ",bags=" + order.getNo_of_bags()*//* + ",Final Amount:-" + totalAmount + " RS/</qrcode>\n" +
                            "[L]\n" +
                            "[C]<font size='small'>The Farmer Produce Trade and commerce</font>\n" +
                            "[C]<font size='small'>Ordinance,2020</font>\n"
            );
+*/
+
+        // new as per Udaan
+
+        return printer.setTextToPrint(
+                /*    *//* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*//*
+                           "[L]\n" +*/
+                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.bill_company_logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
+                        "[L]\n" +
+                        "[L]<b>Tax Invoice/Bill of Supply</font></b>\n" +
+                        "[C]--------------------------------\n" +
+                        "[L][R]" + order.getSellerName() + "\n" +
+                        "[L][R]" + sellerPhone + "\n" +
+                        "[L][R]" + "GSTIN:-" + "29ACLMP6138J1Z2" + "\n" +
+                        "[L]<b>Invoice ID:-</b>[R]" + order.getContractId() + "\n" +
+                        "[C]--------------------------------\n" +
+                        "[L]<b>Order ID:-</b>" + order.getId() + "\n" +
+                        "[L]<b>Invoice Date:-</b><font size='small'>" + format.format(new Date()) + "</font>\n" +
+                        "[C]--------------------------------\n" +
+                        "[L][R]" + order.getFname() + "\n" +
+                        "[L][R]" + buyerPhone + "\n" +
+                        "[L][R]" + "GSTIN:-" + "29ACLMP6138J1Z2" + "\n" +
+                        "[C]--------------------------------\n" +
+                        "[L]<b>Commodity:-</b>[R]" + order.getCategory() + "\n" +
+                        "[L]<b>Net.Weight:-</b>[R]" + order.getQuantity() + " Qtl\n" +
+                        "[L]<b>Selling Price:-</b>[R]" + order.getPrice() + "/Qtl.\n" +
+                        "[C]--------------------------------\n" +
+                        "[L]<b>Total Amount:-</b>[R]" + totalAmount + " RS\n" +
+                        "[R]TAX (SGST(2.5%) :[R]40.00\n" +
+                        "[L]\n" +
+                        "[R]TAX (CGST(2.5%):[R]40.00\n" +
+                        "[L]\n" +
+                        "[C]--------------------------------\n" +
+                        "[L]<b>Final Amount:-</b>[R]" + totalAmount + " RS\n" +
+                        "[C]--------------------------------\n" +
+                        "[C]<font size='small'>This is a system generated Tax Invoice/Bill of Supply</font>\n"
+        );
 
     }
 
