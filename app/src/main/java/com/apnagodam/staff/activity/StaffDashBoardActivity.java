@@ -473,10 +473,10 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(GatePassListingActivity.class);
                     break;
 */
-              /*  case 4:
-                    startActivity(SpotDealTrackListActivity.class);
-                    break;*/
                 case 4:
+                    startActivity(SpotDealTrackListActivity.class);
+                    break;
+                case 5:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;

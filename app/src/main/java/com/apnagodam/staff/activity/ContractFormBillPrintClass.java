@@ -50,7 +50,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                 public void run() {
                     startActivityAndClear(SpotDealTrackListActivity.class);
                 }
-            }, 5000);
+            }, 20000);
         }
     }
 
@@ -126,6 +126,14 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         Double totalAmount = Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice());
         double AG_commission = (1 * (totalAmount)) / 100;
         String roundedNumberFinalPrice = "" + Utility.round(AG_commission, 2);
+        String GSTRate = "0.0";
+        Double gstRatePerentage = 0.0;
+        Double finalAmount =0.0;
+        if (order.getCategory().equalsIgnoreCase("Groundnut")) {
+            GSTRate = "2.5";
+            gstRatePerentage = (totalAmount * Double.parseDouble(GSTRate)) / 100;
+            finalAmount =(gstRatePerentage*2)+totalAmount;
+        }
         // old Printer data
         /* return printer.setTextToPrint(
          *//*    *//**//* "[L]<b>Terminal Copy</b>[R]<font size='small'></font>\n" +*//**//*
@@ -183,35 +191,34 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                            "[L]\n" +*/
                 "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(printer, this.getApplicationContext().getResources().getDrawableForDensity(R.drawable.bill_company_logo, DisplayMetrics.DENSITY_MEDIUM)) + "</img>\n" +
                         "[L]\n" +
-                        "[L]<b>Tax Invoice/Bill of Supply</font></b>\n" +
+                        "[L]<b><font size='wide'>Tax Invoice/Bill of Supply</font></b>\n" +
                         "[C]--------------------------------\n" +
-                        "[L][R]" + order.getSellerName() + "\n" +
-                        "[L][R]" + sellerPhone + "\n" +
-                        "[L][R]" + "GSTIN:-" + "29ACLMP6138J1Z2" + "\n" +
+                        "[L]<b>Seller Name:-</b>[R] <font size='small'>" + order.getSellerName() + "</font>\n" +
+                        "[L]<b>PHONE No:-</b>[R]" + sellerPhone + "\n" +
+                        "[L]<b>GSTIN No:-</b>[R]" + "29ACLMP6138J1Z2" + "\n" +
                         "[L]<b>Invoice ID:-</b>[R]" + order.getContractId() + "\n" +
                         "[C]--------------------------------\n" +
-                        "[L]<b>Order ID:-</b>" + order.getId() + "\n" +
-                        "[L]<b>Invoice Date:-</b><font size='small'>" + format.format(new Date()) + "</font>\n" +
+                        "[L]<b>Order ID:-</b>[R]" + order.getId() + "\n" +
+                        "[L]<b>Invoice Date:-</b><font size='small'>" + order.getUpdatedAt()+ "</font>\n" +
                         "[C]--------------------------------\n" +
-                        "[L][R]" + order.getFname() + "\n" +
-                        "[L][R]" + buyerPhone + "\n" +
-                        "[L][R]" + "GSTIN:-" + "29ACLMP6138J1Z2" + "\n" +
+                        "[L]<b>Buyer Name:-</b>[R] <font size='small'>" + order.getFname() + "</font>\n" +
+                        "[L]<b>PHONE No:-</b>[R]" + buyerPhone + "\n" +
+                        "[L]<b>GSTIN No:-</b>[R]" + "29ACLMP6138J1Z2" + "\n" +
                         "[C]--------------------------------\n" +
-                        "[L]<b>Commodity:-</b>[R]" + order.getCategory() + "\n" +
+                        "[L]<b>Product:-</b>[R]" + order.getCategory() + "\n" +
+                        "[L]<b>HSN No:-</b>[R]" + 1202 + "\n" +
                         "[L]<b>Net.Weight:-</b>[R]" + order.getQuantity() + " Qtl\n" +
                         "[L]<b>Selling Price:-</b>[R]" + order.getPrice() + "/Qtl.\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Total Amount:-</b>[R]" + totalAmount + " RS\n" +
-                        "[R]TAX (SGST(2.5%) :[R]40.00\n" +
-                        "[L]\n" +
-                        "[R]TAX (CGST(2.5%):[R]40.00\n" +
-                        "[L]\n" +
+                        "[L]<b>SGST(2.5%):-</b>[R]" + gstRatePerentage + " RS\n" +
+                        "[L]<b>CGST(2.5%):-</b>[R]" + gstRatePerentage + " RS\n" +
                         "[C]--------------------------------\n" +
-                        "[L]<b>Final Amount:-</b>[R]" + totalAmount + " RS\n" +
+                        "[L]<b>Final Amount:-</b>[R]" + finalAmount + " RS\n" +
                         "[C]--------------------------------\n" +
                         "[C]<font size='small'>This is a system generated Tax Invoice/Bill of Supply</font>\n"
-        );
 
+        );
     }
 
     /*   *//**
