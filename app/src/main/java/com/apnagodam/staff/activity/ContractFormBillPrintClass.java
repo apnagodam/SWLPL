@@ -128,11 +128,11 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         String roundedNumberFinalPrice = "" + Utility.round(AG_commission, 2);
         String GSTRate = "0.0";
         Double gstRatePerentage = 0.0;
-        Double finalAmount =0.0;
+        Double finalAmount = 0.0;
         if (order.getCategory().equalsIgnoreCase("Groundnut")) {
             GSTRate = "2.5";
             gstRatePerentage = (totalAmount * Double.parseDouble(GSTRate)) / 100;
-            finalAmount =(gstRatePerentage*2)+totalAmount;
+            finalAmount = (gstRatePerentage * 2) + totalAmount;
         }
         // old Printer data
         /* return printer.setTextToPrint(
@@ -199,7 +199,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                         "[L]<b>Invoice ID:-</b>[R]" + order.getContractId() + "\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Order ID:-</b>[R]" + order.getId() + "\n" +
-                        "[L]<b>Invoice Date:-</b><font size='small'>" + order.getUpdatedAt()+ "</font>\n" +
+                        "[L]<b>Invoice Date:-</b><font size='small'>" + order.getUpdatedAt() + "</font>\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Buyer Name:-</b>[R] <font size='small'>" + order.getFname() + "</font>\n" +
                         "[L]<b>PHONE No:-</b>[R]" + buyerPhone + "\n" +

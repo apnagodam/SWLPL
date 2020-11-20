@@ -14,6 +14,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +57,8 @@ import com.apnagodam.staff.utils.Utility;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -67,7 +72,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> implements View.OnClickListener, OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener, AdapterView.OnItemSelectedListener,
-        DrawerLayout.DrawerListener , GoogleApiClient.ConnectionCallbacks,
+        DrawerLayout.DrawerListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     private ActionBarDrawerToggle toggle;
     private Toolbar toolbar;
@@ -80,11 +85,11 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     String attendanceINOUTStatus = "2";
     public File fileSelfie;
     UserDetails userDetails;
-
+    ImageView selfieImage;
 
     // for location
     private LocationUtils locationUtils;
-   private int REQUEST_CODE = 1000;
+    private int REQUEST_CODE = 1000;
     GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -135,7 +140,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             }
         });
         binding.clockInOut.setOnClickListener(v -> callServer());
-    //    getAttendanceStatus();
+        //    getAttendanceStatus();
         getdashboardData();
         locationUtils = new LocationUtils(getActivity(), 1000, 2000, (location, address) -> {
             //   showToast(location.getLatitude() + " : " + location.getLongitude());
@@ -250,19 +255,46 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     }
 
     private void setFunctional(boolean flag) {
+        BottomSheetDialog dialog = new BottomSheetDialog(StaffDashBoardActivity.this);
+        dialog.setContentView(R.layout.dilog_attedance_bottom);
+        MaterialButton clockInOut = (MaterialButton) dialog.findViewById(R.id.clock_in_out);
+        MaterialButton close = (MaterialButton) dialog.findViewById(R.id.close);
+        LinearLayout UploadImage = (LinearLayout) dialog.findViewById(R.id.UploadImage);
+        selfieImage = (ImageView) dialog.findViewById(R.id.selfieImage);
+        dialog.setCancelable(true);
+        dialog.show();
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    fileSelfie = null;
+                    dialog.cancel();
+                    dialog.dismiss();
+                } catch (Exception e) {
+                    e.getStackTrace();
+                }
+            }
+        });
+        UploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onImageSelected();
+            }
+        });
+        clockInOut.setOnClickListener(v -> callServer());
         if (flag) {
             attendanceINOUTStatus = "1";
-            binding.cardAttandance.setVisibility(View.VISIBLE);
-            binding.WelcomeMsg.setVisibility(View.GONE);
-          //  locationget();
+        /*    binding.cardAttandance.setVisibility(View.VISIBLE);
+            binding.WelcomeMsg.setVisibility(View.GONE);*/
+            //  locationget();
           /*  binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
             OnOfffAttendance = true;*/
         } else {
-            binding.cardAttandance.setVisibility(View.VISIBLE);
-            binding.WelcomeMsg.setVisibility(View.GONE);
+          /*  binding.cardAttandance.setVisibility(View.VISIBLE);
+            binding.WelcomeMsg.setVisibility(View.GONE);*/
             binding.clockIn.setText(getResources().getString(R.string.clock_out));
             binding.clockInOut.setText(getResources().getString(R.string.clock_out));
-          //  locationget();
+            //  locationget();
             attendanceINOUTStatus = "2";
            /* binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
             OnOfffAttendance = false;*/
@@ -420,6 +452,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     public void onDrawerStateChanged(int newState) {
 
     }
+
     @Override
     public void onItemClick(View view, int position) {
         binding.drawerLayout.postDelayed(() -> {
@@ -431,7 +464,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivityAndClear(StaffDashBoardActivity.class);
                     break;
                 case 2:
-                //    startActivity(LanguageActivity.class);
+                    //    startActivity(LanguageActivity.class);
                     String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
                     String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
                     Intent sendIntent = new Intent();
