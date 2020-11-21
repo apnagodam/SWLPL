@@ -143,9 +143,12 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         if (order.getCategory().equalsIgnoreCase("Groundnut")) {
             GSTRate = "2.5";
             gstRatePerentage = (totalAmount * Double.parseDouble(GSTRate)) / 100;
+            gstRatePerentage =  Utility.round(gstRatePerentage, 2);
             finalAmount = (gstRatePerentage * 2) + totalAmount;
+            finalAmount =  Utility.round(finalAmount, 2);
         }else {
             finalAmount =  totalAmount;
+            finalAmount =  Utility.round(finalAmount, 2);
         }
         // old Printer data
         /* return printer.setTextToPrint(
@@ -208,7 +211,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                         "[C]--------------------------------\n" +
                         "[L]<b>Seller Name:-</b>[R] <font size='small'>" + order.getSellerName() + "</font>\n" +
                         "[L]<b>PHONE No:-</b>[R]" + sellerPhone + "\n" +
-                        "[L]<b>GSTIN No:-</b>[R]" + "29ACLMP6138J1Z2" + "\n" +
+                        "[L]<b>GSTIN No:-</b>[R]" + "N/A" + "\n" +
                         "[L]<b>Invoice ID:-</b>[R]" + order.getContractId() + "\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Order ID:-</b>[R]" + order.getId() + "\n" +
@@ -216,7 +219,7 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                         "[C]--------------------------------\n" +
                         "[L]<b>Buyer Name:-</b>[R] <font size='small'>" + order.getFname() + "</font>\n" +
                         "[L]<b>PHONE No:-</b>[R]" + buyerPhone + "\n" +
-                        "[L]<b>GSTIN No:-</b>[R]" + "29ACLMP6138J1Z2" + "\n" +
+                        "[L]<b>GSTIN No:-</b>[R]" + "N/A" + "\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Product:-</b>[R]" + order.getCategory() + "\n" +
                         "[L]<b>HSN No:-</b>[R]" + 1202 + "\n" +

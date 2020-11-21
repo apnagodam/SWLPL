@@ -408,8 +408,8 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem12);*/
       /*  MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
         menuItems.add(menuItem4);*/
-        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
-        menuItems.add(menuItem4);
+        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
+        menuItems.add(menuItem5);
         return menuItems;
     }
     @Override
