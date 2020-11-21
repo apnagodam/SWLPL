@@ -14,14 +14,14 @@ public class Constants {
     public static final String API_BASE_URL = "http://192.168.0.24/apna_godam/trunk/";*/
 
     // for live server
-   /* public static final String IMAGE_BASE_URL = "https://apnagodam.in/resources/assets/upload/employyes/";
+    public static final String IMAGE_BASE_URL = "https://apnagodam.in/resources/assets/upload/employyes/";
     public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.in/resources/frontend_assets/uploads/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.in/demo/resources/assets/upload/";
-    public static final String API_BASE_URL = "https://apnagodam.in/";*/
+    public static final String API_BASE_URL = "https://apnagodam.in/";
     // for demo server
-    public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employees/";
+    /*public static final String IMAGE_BASE_URL = "https://apnagodam.in/demo/resources/assets/upload/employees/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.in/demo/resources/assets/upload/";
-    public static final String API_BASE_URL = "https://apnagodam.in/demo/";
+    public static final String API_BASE_URL = "https://apnagodam.in/demo/";*/
     public static final String ENDPOINT = API_BASE_URL;
     public static final String First_kata = IMAGE_BASE_URL_kanta_photo + "kanta_parchi/";
     public static final String Secound_kata = IMAGE_BASE_URL_kanta_photo + "second_kanta_parchi/";

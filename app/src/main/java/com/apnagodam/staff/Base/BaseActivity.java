@@ -75,6 +75,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     public ApnaGodamApp ePowerApp;
     protected T binding;
     protected ApiService apiService;
+    public static final int REQUEST_CAMERA = 100;
     private String currentOperation;
     //for pic photo from camera  and gallery
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
@@ -405,10 +406,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem11);
         MenuItem menuItem12 = new MenuItem(getResources().getString(R.string.gate_passs), R.drawable.ic_baseline_notifications_24);
         menuItems.add(menuItem12);*/
-        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
+      /*  MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
+        menuItems.add(menuItem4);*/
+        MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
         menuItems.add(menuItem4);
-        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
-        menuItems.add(menuItem5);
         return menuItems;
     }
     @Override

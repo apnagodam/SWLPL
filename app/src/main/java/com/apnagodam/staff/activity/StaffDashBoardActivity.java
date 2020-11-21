@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,6 +55,9 @@ import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.LocationUtils;
 import com.apnagodam.staff.utils.RecyclerItemClickListener;
 import com.apnagodam.staff.utils.Utility;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
+import com.fxn.utility.PermUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -69,6 +73,7 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> implements View.OnClickListener, OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener, AdapterView.OnItemSelectedListener,
@@ -86,7 +91,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
     public File fileSelfie;
     UserDetails userDetails;
     ImageView selfieImage;
-
+    Options options;
     // for location
     private LocationUtils locationUtils;
     private int REQUEST_CODE = 1000;
@@ -227,22 +232,27 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         map.put("clock_status",""+attendanceINOUTStatus);
         map.put("image", Utility.transferImageToBase64(file));*/
         if (fileSelfie != null) {
-            EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie);
-            apiService.attendance(new AttendancePostData("" + latitude, "" + longitude, "" + attendanceINOUTStatus, EmployeeImage)).enqueue(new NetworkCallback<AttendanceResponse>(getActivity()) {
-                @Override
-                protected void onSuccess(AttendanceResponse body) {
-                    Toast.makeText(StaffDashBoardActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                    fileSelfie = null;
-                    startActivityAndClear(StaffDashBoardActivity.class);
-                    if (body.getClock_status().equalsIgnoreCase("1")) {
-                        binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
-                        OnOfffAttendance = true;
-                    } else {
-                        binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
-                        OnOfffAttendance = false;
+            if (latitude != null && longitude != null) {
+                EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie);
+                apiService.attendance(new AttendancePostData("" + latitude, "" + longitude, "" + attendanceINOUTStatus, EmployeeImage)).enqueue(new NetworkCallback<AttendanceResponse>(getActivity()) {
+                    @Override
+                    protected void onSuccess(AttendanceResponse body) {
+                        Toast.makeText(StaffDashBoardActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                        fileSelfie = null;
+                        startActivityAndClear(StaffDashBoardActivity.class);
+                        if (body.getClock_status().equalsIgnoreCase("1")) {
+                            binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
+                            OnOfffAttendance = true;
+                        } else {
+                            binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
+                            OnOfffAttendance = false;
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                Toast.makeText(StaffDashBoardActivity.this, "Enable Your Location Please!!", Toast.LENGTH_LONG).show();
+            }
+
         } else {
             Toast.makeText(StaffDashBoardActivity.this, "Take your selfie please!", Toast.LENGTH_LONG).show();
         }
@@ -268,6 +278,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
             public void onClick(View view) {
                 try {
                     fileSelfie = null;
+                    selfieImage.setImageBitmap(null);
                     dialog.cancel();
                     dialog.dismiss();
                 } catch (Exception e) {
@@ -278,7 +289,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         UploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onImageSelected();
+                callProfileImageSelector(REQUEST_CAMERA);
             }
         });
         clockInOut.setOnClickListener(v -> callServer());
@@ -299,6 +310,18 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
            /* binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
             OnOfffAttendance = false;*/
         }
+    }
+
+    private void callProfileImageSelector(int requestCamera) {
+        options = Options.init()
+                .setRequestCode(requestCamera)                                           //Request code for activity results
+                .setCount(1)
+                .setFrontfacing(true)
+                .setExcludeVideos(false)
+                .setVideoDurationLimitinSeconds(60)
+                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
+                .setPath("/apnagodam/images");                                       //Custom Path For media Storage
+        Pix.start(StaffDashBoardActivity.this, options);
     }
 
     private void locationget() {
@@ -506,10 +529,10 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                     startActivity(GatePassListingActivity.class);
                     break;
 */
-                case 4:
+             /*   case 4:
                     startActivity(SpotDealTrackListActivity.class);
-                    break;
-                case 5:
+                    break;*/
+                case 4:
                     //call logout api
                     logout((getResources().getString(R.string.logout_alert)), "Logout");
                     break;
@@ -672,7 +695,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
         }, 100);
     }*/
 
-    @Override
+ /*   @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         try {
@@ -699,6 +722,44 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding> 
                 locationUtils.startLocationUpdates();
             }
         } catch (Exception e) {
+        }
+    }*/
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.hasExtra(Pix.IMAGE_RESULTS)) {
+                    ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+                    assert returnValue != null;
+                    Log.e("getImageesValue", returnValue.get(0).toString());
+                    if (requestCode == REQUEST_CAMERA) {
+                        fileSelfie = new File(compressImage(returnValue.get(0).toString()));
+                        Uri uri = Uri.fromFile(fileSelfie);
+                        selfieImage.setImageURI(uri);
+                    }
+                }
+            }
+        }
+        if (requestCode == REQUEST_CODE) {
+            locationUtils.startLocationUpdates();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Pix.start(this, options);
+                } else {
+                    Toast.makeText(this, "Approve permissions to open Pix ImagePicker", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
         }
     }
 

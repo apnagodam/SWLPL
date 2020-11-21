@@ -408,7 +408,7 @@
                             android:layout_marginTop="@dimen/_70sdp"
                             android:layout_marginRight="@dimen/_20sdp"
                             android:background="@android:color/transparent"
-                            android:visibility="visible">
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="match_parent"

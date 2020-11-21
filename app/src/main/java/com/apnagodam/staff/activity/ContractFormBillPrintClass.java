@@ -121,8 +121,19 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         // UserDetails userDetails = SharedPreferencesRepository.getDataManagerInstance().getUser();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         AsyncEscPosPrinter printer = new AsyncEscPosPrinter(printerConnection, 203, 48f, 32);
-        String buyerPhone = order.getBuyer_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
-        String sellerPhone = order.getSeller_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+        String buyerPhone = "";
+        String sellerPhone = "";
+        if (order.getBuyer_phone() != null) {
+            buyerPhone = order.getBuyer_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+        } else {
+            buyerPhone = "N/A";
+        }
+        if (order.getSeller_phone() != null) {
+            sellerPhone = order.getSeller_phone().replaceAll("\\d(?=(?:\\D*\\d){4})", "*");
+        } else {
+            sellerPhone = "N/A";
+        }
+
         Double totalAmount = Double.parseDouble(order.getQuantity()) * Double.parseDouble(order.getPrice());
         double AG_commission = (1 * (totalAmount)) / 100;
         String roundedNumberFinalPrice = "" + Utility.round(AG_commission, 2);
@@ -133,6 +144,8 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
             GSTRate = "2.5";
             gstRatePerentage = (totalAmount * Double.parseDouble(GSTRate)) / 100;
             finalAmount = (gstRatePerentage * 2) + totalAmount;
+        }else {
+            finalAmount =  totalAmount;
         }
         // old Printer data
         /* return printer.setTextToPrint(
@@ -211,8 +224,8 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                         "[L]<b>Selling Price:-</b>[R]" + order.getPrice() + "/Qtl.\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Total Amount:-</b>[R]" + totalAmount + " RS\n" +
-                        "[L]<b>SGST(2.5%):-</b>[R]" + gstRatePerentage + " RS\n" +
-                        "[L]<b>CGST(2.5%):-</b>[R]" + gstRatePerentage + " RS\n" +
+                        "[L]<b>SGST("+GSTRate+"%):-</b>[R]" + gstRatePerentage + " RS\n" +
+                        "[L]<b>CGST("+GSTRate+"%):-</b>[R]" + gstRatePerentage + " RS\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Final Amount:-</b>[R]" + finalAmount + " RS\n" +
                         "[C]--------------------------------\n" +
