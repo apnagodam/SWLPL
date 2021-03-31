@@ -1,7 +1,6 @@
 package com.apnagodam.staff.activity.in.labourbook;
 
 import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,25 +11,17 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
-import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
 import com.apnagodam.staff.activity.in.gatepass.UploadGatePassClass;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
-import com.apnagodam.staff.activity.lead.LeadGenerateClass;
-import com.apnagodam.staff.activity.lead.LeadListingActivity;
-import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Utility;
 
 import java.text.SimpleDateFormat;
@@ -44,7 +35,7 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     private Calendar calender;
     ArrayAdapter<String> SpinnerControactorAdapter;
     String contractorsID = null;
-    // droup down  of meter status
+    // drop down  of meter status
     List<String> contractorName;
     boolean checked = false;
 
@@ -72,11 +63,9 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     }
 
     private void setValueOnSpinner() {
-
         for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
             contractorName.add(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName());
         }
-
         SpinnerControactorAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, contractorName) {
             //By using this method we will define how
             // the text appears before clicking a spinner
@@ -98,7 +87,6 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
         SpinnerControactorAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
         // Set Adapter in the spinner
         binding.spinnerContractor.setAdapter(SpinnerControactorAdapter);
-
         binding.spinnerContractor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -111,15 +99,15 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                             binding.etLabourRate.setText(String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getRate()));
                         }
                     }
+                }else {
+                    contractorsID=null;
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
             }
         });
-
     }
 
     private void clickListner() {
@@ -154,14 +142,14 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //  finish();
+        startActivityAndClear(LabourBookListingActivity.class);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_close:
-                finish();
+                startActivityAndClear(LabourBookListingActivity.class);
                 break;
             case R.id.et_start_date_time:
                 popUpDatePicker();
@@ -170,29 +158,33 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                 popUpDatePicker();
                 break;
             case R.id.btn_login:
-                Utility.showDecisionDialog(LabourBookUploadClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
-                    @Override
-                    public void callback() {
-                        if (isValid()) {
-                            if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
-                                Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
-                            } else if (contractorsID == null) {
-                                Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
-                            } else {
+                if (isValid()) {
+                  /*  if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
+                        Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
+                    } else*/ if (contractorsID == null) {
+                        Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
+                    } else {
+                        Utility.showDecisionDialog(LabourBookUploadClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
+                            @Override
+                            public void callback() {
                                 apiService.uploadLabourDetails(new UploadLabourDetailsPostData(
-                                        CaseID, contractorsID, stringFromView(binding.etContractorPhone), stringFromView(binding.etLocation),
-                                        stringFromView(binding.etLabourRate), stringFromView(binding.etLabourTotal), stringFromView(binding.etTotalBags),
-                                        stringFromView(binding.notes), stringFromView(binding.etStartDateTime))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                        CaseID, contractorsID, stringFromView(binding.etContractorPhone),"N/A",
+                                        stringFromView(binding.etLabourRate), "N/A", "N/A",
+                                        stringFromView(binding.notes), "0000-00-00")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                                     @Override
                                     protected void onSuccess(LoginResponse body) {
-                                        Toast.makeText(LabourBookUploadClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                        startActivityAndClear(LabourBookListingActivity.class);
+                                        Utility.showAlertDialog(LabourBookUploadClass.this, getString(R.string.alert),  body.getMessage(), new Utility.AlertCallback() {
+                                            @Override
+                                            public void callback() {
+                                                startActivityAndClear(LabourBookListingActivity.class);
+                                            }
+                                        });
                                     }
                                 });
                             }
-                        }
+                        });
                     }
-                });
+                }
                 break;
         }
     }
@@ -201,19 +193,19 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
         if (checked) {
 
         } else {
-            if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
+            /*if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
                 return Utility.showEditTextError(binding.tilLocation, R.string.location);
-            }
+            }*/
         }
         if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
             return Utility.showEditTextError(binding.tilContractorPhone, R.string.contractor_phone_val);
         } else if (TextUtils.isEmpty(stringFromView(binding.etLabourRate))) {
             return Utility.showEditTextError(binding.tilLabourRate, R.string.labour_rate_val);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etLabourTotal))) {
+        } /*else if (TextUtils.isEmpty(stringFromView(binding.etLabourTotal))) {
             return Utility.showEditTextError(binding.tilLabourTotal, R.string.labour_total_val);
         } else if (TextUtils.isEmpty(stringFromView(binding.etTotalBags))) {
             return Utility.showEditTextError(binding.tilTotalBags, R.string.total_bags_val);
-        }
+        }*/
         return true;
     }
 

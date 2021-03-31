@@ -256,6 +256,18 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
         @SerializedName("s_q_r_case_id")
         @Expose
         private String s_q_r_case_id;
+
+        public String getF_k_p_case_id() {
+            return f_k_p_case_id;
+        }
+
+        public void setF_k_p_case_id(String f_k_p_case_id) {
+            this.f_k_p_case_id = f_k_p_case_id;
+        }
+
+        @SerializedName("f_k_p_case_id")
+        @Expose
+        private String f_k_p_case_id;
         @SerializedName("moisture_level")
         @Expose
         private String moistureLevel;

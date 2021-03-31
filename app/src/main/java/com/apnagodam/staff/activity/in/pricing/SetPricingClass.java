@@ -7,16 +7,20 @@ import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
 import com.apnagodam.staff.databinding.ActivitySetPricingBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Utility;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     String selectPurpose = null;
@@ -64,54 +68,67 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
         binding.etPrice.setClickable(false);
         binding.etPrice.setFocusable(false);
         binding.etPrice.setText("");
+        binding.etPrice.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etProcessingFees.setEnabled(false);
         binding.etProcessingFees.setClickable(false);
         binding.etProcessingFees.setFocusable(false);
         binding.etProcessingFees.setText("");
+        binding.etProcessingFees.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etRent.setEnabled(false);
         binding.etRent.setClickable(false);
         binding.etRent.setFocusable(false);
         binding.etRent.setText("");
+        binding.etRent.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etIntersetRate.setEnabled(false);
         binding.etIntersetRate.setClickable(false);
         binding.etIntersetRate.setFocusable(false);
         binding.etIntersetRate.setText("");
+        binding.etIntersetRate.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.spinnerTransactionType.setEnabled(false);
         binding.spinnerTransactionType.setClickable(false);
         binding.spinnerTransactionType.setFocusable(false);
         binding.spinnerTransactionType.setPrompt("");
+        binding.spinnerTransactionType.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etLoanPer.setEnabled(false);
         binding.etLoanPer.setClickable(false);
         binding.etLoanPer.setFocusable(false);
         binding.etLoanPer.setText("");
+        binding.etLoanPer.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etLabourRate.setEnabled(false);
         binding.etLabourRate.setClickable(false);
         binding.etLabourRate.setFocusable(false);
         binding.etLabourRate.setText("");
+        binding.etLabourRate.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etUsernamee.setEnabled(false);
         binding.etUsernamee.setClickable(false);
         binding.etUsernamee.setFocusable(false);
         binding.etUsernamee.setText("");
+        binding.etUsernamee.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etUsernameGatepass.setEnabled(false);
         binding.etUsernameGatepass.setClickable(false);
         binding.etUsernameGatepass.setFocusable(false);
         binding.etUsernameGatepass.setText("");
+        binding.etUsernameGatepass.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etColdWin.setEnabled(false);
         binding.etColdWin.setClickable(false);
         binding.etColdWin.setFocusable(false);
         binding.etColdWin.setText("");
+        binding.etColdWin.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etTallyPurchasee.setEnabled(false);
         binding.etTallyPurchasee.setClickable(false);
         binding.etTallyPurchasee.setFocusable(false);
         binding.etTallyPurchasee.setText("");
+        binding.etTallyPurchasee.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etTallyLoan.setEnabled(false);
         binding.etTallyLoan.setClickable(false);
         binding.etTallyLoan.setFocusable(false);
         binding.etTallyLoan.setText("");
+        binding.etTallyLoan.setBackgroundColor(getResources().getColor(R.color.lightgray));
         binding.etTallySale.setEnabled(false);
         binding.etTallySale.setClickable(false);
         binding.etTallySale.setFocusable(false);
         binding.etTallySale.setText("");
+        binding.etTallySale.setBackgroundColor(getResources().getColor(R.color.lightgray));
     }
 
     private void NotChecked() {
@@ -120,6 +137,8 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
         binding.etTallySale.setClickable(true);
         binding.etTallySale.setFocusable(true);
         binding.etTallySale.setFocusableInTouchMode(true);
+        binding.tilPrice.setBoxBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+        binding.tilPrice.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE);
         binding.etTallyLoan.setEnabled(true);
         binding.etTallyLoan.setClickable(true);
         binding.etTallyLoan.setFocusable(true);
@@ -194,14 +213,14 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
+        startActivityAndClear(InPricingListingActivity.class);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_close:
-                finish();
+                startActivityAndClear(InPricingListingActivity.class);
                 break;
             case R.id.btn_login:
                 Utility.showDecisionDialog(SetPricingClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
@@ -235,8 +254,12 @@ public class SetPricingClass extends BaseActivity<ActivitySetPricingBinding> imp
                 stringFromView(binding.etTallySale))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
             @Override
             protected void onSuccess(LoginResponse body) {
-                Toast.makeText(SetPricingClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                startActivityAndClear(InPricingListingActivity.class);
+                Utility.showAlertDialog(SetPricingClass.this, getString(R.string.alert),  body.getMessage(), new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
+                        startActivityAndClear(InPricingListingActivity.class);
+                    }
+                });
             }
         });
     }

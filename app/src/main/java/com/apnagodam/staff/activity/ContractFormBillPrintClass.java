@@ -28,8 +28,6 @@ import com.dantsu.escposprinter.connection.usb.UsbConnection;
 import com.dantsu.escposprinter.textparser.PrinterTextParserImg;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
     SpotSellDealTrackPojo.Datum order;
@@ -41,7 +39,8 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
 
     public void printBluetooth() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH}, ContractFormBillPrintClass.PERMISSION_BLUETOOTH);
+            ActivityCompat.requestPermissions(this, new String[]
+                    {Manifest.permission.BLUETOOTH}, ContractFormBillPrintClass.PERMISSION_BLUETOOTH);
         } else {
             // this.printIt(BluetoothPrintersConnections.selectFirstPaired());
             new AsyncBluetoothEscPosPrint(this).execute(this.getAsyncEscPosPrinter(null));
@@ -143,12 +142,12 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
         if (order.getCategory().equalsIgnoreCase("Groundnut")) {
             GSTRate = "2.5";
             gstRatePerentage = (totalAmount * Double.parseDouble(GSTRate)) / 100;
-            gstRatePerentage =  Utility.round(gstRatePerentage, 2);
+            gstRatePerentage = Utility.round(gstRatePerentage, 2);
             finalAmount = (gstRatePerentage * 2) + totalAmount;
-            finalAmount =  Utility.round(finalAmount, 2);
-        }else {
-            finalAmount =  totalAmount;
-            finalAmount =  Utility.round(finalAmount, 2);
+            finalAmount = Utility.round(finalAmount, 2);
+        } else {
+            finalAmount = totalAmount;
+            finalAmount = Utility.round(finalAmount, 2);
         }
         // old Printer data
         /* return printer.setTextToPrint(
@@ -227,8 +226,8 @@ public class ContractFormBillPrintClass extends BaseActivity<BillPrintBinding> {
                         "[L]<b>Selling Price:-</b>[R]" + order.getPrice() + "/Qtl.\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Total Amount:-</b>[R]" + totalAmount + " RS\n" +
-                        "[L]<b>SGST("+GSTRate+"%):-</b>[R]" + gstRatePerentage + " RS\n" +
-                        "[L]<b>CGST("+GSTRate+"%):-</b>[R]" + gstRatePerentage + " RS\n" +
+                        "[L]<b>SGST(" + GSTRate + "%):-</b>[R]" + gstRatePerentage + " RS\n" +
+                        "[L]<b>CGST(" + GSTRate + "%):-</b>[R]" + gstRatePerentage + " RS\n" +
                         "[C]--------------------------------\n" +
                         "[L]<b>Final Amount:-</b>[R]" + finalAmount + " RS\n" +
                         "[C]--------------------------------\n" +

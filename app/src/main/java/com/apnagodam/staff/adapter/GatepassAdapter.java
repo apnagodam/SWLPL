@@ -91,8 +91,6 @@ public class GatepassAdapter extends BaseRecyclerViewAdapter {
                 binding.tvPhone.setText(context.getResources().getString(R.string.update_gate_pass));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
                 setAllData(binding.tvPhone,binding.tvPhoneDone,position);
-
-
             }
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
@@ -153,7 +151,6 @@ public class GatepassAdapter extends BaseRecyclerViewAdapter {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }.start();
     }

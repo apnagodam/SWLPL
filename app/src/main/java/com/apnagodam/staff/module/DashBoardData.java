@@ -16,6 +16,18 @@ public class DashBoardData extends BaseResponse {
     @SerializedName("clock_status")
     @Expose
     protected String clock_status;
+
+    public String getEmpstatus() {
+        return empstatus;
+    }
+
+    public void setEmpstatus(String empstatus) {
+        this.empstatus = empstatus;
+    }
+
+    @SerializedName("empstatus")
+    @Expose
+    protected String empstatus;
     @SerializedName("remaning_case")
     @Expose
     private String remaning_case;

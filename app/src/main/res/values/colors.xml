@@ -8,17 +8,9 @@
     <color name="iconGray">#939393</color>
     <color name="tw__solid_white">#FFFFFFFF</color>
     <color name="black_back">#454545</color>
-    <color name="colorInputHintText">#515151</color>
-    <color name="colorYellow">#f8831a</color>
     <color name="colorRed">#fb0113</color>
-    <color name="colorBg">#f6f6f6</color>
-    <color name="colorShadow">#03000000</color>
     <color name="colorGreen">#3cc617</color>
     <color name="colorBlackLight">#3a3a3a</color>
-    <color name="colorToolBar">#f6f6f6</color>
-    <color name="colorHeadingBlack">#494949</color>
-    <color name="separatorColor">#a1a1a1</color>
-    <color name="colorBorder">#acacac</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="dark_gray_shade">#333333</color>
     <color name="disabledColor">#06000000</color>
@@ -27,14 +19,11 @@
     <color name="lightGray">#ebebeb</color>
     <color name="darkYellow">#FEC426</color>
     <color name="darkGray">#dcdcdc</color>
-    <color name="transPrimary">#32afab</color>
     <color name="darkGeay">#363636</color>
     <color name="color_top100">#4c4c4c</color>
-    <color name="normal_color">#3c3c3c</color>
     <color name="view_color">#acacac</color>
     <color name="textColor">#8f6f86</color>
-    <color name="colorTransparentDarkBlack">#c8000000</color>
-    <color name="showcasebackgroundCircleColor">#D4D4D4</color>
     <color name="lead_btn">#1ab394</color>
     <color name="yellow">#f0ad4e</color>
+    <color name="lightgray">#eee</color>
 </resources>

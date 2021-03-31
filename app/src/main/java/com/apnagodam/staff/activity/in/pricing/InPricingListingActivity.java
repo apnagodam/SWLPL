@@ -25,7 +25,10 @@ import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.caseid.CaseListingActivity;
+import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.adapter.CasesTopAdapter;
+import com.apnagodam.staff.adapter.ConvancyListAdpter;
 import com.apnagodam.staff.adapter.PricingAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
@@ -40,6 +43,8 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
     private int pageOffset = 1;
     private int totalPage = 0;
     private List<AllpricingResponse.Datum> AllCases;
+    private List<AllpricingResponse.Datum> tempraryList;
+    String  editView = "";
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -47,19 +52,29 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
 
     @Override
     protected void setUp() {
-        binding.pageNextPrivious.setVisibility(View.VISIBLE);
+       /* Bundle bundle = getIntent().getBundleExtra(BUNDLE);
+        if (bundle != null) {
+            editView = bundle.getString("edit");
+        }*/
         AllCases = new ArrayList();
-        setAdapter();
+        tempraryList = new ArrayList();
         setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setAdapter();
         binding.titleHeader.setText(getResources().getString(R.string.pricing_title));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.action));
         binding.tvPhone.setText(getResources().getString(R.string.set_pricing));
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
      /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(InPricingListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        getAllCases();
+        getAllCases("");
+        binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllCases("");
+            }
+        });
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,7 +86,7 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
             public void onClick(View view) {
                 if (pageOffset != 1) {
                     pageOffset--;
-                    getAllCases();
+                    getAllCases("");
                 }
             }
         });
@@ -80,17 +95,45 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
             public void onClick(View view) {
                 if (totalPage != pageOffset) {
                     pageOffset++;
-                    getAllCases();
+                    getAllCases("");
                 }
             }
         });
-       /* binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                AllCases.clear();
-                getAllCases();
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(InPricingListingActivity.this);
+                LayoutInflater inflater = ((Activity) InPricingListingActivity.this).getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.fiter_diloag, null);
+                EditText notes = (EditText) dialogView.findViewById(R.id.notes);
+                Button submit = (Button) dialogView.findViewById(R.id.btn_submit);
+                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
+                builder.setView(dialogView);
+                builder.setCancelable(false);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                cancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (notes.getText().toString().trim() != null && !notes.getText().toString().trim().isEmpty()) {
+                            alertDialog.dismiss();
+                            pageOffset = 1;
+                            getAllCases(notes.getText().toString().trim());
+                            //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Fill Text", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                //  setDateTimeField();
             }
-        });*/
+        });
     }
 
     @Override
@@ -99,8 +142,9 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
         startActivityAndClear(StaffDashBoardActivity.class);
     }
 
+
     private void setAdapter() {
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(InPricingListingActivity.this, LinearLayoutManager.HORIZONTAL));
         binding.rvDefaultersStatus.setHasFixedSize(true);
         binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(InPricingListingActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -109,25 +153,55 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
         binding.rvDefaultersStatus.setAdapter(pricingAdapter);
 
     }
-    private void getAllCases() {
+    private void getAllCases(String search) {
         showDialog();
-        apiService.getAllpricingList("25",pageOffset,"IN").enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
+        apiService.getAllpricingList("10",pageOffset,"IN",search).enqueue(new NetworkCallback<AllpricingResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllpricingResponse body) {
-               // binding.swipeRefresherStock.setRefreshing(false);
-                if (body.getPricing() == null ) {
+                binding.swipeRefresherStock.setRefreshing(false);
+                AllCases.clear();
+                tempraryList.clear();
+                if (body.getPricing().getData().size() == 0) {
+                    binding.txtemptyMsg.setVisibility(View.VISIBLE);
+                    binding.rvDefaultersStatus.setVisibility(View.GONE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
+                } else if (body.getPricing().getLastPage() == 1) {
+                    binding.txtemptyMsg.setVisibility(View.GONE);
+                    binding.rvDefaultersStatus.setVisibility(View.VISIBLE);
+                    binding.pageNextPrivious.setVisibility(View.GONE);
+                    AllCases.clear();
+                    tempraryList.clear();
+                    totalPage = body.getPricing().getLastPage();
+                    AllCases.addAll(body.getPricing().getData());
+                    tempraryList.addAll(AllCases);
+                    pricingAdapter.notifyDataSetChanged();
+                } else {
+                    binding.txtemptyMsg.setVisibility(View.GONE);
+                    binding.rvDefaultersStatus.setVisibility(View.VISIBLE);
+                    binding.pageNextPrivious.setVisibility(View.VISIBLE);
+                    AllCases.clear();
+                    tempraryList.clear();
+                    totalPage = body.getPricing().getLastPage();
+                    AllCases.addAll(body.getPricing().getData());
+                    tempraryList.addAll(AllCases);
+                    pricingAdapter.notifyDataSetChanged();
+                }
+
+               /* if (body.getPricing() == null ) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
                     binding.pageNextPrivious.setVisibility(View.GONE);
                 } else {
                     AllCases.clear();
+                    tempraryList.clear();
+                    binding.txtemptyMsg.setVisibility(View.GONE);
                     totalPage = body.getPricing().getLastPage();
                     AllCases.addAll(body.getPricing().getData());
+                    tempraryList.addAll(AllCases);
                     pricingAdapter.notifyDataSetChanged();
-
                    // AllCases = body.getCases();
                  ///   binding.rvDefaultersStatus.setAdapter(new PricingAdapter(body.getCases(), InPricingListingActivity.this));
-                }
+                }*/
             }
         });
     }
@@ -278,4 +352,5 @@ public class InPricingListingActivity extends BaseActivity<ActivityListingBindin
             }
         });
     }
+
 }

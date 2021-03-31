@@ -48,6 +48,36 @@ public class UserDetails {
         this.level_id = level_id;
     }
 
+    public String getTwo_wheeler_rate() {
+        return two_wheeler_rate;
+    }
+
+    public void setTwo_wheeler_rate(String two_wheeler_rate) {
+        this.two_wheeler_rate = two_wheeler_rate;
+    }
+
+    @SerializedName("two_wheeler_rate")
+    @Expose
+    private String two_wheeler_rate;
+
+    public String getFour_wheeler_rate() {
+        return four_wheeler_rate;
+    }
+
+    public void setFour_wheeler_rate(String four_wheeler_rate) {
+        this.four_wheeler_rate = four_wheeler_rate;
+    }
+
+    @SerializedName("four_wheeler_rate")
+    @Expose
+    private String four_wheeler_rate;
+
+
+
+
+
+
+
     @SerializedName("level_id")
     @Expose
     private String level_id;

@@ -99,19 +99,38 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/_10ssp"
                 android:orientation="vertical">
-                <Spinner
-                    android:id="@+id/spinner_contractor"
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_7sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_contractor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_transaction_type"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -130,8 +149,9 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -154,8 +174,9 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -169,6 +190,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:hint="@string/labour_total_val"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_driver_name">
@@ -192,6 +214,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/location"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/customer_name">
@@ -208,12 +231,13 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <RelativeLayout
                     android:id="@+id/lp_commite_date"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_customer_quantity">
@@ -248,6 +272,7 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_total_bags"
                     style="@style/TextInputStyle"
@@ -255,6 +280,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:hint="@string/total_bags_val"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_driver_phone_no">
@@ -271,11 +297,6 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-
 
 
                 <EditText
@@ -307,9 +328,9 @@
                         style="@style/Base.TextAppearance.AppCompat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Not Required"
-                        android:layout_toRightOf="@+id/check_not_requried"
                         android:layout_marginLeft="@dimen/_10ssp"
+                        android:layout_toRightOf="@+id/check_not_requried"
+                        android:text="Not Required"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_12ssp" />
                 </RelativeLayout>

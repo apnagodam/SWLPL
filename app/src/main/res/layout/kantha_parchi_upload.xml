@@ -168,7 +168,6 @@
                                         android:layout_centerVertical="true"
                                         android:layout_marginLeft="@dimen/_40sdp"
                                         android:layout_marginTop="@dimen/_15sdp"
-                                        android:layout_toRightOf="@id/imageLayout"
                                         android:layout_weight="1"
                                         android:orientation="vertical">
 
@@ -207,7 +206,6 @@
                             android:visibility="visible"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent" />
-
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -264,7 +262,6 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="@dimen/_40sdp"
                                     android:layout_marginTop="@dimen/_15sdp"
-                                    android:layout_toRightOf="@id/imageLayout"
                                     android:layout_weight="1"
                                     android:orientation="vertical">
 
@@ -289,18 +286,18 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
                     </LinearLayout>
-                    <EditText
-                        android:id="@+id/notes"
-                        style="@style/TextStyleBold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5ssp"
-                        android:background="@drawable/white_back_black_border"
-                        android:hint="Notes"
-                        android:imeOptions="actionDone"
-                        android:lines="5"
-                        android:padding="@dimen/_5sdp"
-                        android:textSize="@dimen/_12ssp" />
+                        <EditText
+                            android:id="@+id/notes"
+                            style="@style/TextStyleBold"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5ssp"
+                            android:background="@drawable/white_back_black_border"
+                            android:hint="Notes"
+                            android:imeOptions="actionDone"
+                            android:lines="5"
+                            android:padding="@dimen/_5sdp"
+                            android:textSize="@dimen/_12ssp" />
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_login"
                         style="@style/ButtonStyle"

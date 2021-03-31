@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/root"
@@ -65,8 +66,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/_10ssp"
-            android:scrollbars="none"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,117 +85,6 @@
                     android:padding="@dimen/_10sdp"
                     android:spinnerMode="dropdown"
                     android:visibility="gone" />
-
-                <Spinner
-                    android:id="@+id/spinner_in_out"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_in_out"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
-
-                <Spinner
-                    android:id="@+id/spinner_purpose"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_fpo" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_location"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_location"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_weight"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/weight_kg">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_weight"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_customer_weight_quintal"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/weight_quintal">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_customer_weight_quintal"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:focusedByDefault="false"
-                        android:imeOptions="actionNext"
-                        android:inputType="phone"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-<!--                <Spinner-->
-<!--                    android:id="@+id/spinner_userName"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:background="@android:color/transparent"-->
-<!--                    android:entries="@array/array_pupose"-->
-<!--                    android:gravity="right"-->
-<!--                    android:padding="@dimen/_10sdp"-->
-<!--                    android:spinnerMode="dropdown" />-->
-                <TextView
-                    android:id="@+id/spinner_userName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:text="@string/select_coustomer"
-                    android:padding="@dimen/_10sdp"/>
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -202,6 +92,118 @@
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginRight="3dp"
                     android:layout_weight=".28"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_terminal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/rlUser"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:visibility="gone"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <com.apnagodam.staff.utils.SearchableSpinner
+                        android:id="@+id/spinner_userName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/inoutRl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:visibility="gone"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_in_out"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_in_out"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/RLCommodity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:visibility="gone"
                     android:background="@drawable/white_back_black_border"
                     android:orientation="horizontal"
                     android:paddingEnd="@dimen/_5sdp"
@@ -230,20 +232,161 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
-
-                <Spinner
-                    android:id="@+id/spinner_terminal"
+                <RelativeLayout
+                    android:id="@+id/RLStack"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_commudity" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_stack"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_in_out"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:visibility="gone"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_purpose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_customer_location"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/location"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_customer_location"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="textPersonName"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_customer_weight"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter approx. Weight in KG *">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_customer_weight"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_customer_weight_quintal"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/weight_quintal">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_customer_weight_quintal"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:imeOptions="actionNext"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/black" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!--  <TextView
+                      android:id="@+id/spinner_userName"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="@dimen/_5sdp"
+                      android:background="@drawable/white_back_black_border"
+                      android:text="@string/select_coustomer"
+                      android:padding="@dimen/_10sdp"/>-->
+
+
+
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_gatepass"
@@ -251,6 +394,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/gate_pass"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_customer_weight_quintal">
@@ -289,16 +433,42 @@
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Spinner
-                    android:id="@+id/spinner_lead_convert_other"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown" />
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_lead_convert_other"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_fpo"
@@ -317,7 +487,7 @@
                         android:layout_height="wrap_content"
                         android:focusable="true"
                         android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
                         android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true" />

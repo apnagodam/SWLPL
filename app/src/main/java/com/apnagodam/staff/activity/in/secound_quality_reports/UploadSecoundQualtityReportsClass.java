@@ -13,13 +13,9 @@ import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData;
-import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData;
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
-import com.apnagodam.staff.activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass;
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 import com.apnagodam.staff.utils.Utility;
@@ -38,6 +34,8 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
     boolean ReportsFileSelect = false;
     boolean CommudityFileSelect = false;
     private String reportFile, commudityFile;
+    Options options;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_update_quality_report;
@@ -56,7 +54,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
         binding.caseId.setText(CaseID);
         clickListner();
         // spinner purpose
-        binding.spinnerPackagingtype.setVisibility(View.GONE);
+        binding.rlpackgingType.setVisibility(View.GONE);
         binding.spinnerPackagingtype.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -75,7 +73,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityAndClear(FirstQualityReportListingActivity.class);
+                startActivityAndClear(SecoundQualityReportListingActivity.class);
             }
         });
         binding.btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +82,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
                 Utility.showDecisionDialog(UploadSecoundQualtityReportsClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
                     @Override
                     public void callback() {
-                if (isValid()) {
+                        if (isValid()) {
 
                    /* if (fileReport == null) {
                         Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
@@ -93,9 +91,9 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
                     } else if (packagingTypeID == null) {
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
                     } else {*/
-                        onNext();
-                   // }
-                }
+                            onNext();
+                            // }
+                        }
                     }
                 });
             }
@@ -105,7 +103,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             public void onClick(View v) {
                 ReportsFileSelect = true;
                 CommudityFileSelect = false;
-                callImageSelector();
+                callImageSelector(REQUEST_CAMERA);
             }
         });
         binding.uploadCommudity.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +111,7 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             public void onClick(View v) {
                 ReportsFileSelect = false;
                 CommudityFileSelect = true;
-                callImageSelector();
+                callImageSelector(REQUEST_CAMERA);
             }
         });
         binding.ReportsImage.setOnClickListener(new View.OnClickListener() {
@@ -131,17 +129,16 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
 
     }
 
-    private void callImageSelector() {
-        Options options = Options.init()
-                .setRequestCode(100)                                           //Request code for activity results
+    private void callImageSelector(int requestCamera) {
+        options = Options.init()
+                .setRequestCode(requestCamera)                                                 //Request code for activity results
                 .setCount(1)                                                   //Number of images to restict selection count
                 .setFrontfacing(false)                                         //Front Facing camera on start
-                .setExcludeVideos(true)                                       //Option to exclude videos
+                .setExcludeVideos(false)                                            //Option to exclude videos
                 .setVideoDurationLimitinSeconds(30)                            //Duration for video recording
                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
                 .setPath("/apnagodam/lp/images");                                       //Custom Path For media Storage
-
-        Pix.start(UploadSecoundQualtityReportsClass.this, options.setRequestCode(REQUEST_CAMERA_PICTURE));
+        Pix.start(UploadSecoundQualtityReportsClass.this, options);
     }
 
 
@@ -155,16 +152,20 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity);
         }
         //else {
-        apiService.uploadSecoundQualityReports(new UploadSecoundQualityPostData(CaseID,KanthaImage, stringFromView(binding.etMoistureLevel),stringFromView(binding.etTcw),stringFromView(binding.etFmLevel),stringFromView(binding.etThin)
-                ,stringFromView(binding.etDehuck),stringFromView(binding.etDiscolor),stringFromView(binding.etBroken),stringFromView(binding.etInfested)
-                ,stringFromView(binding.etLive),stringFromView(binding.notes),CommudityFileSelectImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+        apiService.uploadSecoundQualityReports(new UploadSecoundQualityPostData(CaseID, KanthaImage, stringFromView(binding.etMoistureLevel), stringFromView(binding.etTcw), stringFromView(binding.etFmLevel), stringFromView(binding.etThin)
+                , stringFromView(binding.etDehuck), stringFromView(binding.etDiscolor), stringFromView(binding.etBroken), stringFromView(binding.etInfested)
+                , stringFromView(binding.etLive), stringFromView(binding.notes), CommudityFileSelectImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
             @Override
             protected void onSuccess(LoginResponse body) {
-                    Toast.makeText(UploadSecoundQualtityReportsClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                    startActivityAndClear(SecoundQualityReportListingActivity.class);
-                }
-            });
-       // }
+                Utility.showAlertDialog(UploadSecoundQualtityReportsClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
+                    @Override
+                    public void callback() {
+                        startActivityAndClear(SecoundQualityReportListingActivity.class);
+                    }
+                });
+            }
+        });
+        // }
     }
 
     boolean isValid() {
@@ -190,28 +191,33 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
         }*/
         return true;
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == 2) {
-            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-            assert returnValue != null;
-            Log.e("getImageesValue", returnValue.get(0).toString());
-            if (requestCode == REQUEST_CAMERA_PICTURE) {
-                if (ReportsFileSelect) {
-                    ReportsFileSelect = false;
-                    CommudityFileSelect = false;
-                    fileReport = new File(compressImage(returnValue.get(0).toString()));
-                    Uri uri = Uri.fromFile(fileReport);
-                    reportFile = String.valueOf(uri);
-                    binding.ReportsImage.setImageURI(uri);
-                } else if (CommudityFileSelect) {
-                    ReportsFileSelect = false;
-                    CommudityFileSelect = false;
-                    fileCommudity = new File(compressImage(returnValue.get(0).toString()));
-                    Uri uri = Uri.fromFile(fileCommudity);
-                    commudityFile = String.valueOf(uri);
-                    binding.CommudityImage.setImageURI(uri);
+        if (requestCode == REQUEST_CAMERA) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.hasExtra(Pix.IMAGE_RESULTS)) {
+                    ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+                    assert returnValue != null;
+                    Log.e("getImageesValue", returnValue.get(0).toString());
+                    if (requestCode == REQUEST_CAMERA) {
+                        if (ReportsFileSelect) {
+                            ReportsFileSelect = false;
+                            CommudityFileSelect = false;
+                            fileReport = new File(compressImage(returnValue.get(0).toString()));
+                            Uri uri = Uri.fromFile(fileReport);
+                            reportFile = String.valueOf(uri);
+                            binding.ReportsImage.setImageURI(uri);
+                        } else if (CommudityFileSelect) {
+                            ReportsFileSelect = false;
+                            CommudityFileSelect = false;
+                            fileCommudity = new File(compressImage(returnValue.get(0).toString()));
+                            Uri uri = Uri.fromFile(fileCommudity);
+                            commudityFile = String.valueOf(uri);
+                            binding.CommudityImage.setImageURI(uri);
+                        }
+                    }
                 }
             }
         }
@@ -223,12 +229,19 @@ public class UploadSecoundQualtityReportsClass extends BaseActivity<ActivityUpda
             case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Pix.start(this, Options.init().setRequestCode(100));
+                    Pix.start(this, options);
                 } else {
+                    callImageSelector(REQUEST_CAMERA);
                     Toast.makeText(this, "Approve permissions to open Pix ImagePicker", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivityAndClear(SecoundQualityReportListingActivity.class);
     }
 }

@@ -22,10 +22,14 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
+import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllLeadsResponse;
+import com.apnagodam.staff.module.TerminalListPojo;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Utility;
@@ -49,7 +53,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     private Calendar calender;
     private boolean isUpdate = false;
     private String getLeadId;
-
+    List<TerminalListPojo.Datum> data;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_geenerte_leads;
@@ -60,6 +64,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         calender = Calendar.getInstance();
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getTerminalListLevel();
         clickListner();
         CommudityName = new ArrayList<>();
         CommudityID = new ArrayList<>();
@@ -69,7 +74,17 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         TerminalName.add(getResources().getString(R.string.terminal_name1));
         setValueOnSpinner();
     }
-
+    private void getTerminalListLevel() {
+        apiService.getTerminalListLevel().enqueue(new NetworkCallback<TerminalListPojo>(getActivity()) {
+            @Override
+            protected void onSuccess(TerminalListPojo body) {
+                data = body.getData();
+                for (int i = 0; i < data.size(); i++) {
+                    TerminalName.add(data.get(i).getName() + "(" + data.get(i).getWarehouseCode() + ")");
+                }
+            }
+        });
+    }
     private void setValueOnSpinner() {
         // spinner meter obj
         // layout resource and list of items.
@@ -77,11 +92,11 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         //   TerminalID = "" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(0).getId();
 
         for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-            CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
+            CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory()+"("+SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCommodityType()+")");
         }
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
+       /* for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
             TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName() + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
-        }
+        }*/
         SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
             //By using this method we will define how
             // the text appears before clicking a spinner
@@ -111,7 +126,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 if (position != 0) {
                     String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
                     for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-                        if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory())) {
+                        if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory()+"("+SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCommodityType()+")")) {
                             commudityID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getId());
                         }
                     }
@@ -151,9 +166,9 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 // selected item in the list
                 if (position != 0) {
                     String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
-                        if (presentMeterStatusID.contains(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName())) {
-                            TerminalID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getId());
+                    for (int i = 0; i < data.size(); i++) {
+                        if (presentMeterStatusID.contains(data.get(i).getName() + "(" + data.get(i).getWarehouseCode() + ")")) {
+                            TerminalID = String.valueOf(data.get(i).getId());
                         }
                     }
                 }
@@ -190,14 +205,14 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        startActivityAndClear(StaffDashBoardActivity.class);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_close:
-                finish();
+                startActivityAndClear(StaffDashBoardActivity.class);
                 break;
             case R.id.tv_done:
                 callLeadListActivity();
@@ -231,7 +246,13 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                                 @Override
                                 protected void onSuccess(LoginResponse body) {
                                     Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-//                                    callLeadListActivity();
+                                   callLeadListActivity();
+                                    Utility.showAlertDialog(LeadGenerateClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
+                                        @Override
+                                        public void callback() {
+                                            callLeadListActivity();
+                                        }
+                                    });
                                 }
                             });
                         } else {
@@ -242,8 +263,12 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                                     selectPurpose)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                                 @Override
                                 protected void onSuccess(LoginResponse body) {
-                                    Toast.makeText(LeadGenerateClass.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                                    callLeadListActivity();
+                                    Utility.showAlertDialog(LeadGenerateClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
+                                        @Override
+                                        public void callback() {
+                                            callLeadListActivity();
+                                        }
+                                    });
 
                                 }
                             });

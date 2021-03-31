@@ -313,6 +313,19 @@ public class AllTruckBookListResponse extends BaseResponse {
         @Expose
         private String p_case_id;
 
+
+        public String getDelivery_order_case_id() {
+            return delivery_order_case_id;
+        }
+
+        public void setDelivery_order_case_id(String delivery_order_case_id) {
+            this.delivery_order_case_id = delivery_order_case_id;
+        }
+
+        @SerializedName("delivery_order_case_id")
+        @Expose
+        private String delivery_order_case_id;
+
         public Integer getId() {
             return id;
         }
@@ -365,6 +378,17 @@ public class AllTruckBookListResponse extends BaseResponse {
             return commodityId;
         }
 
+        public String getFile() {
+            return file;
+        }
+
+        public void setFile(String file) {
+            this.file = file;
+        }
+
+        @SerializedName("file")
+        @Expose
+        private String file;
         public void setCommodityId(String commodityId) {
             this.commodityId = commodityId;
         }

@@ -210,10 +210,10 @@ public class SpotDealTrackListActivity extends BaseActivity<MyCommudityListBindi
         a6.setText(getResources().getString(R.string.total_weight_qtl));
         inventory_id = "" + getOrdersList.get(position).getId();
         if (SharedPreferencesRepository.getDataManagerInstance().getUser().getUserId().equalsIgnoreCase(getOrdersList.get(position).getSellerId())) {
-            gate_pass_no.setText("Sell");
+            gate_pass_no.setText("Seller");
             terminal_name.setText("" + ((getOrdersList.get(position).getFname()) != null ? getOrdersList.get(position).getFname() : "N/A"));
         } else {
-            gate_pass_no.setText("Buy");
+            gate_pass_no.setText("Buyer");
             terminal_name.setText("" + ((getOrdersList.get(position).getSellerName()) != null ? getOrdersList.get(position).getSellerName() : "N/A"));
         }
 

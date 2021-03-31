@@ -109,6 +109,50 @@
                 android:background="@color/view_color" />
 
             <LinearLayout
+                android:id="@+id/LLStack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10ssp"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:text="Stack no: "
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.01"
+                        android:background="@color/view_color" />
+
+                    <TextView
+                        android:id="@+id/stack_no"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_20sdp"
+                        android:layout_weight="0.6"
+                        android:text="123456787787"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/view_color" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10ssp"
@@ -128,14 +172,14 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.01"
                     android:background="@color/view_color" />
+
                 <ImageView
                     android:id="@+id/kanta_parchi_file"
                     android:layout_width="0dp"
+                    android:layout_height="@dimen/_20ssp"
                     android:layout_marginLeft="@dimen/_20sdp"
                     android:layout_weight="0.6"
-                    android:layout_height="@dimen/_20ssp"
-                    android:src="@drawable/ic_baseline_remove_red_eye_24"
-                    />
+                    android:src="@drawable/ic_baseline_remove_red_eye_24" />
             </LinearLayout>
 
             <View
@@ -144,6 +188,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@color/view_color" />
+
             <LinearLayout
                 android:id="@+id/llview"
                 android:layout_width="match_parent"
@@ -169,12 +214,12 @@
                 <ImageView
                     android:id="@+id/truck_file"
                     android:layout_width="0dp"
+                    android:layout_height="@dimen/_20ssp"
                     android:layout_marginLeft="@dimen/_20sdp"
                     android:layout_weight="0.6"
-                    android:layout_height="@dimen/_20ssp"
-                    android:src="@drawable/ic_baseline_remove_red_eye_24"
-                    />
+                    android:src="@drawable/ic_baseline_remove_red_eye_24" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/price_extra"
                 android:layout_width="match_parent"
@@ -303,6 +348,7 @@
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -341,13 +387,14 @@
                 </LinearLayout>
 
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/gate_pass_extra"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_marginTop="@dimen/_5sdp">
+                android:visibility="gone">
 
                 <View
                     android:layout_width="match_parent"
@@ -424,6 +471,45 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
                 </LinearLayout>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/view_color" />
+            <LinearLayout
+                android:id="@+id/avgweight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="Avg. Weight"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.01"
+                    android:background="@color/view_color" />
+
+                <TextView
+                    android:id="@+id/avg_weight"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_weight="0.6"
+                    android:text="123456787787"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            </LinearLayout>
+
+
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

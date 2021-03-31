@@ -68,10 +68,23 @@ public class UploadTruckDetailsPostData {
     @Expose
     private String notes;
 
+    @SerializedName("transporter_id")
+    @Expose
+    private String transporter_id;
+    @SerializedName("bilty_image")
+    @Expose
+    private String bilty_image;
+    @SerializedName("truckbook_rate_type")
+    @Expose
+    private String truckbook_rate_type;
+    @SerializedName("truckbook_related_caseId")
+    @Expose
+    private String truckbook_related_caseId;
     public UploadTruckDetailsPostData(String case_id, String transporter, String vehicle, String driver_name,
                                       String driver_phone, String min_weight, String max_weight, String turnaround_time, String total_weight,
                                       String no_of_bags, String total_transport_cost, String advance_payment, String start_date_time,
-                                      String final_settlement_amount, String end_date_time, String notes) {
+                                      String final_settlement_amount, String end_date_time, String notes
+            , String transporter_id, String bilty_image, String truckbook_rate_type, String truckbook_related_caseId) {
         this.case_id = case_id;
         this.transporter = transporter;
         this.vehicle = vehicle;
@@ -88,6 +101,10 @@ public class UploadTruckDetailsPostData {
         this.final_settlement_amount = final_settlement_amount;
         this.end_date_time = end_date_time;
         this.notes = notes;
+        this.transporter_id = transporter_id;
+        this.bilty_image = bilty_image;
+        this.truckbook_rate_type = truckbook_rate_type;
+        this.truckbook_related_caseId = truckbook_related_caseId;
     }
 }
 

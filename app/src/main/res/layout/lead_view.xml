@@ -59,6 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
                     android:layout_weight="0.6"
                     android:text="123456787787"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
@@ -255,6 +256,46 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/view_color" />
+
+            <LinearLayout
+                android:id="@+id/staclLL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10ssp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="Stack NO:-"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.01"
+                    android:background="@color/view_color" />
+
+                <TextView
+                    android:id="@+id/stack_no"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_weight="0.6"
+                    android:text="123456787787"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/stackView"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@color/view_color" />
 
@@ -841,6 +882,7 @@
                     android:background="@color/view_color" />
 
                 <LinearLayout
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5ssp"
@@ -1040,6 +1082,42 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/view_color" />
+            <LinearLayout
+                android:id="@+id/biltyLL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/_10ssp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="Bilty Image"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.01"
+                    android:background="@color/view_color" />
+
+                <ImageView
+                    android:id="@+id/Bilty_Image"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_20ssp"
+                    android:layout_marginLeft="@dimen/_20sdp"
+                    android:layout_weight="0.6"
+                    android:src="@drawable/ic_baseline_remove_red_eye_24" />
+            </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

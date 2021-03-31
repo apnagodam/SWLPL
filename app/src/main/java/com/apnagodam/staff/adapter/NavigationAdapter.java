@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.BuildConfig;
@@ -81,6 +82,9 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (BuildConfig.DEBUG) {
                 headerViewHolder.versionName.setText("V " + BuildConfig.VERSION_NAME);
             }
+
+
+
            /* headerViewHolder.rl.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -89,8 +93,13 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 }
             });*/
         } else {
+
             NavigationViewHolder navigationViewHolder = (NavigationViewHolder) holder;
-            if (position == 1) {
+            navigationViewHolder.subMenuItemsRecycler.setLayoutManager(new LinearLayoutManager(activity));
+            SubMenuNavigationAdapter navigationVLCAdapter = new SubMenuNavigationAdapter(menuItems.get(position).getGetList(), userDetailsValues, (StaffDashBoardActivity) activity);
+            navigationViewHolder.subMenuItemsRecycler.setAdapter(navigationVLCAdapter);
+
+           /* if (position == 1) {
                 navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
                 navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
             } else if (position == 2) {
@@ -105,10 +114,10 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             } else if (position == 5) {
                 navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
                 navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else {
+            } else {*/
                 navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
                 navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            }
+//            }
         }
     }
 
@@ -132,6 +141,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView userName, sdo_code, last_login;
         TextView versionName;
         RelativeLayout root, rl;
+
 
         @SuppressLint("ClickableViewAccessibility")
         public HeaderViewHolder(View view, OnProfileClickListener onProfileClickInterface) {
@@ -157,11 +167,14 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         TextView menuName;
         ImageView imageView;
+        RecyclerView subMenuItemsRecycler;
 
         public NavigationViewHolder(View view) {
             super(view);
             menuName = view.findViewById(R.id.menuTitle);
             imageView = view.findViewById(R.id.menuImage);
+            subMenuItemsRecycler = view.findViewById(R.id.subMenuItemsRecycler);
+
         }
     }
 

@@ -79,7 +79,7 @@ public class Utility {
 
     public static String timeFromdateTime(String inputDateStr) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        DateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat outputFormat = new SimpleDateFormat("dd-mm-yyyy");
         Date date = null;
         try {
             date = inputFormat.parse(inputDateStr);
@@ -91,6 +91,7 @@ public class Utility {
         }
 
     }
+
     public static void copyAssets(String fileName) {
         AssetManager assetManager = ApnaGodamApp.getApp().getAssets();
         InputStream in = null;
@@ -119,10 +120,10 @@ public class Utility {
             }
         }
     }
+
     public static double round(double value, int numberOfDigitsAfterDecimalPoint) {
         BigDecimal bigDecimal = new BigDecimal(value);
-        bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint,
-                BigDecimal.ROUND_HALF_UP);
+        bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint, BigDecimal.ROUND_HALF_UP);
         return bigDecimal.doubleValue();
     }
     public static boolean isNetworkAvailable(Context context) {
@@ -133,17 +134,11 @@ public class Utility {
     }
 
     private static int getConnectivityStatus(Context context) {
-
-        ConnectivityManager cm = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
         if (null != activeNetwork) {
-
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI)
                 return TYPE_WIFI;
-
             if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE)
                 return TYPE_MOBILE;
         }
@@ -151,19 +146,14 @@ public class Utility {
     }
 
     public static String getConnectivityStatusString(Context context) {
-
         if (context == null) {
             return Constants.NOT_CONNECT;
         }
-
         int conn = getConnectivityStatus(context);
-
         String status = null;
         if (conn == TYPE_WIFI) {
-            //status = "Wifi enabled";
             status = Constants.CONNECT_TO_WIFI;
         } else if (conn == TYPE_MOBILE) {
-            //status = "Mobile data enabled";
             status = getNetworkClass(context);
         } else if (conn == TYPE_NOT_CONNECTED) {
             status = Constants.NOT_CONNECT;
@@ -185,7 +175,6 @@ public class Utility {
         if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
             int networkType = info.getSubtype();
             switch (networkType) {
-
                 case TelephonyManager.NETWORK_TYPE_HSPAP:  //api<13 : replace by 15
                     return "3G";
                 case TelephonyManager.NETWORK_TYPE_LTE:    //api<11 : replace by 13
@@ -385,6 +374,27 @@ public class Utility {
                 mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
             } else if (media.equals("video")) {
                 mediaFile = new File(mediaStorageDir.getPath() + File.separator + "video_" + timeStamp + ".mp4");
+            } else if (media.equals("pdf")) {
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator + "gatepass_" + timeStamp + ".pdf");
+            }
+
+            return mediaFile;
+        } catch (Exception var6) {
+            return null;
+        }
+    }
+
+    public static File getOutpuPDFtMediaFile(Context context, String media) {
+        try {
+            String e = context.getString(R.string.app_name);
+            File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), e);
+            if (!mediaStorageDir.exists()) {
+                mediaStorageDir.mkdirs();
+            }
+            String timeStamp = (new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())).format(new Date());
+            File mediaFile = null;
+            if (media.equals("pdf")) {
+                mediaFile = new File(mediaStorageDir.getPath() + File.separator + "gatepass_" + timeStamp + ".pdf");
             }
 
             return mediaFile;
@@ -448,11 +458,9 @@ public class Utility {
         } else {
             drawable = context.getResources().getDrawable(maskId);
         }
-
         if (drawable == null) {
             throw new IllegalArgumentException("maskId is invalid");
         }
-
         return drawable;
     }
 
@@ -467,7 +475,6 @@ public class Utility {
                 hexString.append(hex);
             }
             return hexString.toString();
-
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -480,12 +487,14 @@ public class Utility {
         return matcher.matches();
 
     }
+
     public static boolean isValidMobile(String phone) {
-        if(!Pattern.matches("[a-zA-Z]+", phone)) {
+        if (!Pattern.matches("[a-zA-Z]+", phone)) {
             return phone.length() > 9 && phone.length() <= 10;
         }
         return false;
     }
+
     private boolean isValidMobile2(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
     }
@@ -599,20 +608,21 @@ public class Utility {
 
     }*/
 
-   /* public static void setTitle(BaseActivity activity, @StringRes int title) {
-        TextView titleTxt = activity.findViewById(R.id.titleTxt);
-        if (titleTxt != null) {
-            titleTxt.setText(title);
-        }
-        Toolbar toolbar = activity.findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            activity.setBackBtn(toolbar);
-        }
+    /* public static void setTitle(BaseActivity activity, @StringRes int title) {
+         TextView titleTxt = activity.findViewById(R.id.titleTxt);
+         if (titleTxt != null) {
+             titleTxt.setText(title);
+         }
+         Toolbar toolbar = activity.findViewById(R.id.toolbar);
+         if (toolbar != null) {
+             activity.setBackBtn(toolbar);
+         }
 
-    }*/
-   public interface AlertCallback {
-       void callback();
-   }
+     }*/
+    public interface AlertCallback {
+        void callback();
+    }
+
     public static void showDecisionDialog(Context context, String title, String message, final AlertCallback callbackListener) {
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -646,36 +656,36 @@ public class Utility {
     }
 
 
-
-/*    public static void setLocale(BaseActivity activity) {
-        String currentLanguage = SharedPreferencesRepository.getLocale();
-        String languageToLoad = Constants.ENGLISH_LOCALE;
-        if (!currentLanguage.isEmpty() && currentLanguage.equals(Constants.ENGLISH_LOCALE)) {
-            languageToLoad = Constants.HINDI_LOCALE;
+    /*    public static void setLocale(BaseActivity activity) {
+            String currentLanguage = SharedPreferencesRepository.getLocale();
+            String languageToLoad = Constants.ENGLISH_LOCALE;
+            if (!currentLanguage.isEmpty() && currentLanguage.equals(Constants.ENGLISH_LOCALE)) {
+                languageToLoad = Constants.HINDI_LOCALE;
+            }
+            Locale locale = new Locale(languageToLoad);
+            Resources res = activity.getResources();
+            DisplayMetrics dm = res.getDisplayMetrics();
+            Configuration configuration = res.getConfiguration();
+            configuration.setLocale(locale);
+            res.updateConfiguration(configuration, dm);
+            SharedPreferencesRepository.setLocale(languageToLoad);
+            // Refresh the app
+            Intent refresh = new Intent(activity, activity.getClass());
+            activity.overridePendingTransition(0, 0);
+            activity.startActivity(refresh);
+            activity.overridePendingTransition(0, 0);
+            activity.finish();
+        }*/
+    public static String getCorrectFormatMobileNo(String mobileNo) {
+        if (TextUtils.isEmpty(mobileNo) || mobileNo.length() < 10) {
+            return mobileNo;
         }
-        Locale locale = new Locale(languageToLoad);
-        Resources res = activity.getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
-        Configuration configuration = res.getConfiguration();
-        configuration.setLocale(locale);
-        res.updateConfiguration(configuration, dm);
-        SharedPreferencesRepository.setLocale(languageToLoad);
-        // Refresh the app
-        Intent refresh = new Intent(activity, activity.getClass());
-        activity.overridePendingTransition(0, 0);
-        activity.startActivity(refresh);
-        activity.overridePendingTransition(0, 0);
-        activity.finish();
-    }*/
-public static String getCorrectFormatMobileNo(String mobileNo) {
-    if (TextUtils.isEmpty(mobileNo) || mobileNo.length() < 10) {
-        return mobileNo;
+        String result = mobileNo;
+        result = mobileNo.replaceAll("[^0-9]", "");
+        result = result.substring(result.length() - 10);
+        return result;
     }
-    String result = mobileNo;
-    result = mobileNo.replaceAll("[^0-9]", "");
-    result = result.substring(result.length() - 10);
-    return result;
-}
+
     public static void setLocale(BaseActivity activity) {
         String currentLanguage = SharedPreferencesRepository.getLocale();
         String languageToLoad = Constants.ENGLISH_LOCALE;
@@ -936,7 +946,8 @@ public static String getCorrectFormatMobileNo(String mobileNo) {
 
         return Float.toString(fileSizeInMB);
     }
-    public static void changeLanguage(Context context,String languageCode) {
+
+    public static void changeLanguage(Context context, String languageCode) {
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
         android.content.res.Configuration conf = res.getConfiguration();

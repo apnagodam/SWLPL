@@ -24,7 +24,9 @@
         <attr name="ms_isRtl" format="boolean"/>
 
     </declare-styleable>
-
+    <declare-styleable name="SearchableSpinner">
+        <attr name="hintText" format="string"/>
+    </declare-styleable>
     <declare-styleable name="CircularImageView">
         <attr name="civ_border" format="boolean"/>
         <attr name="civ_border_width" format="dimension"/>

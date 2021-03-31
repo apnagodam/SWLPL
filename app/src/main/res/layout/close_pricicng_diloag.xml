@@ -27,6 +27,7 @@
                     android:weightSum="1">
 
                     <TextView
+                        android:id="@+id/title_header"
                         style="@style/TextStyleNormal"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

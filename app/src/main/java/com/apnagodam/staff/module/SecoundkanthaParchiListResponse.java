@@ -312,6 +312,17 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
         @Expose
         private String f_k_p_case_id;
 
+        public String getS_q_case_id() {
+            return s_q_case_id;
+        }
+
+        public void setS_q_case_id(String s_q_case_id) {
+            this.s_q_case_id = s_q_case_id;
+        }
+
+        @SerializedName("s_q_case_id")
+        @Expose
+        private String s_q_case_id;
         public String getF_q_case_id() {
             return f_q_case_id;
         }

@@ -134,7 +134,7 @@
                     android:layout_marginLeft="@dimen/_10ssp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10ssp"
-                    android:hint="@string/quanity"
+                    android:hint="Enter Approx. Quantity in Quintal *"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_customer_number">
@@ -177,37 +177,77 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10ssp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10ssp"
+                    android:layout_weight=".28"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
-                <Spinner
-                    android:id="@+id/spinner_commudity"
+                    <Spinner
+                        android:id="@+id/spinner_commudity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_10ssp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10ssp"
+                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="left"
-                    android:padding="@dimen/_7sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_purpose" />
-                <Spinner
-                    android:id="@+id/spinner_terminal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_10ssp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:layout_marginRight="@dimen/_10ssp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="left"
-                    android:padding="@dimen/_7sdp"
-                    android:spinnerMode="dropdown"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_commudity" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_terminal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/lp_commite_date"
                     android:layout_width="match_parent"
@@ -249,24 +289,41 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
-
-                <Spinner
-                    android:id="@+id/spinner_purpose"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_10ssp"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginRight="@dimen/_10ssp"
+                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="left"
-                    android:padding="@dimen/_7sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/lp_commite_date" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
+                    <Spinner
+                        android:id="@+id/spinner_purpose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_pupose_lead"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_login"

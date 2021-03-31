@@ -1,26 +1,35 @@
 package com.apnagodam.staff.activity.in.truckbook;
 
+import android.app.Activity;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.caseid.CaseListingActivity;
+import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
+import com.apnagodam.staff.utils.Constants;
+import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +41,7 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
     private int pageOffset = 1;
     private int totalPage = 0;
     private List<AllTruckBookListResponse.Datum> AllCases;
+    private String  TruckImage;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -39,7 +49,6 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
 
     @Override
     protected void setUp() {
-        binding.pageNextPrivious.setVisibility(View.VISIBLE);
         AllCases = new ArrayList();
         setAdapter();
         setSupportActionBar(binding.toolbar);
@@ -51,7 +60,13 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
        /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        getAllCases();
+        getAllCases("");
+        binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllCases("");
+            }
+        });
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +78,7 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
             public void onClick(View view) {
                 if (pageOffset != 1) {
                     pageOffset--;
-                    getAllCases();
+                    getAllCases("");
                 }
             }
         });
@@ -72,14 +87,56 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
             public void onClick(View view) {
                 if (totalPage != pageOffset) {
                     pageOffset++;
-                    getAllCases();
+                    getAllCases("");
                 }
+            }
+        });
+        binding.filterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(TruckBookListingActivity.this);
+                LayoutInflater inflater = ((Activity) TruckBookListingActivity.this).getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.fiter_diloag, null);
+                EditText notes = (EditText) dialogView.findViewById(R.id.notes);
+                Button submit = (Button) dialogView.findViewById(R.id.btn_submit);
+                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
+                builder.setView(dialogView);
+                builder.setCancelable(false);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                cancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (notes.getText().toString().trim() != null && !notes.getText().toString().trim().isEmpty()) {
+                            alertDialog.dismiss();
+                            pageOffset = 1;
+                            getAllCases(notes.getText().toString().trim());
+                            //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Fill Text", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                //  setDateTimeField();
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivityAndClear(StaffDashBoardActivity.class);
+    }
+
     private void setAdapter() {
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
+        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.HORIZONTAL));
         binding.rvDefaultersStatus.setHasFixedSize(true);
         binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -89,46 +146,14 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
 //        pagination(horizontalLayoutManager);
 
     }
-/*
-    private void pagination(LinearLayoutManager horizontalLayoutManager) {
-        binding.rvDefaultersStatus.addOnScrollListener(new PaginationScrollListener(horizontalLayoutManager) {
-            @Override
-            public boolean isLastPage() {
-                return isLastPage;
-            }
 
-            @Override
-            public boolean isLoading() {
-                return isLoading;
-            }
-
-            @Override
-            public void loadMoreItems() {
-                isLoading = true;
-                getMoreItems();
-            }
-        });
-    }
-*/
-
-    /*
-        private void getMoreItems() {
-            if (isLoading && pageOffset<totalPage) {
-                pageOffset = pageOffset + 1;
-                binding.layoutLoader.setVisibility(View.VISIBLE);
-                getAllCases();
-                isLoading = false;
-            }else{
-                binding.layoutLoader.setVisibility(View.GONE);
-            }
-        }
-    */
-    private void getAllCases() {
+    private void getAllCases(String search) {
         showDialog();
-        apiService.getTruckBookList("15", pageOffset, "IN").enqueue(new NetworkCallbackWProgress<AllTruckBookListResponse>(getActivity()) {
+        apiService.getTruckBookList("10", pageOffset, "IN",search).enqueue(new NetworkCallbackWProgress<AllTruckBookListResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllTruckBookListResponse body) {
-
+                binding.swipeRefresherStock.setRefreshing(false);
+                AllCases.clear();
                 if (body.getTruckBookCollection() == null) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
@@ -241,6 +266,19 @@ public class TruckBookListingActivity extends BaseActivity<ActivityListingBindin
         purpose_name.setText("" + ((AllCases.get(position).getMaxWeight()) != null ? AllCases.get(position).getMaxWeight() : "N/A"));
         commitemate_date.setText("" + ((AllCases.get(position).getTurnaroundTime()) != null ? AllCases.get(position).getTurnaroundTime() : "N/A"));
         create_date.setText("" + ((AllCases.get(position).getCommodityId()) != null ? AllCases.get(position).getCommodityId() : "N/A"));
+        ImageView truck_file = (ImageView) dialogView.findViewById(R.id.Bilty_Image);
+        LinearLayout biltyLL = (LinearLayout) dialogView.findViewById(R.id.biltyLL);
+        biltyLL.setVisibility(View.VISIBLE);
+        if (AllCases.get(position).getFile() == null || AllCases.get(position).getFile().isEmpty()) {
+            truck_file.setVisibility(View.GONE);
+        }
+        TruckImage = Constants.Truck_bilty_photo + AllCases.get(position).getFile();
+        truck_file.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new PhotoFullPopupWindow(TruckBookListingActivity.this, R.layout.popup_photo_full, view, TruckImage, null);
+            }
+        });
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

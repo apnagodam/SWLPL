@@ -217,6 +217,18 @@ public class AllCaseIDResponse extends BaseResponse {
         @SerializedName("sale_name")
         @Expose
         private String saleName;
+
+        public String getStack_number() {
+            return stack_number;
+        }
+
+        public void setStack_number(String stack_number) {
+            this.stack_number = stack_number;
+        }
+
+        @SerializedName("stack_number")
+        @Expose
+        private String stack_number;
         @SerializedName("no_of_bags")
         @Expose
         private String noOfBags;
@@ -232,6 +244,8 @@ public class AllCaseIDResponse extends BaseResponse {
         @SerializedName("created_at")
         @Expose
         private String createdAt;
+
+
         @SerializedName("updated_at")
         @Expose
         private String updatedAt;

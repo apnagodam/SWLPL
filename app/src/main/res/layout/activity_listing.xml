@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/root"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/darkGray">
+
+    <LinearLayout
+        android:id="@+id/root"
         android:background="@color/tw__solid_white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
+
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -60,6 +65,19 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
+                    <ImageView
+                        android:id="@+id/filterIcon"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@android:drawable/ic_search_category_default"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:backgroundTint="@color/colorWhite"
+                        app:tint="@color/colorWhite"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"/>
                 </LinearLayout>
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -148,18 +166,19 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/swipeRefresherStock"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_defaulters_status"
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresherStock"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/pricing_data"
-                android:layout_above="@+id/page_next_privious"
-                android:visibility="visible" />
-            <!--  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/page_next_privious">
+                <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_defaulters_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                tools:listitem="@layout/layout_top_case_generate" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
             <TextView
                 android:id="@+id/txtempty_msg"
                 android:layout_width="match_parent"
@@ -217,4 +236,5 @@
 
         <!--        </androidx.core.widget.NestedScrollView>-->
     </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -99,12 +99,47 @@
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/_10ssp"
                 android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
+                    <Spinner
+                        android:id="@+id/spinner_transporter_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_truck_rate_type"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_transporter_name"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     android:hint="@string/transporter_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -139,8 +174,11 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:clickable="false"
+                        android:background="@color/lightgray"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -163,8 +201,11 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:clickable="false"
+                        android:background="@color/lightgray"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -187,15 +228,51 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:focusable="false"
+                        android:enabled="false"
+                        android:clickable="false"
+                        android:background="@color/lightgray"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="phone"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
+                    <Spinner
+                        android:id="@+id/spinner_ratet_ype"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_truck_rate_type"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_transport_rate"
@@ -205,6 +282,7 @@
                     android:layout_marginTop="@dimen/_5sdp"
                     android:hint="@string/transport_rate_validation"
                     app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_driver_phone_no">
 
@@ -264,7 +342,7 @@
                         android:focusable="true"
                         android:focusedByDefault="true"
                         android:imeOptions="actionNext"
-                        android:inputType="text"
+                        android:inputType="numberDecimal"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -340,6 +418,7 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_advance_patyment"
                     style="@style/TextInputStyle"
@@ -357,12 +436,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="true"
+                        android:clickable="true"
+                        android:enabled="true"
                         android:focusedByDefault="true"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_total_trans_cost"
                     style="@style/TextInputStyle"
@@ -386,10 +468,121 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_realte_caseid"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="Enter Related CaseId"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_bags">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_realte_caseid"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
 
+                <TextView
+                    style="@style/TextStyleBold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text="Bilty Image"
+                    android:textColor="@color/colorBlackLight"
+                    android:textSize="@dimen/_16ssp"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_90sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
 
+                        <RelativeLayout
+                            android:id="@+id/uploadPassbookImage"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:layout_weight="1"
+                            android:background="@drawable/white_back_black_border"
+                            android:gravity="left">
+
+                            <FrameLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/TruckImage"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="fitXY" />
+
+                                <TextView
+                                    style="@style/Base.TextAppearance.AppCompat.Caption"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="@dimen/_10sdp"
+                                    android:gravity="center"
+                                    android:maxLines="3"
+                                    android:text="@string/upload_picture"
+                                    android:textColor="@color/dark_gray_shade"
+                                    android:visibility="gone" />
+                            </FrameLayout>
+                        </RelativeLayout>
+
+                        <LinearLayout
+                            android:id="@+id/upload_truck"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_120sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/_40sdp"
+                            android:layout_marginTop="@dimen/_15sdp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_gravity="center_horizontal"
+                                android:src="@drawable/upload" />
+
+                            <TextView
+                                style="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:maxLines="5"
+                                android:padding="@dimen/_10sdp"
+                                android:text="Click Here To Upload to Bilty Image"
+                                android:textColor="@color/dark_gray_shade" />
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
                 <RelativeLayout
                     android:id="@+id/lp_commite_date"
                     android:layout_width="match_parent"
@@ -436,9 +629,9 @@
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:hint="@string/start_date_time_val"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_customer_quantity">
@@ -455,6 +648,7 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <RelativeLayout
                     android:id="@+id/lp_end_date"
                     android:layout_width="match_parent"
@@ -495,6 +689,7 @@
                         android:textCursorDrawable="@null"
                         tools:ignore="Deprecated" />
                 </RelativeLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_final_settalement_amount"
                     style="@style/TextInputStyle"
@@ -518,6 +713,7 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_end_date_time"
                     style="@style/TextInputStyle"
@@ -572,9 +768,9 @@
                         style="@style/Base.TextAppearance.AppCompat.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Not Required"
-                        android:layout_toRightOf="@+id/check_not_requried"
                         android:layout_marginLeft="@dimen/_10ssp"
+                        android:layout_toRightOf="@+id/check_not_requried"
+                        android:text="Not Required"
                         android:textColor="@android:color/black"
                         android:textSize="@dimen/_12ssp" />
                 </RelativeLayout>

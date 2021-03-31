@@ -7,7 +7,6 @@ import com.apnagodam.staff.ApnaGodamApp;
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.Bank;
 import com.apnagodam.staff.module.CommudityResponse;
-import com.apnagodam.staff.module.TerminalResponse;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.Tags;
@@ -20,14 +19,10 @@ import java.util.List;
 
 
 public class SharedPreferencesRepository implements Tags {
-
     private static SharedPreferences loginSharedPreferences;
     private static SharedPreferences.Editor loginPrefEditor;
-
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor sharedPrefEditor;
-
-
     private static SharedPreferencesRepository dataManagerInstance;
 
     public static SharedPreferencesRepository getDataManagerInstance() {
@@ -136,75 +131,86 @@ public class SharedPreferencesRepository implements Tags {
         sharedPrefEditor.putString(Locale_KeyValue, locale);
         sharedPrefEditor.commit();
     }
-  /*  public static void setBank(List<OTPvarifedResponse.Bank> bankNameResponses) {
-        String data = new Gson().toJson(bankNameResponses, OTPvarifedResponse.Bank.class);
-        sharedPrefEditor.putString(BANK_NAME, data).commit();
-    }
 
-    public static List<OTPvarifedResponse.Bank> getBank() {
-        String bankData = sharedPreferences.getString(BANK_NAME, null);
-        Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<OTPvarifedResponse.Bank>>(){}.getType();
-        ArrayList<OTPvarifedResponse.Bank> userArray = gson.fromJson(bankData, userListType);
-        return userArray;
+    /*  public static void setBank(List<OTPvarifedResponse.Bank> bankNameResponses) {
+          String data = new Gson().toJson(bankNameResponses, OTPvarifedResponse.Bank.class);
+          sharedPrefEditor.putString(BANK_NAME, data).commit();
+      }
+
+      public static List<OTPvarifedResponse.Bank> getBank() {
+          String bankData = sharedPreferences.getString(BANK_NAME, null);
+          Gson gson = new Gson();
+          Type userListType = new TypeToken<ArrayList<OTPvarifedResponse.Bank>>(){}.getType();
+          ArrayList<OTPvarifedResponse.Bank> userArray = gson.fromJson(bankData, userListType);
+          return userArray;
+      }
+  */
+    public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
+        String data = new Gson().toJson(user);
+        sharedPrefEditor.putString(Permission, data).commit();
     }
-*/
-  public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
-      String data = new Gson().toJson(user);
-      sharedPrefEditor.putString(Permission, data).commit();
-  }
 
     public List<AllUserPermissionsResultListResponse.UserPermissionsResult> getUserPermission() {
         String userMonthlyLedger = sharedPreferences.getString(Permission, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>() {
+        }.getType();
         ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
-  public void setEmployee(List<CommudityResponse.Employee> datumMonthlyLedger) {
-      String data = new Gson().toJson(datumMonthlyLedger);
-      sharedPrefEditor.putString(Employee, data).commit();
-  }
+
+    public void setEmployee(List<CommudityResponse.Employee> datumMonthlyLedger) {
+        String data = new Gson().toJson(datumMonthlyLedger);
+        sharedPrefEditor.putString(Employee, data).commit();
+    }
+
     public List<CommudityResponse.Employee> getEmployee() {
         String userMonthlyLedger = sharedPreferences.getString(Employee, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<CommudityResponse.Employee>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.Employee>>() {
+        }.getType();
         ArrayList<CommudityResponse.Employee> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
+
     public void setContractor(List<CommudityResponse.Contractor> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
         sharedPrefEditor.putString(Contractor, data).commit();
     }
+
     public List<CommudityResponse.Contractor> getContractorList() {
         String userMonthlyLedger = sharedPreferences.getString(Contractor, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<CommudityResponse.Contractor>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.Contractor>>() {
+        }.getType();
         ArrayList<CommudityResponse.Contractor> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
 
+    public void setUser(List<CommudityResponse.User> datumMonthlyLedger) {
+        String data = new Gson().toJson(datumMonthlyLedger);
+        sharedPrefEditor.putString(User, data).commit();
+    }
 
-  public void setUser(List<CommudityResponse.User> datumMonthlyLedger) {
-      String data = new Gson().toJson(datumMonthlyLedger);
-      sharedPrefEditor.putString(User, data).commit();
-  }
     public List<CommudityResponse.User> getuserlist() {
         String userMonthlyLedger = sharedPreferences.getString(User, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<CommudityResponse.User>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.User>>() {
+        }.getType();
         ArrayList<CommudityResponse.User> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
-  public void setCommdity(List<CommudityResponse.Category> datumMonthlyLedger) {
-      String data = new Gson().toJson(datumMonthlyLedger);
-      sharedPrefEditor.putString(Commudity, data).commit();
-  }
+
+    public void setCommdity(List<CommudityResponse.Category> datumMonthlyLedger) {
+        String data = new Gson().toJson(datumMonthlyLedger);
+        sharedPrefEditor.putString(Commudity, data).commit();
+    }
 
     public List<CommudityResponse.Category> getCommudity() {
         String userMonthlyLedger = sharedPreferences.getString(Commudity, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<CommudityResponse.Category>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.Category>>() {
+        }.getType();
         ArrayList<CommudityResponse.Category> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
@@ -217,7 +223,8 @@ public class SharedPreferencesRepository implements Tags {
     public ArrayList<CommudityResponse.Terminals> GetTerminal() {
         String userMonthlyLedger = sharedPreferences.getString(Terminal, null);
         Gson gson = new Gson();
-        Type userListType = new TypeToken<ArrayList<CommudityResponse.Terminals>>(){}.getType();
+        Type userListType = new TypeToken<ArrayList<CommudityResponse.Terminals>>() {
+        }.getType();
         ArrayList<CommudityResponse.Terminals> userArray = gson.fromJson(userMonthlyLedger, userListType);
         return userArray;
     }
@@ -235,7 +242,6 @@ public class SharedPreferencesRepository implements Tags {
         ArrayList<Bank> userArray = gson.fromJson(bankNameList, userListType);
         return userArray;
     }
-
 
     public void savelat(String sessionToken) {
         loginPrefEditor.putString(lat, sessionToken).commit();
@@ -262,5 +268,12 @@ public class SharedPreferencesRepository implements Tags {
             return value;
         }
     }
+    // temp save dataa
+    public static boolean isReleaseSave() {
+        return loginSharedPreferences.getBoolean(ACCOUNTS, false);
+    }
 
+    public static void setisReleaseSave(boolean isProfileComplete) {
+        loginPrefEditor.putBoolean(ACCOUNTS, isProfileComplete).commit();
+    }
 }

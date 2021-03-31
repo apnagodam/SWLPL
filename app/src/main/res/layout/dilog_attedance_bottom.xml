@@ -94,7 +94,6 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="@dimen/_20sdp"
                                     android:layout_marginTop="@dimen/_5sdp"
-                                    android:layout_toRightOf="@id/imageLayout"
                                     android:layout_weight="1"
                                     android:orientation="vertical">
 
@@ -125,29 +124,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:weightSum="2">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/clock_in_out"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@color/colorGreen"
-                            android:text="@string/clock_in"
-                            android:textAllCaps="false"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_12ssp" />
-
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/close"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_5sdp"
                             android:layout_weight="1"
                             android:background="@color/colorPrimary"
                             android:text="@string/close"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_12ssp" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/clock_in_out"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:background="@color/colorGreen"
+                            android:text="@string/clock_in"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_12ssp" />
+
+
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

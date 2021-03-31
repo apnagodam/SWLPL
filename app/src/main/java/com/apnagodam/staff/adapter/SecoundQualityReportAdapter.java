@@ -124,7 +124,7 @@ public class SecoundQualityReportAdapter extends BaseRecyclerViewAdapter {
                           /*  new Thread() {
                                 public void run() {*/
                             for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("18")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("28")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
                                         if (Leads.get(position).getS_k_p_case_id()!=null){
                                             tvPhone.setVisibility(View.VISIBLE);

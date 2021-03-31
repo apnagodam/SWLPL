@@ -294,20 +294,39 @@
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <Spinner
-                    android:id="@+id/spinner_packagingtype"
+                <RelativeLayout
+                    android:id="@+id/rlpackgingType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_packaging_type"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_fpo" />
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_packagingtype"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/transparent"
+                        android:entries="@array/array_packaging_type"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
 
                 <LinearLayout
                     android:id="@+id/ll_document"
@@ -370,7 +389,6 @@
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="@dimen/_40sdp"
                                     android:layout_marginTop="@dimen/_15sdp"
-                                    android:layout_toRightOf="@id/imageLayout"
                                     android:layout_weight="1"
                                     android:orientation="vertical">
 
@@ -466,7 +484,6 @@
                                 android:layout_centerVertical="true"
                                 android:layout_marginLeft="@dimen/_40sdp"
                                 android:layout_marginTop="@dimen/_15sdp"
-                                android:layout_toRightOf="@id/imageLayout"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 

@@ -56,7 +56,6 @@ public class FirstQuilityReportListResponse extends BaseResponse {
         @SerializedName("total")
         @Expose
         private Integer total;
-
         public Integer getCurrentPage() {
             return currentPage;
         }
@@ -156,6 +155,17 @@ public class FirstQuilityReportListResponse extends BaseResponse {
 
 
     public class Datum {
+        public String getLabour_book_case_id() {
+            return labour_book_case_id;
+        }
+
+        public void setLabour_book_case_id(String labour_book_case_id) {
+            this.labour_book_case_id = labour_book_case_id;
+        }
+
+        @SerializedName("labour_book_case_id")
+        @Expose
+        private String labour_book_case_id;
 
         @SerializedName("id")
         @Expose

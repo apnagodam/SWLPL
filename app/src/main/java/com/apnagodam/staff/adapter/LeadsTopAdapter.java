@@ -23,12 +23,14 @@ import java.util.List;
 import java.util.Locale;
 
 public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
+    private final AllLeadsResponse.Lead Lead;
     private List<AllLeadsResponse.Datum> Leads;
     private Context context;
-    private List<AllLeadsResponse.Lead> Lead;
     private BaseActivity activity;
-    public LeadsTopAdapter(List<AllLeadsResponse.Datum> leads, LeadListingActivity leadListingActivity,BaseActivity activity) {
+
+    public LeadsTopAdapter(List<AllLeadsResponse.Datum> leads, AllLeadsResponse.Lead response, LeadListingActivity leadListingActivity, BaseActivity activity) {
         this.Leads = leads;
+        this.Lead = response;
         this.context = leadListingActivity;
         this.activity = activity;
     }
@@ -92,23 +94,23 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
                 String previousDate = format.format(strDate);
                 String currentDate = format.format(new Date());
 
-//                String timePrevious = timeFormat.format(strDate);
-//                String timeCurrent = timeFormat.format(new Date());
-//                Integer timePreviousInt,timeCurrentInt;
-//                timePreviousInt= Integer.valueOf(timePrevious);
-//                timeCurrentInt= Integer.valueOf(timeCurrent);
+                String timePrevious = timeFormat.format(strDate);
+                String timeCurrent = timeFormat.format(new Date());
+                Integer timePreviousInt, timeCurrentInt;
+                timePreviousInt = Integer.valueOf(timePrevious);
+                timeCurrentInt = Integer.valueOf(timeCurrent);
 
                 if (currentDate.compareTo(previousDate) == 0) {
                     long difference = strDate.getTime() - new Date().getTime();
-                    int days = (int) (difference / (1000*60*60*24));
-                    int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
+                    int days = (int) (difference / (1000 * 60 * 60 * 24));
+                    int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
                     hours = (hours < 0 ? -hours : hours);
-                    if (hours<=1){
+                    if (hours <= 1) {
                         binding.update.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         binding.update.setVisibility(View.GONE);
                     }
-                }else {
+                } else {
                     binding.update.setVisibility(View.GONE);
                 }
 
@@ -132,13 +134,11 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
                 @Override
                 public void onClick(View view) {
                     if (context instanceof LeadListingActivity) {
-                  //      ((LeadListingActivity) context).editLeads(Lead.get(position).getData());
+                        ((LeadListingActivity) context).editLead(position);
                     }
                 }
             });
-
         }
-        //}
     }
 
 }

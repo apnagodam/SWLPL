@@ -173,6 +173,19 @@ public class GatePassListResponse extends BaseResponse {
         @SerializedName("location")
         @Expose
         private String location;
+
+        public String getTerminal_name() {
+            return terminal_name;
+        }
+
+        public void setTerminal_name(String terminal_name) {
+            this.terminal_name = terminal_name;
+        }
+
+        @SerializedName("terminal_name")
+        @Expose
+        private String terminal_name;
+
         @SerializedName("commodity_id")
         @Expose
         private Integer commodityId;
@@ -239,6 +252,18 @@ public class GatePassListResponse extends BaseResponse {
         @SerializedName("cust_fname")
         @Expose
         private String custFname;
+
+        public String getGatepass_avgWeight() {
+            return gatepass_avgWeight;
+        }
+
+        public void setGatepass_avgWeight(String gatepass_avgWeight) {
+            this.gatepass_avgWeight = gatepass_avgWeight;
+        }
+
+        @SerializedName("gatepass_avgWeight")
+        @Expose
+        private String gatepass_avgWeight;
         @SerializedName("cust_lname")
         @Expose
         private String custLname;
@@ -254,6 +279,18 @@ public class GatePassListResponse extends BaseResponse {
         @SerializedName("stack_no")
         @Expose
         private String stackNo;
+
+        public String getStack_number() {
+            return stack_number;
+        }
+
+        public void setStack_number(String stack_number) {
+            this.stack_number = stack_number;
+        }
+
+        @SerializedName("stack_number")
+        @Expose
+        private String stack_number;
         @SerializedName("lot_no")
         @Expose
         private String lotNo;
@@ -278,6 +315,19 @@ public class GatePassListResponse extends BaseResponse {
         @SerializedName("s_q_case_id")
         @Expose
         private String sQCaseId;
+
+        public String getsKPCaseID() {
+            return sKPCaseID;
+        }
+
+        public void setsKPCaseID(String sKPCaseID) {
+            this.sKPCaseID = sKPCaseID;
+        }
+
+        @SerializedName("s_k_p_case_id")
+        @Expose
+        private String sKPCaseID;
+
 
         public Integer getId() {
             return id;

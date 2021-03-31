@@ -5,24 +5,24 @@ import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.adapter.CasesTopAdapter;
-import com.apnagodam.staff.adapter.TruckBookAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
     private int pageOffset = 1;
     private int totalPage = 0;
     private List<AllCaseIDResponse.Datum> AllCases;
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_listing;
@@ -49,11 +50,17 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
         binding.tvId.setText(getResources().getString(R.string.case_idd));
         binding.tvMoreView.setText(getResources().getString(R.string.status_title));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getAllCases();
+        getAllCases("");
+        binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getAllCases("");
+            }
+        });
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityAndClear(StaffDashBoardActivity.class);
+                startActivityAndClear(CaseIDGenerateClass.class);
             }
         });
         binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +68,7 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
             public void onClick(View view) {
                 if (pageOffset != 1) {
                     pageOffset--;
-                    getAllCases();
+                    getAllCases("");
                 }
             }
         });
@@ -70,41 +77,86 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
             public void onClick(View view) {
                 if (totalPage != pageOffset) {
                     pageOffset++;
-                    getAllCases();
+                    getAllCases("");
                 }
             }
         });
+        binding.filterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(CaseListingActivity.this);
+                LayoutInflater inflater = ((Activity) CaseListingActivity.this).getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.fiter_diloag, null);
+                EditText notes = (EditText) dialogView.findViewById(R.id.notes);
+                Button submit = (Button) dialogView.findViewById(R.id.btn_submit);
+                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
+                builder.setView(dialogView);
+                builder.setCancelable(false);
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+                cancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (notes.getText().toString().trim() != null && !notes.getText().toString().trim().isEmpty()) {
+                            alertDialog.dismiss();
+                            pageOffset = 1;
+                            getAllCases(notes.getText().toString().trim());
+                            //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Fill Text", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                //  setDateTimeField();
+            }
+        });
     }
+
     private void setAdapter() {
         binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(CaseListingActivity.this, LinearLayoutManager.VERTICAL));
         binding.rvDefaultersStatus.setHasFixedSize(true);
         binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(CaseListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
-        casesTopAdapter = new CasesTopAdapter(AllCases, CaseListingActivity.this,getActivity());
+        casesTopAdapter = new CasesTopAdapter(AllCases, CaseListingActivity.this, getActivity());
         binding.rvDefaultersStatus.setAdapter(casesTopAdapter);
-
     }
-    private void getAllCases() {
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivityAndClear(CaseIDGenerateClass.class);
+    }
+
+    private void getAllCases(String search) {
         showDialog();
-        apiService.getAllCase("15",pageOffset,"1").enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
+        apiService.getAllCase("15", pageOffset, "1", search).enqueue(new NetworkCallback<AllCaseIDResponse>(getActivity()) {
             @Override
             protected void onSuccess(AllCaseIDResponse body) {
-                if (body.getaCase() == null ) {
+                binding.swipeRefresherStock.setRefreshing(false);
+                AllCases.clear();
+                if (body.getaCase() == null) {
                     binding.txtemptyMsg.setVisibility(View.VISIBLE);
                     binding.rvDefaultersStatus.setVisibility(View.GONE);
                     binding.pageNextPrivious.setVisibility(View.GONE);
-                }else {
+                } else {
                     AllCases.clear();
                     totalPage = body.getaCase().getLastPage();
                     AllCases.addAll(body.getaCase().getData());
                     casesTopAdapter.notifyDataSetChanged();
-                  //  AllCases=body.getCases();
-                   // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    //  AllCases=body.getCases();
+                    // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
                 }
             }
         });
     }
+
     public void ViewData(int position) {
         Rect displayRectangle = new Rect();
         Window window = this.getWindow();
@@ -135,22 +187,29 @@ public class CaseListingActivity extends BaseActivity<ActivityListingBinding> {
         TextView converted_by = (TextView) dialogView.findViewById(R.id.converted_by);
         TextView vehicle_no = (TextView) dialogView.findViewById(R.id.vehicle_no);
         TextView in_out = (TextView) dialogView.findViewById(R.id.in_out);
-        converted_by.setText(""+AllCases.get(position).getLeadGenFname());
-        vehicle_no.setText(""+AllCases.get(position).getVehicleNo());
-        in_out.setText(""+AllCases.get(position).getInOut());
+        LinearLayout staclLL = (LinearLayout) dialogView.findViewById(R.id.staclLL);
+        View stackView = (View) dialogView.findViewById(R.id.stackView);
+        staclLL.setVisibility(View.VISIBLE);
+        stackView.setVisibility(View.VISIBLE);
+        TextView stack_no = (TextView) dialogView.findViewById(R.id.stack_no);
+        converted_by.setText("" + AllCases.get(position).getLeadConvFname()+" "+AllCases.get(position).getLeadConvLname());
+        vehicle_no.setText("" + AllCases.get(position).getVehicleNo());
+        in_out.setText("" + AllCases.get(position).getInOut());
         case_id.setText(getResources().getString(R.string.case_idd));
         sub_user.setText(getResources().getString(R.string.sub_user));
-        lead_id.setText(""+AllCases.get(position).getCaseId());
-        genrated_by.setText(""+AllCases.get(position).getLeadGenFname());
-        customer_name.setText(""+AllCases.get(position).getCustFname());
-        location_title.setText(""+AllCases.get(position).getLocation());
-        phone_no.setText(""+AllCases.get(position).getPhone());
-        commodity_name.setText(AllCases.get(position).getCateName()+"("+AllCases.get(position).getCommodityType()+")");
-        est_quantity_nmae.setText(""+AllCases.get(position).getTotalWeight());
-        terminal_name.setText(""+AllCases.get(position).getTerminalName()+" "+AllCases.get(position).getWarehouseCode());
-        purpose_name.setText(""+AllCases.get(position).getPurpose());
+        lead_id.setText("" + AllCases.get(position).getCaseId());
+        genrated_by.setText("" + AllCases.get(position).getLeadGenFname()+" "+AllCases.get(position).getLeadGenLname());
+        customer_name.setText("" + AllCases.get(position).getCustFname());
+        location_title.setText("" + AllCases.get(position).getLocation());
+        phone_no.setText("" + AllCases.get(position).getPhone());
+        commodity_name.setText(AllCases.get(position).getCateName() + "(" + AllCases.get(position).getCommodityType() + ")");
+        est_quantity_nmae.setText("" + AllCases.get(position).getTotalWeight());
+        terminal_name.setText("" + AllCases.get(position).getTerminalName() + " " + AllCases.get(position).getWarehouseCode());
+        purpose_name.setText("" + AllCases.get(position).getPurpose());
         commitemate_date.setText((AllCases.get(position).getFpoUsers()));
-        create_date.setText(""+AllCases.get(position).getCreatedAt());
+        create_date.setText("" + AllCases.get(position).getCreatedAt());
+        stack_no.setText("" + AllCases.get(position).getStack_number());
+
         cancel_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

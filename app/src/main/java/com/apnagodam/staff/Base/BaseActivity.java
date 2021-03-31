@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,7 +82,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
     public static final int REQUEST_CAMERA_PICTURE = 0x02;
     protected Uri mediaUri;
-    public  String SpiltImageoFCommudity="";
+    public String SpiltImageoFCommudity = "";
     protected Uri camUri;
     public File file;
     private static final int REQUEST_CAMERA_CODE = 120;
@@ -209,6 +210,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         alertDialog.setNegativeButton(R.string.no, (dialogInterface, i) -> dialogInterface.dismiss());
         alertDialog.create().show();
     }
+
     private void callBidderLogout() {
         apiService.doLogout().enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
             @Override
@@ -224,6 +226,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         });
 
     }
+
     public void logout() {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(BaseActivity.this);
         alertDialog.setMessage(R.string.logout_alert);
@@ -378,12 +381,16 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     public ArrayList<MenuItem> getMenuList() {
 
         ArrayList<MenuItem> menuItems = new ArrayList<>();
-        menuItems.add(new MenuItem("", 0));
-        MenuItem menuItem1 = new MenuItem(getResources().getString(R.string.home), R.drawable.ic_home_solid);
+        ArrayList<MenuItem.SubList> getSubList = new ArrayList<>();
+        getSubList.add(new MenuItem.SubList("dummy", R.drawable.ic_home_solid));
+        getSubList.add(new MenuItem.SubList("dummy", R.drawable.ic_home_solid));
+
+        menuItems.add(new MenuItem("", 0, getSubList));
+        MenuItem menuItem1 = new MenuItem(getResources().getString(R.string.home), R.drawable.ic_home_solid, getSubList);
         menuItems.add(menuItem1);
-        MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24);
+        MenuItem menuItem2 = new MenuItem(getResources().getString(R.string.referral_code), R.drawable.ic_baseline_group_add_24, getSubList);
         menuItems.add(menuItem2);
-        MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_group_add_24);
+        MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.select_language), R.drawable.ic_baseline_group_add_24, getSubList);
         menuItems.add(menuItem3);
        /* MenuItem menuItem3 = new MenuItem(getResources().getString(R.string.lead_generate), R.drawable.ic_baseline_settings_24);
         menuItems.add(menuItem3);
@@ -408,14 +415,16 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         menuItems.add(menuItem12);*/
       /*  MenuItem menuItem4 = new MenuItem(getResources().getString(R.string.spot_sell), R.drawable.deal_statment);
         menuItems.add(menuItem4);*/
-        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp);
+        MenuItem menuItem5 = new MenuItem(getResources().getString(R.string.logout), R.drawable.ic_logout_new_black_24dp,getSubList);
         menuItems.add(menuItem5);
         return menuItems;
     }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(ViewPumpContextWrapper.wrap(LocaleHelper.onAttach(newBase)));
     }
+
     public void onImageSelected() {
       /*  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -542,6 +551,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
             Toast.makeText(this, "Fail", Toast.LENGTH_SHORT).show();
         }
     }
+
     public String compressImage(String imageUri) {
 
         String filePath = getRealPathFromURI(imageUri);
@@ -701,12 +711,14 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
         return inSampleSize;
     }
+
     public void loadImage(Uri resultUri, ImageView passbookImage) {
         BitmapLoadUtils.decodeBitmapInBackground(this, resultUri, null, 400, 400, new BitmapLoadCallback() {
             @Override
             public void onBitmapLoaded(@NonNull Bitmap bitmap, @NonNull ExifInfo exifInfo, @NonNull String imageInputPath, @Nullable String imageOutputPath) {
                 passbookImage.setImageBitmap(bitmap);
             }
+
             @Override
             public void onFailure(@NonNull Exception bitmapWorkerException) {
             }

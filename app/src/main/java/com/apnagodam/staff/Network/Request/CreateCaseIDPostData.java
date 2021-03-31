@@ -40,9 +40,15 @@ public class CreateCaseIDPostData {
     @SerializedName("fpo_users")
     @Expose
     private String fpo_users;
+    @SerializedName("stack_id")
+    @Expose
+    private String stack_id;
+    @SerializedName("conv_user_id")
+    @Expose
+    private String conv_user_id;
 
     public CreateCaseIDPostData(String gate_pass, String in_out, String weight, String location,
-                                String customer_phone, String commodity_id, String terminal_id, String vehicle_no, String purpose, String fpo_users) {
+                                String customer_phone, String commodity_id, String terminal_id, String vehicle_no, String purpose, String fpo_users, String stack_id, String conv_user_id) {
         this.gate_pass = gate_pass;
         this.in_out = in_out;
         this.weight = weight;
@@ -53,6 +59,8 @@ public class CreateCaseIDPostData {
         this.vehicle_no = vehicle_no;
         this.purpose = purpose;
         this.fpo_users = fpo_users;
+        this.stack_id = stack_id;
+        this.conv_user_id = conv_user_id;
     }
 }
 

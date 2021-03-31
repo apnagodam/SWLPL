@@ -8,8 +8,10 @@
         android:id="@+id/customerName"
         style="@style/TextStyleBold"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textColor="@color/textColor"
         android:textStyle="bold"
+        android:layout_margin="@dimen/_3sdp"
         android:text="someda"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
