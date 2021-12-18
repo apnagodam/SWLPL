@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_arrow_back"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.7"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Add PV"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/_16sdp" />
+                    <TextView
+                        android:id="@+id/pvlisting"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.3"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="PV List"
+                        android:background="@drawable/white_back_black_border"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/_16sdp" />
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_120sdp"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:background="@drawable/bg_settings_user_details"
+                    android:orientation="vertical"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                    <TableLayout
+                        android:id="@+id/resultInputLoanData"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:padding="@dimen/_3ssp"
+                        android:stretchColumns="*"
+                        android:visibility="visible">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:weightSum="2">
+
+                            <RelativeLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:background="@drawable/white_back_black_border"
+                                android:orientation="horizontal"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                                <Spinner
+                                    android:id="@+id/spinner_gatepass"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/transparent"
+                                    android:entries="@array/array_pupose"
+                                    android:gravity="right"
+                                    android:padding="@dimen/_5sdp"
+                                    android:spinnerMode="dropdown"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent" />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/ic_arrow_drop_down" />
+                            </RelativeLayout>
+
+                            <TextView
+                                android:id="@+id/stack_no"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_10sdp"
+                                android:layout_weight="1"
+                                android:text="Stack No:- 12.3"
+                                android:textColor="@color/black_back"
+                                android:textSize="@dimen/_8sdp"
+                                android:textStyle="bold" />
+
+                        </TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/secoundtb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:layout_margin="@dimen/_4sdp"
+                                android:background="@color/view_color"></View>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:weightSum="2">
+
+                                <TextView
+                                    android:id="@+id/userName"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="User Name :- R K Wherhouse mandha"
+                                    android:textColor="@color/black_back"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/commodity_name"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Commodity :- Millet(Bajara)(Secoundary)"
+                                    android:textColor="@color/black_back"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:textStyle="bold" />
+                            </TableRow>
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:layout_margin="@dimen/_4sdp"
+                                android:background="@color/view_color"></View>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:weightSum="2">
+
+                                <TextView
+                                    android:id="@+id/terminalName"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:layout_weight="1"
+                                    android:text="Terminal Name :- R K Wherhouse mandha sikar rajathan jaipur dsjkjsdsdfsfshdhsjhdjhsjdhsjhsdjh"
+                                    android:textColor="@color/black_back"
+                                    android:textSize="@dimen/_8sdp"
+                                    android:textStyle="bold" />
+
+
+                                <TextView
+                                    android:id="@+id/ad_pv_sheet"
+                                    android:layout_width="0dp"
+                                    android:layout_height="@dimen/_30sdp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="@dimen/_4sdp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/btn_green_background"
+                                    android:drawableLeft="@android:drawable/ic_menu_add"
+                                    android:drawablePadding="@dimen/_4sdp"
+                                    android:drawableTint="@color/white"
+                                    android:gravity="center"
+                                    android:text="Add Pv Sheet"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+                            </TableRow>
+                        </LinearLayout>
+                    </TableLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fieldStockList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_3ssp"
+                        android:background="@drawable/bg_settings_user_details"
+                        tools:listitem="@layout/pv_itmes" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/privious_loan_statment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:background="@drawable/bg_post_pink_button"
+                    android:elevation="50dp"
+                    android:fontFamily="@fonts/gilloryregular"
+                    android:gravity="center"
+                    android:paddingLeft="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingRight="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:text="Add PV Stocks"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="@dimen/_10ssp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</layout>

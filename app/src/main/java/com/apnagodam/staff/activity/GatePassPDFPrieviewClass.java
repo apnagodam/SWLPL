@@ -62,11 +62,42 @@ public class GatePassPDFPrieviewClass extends BaseActivity<ActivityGatePassPdfFi
                     binding.truckNo.setText(body.getData().getVehicleNo());
                     binding.dharmKathaName.setText(body.getData().getDharamKantaName());
                     binding.stackNo.setText(body.getData().getStackNo());
-                    binding.bags.setText("" + body.getData().getNoOfBags());
-                    binding.avgWweight.setText(body.getData().getTotalWeight()+ " "+"QTL.");
+                    binding.dispadgeBags.setText("" + ((body.getData().getDispledge_bags()) != null ? body.getData().getDispledge_bags() : "N/A"));
+                    Double TotalBags = 0.0;
+                    if ( body.getData().getDispledge_bags() != null) {
+                        TotalBags = (Double.parseDouble("" + body.getData().getNoOfBags())) - (Double.parseDouble("" + body.getData().getDispledge_bags()));
+                    } else {
+                        TotalBags = (Double.parseDouble("" + body.getData().getNoOfBags())) - 0.0;
+                    }
+                    binding.bags.setText("" + TotalBags);
+                    binding.avgWweight.setText(body.getData().getTotalWeight() + " " + "QTL.");
                     binding.commodityName.setText(body.getData().getCommodityName());
                     binding.transporterName.setText(body.getData().getTransporterName());
                     binding.tansporterMobileNo.setText(body.getData().getTransporterPhoneNo());
+                    /*dhangs wise total bags */
+                    if (body.getData_dhang() == null) {
+                        binding.headingdhang.setVisibility(View.GONE);
+                        binding.dhangsbags.setVisibility(View.GONE);
+                    } else {
+                        binding.headingdhang.setVisibility(View.VISIBLE);
+                        binding.dhangsbags.setVisibility(View.VISIBLE);
+                        binding.dhang1.setText("" + body.getData_dhang().getDhang_1());
+                        binding.dhang2.setText("" + body.getData_dhang().getDhang_2());
+                        binding.dhang3.setText("" + body.getData_dhang().getDhang_3());
+                        binding.dhang4.setText("" + body.getData_dhang().getDhang_4());
+                        binding.dhang5.setText("" + body.getData_dhang().getDhang_5());
+                        binding.dhang6.setText("" + body.getData_dhang().getDhang_6());
+                        binding.dhang7.setText("" + body.getData_dhang().getDhang_7());
+                        binding.dhang8.setText("" + body.getData_dhang().getDhang_8());
+                        binding.dhang9.setText("" + body.getData_dhang().getDhang_9());
+                        binding.dhang10.setText("" + body.getData_dhang().getDhang_10());
+                        binding.dhang11.setText("" + body.getData_dhang().getDhang_11());
+                        binding.dhang12.setText("" + body.getData_dhang().getDhang_12());
+                        binding.dhang13.setText("" + body.getData_dhang().getDhang_13());
+                        binding.dhang14.setText("" + body.getData_dhang().getDhang_14());
+                        binding.dhang15.setText("" + body.getData_dhang().getDhang_15());
+                    }
+
 /****************************************************************************************************************/
                     if (body.getData().getTruckFacility() != null) {
                         binding.facilityTruck.setText(Integer.parseInt(body.getData().getTruckFacility()) == 1 ? "YES" : "No");
@@ -87,6 +118,12 @@ public class GatePassPDFPrieviewClass extends BaseActivity<ActivityGatePassPdfFi
                 } catch (Exception e) {
                     e.getStackTrace();
                 }
+            }
+        });
+        binding.ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
         binding.tvDone.setOnClickListener(new View.OnClickListener() {
@@ -187,23 +224,16 @@ public class GatePassPDFPrieviewClass extends BaseActivity<ActivityGatePassPdfFi
     }
 
     private void openGeneratedPDF(File camFile) {
-        // File camFile = Utility.getOutpuPDFtMediaFile(this, "pdf");
-       /* if (camFile.exists()) {
-            camFile.delete();
-        }
-        camFile = Utility.getOutpuPDFtMediaFile(this, "pdf");*/
-        Uri uri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", camFile);
+        Uri photoURI = FileProvider.getUriForFile(GatePassPDFPrieviewClass.this, getApplicationContext().getPackageName() + ".provider", camFile);
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, "application/pdf");
-        // intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);
         if (Build.VERSION.SDK_INT >= 24) {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         }
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent targetIntent = Intent.createChooser(intent, "Open File");
+        intent.setDataAndType(photoURI, "application/pdf");
         try {
-            startActivity(targetIntent);
-            //  finish();
+            startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(GatePassPDFPrieviewClass.this, "No Application available to view pdf", Toast.LENGTH_LONG).show();
         }

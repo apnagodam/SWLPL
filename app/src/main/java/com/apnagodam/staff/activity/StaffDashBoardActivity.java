@@ -1,12 +1,10 @@
 package com.apnagodam.staff.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -40,24 +38,35 @@ import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass;
 import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass;
+import com.apnagodam.staff.activity.dispaldgeinventory.MyAddedDispladgeBagsListClass;
+import com.apnagodam.staff.activity.errorlog.MyErrorLogListClass;
+import com.apnagodam.staff.activity.feedbackemp.UploadEmpSuggestionClass;
+import com.apnagodam.staff.activity.in.cctv.INCCTVListingActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
+import com.apnagodam.staff.activity.in.ivr.INIVRListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
+import com.apnagodam.staff.activity.in.pv.PVUploadClass;
 import com.apnagodam.staff.activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.secound_quality_reports.SecoundQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
+import com.apnagodam.staff.activity.kra.MyKRAHistoryListClass;
 import com.apnagodam.staff.activity.lead.LeadGenerateClass;
+import com.apnagodam.staff.activity.out.cctv.OutCCTVListingActivity;
 import com.apnagodam.staff.activity.out.deliveryorder.OUTDeliverdOrderListingActivity;
 import com.apnagodam.staff.activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.out.f_quailty_report.OutFirstQualityReportListingActivity;
 import com.apnagodam.staff.activity.out.gatepass.OutGatePassListingActivity;
+import com.apnagodam.staff.activity.out.ivr.OutIVRListingActivity;
 import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookListingActivity;
+import com.apnagodam.staff.activity.out.pv.OUTPVUploadClass;
 import com.apnagodam.staff.activity.out.releaseorder.OUTRelaseOrderListingActivity;
 import com.apnagodam.staff.activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.out.s_quaility_report.OutSecoundQualityReportListingActivity;
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckBookListingActivity;
+import com.apnagodam.staff.activity.remoteaudit.AllAsserstListClass;
 import com.apnagodam.staff.activity.vendorPanel.MyVendorVoacherListClass;
 import com.apnagodam.staff.adapter.ExpandableListAdapter;
 import com.apnagodam.staff.adapter.NavigationAdapter;
@@ -119,7 +128,6 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
     ExpandableListAdapter expandableListAdapter;
     List<MenuModel> headerList = new ArrayList<>();
     HashMap<MenuModel, List<MenuModel>> childList = new HashMap<>();
-    Typeface font;
 
     @Override
     protected int getLayoutResId() {
@@ -141,7 +149,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                     .circleCrop()
                     .into(binding.userProfileImage);
         }
-        binding.userNameText.setText(userDetails.getFname() + " " + userDetails.getLname()+"("+userDetails.getEmp_id()+")");
+        binding.userNameText.setText(userDetails.getFname() + " " + userDetails.getLname() + "(" + userDetails.getEmp_id() + ")");
         binding.drawerLayout.addDrawerListener(this);
         binding.profileId.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +161,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
         binding.mainContent.mainHeader.toogleIcon.setOnClickListener(this);
         toggle = new ActionBarDrawerToggle(StaffDashBoardActivity.this, binding.drawerLayout, toolbar,
                 0, 0);
+
         toggle.setDrawerIndicatorEnabled(false);
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -232,19 +241,59 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                             Log.e("refer url :", "" + sharedUrl);
                         } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.select_language))) {
                             startActivity(LanguageActivity.class);
-                        } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.lead_generate))) {
+                        }/* else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.lead_generate))) {
                             startActivity(LeadGenerateClass.class);
-                        } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.create_case))) {
-                            startActivity(CaseIDGenerateClass.class);
+                        }*/ else if (headerList.get(groupPosition).menuName.equals("Transaction Request")) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("12")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                                        startActivity(CaseIDGenerateClass.class);
+                                    }
+                                }
+                            }
                         }/*else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.vendor))) {
                             startActivity(MyVendorVoacherListClass.class);
-                        }*/ else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.spot_sell))) {
+                        }*/ else if (headerList.get(groupPosition).menuName.equals("Displedge Request")) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("93")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(MyAddedDispladgeBagsListClass.class);
+                                    }
+                                }
+                            }
+                        } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.my_error_logs))) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("43")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(MyErrorLogListClass.class);
+                                    }
+                                }
+                            }
+                        } else if (headerList.get(groupPosition).menuName.equals("Feedback")) {
+                            startActivity(UploadEmpSuggestionClass.class);
+                        }else if (headerList.get(groupPosition).menuName.equals("KRA")) {
+                            startActivity(MyKRAHistoryListClass.class);
+                        } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.spot_sell))) {
                             startActivity(SpotDealTrackListActivity.class);
                         } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.intantion_title))) {
                             startActivity(IntantionApprovalListClass.class);
                         } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.heat_map))) {
-                            startActivity(StateMapActivity.class);
-                        }  else if (headerList.get(groupPosition).menuName.equals("Customer Map")) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("91")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(StateMapActivity.class);
+                                    }
+                                }
+                            }
+                        } else if (headerList.get(groupPosition).menuName.equals("Remote Audit")) {
+                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("91")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(AllAsserstListClass.class);
+                                    }
+                                }
+                            }
+                        } else if (headerList.get(groupPosition).menuName.equals("Customer Map")) {
                             startActivity(MobileNumberMapActivity.class);
                         } else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.logout))) {
                             logout((getResources().getString(R.string.logout_alert)), "Logout");
@@ -299,6 +348,13 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                     }
                                 }
                                 // startActivity(FirstQualityReportListingActivity.class);
+                            } else if (model.menuName.equals("PV Sheet")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("42")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(PVUploadClass.class);
+                                    }
+                                }
+                                //  startActivity(SecoundkanthaParchiListingActivity.class);
                             } else if (model.menuName.equals(getResources().getString(R.string.secoundkanta_parchi))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
@@ -310,6 +366,20 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("28")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(SecoundQualityReportListingActivity.class);
+                                    }
+                                }
+                                //  startActivity(SecoundQualityReportListingActivity.class);
+                            } else if (model.menuName.equals("CCTV")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("33")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(INCCTVListingActivity.class);
+                                    }
+                                }
+                                //  startActivity(SecoundQualityReportListingActivity.class);
+                            } else if (model.menuName.equals("IVR Tagging")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("37")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(INIVRListingActivity.class);
                                     }
                                 }
                                 //  startActivity(SecoundQualityReportListingActivity.class);
@@ -329,15 +399,14 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                 //startActivity(MyConveyanceListClass.class);
                             } else if (model.menuName.equals(getResources().getString(R.string.vendor))) {
                                 startActivity(MyVendorVoacherListClass.class);
-                            }else if (model.menuName.equals(getResources().getString(R.string.case_status_in))) {
+                            } else if (model.menuName.equals(getResources().getString(R.string.case_status_in))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("44")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(CaseStatusINListClass.class);
                                     }
                                 }
                                 //startActivity(MyConveyanceListClass.class);
-                            }
-                            else if (model.menuName.equals(getResources().getString(R.string.case_status_out))) {
+                            } else if (model.menuName.equals(getResources().getString(R.string.case_status_out))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("44")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(CaseStatusINListClass.class);
@@ -352,16 +421,14 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                         startActivity(OUTRelaseOrderListingActivity.class);
                                     }
                                 }
-                            }
-                            else if (model.menuName.equals(getResources().getString(R.string.out_deiverd_book))) {
+                            } else if (model.menuName.equals(getResources().getString(R.string.out_deiverd_book))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("25")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(OUTDeliverdOrderListingActivity.class);
                                     }
                                 }
                                 // startActivity(TruckBookListingActivity.class);
-                            }
-                            else if (model.menuName.equals(getResources().getString(R.string.out_truck_book))) {
+                            } else if (model.menuName.equals(getResources().getString(R.string.out_truck_book))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(OUTTruckBookListingActivity.class);
@@ -375,8 +442,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                     }
                                 }
                                 //   startActivity(LabourBookListingActivity.class);
-                            }
-                            else if (model.menuName.equals(getResources().getString(R.string.out_f_katha_book))) {
+                            } else if (model.menuName.equals(getResources().getString(R.string.out_f_katha_book))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                                         startActivity(OutFirstkanthaParchiListingActivity.class);
@@ -394,6 +460,18 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                         startActivity(OutSecoundkanthaParchiListingActivity.class);
                                     }
                                 }
+                            } else if (model.menuName.equals("OUT CCTV")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("33")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(OutCCTVListingActivity.class);
+                                    }
+                                }
+                            } else if (model.menuName.equals("OUT IVR")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("37")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(OutIVRListingActivity.class);
+                                    }
+                                }
                             } else if (model.menuName.equals(getResources().getString(R.string.out_s_quality_book))) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("28")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
@@ -406,6 +484,12 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                                         startActivity(OutGatePassListingActivity.class);
                                     }
                                 }
+                            } else if (model.menuName.equals("Out PV Sheet")) {
+                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("42")) {
+                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
+                                        startActivity(OUTPVUploadClass.class);
+                                    }
+                                }
                             }
                         }
                     }
@@ -416,22 +500,24 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
     }
 
     private void prepareMenuData() {
+        // MenuModel menuModel0 = new MenuModel("Cowin Vaccine", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.dashboard_icon); //Menu of Android Tutorial. No sub menus
         MenuModel menuModel = new MenuModel(getResources().getString(R.string.home), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.dashboard_icon); //Menu of Android Tutorial. No sub menus
         MenuModel menuModel1 = new MenuModel(getResources().getString(R.string.referral_code), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.refer_earn); //Menu of Android Tutorial. No sub menus
-        MenuModel menuModel2 = new MenuModel(getResources().getString(R.string.select_language), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.langauge); //Menu of Android Tutorial. No sub menus
+       // MenuModel menuModel2 = new MenuModel(getResources().getString(R.string.select_language), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.langauge); //Menu of Android Tutorial. No sub menus
+        //headerList.add(menuModel0);
         headerList.add(menuModel);
         headerList.add(menuModel1);
-        headerList.add(menuModel2);
+       // headerList.add(menuModel2);
         for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-            if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("11")) {
+            /*if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("11")) {
                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
                     MenuModel menuModel3 = new MenuModel(getResources().getString(R.string.lead_generate), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.lead_gernate_icon); //Menu of Android Tutorial. No sub menus
                     headerList.add(menuModel3);
                 }
-            }
+            }*/
             if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("12")) {
                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getView() == 1) {
-                    MenuModel menuModel4 = new MenuModel(getResources().getString(R.string.create_case), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.caseid); //Menu of Android Tutorial. No sub menus
+                    MenuModel menuModel4 = new MenuModel("Transaction Request", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.caseid); //Menu of Android Tutorial. No sub menus
                     headerList.add(menuModel4);
                 }
             }
@@ -457,10 +543,15 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
 
         childModel = new MenuModel(getResources().getString(R.string.f_quality_repots), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
         childModelsList.add(childModel);
-
+        childModel = new MenuModel("PV Sheet", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
+        childModelsList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.secoundkanta_parchi), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.katha_photo);
         childModelsList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.s_quality_repots), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("CCTV", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("IVR Tagging", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
         childModelsList.add(childModel);
 
         childModel = new MenuModel(getResources().getString(R.string.gate_passs), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.gatepass);
@@ -490,7 +581,13 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
         childModelsList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.out_s_katha__book), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.katha_photo);
         childModelsList.add(childModel);
+        childModel = new MenuModel("OUT CCTV", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("OUT IVR", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
+        childModelsList.add(childModel);
         childModel = new MenuModel(getResources().getString(R.string.out_gatepass_book), false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.gatepass);
+        childModelsList.add(childModel);
+        childModel = new MenuModel("Out PV Sheet", false, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.quaility);
         childModelsList.add(childModel);
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
@@ -507,6 +604,8 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
         }
+
+
        /* menuModel = new MenuModel(getResources().getString(R.string.case_status), true, true, "https://www.journaldev.com/19226/python-fractions", R.drawable.case_status_icon); //Menu of Java Tutorials
         headerList.add(menuModel);
         childModelsList = new ArrayList<>();
@@ -519,18 +618,40 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
         if (menuModel.hasChildren) {
             childList.put(menuModel, childModelsList);
         }*/
+        MenuModel menuModel6 = new MenuModel("Displedge Request", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.displadge_24); //Menu of Android Tutorial. No sub menus
         // MenuModel menuModel5 = new MenuModel(getResources().getString(R.string.vendor), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.ic_baseline_settings_24); //Menu of Android Tutorial. No sub menus
-        MenuModel menuModel6 = new MenuModel(getResources().getString(R.string.spot_sell), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.deal_track); //Menu of Android Tutorial. No sub menus
-        MenuModel menuModel7 = new MenuModel(getResources().getString(R.string.intantion_title), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.purchase); //Menu of Android Tutorial. No sub menus
-        MenuModel menuModel8 = new MenuModel("Customer Map", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.heat_map); //Menu of Android Tutorial. No sub menus
-        MenuModel menuModel9 = new MenuModel(getResources().getString(R.string.heat_map), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.heat_map); //Menu of Android Tutorial. No sub menus
-        MenuModel menuMode20 = new MenuModel(getResources().getString(R.string.logout), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.out_icon); //Menu of Android Tutorial. No sub menus
+        MenuModel menuModel7 = new MenuModel(getResources().getString(R.string.my_error_logs), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.ic_baseline_error_24); //Menu of Android Tutorial. No sub menus
+       // MenuModel menuModel23 = new MenuModel("Remote Audit", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.remote_24); //Menu of Android Tutorial. No sub menus
+        MenuModel menuModel22 = new MenuModel("Feedback", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.ic_baseline_feedback_24); //Menu of Android Tutorial. No sub menus
+       // MenuModel menuModel24 = new MenuModel("KRA", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.ic_baseline_feedback_24); //Menu of Android Tutorial. No sub menus
+      /*  MenuModel menuModel8 = new MenuModel(getResources().getString(R.string.spot_sell), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.deal_track); //Menu of Android Tutorial. No sub menus
+        MenuModel menuModel9 = new MenuModel(getResources().getString(R.string.intantion_title), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.purchase); //Menu of Android Tutorial. No sub menus*/
+        MenuModel menuModel10 = new MenuModel("Customer Map", true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.heat_map); //Menu of Android Tutorial. No sub menus
+        MenuModel menuMode20 = new MenuModel(getResources().getString(R.string.heat_map), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.heat_map); //Menu of Android Tutorial. No sub menus
+        MenuModel menuMode21 = new MenuModel(getResources().getString(R.string.logout), true, false, "https://www.journaldev.com/19226/python-fractions", R.drawable.out_icon); //Menu of Android Tutorial. No sub menus
         //  headerList.add(menuModel5);
         headerList.add(menuModel6);
         headerList.add(menuModel7);
-        headerList.add(menuModel8);
-        headerList.add(menuModel9);
+        headerList.add(menuModel22);
+       /* headerList.add(menuModel23);
+        headerList.add(menuModel24);*/
+       /* headerList.add(menuModel8);
+        headerList.add(menuModel9);*/
+        headerList.add(menuModel10);
         headerList.add(menuMode20);
+        headerList.add(menuMode21);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //  binding.mainContent.shimmerViewContainer.startShimmerAnimation();
+    }
+
+    @Override
+    public void onPause() {
+        //   binding.mainContent.shimmerViewContainer.stopShimmerAnimation();
+        super.onPause();
     }
 
     private void getAllPermission() {
@@ -588,7 +709,9 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date date = new Date();
                     binding.mainContent.date.setText("" + formatter.format(date));
-
+                    // stop animating Shimmer and hide the layout
+                    // binding.mainContent.shimmerViewContainer.stopShimmerAnimation();
+                    // binding.mainContent.shimmerViewContainer.setVisibility(View.GONE);
                 }
             }
         });
@@ -661,7 +784,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
             @Override
             public void onClick(View v) {
                 onImageSelected();
-               // callProfileImageSelector(REQUEST_CAMERA);
+                // callProfileImageSelector(REQUEST_CAMERA);
             }
         });
         clockInOut.setOnClickListener(v -> callServer());
@@ -1074,7 +1197,7 @@ public class StaffDashBoardActivity extends BaseActivity<StaffDashboardBinding>
         super.onActivityResult(requestCode, resultCode, data);
         try {
             if (resultCode == RESULT_OK) {
-               if (requestCode == REQUEST_CAMERA_PICTURE) {
+                if (requestCode == REQUEST_CAMERA_PICTURE) {
                     File camFile;
                     if (this.camUri != null) {
                         camFile = new File(this.camUri.getPath());

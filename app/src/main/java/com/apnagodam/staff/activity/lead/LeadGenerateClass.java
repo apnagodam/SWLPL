@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
@@ -29,6 +30,7 @@ import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllLeadsResponse;
+import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.TerminalListPojo;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Constants;
@@ -54,6 +56,7 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
     private boolean isUpdate = false;
     private String getLeadId;
     List<TerminalListPojo.Datum> data;
+    private List<CommudityResponse.Category> DataCommodity;
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_geenerte_leads;
@@ -90,10 +93,24 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
         // layout resource and list of items.
         // commudityID = "" + SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(0).getId();
         //   TerminalID = "" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(0).getId();
-
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
+        apiService.getcommuydity_terminal_user_emp_listing("Emp").enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
+            @Override
+            protected void onSuccess(CommudityResponse body) {
+                DataCommodity= body.getCategories();
+                for (int i = 0; i <body.getCategories().size(); i++) {
+                    String commodityType = DataCommodity.get(i).getCommodityType();
+                    if (commodityType.equalsIgnoreCase("Primary")) {
+                        commodityType = "किसानी";
+                    } else {
+                        commodityType = "MTP";
+                    }
+                    CommudityName.add(DataCommodity.get(i).getCategory() + "(" + commodityType + ")");
+                }
+            }
+        });
+       /* for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
             CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory()+"("+SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCommodityType()+")");
-        }
+        }*/
        /* for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
             TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName() + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
         }*/
@@ -125,9 +142,15 @@ public class LeadGenerateClass extends BaseActivity<ActivityGeenerteLeadsBinding
                 // selected item in the list
                 if (position != 0) {
                     String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-                        if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory()+"("+SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCommodityType()+")")) {
-                            commudityID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getId());
+                    for (int i = 0; i < DataCommodity.size(); i++) {
+                        String commodityType = DataCommodity.get(i).getCommodityType();
+                        if (commodityType.equalsIgnoreCase("Primary")) {
+                            commodityType = "किसानी";
+                        } else {
+                            commodityType = "MTP";
+                        }
+                        if (presentMeterStatusID.equalsIgnoreCase(DataCommodity.get(i).getCategory() + "(" + commodityType + ")")) {
+                            commudityID = String.valueOf(DataCommodity.get(i).getId());
                         }
                     }
                 }

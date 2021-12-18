@@ -48,11 +48,7 @@ public abstract class NetworkCallback<T extends BaseResponse> implements Callbac
     public void onFailure(@NotNull Call<T> call, @NotNull Throwable t) {
         activity.hideDialog();
         Utility.showAlertDialog(activity, activity.getString(R.string.alert),"Network Issue");
-
 //        Utility.showOnFailureError(activity, t);
     }
-
     protected abstract void onSuccess(T body);
-
-
 }

@@ -59,6 +59,14 @@
     <string name="spot_sell">स्पॉट डील</string>
     <string name="approved">स्वीकृत</string>
     <string name="rejected">अस्वीकृत</string>
+    <string name="upload_cctv">Upload CCTV</string>
+    <string name="cctv_file">CCTV File *</string>
+    <string name="click_here_to_upload_cctv_file_1">Click here to Upload CCTV File 1</string>
+    <string name="cctv_file_2">CCTV File 2 *</string>
+    <string name="click_here_to_upload_cctv_file_2">Click here to Upload CCTV File 2</string>
+    <string name="ivr_tagging">IVR Tagging List</string>
+    <string name="ivr_upload">IVR Tagging</string>
+    <string name="total_displedge_bags">कुल डिसप्लेज बैग</string>
     <string-array name="state">
         <item>Select</item>
         <item>Bihar</item>

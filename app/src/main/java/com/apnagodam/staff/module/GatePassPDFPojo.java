@@ -15,8 +15,31 @@ public class GatePassPDFPojo extends BaseResponse {
     public void setData(Data data) {
         this.data = data;
     }
-    public class Data {
 
+
+    public dataDhang getData_dhang() {
+        return data_dhang;
+    }
+
+    public void setData_dhang(dataDhang data_dhang) {
+        this.data_dhang = data_dhang;
+    }
+
+    @SerializedName("data_dhang")
+    @Expose
+    private dataDhang data_dhang;
+    public class Data {
+        public String getDispledge_bags() {
+            return displedge_bags;
+        }
+
+        public void setDispledge_bags(String displedge_bags) {
+            this.displedge_bags = displedge_bags;
+        }
+
+        @SerializedName("displedge_bags")
+        @Expose
+        private String displedge_bags;
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -699,6 +722,174 @@ public class GatePassPDFPojo extends BaseResponse {
         public void setLastName(String lastName) {
             this.lastName = lastName;
         }
+
+    }
+    public class dataDhang {
+        public String getDhang_1() {
+            return dhang_1;
+        }
+
+        public void setDhang_1(String dhang_1) {
+            this.dhang_1 = dhang_1;
+        }
+
+        public String getDhang_2() {
+            return dhang_2;
+        }
+
+        public void setDhang_2(String dhang_2) {
+            this.dhang_2 = dhang_2;
+        }
+
+        public String getDhang_3() {
+            return dhang_3;
+        }
+
+        public void setDhang_3(String dhang_3) {
+            this.dhang_3 = dhang_3;
+        }
+
+        public String getDhang_4() {
+            return dhang_4;
+        }
+
+        public void setDhang_4(String dhang_4) {
+            this.dhang_4 = dhang_4;
+        }
+
+        public String getDhang_5() {
+            return dhang_5;
+        }
+
+        public void setDhang_5(String dhang_5) {
+            this.dhang_5 = dhang_5;
+        }
+
+        public String getDhang_6() {
+            return dhang_6;
+        }
+
+        public void setDhang_6(String dhang_6) {
+            this.dhang_6 = dhang_6;
+        }
+
+        public String getDhang_7() {
+            return dhang_7;
+        }
+
+        public void setDhang_7(String dhang_7) {
+            this.dhang_7 = dhang_7;
+        }
+
+        public String getDhang_8() {
+            return dhang_8;
+        }
+
+        public void setDhang_8(String dhang_8) {
+            this.dhang_8 = dhang_8;
+        }
+
+        public String getDhang_9() {
+            return dhang_9;
+        }
+
+        public void setDhang_9(String dhang_9) {
+            this.dhang_9 = dhang_9;
+        }
+
+        public String getDhang_10() {
+            return dhang_10;
+        }
+
+        public void setDhang_10(String dhang_10) {
+            this.dhang_10 = dhang_10;
+        }
+
+        public String getDhang_11() {
+            return dhang_11;
+        }
+
+        public void setDhang_11(String dhang_11) {
+            this.dhang_11 = dhang_11;
+        }
+
+        public String getDhang_12() {
+            return dhang_12;
+        }
+
+        public void setDhang_12(String dhang_12) {
+            this.dhang_12 = dhang_12;
+        }
+
+        public String getDhang_13() {
+            return dhang_13;
+        }
+
+        public void setDhang_13(String dhang_13) {
+            this.dhang_13 = dhang_13;
+        }
+
+        public String getDhang_14() {
+            return dhang_14;
+        }
+
+        public void setDhang_14(String dhang_14) {
+            this.dhang_14 = dhang_14;
+        }
+
+        public String getDhang_15() {
+            return dhang_15;
+        }
+
+        public void setDhang_15(String dhang_15) {
+            this.dhang_15 = dhang_15;
+        }
+
+        @SerializedName("dhang_1")
+        @Expose
+        private String dhang_1;
+        @SerializedName("dhang_2")
+        @Expose
+        private String dhang_2;
+        @SerializedName("dhang_3")
+        @Expose
+        private String dhang_3;
+        @SerializedName("dhang_4")
+        @Expose
+        private String dhang_4;
+        @SerializedName("dhang_5")
+        @Expose
+        private String dhang_5;
+        @SerializedName("dhang_6")
+        @Expose
+        private String dhang_6;
+        @SerializedName("dhang_7")
+        @Expose
+        private String dhang_7;
+        @SerializedName("dhang_8")
+        @Expose
+        private String dhang_8;
+        @SerializedName("dhang_9")
+        @Expose
+        private String dhang_9;
+        @SerializedName("dhang_10")
+        @Expose
+        private String dhang_10;
+        @SerializedName("dhang_11")
+        @Expose
+        private String dhang_11;
+        @SerializedName("dhang_12")
+        @Expose
+        private String dhang_12;
+        @SerializedName("dhang_13")
+        @Expose
+        private String dhang_13;
+        @SerializedName("dhang_14")
+        @Expose
+        private String dhang_14;
+        @SerializedName("dhang_15")
+        @Expose
+        private String dhang_15;
 
     }
 }

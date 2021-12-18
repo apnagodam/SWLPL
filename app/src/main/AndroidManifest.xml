@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
 
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-feature
@@ -158,14 +160,46 @@
         <activity android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass" />
         <activity android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity" />
         <activity android:name=".activity.MobileNumberMapActivity" />
+        <activity android:name=".activity.errorlog.UploadErrorLogClass" />
+        <activity android:name=".activity.errorlog.ApprovalRequestErroorListClass" />
+        <activity android:name=".activity.errorlog.MyErrorLogListClass" />
+        <activity android:name=".activity.CoWinVactionClass" />
+        <activity android:name=".activity.out.cctv.OutUploadCCTVFileClass" />
+        <activity android:name=".activity.out.cctv.OutCCTVListingActivity" />
+        <activity android:name=".activity.out.ivr.OutUploadIVRFileClass" />
+        <activity android:name=".activity.out.ivr.OutIVRListingActivity" />
+        <activity android:name=".activity.in.cctv.INCCTVListingActivity" />
+        <activity android:name=".activity.in.ivr.INIVRListingActivity" />
+        <activity android:name=".activity.in.ivr.INUploadIVRFileClass" />
+        <activity android:name=".activity.in.pv.PVUploadClass" />
+        <activity android:name=".activity.in.pv.PVListingActivityClass"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".activity.out.pv.OUTPVUploadClass" />
+        <activity android:name=".activity.out.pv.OUTPVListingActivityClass" />
+        <activity android:name=".activity.in.cctv.INUploadCCTVFileClass" />
+        <activity android:name=".activity.dispaldgeinventory.UploadDispladgeClass" />
+        <activity android:name=".activity.dispaldgeinventory.MyAddedDispladgeBagsListClass" />
+        <activity android:name=".activity.dispaldgeinventory.ApprovalRequestDispladgeListClass" />
+        <activity android:name=".activity.feedbackemp.UploadEmpSuggestionClass" />
+        <activity android:name=".activity.feedbackemp.ApprovalRequestFeedbackListClass" />
+        <activity android:name=".activity.remoteaudit.AllAsserstListClass" />
+        <activity android:name=".activity.remoteaudit.CommonAuditFileUploadClass" />
+        <activity android:name=".activity.kra.MyKRAHistoryListClass" />
+        <activity android:name=".activity.kra.UploadMyKRAClass" />
+        <activity android:name=".activity.in.gatepass.UpdateGatePassClass" />
+        <activity android:name=".activity.out.gatepass.OUTUpdateGatePassClass" />
 
         <receiver
+            android:name=".utils.SmsBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+       <!-- <receiver
             android:name=".reciever.SMSReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
        <!-- <meta-data
             android:name="com.google.android.geo.API_KEY"

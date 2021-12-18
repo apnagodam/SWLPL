@@ -84,7 +84,7 @@ public class UploadConveyanceVoacharClass extends BaseActivity<ActivityEmpConvey
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         // get approve person  list
-        apiService.getlevelwiselist().enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
+        apiService.getlevelwiselist("").enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
             @Override
             protected void onSuccess(AllLevelEmpListPojo body) {
                 for (int i = 0; i < body.getData().size(); i++) {

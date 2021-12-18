@@ -10,10 +10,15 @@ import com.apnagodam.staff.Network.Request.AttendancePostData;
 import com.apnagodam.staff.Network.Request.ClosedCasesPostData;
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData;
 import com.apnagodam.staff.Network.Request.CreateConveyancePostData;
+import com.apnagodam.staff.Network.Request.CreateDispladgePostData;
+import com.apnagodam.staff.Network.Request.CreateErrorLogPostData;
 import com.apnagodam.staff.Network.Request.CreateLeadsPostData;
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData;
 import com.apnagodam.staff.Network.Request.CreateVendorConveyancePostData;
 import com.apnagodam.staff.Network.Request.DharmaKanthaPostData;
+import com.apnagodam.staff.Network.Request.EmpFeedbackRequest;
+import com.apnagodam.staff.Network.Request.EmpUpdateGartepassRequest;
+import com.apnagodam.staff.Network.Request.LoginCoWinPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Request.OTPData;
 import com.apnagodam.staff.Network.Request.OTPGatePassData;
@@ -22,10 +27,12 @@ import com.apnagodam.staff.Network.Request.SelfRejectConveyancePOst;
 import com.apnagodam.staff.Network.Request.SelfRejectVendorConveyancePOst;
 import com.apnagodam.staff.Network.Request.StackPostData;
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData;
+import com.apnagodam.staff.Network.Request.UploadCCTVPostData;
 import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData;
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData;
 import com.apnagodam.staff.Network.Request.UploadGatePassPostData;
 import com.apnagodam.staff.Network.Request.UploadGatePassPostDataNew;
+import com.apnagodam.staff.Network.Request.UploadIVRPostData;
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
 import com.apnagodam.staff.Network.Request.UploadReleaseOrderlsPostData;
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
@@ -46,21 +53,36 @@ import com.apnagodam.staff.module.AllUserListPojo;
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.module.AllVendorConvancyList;
 import com.apnagodam.staff.module.AllpricingResponse;
+import com.apnagodam.staff.module.ApproveGatepassPojo;
+import com.apnagodam.staff.module.CCTVListPojo;
 import com.apnagodam.staff.module.CaseStatusINPojo;
 import com.apnagodam.staff.module.CheckInventory;
 import com.apnagodam.staff.module.CommudityResponse;
+import com.apnagodam.staff.module.CowinPojo;
 import com.apnagodam.staff.module.DashBoardData;
+import com.apnagodam.staff.module.DispladgeCommodityPojo;
+import com.apnagodam.staff.module.DispladgePojo;
+import com.apnagodam.staff.module.ErrorLogListPojo;
+import com.apnagodam.staff.module.FeedbackApprovalLisPojo;
+import com.apnagodam.staff.module.FeedbackListPojo;
+import com.apnagodam.staff.module.FeedbackPojo;
 import com.apnagodam.staff.module.FirstQuilityReportListResponse;
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
 import com.apnagodam.staff.module.GatePassListResponse;
 import com.apnagodam.staff.module.GatePassPDFPojo;
+import com.apnagodam.staff.module.GatepassDetailsPVPojo;
+import com.apnagodam.staff.module.IVRListPojo;
 import com.apnagodam.staff.module.MobileNUmberPojo;
+import com.apnagodam.staff.module.OUTComodityPojo;
+import com.apnagodam.staff.module.PVGatepassPojo;
+import com.apnagodam.staff.module.PVGetListPojo;
 import com.apnagodam.staff.module.ReleaseOrderPojo;
 import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse;
 import com.apnagodam.staff.module.SpotSellDealTrackPojo;
 import com.apnagodam.staff.module.StackListPojo;
 import com.apnagodam.staff.module.StateMapModel;
+import com.apnagodam.staff.module.StockDetailsPVPojo;
 import com.apnagodam.staff.module.TerminalListPojo;
 import com.apnagodam.staff.module.TransporterDetailsPojo;
 import com.apnagodam.staff.module.TransporterListPojo;
@@ -69,8 +91,12 @@ import com.apnagodam.staff.module.VendorExpensionApprovedListPojo;
 import com.apnagodam.staff.module.VendorExpensionNamePojo;
 import com.apnagodam.staff.module.VendorNamePojo;
 
+import org.json.JSONObject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -100,7 +126,7 @@ public interface ApiService {
 
     // employee conveyance list
     @GET("emp_api/apna_emp_get_levelwiselist")
-    Call<AllLevelEmpListPojo> getlevelwiselist();
+    Call<AllLevelEmpListPojo> getlevelwiselist(@Query("req_count_type") String req_count_type);
 
     @GET("emp_api/apna_emp_get_conveyance")
     Call<AllConvancyList> getConvancyList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
@@ -169,32 +195,32 @@ public interface ApiService {
     Call<LoginResponse> doClosedCase(@Body ClosedCasesPostData closedCasesPostData);
 
     @POST("emp_api/apna_emp_addPrice")
-    Call<LoginResponse> setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
+    Call<LoginResponse>setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
 
     // tuck book
     @GET("emp_api/apna_emp_get_truckbook")
-    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
+    Call<AllTruckBookListResponse>getTruckBookList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_update_truckbook")
-    Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
+    Call<LoginResponse>uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
 
     // labour book
     @GET("emp_api/apna_emp_get_labourbook")
-    Call<AllLabourBookListResponse> getLabourBookList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<AllLabourBookListResponse>getLabourBookList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_update_labour")
-    Call<LoginResponse> uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
+    Call<LoginResponse>uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
 
     // first katha parchi
     @GET("emp_api/apna_emp_get_kanta_prachi")
-    Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<FirstkanthaParchiListResponse>getf_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_kanta_parchi")
-    Call<LoginResponse> uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
+    Call<LoginResponse>uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
 
     // first quality reports
     @GET("emp_api/apna_emp_get_quality")
-    Call<FirstQuilityReportListResponse> getf_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<FirstQuilityReportListResponse>getf_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_f_quality")
     Call<LoginResponse> uploadFirstQualityReports(@Body UploadFirstQualityPostData uploadFirstQualityPostData);
@@ -222,6 +248,11 @@ public interface ApiService {
 
     @POST("emp_api/apna_emp_gatepass")
     Call<LoginResponse> uploadGatePassNew(@Body UploadGatePassPostDataNew uploadGatePassPostDataNew);
+
+
+    @POST("emp_api/apna_emp_pre_gatepass")
+    Call<LoginResponse> uploadIntermideateGatePassNew(@Body UploadGatePassPostDataNew uploadGatePassPostDataNew);
+
 
     // deal track on spot sell
     @GET("emp_api/apna_emp_get_spot_deals")
@@ -279,6 +310,7 @@ public interface ApiService {
 
     @GET("emp_api/apna_emp_statewise_user_heatmap")
     Call<StateMapModel> apnaEmpStatewiseUserHeatmap(@Query("state_name") String state);
+
     @GET("emp_api/apna_emp_get_user_location")
     Call<MobileNUmberPojo> routeMap(@Query("phone_no") String phone_no);
 
@@ -290,10 +322,13 @@ public interface ApiService {
 
     @POST("emp_api/apna_emp_gatepass_otp_verification")
     Call<LoginResponse> doVerifyGatePassOTP(@Body OTPVerifyGatePassData otpVerifyGatePassData);
+
     @GET("emp_api/apna_emp_generate_gate_pass")
     Call<GatePassPDFPojo> getGatePassPDf(@Query("case_id") String case_id);
+
     @GET("emp_api/apna_emp_get_user_data")
     Call<AllUserListPojo> getUserList();
+
     @GET("emp_api/apna_emp_get_InOutInventoryDetail")
     Call<CheckInventory> checkWeightBag(@Query("case_id") String case_id);
 
@@ -306,16 +341,125 @@ public interface ApiService {
     // release order
     @GET("emp_api/apna_emp_release_order")
     Call<ReleaseOrderPojo> getReleaseOrderList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
+
     @POST("emp_api/apna_emp_update_releaseorder")
     Call<LoginResponse> uploadRleaseOrder(@Body UploadReleaseOrderlsPostData uploadReleaseOrderlsPostData);
-
 
     // delivered  order
     @GET("emp_api/apna_emp_delivery_order")
     Call<ReleaseOrderPojo> getDeliveredOrderList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
+
     @POST("emp_api/apna_emp_update_deliverorder")
     Call<LoginResponse> uploadDeliveredOrder(@Body UploadReleaseOrderlsPostData uploadReleaseOrderlsPostData);
 
+    /*Error log */
+    @GET("emp_api/apna_emp_get_errorlog")
+    Call<ErrorLogListPojo> getErrorList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
+
+    @GET("emp_api/apna_emp_errorlog_reject")
+    Call<LoginResponse> ErrorCancel(@Query("log_id") String log_id);
+
+    @GET("emp_api/apna_emp_errorlog_request_list")
+    Call<ErrorLogListPojo> getRequestedErrorList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
+
+    @GET("emp_api/apna_emp_errorlog_approve")
+    Call<LoginResponse> getApprovelogList(@Query("id") String id, @Query("future_correction") String future_correction, @Query("final_conclusion") String final_conclusion);
+
+    @POST("emp_api/apna_emp_errorlog")
+    Call<LoginResponse> doCreateErrorLog(@Body CreateErrorLogPostData createErrorLogPostData);
+
+    @POST("emp_api/apna_emp_send_covid_otp")
+    Call<LoginResponse> doCowinLogin(@Body LoginCoWinPostData loginCoWinPostData);
+
+    @GET("api/v2/appointment/sessions/public/calendarByDistrict")
+    Call<CowinPojo> getCowinData(@Query("district_id") String district_id, @Query("date") String date);
+
+  /*  @POST("emp_api/apna_emp_create_pv")
+    Call<LoginResponse> uploadPVStocks(@Body String data);
+    @POST("emp_api/apna_emp_create_pv")
+    Call<LoginResponse> uploadPVStocksIN(@Body PVPojo loginPostData);*/
+
+    /*pv stock show*/
+    @GET("emp_api/apna_emp_pv_case_ids")
+    Call<PVGatepassPojo> getallGatepass(@Query("in_out") String in_out);
+
+    @GET("emp_api/apna_emp_pv_caseid_details")
+    Call<GatepassDetailsPVPojo> getGatepassDetails(@Query("case_id") String case_id);
+
+    @FormUrlEncoded
+    @POST("emp_api/apna_emp_create_pv")
+    Call<LoginResponse> createPv(
+            @Field("commodities_id") String commodities_id,
+            @Field("case_ids") String case_ids,
+            @Field("user_id") String user_id,
+            @Field("stack_no") String stack_no,
+            @Field("terminal_id") String terminal_id,
+            @Field("block_no") JSONObject block_no,
+            @Field("dhang") JSONObject dhang,
+            @Field("danda") JSONObject danda,
+            @Field("height") JSONObject height,
+            @Field("plus_minus") JSONObject plus_minus,
+            @Field("remark") JSONObject remark);
+
+
+    @GET("emp_api/apna_emp_get_pv")
+    Call<PVGetListPojo> getallGatepass();
+
+    @GET("emp_api/apna_emp_get_pv_blocks_data")
+    Call<StockDetailsPVPojo> getstockdetails(@Query("pv_id") String pv_id);
+
+    /*CCTV*/
+    @POST("emp_api/apna_emp_cctv_update")
+    Call<LoginResponse> uploadCCTVFile(@Body UploadCCTVPostData uploadCCTVPostData);
+    @GET("emp_api/apna_emp_get_cctv")
+    Call<CCTVListPojo> getCCTVList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+
+    /*IVR*/
+    @POST("emp_api/apna_emp_ivr_update")
+    Call<LoginResponse> uploadIVRFile(@Body UploadIVRPostData uploadIVRPostData);
+    @GET("emp_api/apna_emp_get_ivr")
+    Call<IVRListPojo> getIVRList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    @GET("emp_api/apna_emp_user_terminal_commodity")
+    Call<OUTComodityPojo> getOutCommodityList(@Query("terminal_id") String terminal_id, @Query("user_id") String user_id);
+
+    /*Displadge Inventory API */
+    @GET("api/user_terminalewise_commodity_stack")
+    Call<DispladgeCommodityPojo> getOutDisppladgeCommodityList(@Query("terminal_id") String terminal_id, @Query("user_id") String user_id, @Query("commodity_id") String commodity_id, @Query("type") String type);
+
+    @POST("emp_api/apna_emp_displedge_add")
+    Call<LoginResponse> doAddDispladge(@Body CreateDispladgePostData createDispladgePostData);
+
+    @GET("emp_api/apna_emp_displedge_req_data")
+    Call<DispladgePojo> getDispladgeList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
+
+    @GET("emp_api/apna_emp_displedge_req_reject")
+    Call<LoginResponse> rejectDispladge(@Query("row_id") String row_id, @Query("notes") String notes);
+
+    @GET("emp_api/apna_emp_get_displedge_reqforapprove")
+    Call<DispladgePojo> getDispladgeRequestedList(@Query("limit") String limit, @Query("page") int page, @Query("search") String search);
+
+    @GET("emp_api/apna_emp_displedge_req_approve")
+    Call<LoginResponse> approveDispladge(@Query("row_id") String row_id, @Query("approve_notes") String approve_notes);
+
+
+    /*emp feedback */
+    @GET("api/designation_list")
+    Call<FeedbackPojo> getDepartmentList();
+    @POST("emp_api/apna_emp_feedback_submit")
+    Call<LoginResponse> doCreateEmpSuggestion(@Body EmpFeedbackRequest empFeedbackRequest);
+    @GET("emp_api/apna_emp_get_feedback")
+    Call<FeedbackListPojo> getAllFeedbackList();
+    @GET("emp_api/apna_emp_feedback_request")
+    Call<FeedbackApprovalLisPojo> getAllRequestList();
+    @GET("emp_api/apna_emp_feedback_action")
+    Call<LoginResponse> getcancelapproveFeedback(@Query("row_id") String row_id,@Query("action") String action);
+
+
+/*gatepasss break */
+@POST("emp_api/apna_emp_ivr_wb_update")
+Call<LoginResponse> doCreateEmpGatepasssUpdate(@Body EmpUpdateGartepassRequest empUpdateGartepassRequest);
+    @GET("emp_api/apna_emp_get_pre_gatepass")
+    Call<ApproveGatepassPojo> getPreApproveGatePassData(@Query("case_id") String case_id);
 
 }
 

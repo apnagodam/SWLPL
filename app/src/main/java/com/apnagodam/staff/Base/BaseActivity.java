@@ -42,6 +42,7 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.apnagodam.staff.ApnaGodamApp;
 import com.apnagodam.staff.Network.ApiService;
+import com.apnagodam.staff.Network.CoWinRetrofitAPIClient;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.RetrofitAPIClient;
@@ -76,12 +77,15 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     public ApnaGodamApp ePowerApp;
     protected T binding;
     protected ApiService apiService;
+    protected ApiService CowinServices;
     public static final int REQUEST_CAMERA = 100;
+    public static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
+    public static final int MEDIA_TYPE_VIDEO = 2;
     private String currentOperation;
     //for pic photo from camera  and gallery
     private static final int REQUEST_CAMERA_PERMISSIONS = 931;
     public static final int REQUEST_CAMERA_PICTURE = 0x02;
-    protected Uri mediaUri;
+    protected Uri mediaUri,fileUri;
     public String SpiltImageoFCommudity = "";
     protected Uri camUri;
     public File file;
@@ -95,6 +99,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         super.onCreate(savedInstanceState);
         ePowerApp = (ApnaGodamApp) getApplication();
         apiService = RetrofitAPIClient.getRetrofitClient();
+        CowinServices = CoWinRetrofitAPIClient.getRetrofitClient();
         binding = DataBindingUtil.setContentView(this, getLayoutResId());
         setUp();
     }
@@ -569,8 +574,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
 //      max Height and width values of the compressed image is taken as 816x612
 
-        float maxHeight = 916.0f;
-        float maxWidth = 712.0f;
+     /*   float maxHeight = 916.0f;
+        float maxWidth = 712.0f;*/
+        float maxHeight = 1132.0f;
+        float maxWidth = 924.0f;
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
 

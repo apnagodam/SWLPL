@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.Base.BaseActivity;
@@ -19,6 +21,12 @@ import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass;
 import com.apnagodam.staff.module.AllConvancyList;
 import com.apnagodam.staff.utils.Utility;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +38,7 @@ public class ConvancyListAdpter extends RecyclerView.Adapter<ConvancyListAdpter.
     private Context context;
     private BaseActivity activity;
 
-    public ConvancyListAdpter( List<AllConvancyList.Datum> body, MyConveyanceListClass myConveyanceListClass, BaseActivity activity) {
+    public ConvancyListAdpter(List<AllConvancyList.Datum> body, MyConveyanceListClass myConveyanceListClass, BaseActivity activity) {
         this.commudityResponseList = body;
         this.context = myConveyanceListClass;
         this.activity = activity;
@@ -44,6 +52,7 @@ public class ConvancyListAdpter extends RecyclerView.Adapter<ConvancyListAdpter.
         return gvh;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(CommudityResponseViewHolder holder, final int position) {
@@ -63,7 +72,26 @@ public class ConvancyListAdpter extends RecyclerView.Adapter<ConvancyListAdpter.
             holder.tv_name.setText("-");
         }
         if (commudityResponseList.get(position).getDate() != null) {
-            holder.tv_date.setText(" " + (commudityResponseList.get(position).getDate()));
+            DateTimeFormatter formatter = null;
+            try{
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    DateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = inputFormatter.parse((commudityResponseList.get(position).getDate()));
+                        DateFormat outputFormatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String output = outputFormatter.format(date); // Output : 01/20/2012
+                        holder.tv_date.setText(""+output);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }catch (DateTimeParseException e){
+                e.getStackTrace();
+                holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
+            }
+
+            // holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
         } else {
             holder.tv_date.setText("-");
         }
@@ -131,6 +159,4 @@ public class ConvancyListAdpter extends RecyclerView.Adapter<ConvancyListAdpter.
             tv_action = view.findViewById(R.id.tv_action);
         }
     }
-
-
 }

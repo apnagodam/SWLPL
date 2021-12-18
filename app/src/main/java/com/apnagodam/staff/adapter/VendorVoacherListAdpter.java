@@ -3,6 +3,7 @@ package com.apnagodam.staff.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.Base.BaseActivity;
@@ -19,6 +21,12 @@ import com.apnagodam.staff.activity.vendorPanel.MyVendorVoacherListClass;
 import com.apnagodam.staff.module.AllConvancyList;
 import com.apnagodam.staff.module.AllVendorConvancyList;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +52,7 @@ public class VendorVoacherListAdpter extends RecyclerView.Adapter<VendorVoacherL
         return gvh;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(CommudityResponseViewHolder holder, final int position) {
@@ -63,7 +72,26 @@ public class VendorVoacherListAdpter extends RecyclerView.Adapter<VendorVoacherL
             holder.tv_name.setText("-");
         }
         if (commudityResponseList.get(position).getDate() != null) {
-            holder.tv_date.setText(" " + (commudityResponseList.get(position).getDate()));
+            DateTimeFormatter formatter = null;
+            try{
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    DateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = inputFormatter.parse((commudityResponseList.get(position).getDate()));
+                        DateFormat outputFormatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String output = outputFormatter.format(date); // Output : 01/20/2012
+                        holder.tv_date.setText(""+output);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }catch (DateTimeParseException e){
+                e.getStackTrace();
+                holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
+            }
+
+            // holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
         } else {
             holder.tv_date.setText("-");
         }

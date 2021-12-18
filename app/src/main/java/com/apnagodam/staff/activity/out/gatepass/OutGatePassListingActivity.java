@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,16 +22,21 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.GatePassPDFPrieviewClass;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
+import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
 import com.apnagodam.staff.activity.in.gatepass.UploadGatePassClass;
 import com.apnagodam.staff.activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity;
 import com.apnagodam.staff.adapter.OutGatepassAdapter;
 import com.apnagodam.staff.databinding.ActivityListingBinding;
 import com.apnagodam.staff.module.GatePassListResponse;
+import com.apnagodam.staff.module.StockDetailsPVPojo;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +62,8 @@ public class OutGatePassListingActivity extends BaseActivity<ActivityListingBind
         setSupportActionBar(binding.toolbar);
         binding.titleHeader.setText(getResources().getString(R.string.gate_pass_list));
         binding.tvId.setText(getResources().getString(R.string.case_idd));
-        binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
-        binding.tvPhone.setText(getResources().getString(R.string.gate_passs));
+        binding.tvMoreView.setText(getResources().getString(R.string.gate_passs));
+        binding.tvPhone.setText(getResources().getString(R.string.more_view_truck));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -212,6 +219,22 @@ public class OutGatePassListingActivity extends BaseActivity<ActivityListingBind
         if (AllCases.get(position).getGPCaseId() == null || AllCases.get(position).getGPCaseId().isEmpty()) {
             kanta_parchi_file.setVisibility(View.GONE);
         }
+        /*displadge bags*/
+        LinearLayout dispaldgebags = (LinearLayout) dialogView.findViewById(R.id.dispaldgebags);
+        TextView no_of_displadge_bags = (TextView) dialogView.findViewById(R.id.no_of_displadge_bags);
+        dispaldgebags.setVisibility(View.VISIBLE);
+        Double TotalBags = 0.0;
+        if (AllCases.get(position).getNoOfBags() != null) {
+            if (AllCases.get(position).getDispledge_bags() != null) {
+                TotalBags = (Double.parseDouble(AllCases.get(position).getNoOfBags())) - (Double.parseDouble(AllCases.get(position).getDispledge_bags()));
+            }else {
+                TotalBags =  (Double.parseDouble(AllCases.get(position).getNoOfBags()));
+            }
+        } else {
+            TotalBags = 0.0;
+        }
+        no_of_displadge_bags.setText("" + ((AllCases.get(position).getDispledge_bags()) != null ? AllCases.get(position).getDispledge_bags() : "N/A"));
+        bags.setText("" + ((AllCases.get(position).getNoOfBags()) != null ? "" + TotalBags : "N/A"));
         case_id.setText(getResources().getString(R.string.case_idd));
         lead_id.setText("" + AllCases.get(position).getCaseId());
         customer_name.setText("" + AllCases.get(position).getCustFname());
@@ -224,7 +247,6 @@ public class OutGatePassListingActivity extends BaseActivity<ActivityListingBind
         purchase_details.setText("purchase Details : " + ((AllCases.get(position).getPurchaseName()) != null ? AllCases.get(position).getPurchaseName() : "N/A"));
         loan_details.setText("Loan Details : " + ((AllCases.get(position).getLoanName()) != null ? AllCases.get(position).getLoanName() : "N/A"));
         selas_details.setText("Sale Details : " + ((AllCases.get(position).getSaleName()) != null ? AllCases.get(position).getSaleName() : "N/A"));
-        bags.setText("" + ((AllCases.get(position).getNoOfBags()) != null ? AllCases.get(position).getNoOfBags() : "N/A"));
         wieight.setText("" + ((AllCases.get(position).getTotalWeight()) != null ? AllCases.get(position).getTotalWeight() : "N/A"));
         /////
         firstkantaParchiFile = Constants.gate_pass + AllCases.get(position).getFile();
@@ -249,7 +271,16 @@ public class OutGatePassListingActivity extends BaseActivity<ActivityListingBind
         });
         alertDialog.show();
     }
-
+    public void updateGatepassData(int position) {
+        Bundle bundle = new Bundle();
+        bundle.putString("user_name", AllCases.get(position).getCustFname());
+        bundle.putString("case_id", AllCases.get(position).getCaseId());
+        bundle.putString("terminal_name", AllCases.get(position).getTerminal_name());
+        bundle.putString("vehicle_no", AllCases.get(position).getVehicleNo());
+        bundle.putString("stackNo", AllCases.get(position).getStack_number());
+        bundle.putString("INOUT", AllCases.get(position).getInOut());
+        startActivity(OUTUpdateGatePassClass.class, bundle);
+    }
     public void checkVeehicleNo(int postion) {
         Bundle bundle = new Bundle();
         bundle.putString("user_name", AllCases.get(postion).getCustFname());

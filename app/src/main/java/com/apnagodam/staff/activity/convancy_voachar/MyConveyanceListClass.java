@@ -2,7 +2,6 @@ package com.apnagodam.staff.activity.convancy_voachar;
 
 import android.app.Activity;
 import android.graphics.Rect;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -24,23 +23,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Request.CreateConveyancePostData;
-import com.apnagodam.staff.Network.Request.OTPData;
 import com.apnagodam.staff.Network.Request.SelfRejectConveyancePOst;
 import com.apnagodam.staff.Network.Response.LoginResponse;
-import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.OtpActivity;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
 import com.apnagodam.staff.adapter.ConvancyListAdpter;
 import com.apnagodam.staff.databinding.ConvencyListBinding;
+import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllConvancyList;
 import com.apnagodam.staff.module.AllLevelEmpListPojo;
 import com.apnagodam.staff.utils.Constants;
 import com.apnagodam.staff.utils.PhotoFullPopupWindow;
 import com.apnagodam.staff.utils.Utility;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +46,7 @@ public class MyConveyanceListClass extends BaseActivity<ConvencyListBinding> {
     private List<AllConvancyList.Datum> getOrdersList;
     private List<AllConvancyList.Datum> tempraryList;
     private String inventory_id = "";
-    private String startMeterImage, endMeterImage,otherImaage;
+    private String startMeterImage, endMeterImage, otherImaage;
     // for FB button
     private Animation fabOpenAnimation;
     private Animation fabCloseAnimation;
@@ -150,7 +144,13 @@ public class MyConveyanceListClass extends BaseActivity<ConvencyListBinding> {
         }
 
         public void onCreateFabClick(View view) {
-            startActivity(UploadConveyanceVoacharClass.class);
+            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("41")) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                        startActivity(UploadConveyanceVoacharClass.class);
+                    }
+                }
+            }
         }
 
         public void onShareFabClick(View view) {
@@ -180,28 +180,19 @@ public class MyConveyanceListClass extends BaseActivity<ConvencyListBinding> {
         fabOpenAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_open);
         fabCloseAnimation = AnimationUtils.loadAnimation(this, R.anim.fab_close);
     }
-    private void getapproveCount( ) {
-        apiService.getlevelwiselist().enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
+
+    private void getapproveCount() {
+        apiService.getlevelwiselist("").enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
             @Override
             protected void onSuccess(AllLevelEmpListPojo body) {
                 for (int i = 0; i < body.getData().size(); i++) {
-                    if (body.getRequest_count() > 0) {
-                        binding.shareLabelTextView.setClickable(true);
-                        binding.shareLabelTextView.setEnabled(true);
-                        binding.shareFab.setClickable(true);
-                        binding.shareFab.setEnabled(true);
                         binding.shareLabelTextView.setText("Approval Request " + "(" + body.getRequest_count() + ")");
-                    }else {
-                        binding.shareLabelTextView.setClickable(false);
-                        binding.shareFab.setClickable(false);
-                        binding.shareLabelTextView.setEnabled(false);
-                        binding.shareFab.setEnabled(false);
-                    }
                 }
             }
 
         });
     }
+
     private void getConvencyList(String SerachKey) {
         showDialog();
         apiService.getConvancyList("15", pageOffset, SerachKey).enqueue(new NetworkCallback<AllConvancyList>(getActivity()) {
@@ -308,7 +299,7 @@ public class MyConveyanceListClass extends BaseActivity<ConvencyListBinding> {
         view_conv_type.setVisibility(View.VISIBLE);
         startMeterImage = Constants.conveyance + getOrdersList.get(position).getImage();
         endMeterImage = Constants.conveyance + getOrdersList.get(position).getImage2();
-        otherImaage=Constants.conveyance + getOrdersList.get(position).getOther_charge_img();
+        otherImaage = Constants.conveyance + getOrdersList.get(position).getOther_charge_img();
         reports_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

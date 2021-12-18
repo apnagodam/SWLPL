@@ -9,19 +9,22 @@ import android.util.Log;
 
 public class Constants {
       // for local server
-/*    public static final String IMAGE_BASE_URL = "http://192.168.0.59/apna_godamWeb/trunk//resources/assets/upload/employyes/";
-    public static final String IMAGE_BASE_URL_kanta_photo = "http://192.168.0.59/apna_godamWeb/trunk//resources/assets/upload/";
-    public static final String API_BASE_URL = "http://192.168.0.59/apna_godamWeb/trunk/";*/
+ /*   public static final String IMAGE_BASE_URL = "http://192.168.0.12/apna_godamWeb/trunk//resources/assets/upload/employyes/";
+    public static final String IMAGE_BASE_URL_kanta_photo = "http://192.168.0.12/apna_godamWeb/trunk/resources/assets/upload/";
+    public static final String API_BASE_URL = "http://192.168.0.12/apna_godamWeb/trunk/";
+    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";*/
 
     // for live server
     public static final String IMAGE_BASE_URL = "https://apnagodam.com/resources/assets/upload/employyes/";
-    public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.com/resources/frontend_assets/uploads/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/resources/assets/upload/";
     public static final String API_BASE_URL = "https://apnagodam.com/";
+    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";
     // for demo server
-   /* public static final String IMAGE_BASE_URL = "https://apnagodam.com/demo/resources/assets/upload/employees/";
+    /*public static final String IMAGE_BASE_URL = "https://apnagodam.com/demo/resources/assets/upload/employees/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/demo/resources/assets/upload/";
-    public static final String API_BASE_URL = "https://apnagodam.com/demo/";*/
+    public static final String API_BASE_URL = "https://apnagodam.com/demo/";
+    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";*/
+
     public static final String ENDPOINT = API_BASE_URL;
     public static final String First_kata = IMAGE_BASE_URL_kanta_photo + "kanta_parchi/";
     public static final String Secound_kata = IMAGE_BASE_URL_kanta_photo + "second_kanta_parchi/";
@@ -33,6 +36,10 @@ public class Constants {
     public static final String Truck_bilty_photo = IMAGE_BASE_URL_kanta_photo + "truckBook/";
     public static final String release_order_photo = IMAGE_BASE_URL_kanta_photo + "release_order/";
     public static final String delivery_order_photo = IMAGE_BASE_URL_kanta_photo + "delivery_order/";
+    public static final String error_log_photo = IMAGE_BASE_URL_kanta_photo + "error_log/";
+    public static final String CCTV = IMAGE_BASE_URL_kanta_photo + "cctv/";
+    public static final String IVRTEGGING = IMAGE_BASE_URL_kanta_photo + "ivr_tagging/";
+    public static final String DispladgeImage = IMAGE_BASE_URL_kanta_photo + "displedge/";
     public static final String RES_SUCCESS = "Success";
     public static final String RES_ERROR = "Error";
     public static final String CONNECT_TO_WIFI = "WIFI";

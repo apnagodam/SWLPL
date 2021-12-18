@@ -28,6 +28,8 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
         @SerializedName("first_page_url")
         @Expose
         private String firstPageUrl;
+
+
         @SerializedName("from")
         @Expose
         private Integer from;
@@ -155,6 +157,17 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
 
 
     public class Datum {
+        public String getApna_pv_caseId() {
+            return apna_pv_caseId;
+        }
+
+        public void setApna_pv_caseId(String apna_pv_caseId) {
+            this.apna_pv_caseId = apna_pv_caseId;
+        }
+
+        @SerializedName("apna_pv_caseId")
+        @Expose
+        private String apna_pv_caseId;
         @SerializedName("id")
         @Expose
         private Integer id;

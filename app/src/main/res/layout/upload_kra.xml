@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_5ssp"
+        android:background="@color/tw__solid_white"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_arrow_back"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Upload Your KRA"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/_16sdp" />
+
+                    <TextView
+                        android:id="@+id/tv_done"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Print"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_pdf_creation"
+                android:orientation="vertical"
+                android:padding="@dimen/_4sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+                <TextView
+                    android:id="@+id/roleName"
+                    style="@style/TextStyleBold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Operation / Logistic Head"
+                    android:textColor="@color/colorBlackLight"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pdf_creation"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="7"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
+
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="S.No."
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
+                        <View
+                            android:layout_width="@dimen/_1sdp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:background="@color/black_back" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/emp_name"
+                                style="@style/TextStyleBold"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:padding="@dimen/_5sdp"
+                                android:text="Raju Singh Choudhary"
+                                android:textColor="@color/colorBlackLight"
+                                android:textSize="@dimen/_8ssp"
+                                android:textStyle="bold" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/black_back" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:layout_weight="3"
+                                android:orientation="horizontal"
+                                android:gravity="center">
+                                <TextView
+                                    style="@style/TextStyleBold"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Activities"
+                                    android:textColor="@color/colorBlackLight"
+                                    android:textSize="@dimen/_8ssp"
+                                    android:textStyle="bold" />
+
+                                <View
+                                    android:layout_width="@dimen/_1sdp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginLeft="@dimen/_5sdp"
+                                    android:layout_marginRight="@dimen/_5sdp"
+                                    android:background="@color/black_back" />
+                                <TextView
+                                    style="@style/TextStyleBold"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Details"
+                                    android:textColor="@color/colorBlackLight"
+                                    android:textSize="@dimen/_8ssp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="@dimen/_1sdp"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginLeft="@dimen/_5sdp"
+                                    android:layout_marginRight="@dimen/_5sdp"
+                                    android:background="@color/black_back" />
+                                <TextView
+                                    style="@style/TextStyleBold"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="Maximum Score"
+                                    android:textColor="@color/colorBlackLight"
+                                    android:textSize="@dimen/_8ssp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="@dimen/_1sdp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="@dimen/_5sdp"
+                            android:background="@color/black_back" />
+
+                          <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/TextStyleBold"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Reporting to : Sanjay Agarwal"
+                                android:textColor="@color/colorBlackLight"
+                                android:textSize="@dimen/_8ssp"
+                                android:textStyle="bold" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/black_back" />
+                              <LinearLayout
+                                  android:layout_width="match_parent"
+                                  android:layout_height="match_parent"
+                                  android:layout_gravity="center"
+                                  android:layout_weight="1"
+                                  android:orientation="horizontal"
+                                  android:gravity="center">
+                                  <TextView
+                                      style="@style/TextStyleBold"
+                                      android:layout_width="0dp"
+                                      android:layout_height="match_parent"
+                                      android:layout_gravity="center"
+                                      android:layout_weight="1"
+                                      android:gravity="center"
+                                      android:text="Score obtained"
+                                      android:textColor="@color/colorBlackLight"
+                                      android:textSize="@dimen/_8ssp"
+                                      android:textStyle="bold" />
+
+
+                              </LinearLayout>
+                          </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/black_back" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fieldStockList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    tools:listitem="@layout/kra_upload_itmes" />
+            </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_pdf_creation"
+            android:orientation="horizontal"
+            android:padding="@dimen/_4sdp"
+            android:weightSum="7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+            <TextView
+                style="@style/TextStyleBold"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="4.5"
+                android:gravity="center"
+                android:text="Total"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="@dimen/_1sdp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:background="@color/black_back" />
+            <TextView
+                style="@style/TextStyleBold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1.4"
+                android:gravity="center"
+                android:text="100"
+                android:textColor="@color/colorBlackLight"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="@dimen/_1sdp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:background="@color/black_back" />
+            <TextView
+                android:id="@+id/totalGainScore"
+                style="@style/TextStyleBold"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1.3"
+                android:gravity="center"
+                android:text="77"
+                android:textColor="@color/colorBlackLight"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</layout>

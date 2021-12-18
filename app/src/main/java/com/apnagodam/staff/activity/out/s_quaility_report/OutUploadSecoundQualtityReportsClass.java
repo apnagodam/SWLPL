@@ -164,7 +164,7 @@ public class OutUploadSecoundQualtityReportsClass extends BaseActivity<ActivityU
         //else {
         apiService.uploadSecoundQualityReports(new UploadSecoundQualityPostData(CaseID, KanthaImage, stringFromView(binding.etMoistureLevel), stringFromView(binding.etTcw), stringFromView(binding.etFmLevel), stringFromView(binding.etThin)
                 , stringFromView(binding.etDehuck), stringFromView(binding.etDiscolor), stringFromView(binding.etBroken), stringFromView(binding.etInfested)
-                , stringFromView(binding.etLive), stringFromView(binding.notes), CommudityFileSelectImage)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                , stringFromView(binding.etLive), stringFromView(binding.notes), CommudityFileSelectImage,"")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
             @Override
             protected void onSuccess(LoginResponse body) {
                 Utility.showAlertDialog(OutUploadSecoundQualtityReportsClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {

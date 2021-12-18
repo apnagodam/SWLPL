@@ -23,10 +23,9 @@
                 android:layout_gravity="center"
                 android:layout_weight="0.7"
                 android:gravity="center"
-                android:padding="@dimen/_4sdp"
                 android:text="34343434"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_8ssp" />
+                android:textSize="@dimen/_7ssp" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
@@ -54,10 +53,9 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:gravity="center"
-            android:padding="@dimen/_4sdp"
             android:text="barelyu"
             android:textColor="@color/colorWhite"
-            android:textSize="@dimen/_10ssp" />
+            android:textSize="@dimen/_7ssp" />
 
         <include layout="@layout/layout_divider_horizontal" />
 
@@ -77,10 +75,9 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:padding="@dimen/_4sdp"
                 android:text="barelyu"
                 android:textColor="@color/colorWhite"
-                android:textSize="@dimen/_8ssp" />
+                android:textSize="@dimen/_7ssp" />
 
 
         </LinearLayout>

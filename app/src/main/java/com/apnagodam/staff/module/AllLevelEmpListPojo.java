@@ -4,10 +4,9 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class AllLevelEmpListPojo extends BaseResponse  {
+public class AllLevelEmpListPojo extends BaseResponse {
     public int getRequest_count() {
         return request_count;
     }
@@ -35,6 +34,19 @@ public class AllLevelEmpListPojo extends BaseResponse  {
     @Expose
     private List<WherHouseName> warehouse_name = null;
 
+    public List<errorNameClasss> getErrorName() {
+        return errorName;
+    }
+
+    public void setErrorName(List<errorNameClasss> errorName) {
+        this.errorName = errorName;
+    }
+
+    @SerializedName("errorName")
+    @Expose
+    private List<errorNameClasss> errorName = null;
+
+
     public List<Datum> getData() {
         return data;
     }
@@ -42,6 +54,7 @@ public class AllLevelEmpListPojo extends BaseResponse  {
     public void setData(List<Datum> data) {
         this.data = data;
     }
+
     public class Datum {
         @SerializedName("id")
         @Expose
@@ -364,10 +377,38 @@ public class AllLevelEmpListPojo extends BaseResponse  {
         }
 
     }
-    public  class WherHouseName {
+
+    public class errorNameClasss {
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
         @SerializedName("id")
         @Expose
         private String id;
+
+        public String getError_name() {
+            return error_name;
+        }
+
+        public void setError_name(String error_name) {
+            this.error_name = error_name;
+        }
+
+        @SerializedName("error_name")
+        @Expose
+        private String error_name;
+    }
+
+    public class WherHouseName {
+        @SerializedName("id")
+        @Expose
+        private String id;
+
         public String getId() {
             return id;
         }

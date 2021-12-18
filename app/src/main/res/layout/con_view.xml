@@ -70,7 +70,48 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@color/view_color" />
+<LinearLayout
+    android:id="@+id/employeeid"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10ssp"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:text="Employee"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.01"
+            android:background="@color/view_color" />
+
+        <TextView
+            android:id="@+id/employye_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_20sdp"
+            android:layout_weight="0.6"
+            android:text="123456787787"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="@color/view_color" />
+</LinearLayout>
             <LinearLayout
                 android:id="@+id/ll2"
                 android:layout_width="match_parent"
@@ -679,12 +720,14 @@
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/approveview"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:background="@color/view_color" />
 
                 <LinearLayout
+                    android:id="@+id/approvelayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10ssp"

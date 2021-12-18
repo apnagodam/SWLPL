@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorWhite"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@color/colorWhite"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <TextView
+                            android:id="@+id/heading"
+                            style="@style/TextStyleNormal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/_10ssp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:lines="2"
+                            android:text="Edit IVR Tagging"
+                            android:textSize="@dimen/_16ssp" />
+
+                    <!--    <ImageView
+                            android:id="@+id/cancel_btn"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_40sdp"
+                            android:layout_gravity="right"
+                            android:padding="@dimen/_5sdp"
+                            app:srcCompat="@drawable/ic_baseline_cancel_24" />-->
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@color/lightGray" />
+
+                    <TextView
+                        android:id="@+id/caseid"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@string/terminal"
+                        android:textColor="@color/lead_btn"
+                        android:textSize="@dimen/_16ssp"
+                        android:visibility="visible" />
+
+
+
+                    <View
+                        android:id="@+id/interset_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/lightGray"
+                        android:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/net_price_hint"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Secound Kanta Weight(Qtl) *" />
+
+                    <EditText
+                        android:id="@+id/weight"
+                        style="@style/TextStyleBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/_10ssp"
+                        android:background="@drawable/white_back_black_border"
+                        android:gravity="center"
+                        android:hint="Enter secound kanta weight"
+                        android:inputType="numberDecimal"
+                        android:textSize="@dimen/_12ssp" />
+
+                    <TextView
+                        android:id="@+id/net_weight_hint"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Secound Kanta Bags *" />
+
+                    <EditText
+                        android:id="@+id/bags"
+                        style="@style/TextStyleBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/_10ssp"
+                        android:background="@drawable/white_back_black_border"
+                        android:gravity="center"
+                        android:hint="Enter secound kanta bags"
+                        android:inputType="numberDecimal"
+                        android:lines="5"
+                        android:textSize="@dimen/_12ssp" />
+
+
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="2">
+
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/btn_red_background"
+        android:gravity="center"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/cancel"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/_14ssp" />
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/btn_green_background"
+        android:gravity="center"
+        android:padding="@dimen/_5sdp"
+        android:text="@string/submit"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+</LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</layout>

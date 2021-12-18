@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
 import com.apnagodam.staff.Network.Request.LoginPostData;
@@ -24,15 +29,77 @@ import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllTruckBookListResponse;
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
 import com.apnagodam.staff.reciever.SMSReceiver;
+import com.apnagodam.staff.utils.SmsBroadcastReceiver;
 import com.apnagodam.staff.utils.Utility;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMSReceiver.OTPReceiveListener {
-    private SMSReceiver smsReceiver;
-    String mobileNumbewr,empID,setting = "";
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class OtpActivity extends BaseActivity<ActivityOtpBinding>{
+   // private SMSReceiver smsReceiver;
+   String mobileNumbewr,empID,setting = "";
     public int counter;
     private OTPvarifedResponse userInfo;
 
+    private static final int REQ_USER_CONSENT = 200;
+    SmsBroadcastReceiver smsBroadcastReceiver;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // isDashboardRunning = true;
+        registerBroadcastReceiver();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(smsBroadcastReceiver);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_USER_CONSENT) {
+            if ((resultCode == RESULT_OK) && (data != null)) {
+                //That gives all message to us.
+                // We need to get the code from inside with regex
+                String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
+                //   Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                getOtpFromMessage(message);
+            }
+        }
+    }
+
+    private void getOtpFromMessage(String message) {
+        // This will match any 6 digit number in the message
+        Pattern pattern = Pattern.compile("(|^)\\d{6}");
+        Matcher matcher = pattern.matcher(message);
+        if (matcher.find()) {
+            binding.etOtpNumber.setText(matcher.group(0));
+        }
+    }
+
+    private void registerBroadcastReceiver() {
+        smsBroadcastReceiver = new SmsBroadcastReceiver();
+        smsBroadcastReceiver.smsBroadcastReceiverListener =
+                new SmsBroadcastReceiver.SmsBroadcastReceiverListener() {
+                    @Override
+                    public void onSuccess(Intent intent) {
+                        startActivityForResult(intent, REQ_USER_CONSENT);
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                };
+        IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
+        registerReceiver(smsBroadcastReceiver, intentFilter);
+    }
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_otp;
@@ -48,12 +115,12 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
             empID = bundle.getString("empID");
         }
         binding.txtHead.setText(this.getString(R.string.hint_otp)+" :- " + mobileNumbewr);
-        smsReceiver = new SMSReceiver();
+       /* smsReceiver = new SMSReceiver();
         smsReceiver.setOTPListener((SMSReceiver.OTPReceiveListener) this);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION);
-        this.registerReceiver(smsReceiver, intentFilter);
+        this.registerReceiver(smsReceiver, intentFilter);*/
         binding.btnVerfyOtp.setOnClickListener(v -> getvarifedOtp());
         binding.btnResendOtp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,9 +192,27 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
             @Override
             protected void onSuccess(LoginResponse body) {
                 Toast.makeText(OtpActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
+                startSMSListener();
 
             }
         });
+    }
+    public void startSMSListener() {
+        try {
+            SmsRetrieverClient client = SmsRetriever.getClient(this);
+            client.startSmsUserConsent(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "On OnFailure", Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean isValid() {
@@ -180,20 +265,17 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (smsReceiver != null) {
-            unregisterReceiver(smsReceiver);
-        }
     }
 
 
-    @Override
+   /* @Override
     public void onOTPReceived(String otp) {
       //  Toast.makeText(this, "Otp Received " + otp, Toast.LENGTH_LONG).show();
         binding.etOtpNumber.setText(otp);
-        /*if (isValid()) {
+        *//*if (isValid()) {
             /// apply otp varifed api here
             varifedOTP();
-        }*/
+        }*//*
         if (smsReceiver != null) {
             unregisterReceiver(smsReceiver);
             smsReceiver = null;
@@ -210,5 +292,5 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
     @Override
     public void onOTPReceivedError(String error) {
 
-    }
+    }*/
 }

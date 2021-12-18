@@ -3,6 +3,7 @@ package com.apnagodam.staff.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.Base.BaseActivity;
@@ -20,6 +22,12 @@ import com.apnagodam.staff.activity.vendorPanel.ApprovalRequestVendorVoacherList
 import com.apnagodam.staff.module.AllConvancyList;
 import com.apnagodam.staff.utils.Utility;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +53,7 @@ public class ApprovalRequestConvancyListAdpter extends RecyclerView.Adapter<Appr
         return gvh;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(CommudityResponseViewHolder holder, final int position) {
@@ -64,29 +73,54 @@ public class ApprovalRequestConvancyListAdpter extends RecyclerView.Adapter<Appr
             holder.tv_name.setText("-");
         }
         if (commudityResponseList.get(position).getDate() != null) {
-            holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
+            DateTimeFormatter formatter = null;
+            try{
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    DateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = inputFormatter.parse((commudityResponseList.get(position).getDate()));
+                        DateFormat outputFormatter = new SimpleDateFormat("dd-MM-yyyy");
+                        String output = outputFormatter.format(date); // Output : 01/20/2012
+                        holder.tv_date.setText(""+output);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }catch (DateTimeParseException e){
+                e.getStackTrace();
+                holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
+            }
+
+            // holder.tv_date.setText(" " +(commudityResponseList.get(position).getDate()));
         } else {
             holder.tv_date.setText("-");
         }
-       /* if (commudityResponseList.get(position).getStatus() != null) {
+        if (commudityResponseList.get(position).getStatus() != null) {
             if (commudityResponseList.get(position).getStatus().equalsIgnoreCase("1")) {
                 // show button self rejected
                 holder.tv_rejected.setVisibility(View.GONE);
                 holder.tv_action.setVisibility(View.VISIBLE);
+                holder.view12.setVisibility(View.VISIBLE);
+                holder.tv_action_apprved.setVisibility(View.VISIBLE);
             } else if (commudityResponseList.get(position).getStatus().equalsIgnoreCase("0")) {
                 // rejected by self or approved from high authority
                 holder.tv_rejected.setVisibility(View.VISIBLE);
                 holder.tv_action.setVisibility(View.GONE);
+                holder.tv_action_apprved.setVisibility(View.GONE);
+                holder.view12.setVisibility(View.GONE);
                 holder.tv_rejected.setText(context.getResources().getString(R.string.rejected));
                 holder.tv_rejected.setTextColor(context.getResources().getColor(R.color.red));
             } else if (commudityResponseList.get(position).getStatus().equalsIgnoreCase("2")) {
                 //approved from high authority
                 holder.tv_rejected.setVisibility(View.VISIBLE);
                 holder.tv_action.setVisibility(View.GONE);
+                holder.view12.setVisibility(View.GONE);
+                holder.tv_action_apprved.setVisibility(View.GONE);
                 holder.tv_rejected.setText(context.getResources().getString(R.string.approved));
                 holder.tv_rejected.setTextColor(context.getResources().getColor(R.color.colorGreen));
             }
-        }*/
+        }
         holder.tv_gatepass.setTextColor(Color.BLACK);
         holder.tv_name.setTextColor(Color.BLACK);
         holder.tv_date.setTextColor(Color.BLACK);
@@ -123,7 +157,7 @@ public class ApprovalRequestConvancyListAdpter extends RecyclerView.Adapter<Appr
     }
 
     public class CommudityResponseViewHolder extends RecyclerView.ViewHolder {
-        TextView tv_gatepass, tv_apply, tv_name, tv_date, tv_action_apprved, tv_action;
+        TextView tv_gatepass, tv_rejected, tv_name, tv_date, tv_action_apprved, tv_action;
         LinearLayout cell_container;
         ImageView view1;
         View view12;
@@ -135,9 +169,11 @@ public class ApprovalRequestConvancyListAdpter extends RecyclerView.Adapter<Appr
             view1 = view.findViewById(R.id.view);
             view12 = view.findViewById(R.id.view12);
             tv_action_apprved = view.findViewById(R.id.tv_action_apprved);
+            tv_action = view.findViewById(R.id.tv_action);
+            tv_rejected = view.findViewById(R.id.tv_rejected);
             tv_date = view.findViewById(R.id.tv_date);
             cell_container = view.findViewById(R.id.cell_container);
-            tv_action = view.findViewById(R.id.tv_action);
+
         }
     }
 

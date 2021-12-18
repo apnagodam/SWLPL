@@ -161,6 +161,18 @@ public class GatePassListResponse extends BaseResponse {
         @SerializedName("case_id")
         @Expose
         private String caseId;
+
+        public String getDispledge_bags() {
+            return displedge_bags;
+        }
+
+        public void setDispledge_bags(String displedge_bags) {
+            this.displedge_bags = displedge_bags;
+        }
+
+        @SerializedName("displedge_bags")
+        @Expose
+        private String displedge_bags;
         @SerializedName("gate_pass")
         @Expose
         private String gatePass;
@@ -316,6 +328,45 @@ public class GatePassListResponse extends BaseResponse {
         @Expose
         private String sQCaseId;
 
+        public String getIvr_case_id() {
+            return ivr_case_id;
+        }
+
+        public void setIvr_case_id(String ivr_case_id) {
+            this.ivr_case_id = ivr_case_id;
+        }
+
+        @SerializedName("ivr_case_id")
+        @Expose
+        private String ivr_case_id;
+
+        public String getgPCaseId() {
+            return gPCaseId;
+        }
+
+        public void setgPCaseId(String gPCaseId) {
+            this.gPCaseId = gPCaseId;
+        }
+
+        public String getsQCaseId() {
+            return sQCaseId;
+        }
+
+        public void setsQCaseId(String sQCaseId) {
+            this.sQCaseId = sQCaseId;
+        }
+
+        public String getPer_gatepass_case_id() {
+            return per_gatepass_case_id;
+        }
+
+        public void setPer_gatepass_case_id(String per_gatepass_case_id) {
+            this.per_gatepass_case_id = per_gatepass_case_id;
+        }
+
+        @SerializedName("per_gatepass_case_id")
+        @Expose
+        private String per_gatepass_case_id;
         public String getsKPCaseID() {
             return sKPCaseID;
         }

@@ -30,7 +30,7 @@ public interface Tags {
 
     String Locale_KeyValue = "local_key_value";
 
-    String Permission = "Permission";
+    String Permission1 = "Permission";
 
     String DISCOM_ID = "discom_id";
 

@@ -8,19 +8,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.Request.LoginCoWinPostData;
 import com.apnagodam.staff.Network.Request.LoginPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.databinding.ActivityLoginBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.CommudityResponse;
-import com.apnagodam.staff.module.TerminalResponse;
 import com.apnagodam.staff.reciever.SMSReceiver;
-import com.apnagodam.staff.smsOtp.AppSignatureHashHelper;
 import com.apnagodam.staff.utils.LocationUtils;
 import com.apnagodam.staff.utils.Utility;
 import com.google.android.gms.auth.api.Auth;
@@ -30,11 +30,9 @@ import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 
-public class LoginActivity extends BaseActivity<ActivityLoginBinding>
-{
+public class LoginActivity extends BaseActivity<ActivityLoginBinding> {
     private SMSReceiver smsReceiver;
     private int RESOLVE_HINT = 2;
     private static final int LANGUAGE_SELECT = 977;
@@ -44,7 +42,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding>
     private String lat, Long;
     ACTIVITY_STATE currentState = ACTIVITY_STATE.INITIAL;
     public static final String TAG = LoginActivity.class.getSimpleName();
-    private String settingScreen="";
+    private String settingScreen = "";
 
     @Override
     protected int getLayoutResId() {
@@ -77,7 +75,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding>
                 }
             }
         } else*/
-            if (requestCode == REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE) {
             locationUtils.startLocationUpdates();
           /*  binding.etPhoneNumber.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
@@ -113,7 +111,7 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding>
             lat = "" + location.getLatitude();
             Long = "" + location.getLongitude();
             LocationUtils.LocationAddress locationAddress = new LocationUtils.LocationAddress();
-            String geolocation = String.valueOf(locationAddress.getAddressFromLocation(Double.parseDouble(lat),Double.parseDouble(Long), LoginActivity.this));
+            String geolocation = String.valueOf(locationAddress.getAddressFromLocation(Double.parseDouble(lat), Double.parseDouble(Long), LoginActivity.this));
             Log.e("geolocationLogin", " " + geolocation);
         }, REQUEST_CODE);
 
@@ -144,17 +142,32 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding>
 
     @Override
     public void onBackPressed() {
-       finish();
+        finish();
     }
 
     void getLogin() {
         if (isValid()) {
-           // startActivity(VLCDashboardScreen.class);
+            // startActivity(VLCDashboardScreen.class);
             // Call server API for requesting OTP and when you got success start
-             login();
+            login();
         }
     }
+  /*  void Cowinlogin() {
+        if (Utility.isNetworkAvailable(this)) {
+            SharedPreferencesRepository.getDataManagerInstance().savelat(lat);
+            SharedPreferencesRepository.getDataManagerInstance().savelong(Long);
+            apiService.doCowinLogin(new LoginCoWinPostData((stringFromView(binding.etCowinPhoneNumber)))).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                @Override
+                protected void onSuccess(LoginResponse body) {
+                    Toast.makeText(LoginActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
 
+
+                }
+            });
+        } else {
+            Utility.showAlertDialog(this, this.getString(R.string.alert), this.getString(R.string.no_internet_connection));
+        }
+    }*/
     void login() {
         if (Utility.isNetworkAvailable(this)) {
             SharedPreferencesRepository.getDataManagerInstance().savelat(lat);
@@ -168,41 +181,38 @@ public class LoginActivity extends BaseActivity<ActivityLoginBinding>
 
                 }
             });
-        }
-        else {
+        } else {
             Utility.showAlertDialog(this, this.getString(R.string.alert), this.getString(R.string.no_internet_connection));
         }
     }
 
     public void startSMSListener(String phone) {
         try {
-        SmsRetrieverClient client = SmsRetriever.getClient(this);
-        Task<Void> task = client.startSmsRetriever();
-        task.addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Bundle bundle = new Bundle();
-                bundle.putString("mobile", phone);
-                bundle.putString("empID", (stringFromView(binding.etPhoneNumber)));
-                bundle.putString("setting", settingScreen);
-                startActivity(OtpActivity.class, bundle);
-            }
-        });
-        task.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Fail to start API
-            }
-        });
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+            SmsRetrieverClient client = SmsRetriever.getClient(this);
+            client.startSmsUserConsent(null).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("mobile", phone);
+                    bundle.putString("empID", (stringFromView(binding.etPhoneNumber)));
+                    bundle.putString("setting", settingScreen);
+                    startActivity(OtpActivity.class, bundle);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "On OnFailure", Toast.LENGTH_LONG).show();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     boolean isValid() {
         if (TextUtils.isEmpty(stringFromView(binding.etPhoneNumber))) {
             return Utility.showEditTextError(binding.tilPhoneNumber, R.string.emp_id);
-        } else if (!(stringFromView(binding.etPhoneNumber).length()<7)) {
+        } else if (!(stringFromView(binding.etPhoneNumber).length() < 7)) {
             return Utility.showEditTextError(binding.tilPhoneNumber, R.string.error_validateempChar);
         }
         return true;

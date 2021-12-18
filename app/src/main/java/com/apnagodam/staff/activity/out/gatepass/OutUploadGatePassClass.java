@@ -27,6 +27,7 @@ import com.apnagodam.staff.Network.Request.OTPVerifyGatePassData;
 import com.apnagodam.staff.Network.Request.UploadGatePassPostDataNew;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.in.gatepass.UploadGatePassClass;
 import com.apnagodam.staff.databinding.ActivityGatePassBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.CheckInventory;
@@ -56,8 +57,30 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
     String InTrackID = "0";
     String InBardhanaType = "null";
     String InBardhanaID = "0";
-    private int TotalBag;
-    private Double TOtalWeight;
+
+    String skweight = null, skbag = null;
+    private  String re_weight;
+  /*dhangs value varible */
+  int finaldispatch = 0;
+    int dhang1Value = 0;
+    int dhang2Value = 0;
+    int dhang3Value = 0;
+    int dhang4Value = 0;
+    int dhang5Value = 0;
+    int dhang6Value = 0;
+    int dhang7Value = 0;
+    int dhang8Value = 0;
+    int dhang9Value = 0;
+    int dhang10Value = 0;
+    int dhang11Value = 0;
+    int dhang12Value = 0;
+    int dhang13Value = 0;
+    int dhang14Value = 0;
+    int dhang15Value = 0;
+    Integer totalBags = 0;
+    public File filekatha;
+    boolean firstFilekatha = false;
+    private String firstkathafileValue;
 
     @Override
     protected int getLayoutResId() {
@@ -75,6 +98,9 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             stackNo = bundle.getString("stackNo");
             inout = bundle.getString("INOUT");
         }
+        binding.etBags.setEnabled(false);
+        binding.etBags.setClickable(false);
+        binding.etBags.setFocusableInTouchMode(false);
         kanthaName = new ArrayList<>();
         kanthaName.add("Select Dharam Kanta");
         setSupportActionBar(binding.toolbar);
@@ -84,8 +110,8 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
                 @Override
                 protected void onSuccess(CheckInventory body) {
                     try {
-                        TotalBag = body.getBagsTotal();
-                        TOtalWeight = body.getWeightTotal();
+                        skbag = body.getS_k_bags();
+                        skweight = body.getS_k_weight();
                     } catch (Exception e) {
                         e.getStackTrace();
                     }
@@ -93,13 +119,315 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             });
         } else {
         }
+        /*add total bags  from dhangs  wise calculate */
+        binding.dhang1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang1Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang1Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang2Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang2Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang3Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang3Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang4Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang4Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang5.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang5Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang5Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang6.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang6Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang6Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang7.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang7Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang7Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang8.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang8Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang8Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang9.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang9Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang9Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang10.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang10Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang10Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang11.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang11Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang11Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang12.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang12Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang12Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang13.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang13Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang13Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang14.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang14Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang14Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+        binding.dhang15.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    dhang15Value = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    dhang15Value = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
         binding.etWeightKg.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
                     if (binding.etWeightQt.getText().toString().trim() != null && !binding.etWeightQt.getText().toString().trim().isEmpty() && inout.equalsIgnoreCase("OUT")) {
                         Double weight = (Double.parseDouble(binding.etWeightQt.getText().toString().trim()));
-                        if (weight > TOtalWeight) {
+                        if ( weight > Double.parseDouble(skweight)) {
                             Utility.showAlertDialog(OutUploadGatePassClass.this, getString(R.string.alert), "Weight must be Less or equal to Total weight !!!", new Utility.AlertCallback() {
                                 @Override
                                 public void callback() {
@@ -121,7 +449,7 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
                 if (!hasFocus) {
                     if (binding.etBags.getText().toString().trim() != null && !binding.etBags.getText().toString().trim().isEmpty() && inout.equalsIgnoreCase("OUT")) {
                         Double bags = (Double.parseDouble(binding.etBags.getText().toString().trim()));
-                        if (bags > TotalBag) {
+                        if ( bags > Double.parseDouble(skbag)) {
                             Utility.showAlertDialog(OutUploadGatePassClass.this, getString(R.string.alert), "Bags must be Less or equal to Total Bags !!! ", new Utility.AlertCallback() {
                                 @Override
                                 public void callback() {
@@ -200,6 +528,26 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
         binding.vehicleNo.setText("Vehicle No:- " + VehicleNo);
         binding.etStackNo.setText(" " + stackNo);
         clickListner();
+        binding.etDispatchbags.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() != 0 && !charSequence.equals("")) {
+                    finaldispatch = (Integer.parseInt(charSequence.toString().trim()));
+                    calculationBags();
+                } else {
+                    finaldispatch = 0;
+                    calculationBags();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
         try{
             binding.etWeightKg.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -269,7 +617,26 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             }
         });
     }
-
+    private void calculationBags() {
+        totalBags = finaldispatch + dhang1Value + dhang2Value + dhang3Value + dhang4Value + dhang5Value + dhang6Value + dhang7Value + dhang8Value + dhang9Value + dhang10Value + dhang11Value + dhang12Value + dhang13Value + dhang14Value + dhang15Value;
+        binding.etBags.setText("" + totalBags);
+        Double bags = (Double.parseDouble(binding.etBags.getText().toString().trim()));
+        if (bags > Double.parseDouble(skbag)) {
+            Utility.showAlertDialog(OutUploadGatePassClass.this, getString(R.string.alert), "Bags must be Less or equal to Total Bags !!! ", new Utility.AlertCallback() {
+                @Override
+                public void callback() {
+                    binding.etBags.setText("");
+                }
+            });
+        } else if (bags > 1500) {
+            Utility.showAlertDialog(OutUploadGatePassClass.this, getString(R.string.alert), "Bags must be Less or equal to Total 1500 Bags !!! ", new Utility.AlertCallback() {
+                @Override
+                public void callback() {
+                    binding.etBags.setText("");
+                }
+            });
+        }
+    }
     private void getKanthaList() {
         apiService.getDharmaKanthaListLevel().enqueue(new NetworkCallback<DharmaKanthaPostData>(getActivity()) {
             @Override
@@ -281,7 +648,6 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             }
         });
     }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -293,6 +659,13 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             @Override
             public void onClick(View view) {
                 startActivityAndClear(OutGatePassListingActivity.class);
+            }
+        });
+         binding.uploadKantha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                firstFilekatha = true;
+               callImageSelector(REQUEST_CAMERA);
             }
         });
         binding.sendOtp.setOnClickListener(new View.OnClickListener() {
@@ -402,12 +775,18 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
                                 Toast.makeText(getApplicationContext(), "क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ?", Toast.LENGTH_LONG).show();
                             } else if (InBardhanaType == null) {
                                 Toast.makeText(getApplicationContext(), "क्या Inward में, कुछ बोरिया भीगी हुई थी ?", Toast.LENGTH_LONG).show();
+                            }else  if (filekatha == null) {
+                                Toast.makeText(getApplicationContext(),"Upload katha Parchi File ", Toast.LENGTH_LONG).show();
                             }
                             /*if (fileGatePass == null) {
                                 Toast.makeText(getApplicationContext(), R.string.upload_gatepass_file, Toast.LENGTH_LONG).show();
                             }*/
                             else {
-                                onNext();
+                                String KanthaImage = "";
+                                if (filekatha != null) {
+                                    KanthaImage = "" + Utility.transferImageToBase64(filekatha);
+                                }
+                                onNext(KanthaImage);
                             }
                         }
                     });
@@ -419,6 +798,17 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
             public void onClick(View v) {
                 GatePassFileSelect = true;
                 callImageSelector(REQUEST_CAMERA);
+            }
+        });
+        binding.KanthaImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (firstkathafileValue==null){
+
+                }else {
+                    new PhotoFullPopupWindow(OutUploadGatePassClass.this, R.layout.popup_photo_full, view, firstkathafileValue, null);
+                }
+
             }
         });
         binding.GatePassImage.setOnClickListener(new View.OnClickListener() {
@@ -442,12 +832,14 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
     }
 
     // update file
-    public void onNext() {
+    public void onNext(String kanthaImage) {
         String Weightkg = "" + Utility.round(Double.parseDouble(stringFromView(binding.etWeightKg)), 2);
-        apiService.uploadGatePassNew(new UploadGatePassPostDataNew(CaseID, Weightkg, stringFromView(binding.etBags), stringFromView(binding.notes)
+        apiService.uploadIntermideateGatePassNew(new UploadGatePassPostDataNew(CaseID, Weightkg, stringFromView(binding.etBags), stringFromView(binding.notes)
                 , stringFromView(binding.etStackNo), stringFromView(binding.etTransportotName), stringFromView(binding.etTranPhone), stringFromView(binding.etAvgWeight)
                 , stringFromView(binding.etKathaParchiNo), InTrackID, InBardhanaID, stringFromView(binding.etOldKathaParchiNo), stringFromView(binding.etOldTotalWeight)
-                , stringFromView(binding.etOldOriginalWeight), stringFromView(binding.etOldKanthaName), stringFromView(binding.etOldDriverName), stringFromView(binding.etDriverPhone), kanthaID)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                , stringFromView(binding.etOldOriginalWeight), stringFromView(binding.etOldKanthaName), stringFromView(binding.etOldDriverName), stringFromView(binding.etDriverPhone), kanthaID,""+dhang1Value
+                ,""+dhang2Value,""+dhang3Value,""+dhang4Value,""+dhang5Value,""+dhang6Value,""+dhang7Value,""+dhang8Value,""+dhang9Value,""+dhang10Value,""+dhang11Value,""+dhang12Value,""+dhang13Value
+                ,""+dhang14Value,""+dhang15Value,""+finaldispatch,kanthaImage,"")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
             @Override
             protected void onSuccess(LoginResponse body) {
                 Utility.showAlertDialog(OutUploadGatePassClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
@@ -508,12 +900,20 @@ public class OutUploadGatePassClass extends BaseActivity<ActivityGatePassBinding
                     assert returnValue != null;
                     Log.e("getImageesValue", returnValue.get(0).toString());
                     if (requestCode == REQUEST_CAMERA) {
-                        if (GatePassFileSelect) {
-                            GatePassFileSelect = false;
-                            fileGatePass = new File(compressImage(returnValue.get(0).toString()));
-                            Uri uri = Uri.fromFile(fileGatePass);
-                            GatePassFile = String.valueOf(uri);
-                            binding.GatePassImage.setImageURI(uri);
+                        if (firstFilekatha) {
+                            firstFilekatha = false;
+                            filekatha = new File(compressImage(returnValue.get(0)));
+                            Uri uri = Uri.fromFile(filekatha);
+                            firstkathafileValue = String.valueOf(uri);
+                            binding.KanthaImage.setImageURI(uri);
+                        } else if (requestCode == REQUEST_CAMERA) {
+                            if (GatePassFileSelect) {
+                                GatePassFileSelect = false;
+                                fileGatePass = new File(compressImage(returnValue.get(0).toString()));
+                                Uri uri = Uri.fromFile(fileGatePass);
+                                GatePassFile = String.valueOf(uri);
+                                binding.GatePassImage.setImageURI(uri);
+                            }
                         }
                     }
                 }

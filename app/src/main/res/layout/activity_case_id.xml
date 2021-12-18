@@ -166,7 +166,7 @@
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginRight="3dp"
                     android:layout_weight=".28"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:background="@drawable/white_back_black_border"
                     android:orientation="horizontal"
                     android:paddingEnd="@dimen/_5sdp"
@@ -312,6 +312,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/location"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">
@@ -417,7 +418,6 @@
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
                     android:hint="@string/vehicle_no">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -440,6 +440,7 @@
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginRight="3dp"
                     android:layout_weight=".28"
+                    android:visibility="gone"
                     android:background="@drawable/white_back_black_border"
                     android:orientation="horizontal"
                     android:paddingEnd="@dimen/_5sdp"
@@ -474,6 +475,7 @@
                     android:id="@+id/til_customer_fpo"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
+                    android:visibility="gone"
                     android:layout_height="wrap_content"
                     android:hint="@string/fpo_sub_useername"
                     app:layout_constraintEnd_toEndOf="parent"

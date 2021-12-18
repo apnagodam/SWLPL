@@ -736,7 +736,6 @@ public class UploadVendorVoacherClass extends BaseActivity<VendorConveyanceBindi
                     }
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
@@ -745,8 +744,7 @@ public class UploadVendorVoacherClass extends BaseActivity<VendorConveyanceBindi
     }
 
     private void locationWherHouseName() {
-
-        apiService.getlevelwiselist().enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
+        apiService.getlevelwiselist("").enqueue(new NetworkCallback<AllLevelEmpListPojo>(getActivity()) {
             @Override
             protected void onSuccess(AllLevelEmpListPojo body) {
                 for (int i = 0; i < body.getData().size(); i++) {

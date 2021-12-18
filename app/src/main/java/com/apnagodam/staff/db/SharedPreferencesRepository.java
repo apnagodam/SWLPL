@@ -147,11 +147,11 @@ public class SharedPreferencesRepository implements Tags {
   */
     public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
         String data = new Gson().toJson(user);
-        sharedPrefEditor.putString(Permission, data).commit();
+        sharedPrefEditor.putString(Permission1, data).commit();
     }
 
     public List<AllUserPermissionsResultListResponse.UserPermissionsResult> getUserPermission() {
-        String userMonthlyLedger = sharedPreferences.getString(Permission, null);
+        String userMonthlyLedger = sharedPreferences.getString(Permission1, null);
         Gson gson = new Gson();
         Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>() {
         }.getType();

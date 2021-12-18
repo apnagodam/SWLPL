@@ -40,8 +40,8 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     @Override
     protected void setUp() {
         //getappVersion();
-        getCommditityList();
-        // nextMClass();
+      //  getCommditityList();
+         nextMClass();
     }
 
     private void nextMClass() {
@@ -54,7 +54,6 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
                     REQUEST_CAMERA_CODE
             );
         }
-
     }
 
     private void afterpermissionNext() {
@@ -191,18 +190,18 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
                         showUpdateDialogue();
                     } else {
 //                for (int i = 0; i < body.getCategories().size(); i++) {
-                        SharedPreferencesRepository.getDataManagerInstance().setCommdity(body.getCategories());
+                       // SharedPreferencesRepository.getDataManagerInstance().setCommdity(body.getCategories());
 //                }
 //                for (int i = 0; i < body.getTerminals().size(); i++) {
                       //  SharedPreferencesRepository.getDataManagerInstance().SETTerminal(body.getTerminals());
 //                }
 //                for (int i = 0; i < body.getEmployee().size(); i++) {
-                        SharedPreferencesRepository.getDataManagerInstance().setEmployee(body.getEmployee());
+                     //   SharedPreferencesRepository.getDataManagerInstance().setEmployee(body.getEmployee());
 //                }
 //                for (int i = 0; i < body.getUsers().size(); i++) {
                       //  SharedPreferencesRepository.getDataManagerInstance().setUser(body.getUsers());
 //                }
-                        SharedPreferencesRepository.getDataManagerInstance().setContractor(body.getContractor_result());
+                     //   SharedPreferencesRepository.getDataManagerInstance().setContractor(body.getContractor_result());
                         hideDialog();
                         nextMClass();
                     }

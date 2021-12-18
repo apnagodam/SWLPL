@@ -219,6 +219,14 @@ public class ApprovalRequestConveyanceListClass extends BaseActivity<ConvencyLis
         View viewOther = dialogView.findViewById(R.id.viewOther);
         LinearLayout LlOther = dialogView.findViewById(R.id.llOther);
         ImageView OtherFile = dialogView.findViewById(R.id.other_file);
+        LinearLayout employeeid = dialogView.findViewById(R.id.employeeid);
+        TextView employye_name = dialogView.findViewById(R.id.employye_name);
+
+        View approveview = dialogView.findViewById(R.id.approveview);
+        LinearLayout approvelayout = dialogView.findViewById(R.id.approvelayout);
+        approvelayout.setVisibility(View.GONE);
+        approveview.setVisibility(View.GONE);
+        employeeid.setVisibility(View.VISIBLE);
         viewOther.setVisibility(View.VISIBLE);
         LlOther.setVisibility(View.VISIBLE);
         otherImaage=Constants.conveyance + getOrdersList.get(position).getOther_charge_img();
@@ -243,6 +251,7 @@ public class ApprovalRequestConveyanceListClass extends BaseActivity<ConvencyLis
             }
         });
         inventory_id = "" + getOrdersList.get(position).getId();
+        employye_name.setText("" + ((getOrdersList.get(position).getFname()) != null ? ((getOrdersList.get(position).getFname() + " " + getOrdersList.get(position).getLname() + "(" + getOrdersList.get(position).getUSerempId() + ")")) : "N/A"));
         lead_id.setText("CV - " + ((getOrdersList.get(position).getUniqueId()) != null ? getOrdersList.get(position).getUniqueId() : "N/A"));
         genrated_by.setText("" + ((getOrdersList.get(position).getDate()) != null ? getOrdersList.get(position).getDate() : "N/A"));
         customer_name.setText("" + ((getOrdersList.get(position).getVehicleNo()) != null ? getOrdersList.get(position).getVehicleNo() : "N/A"));

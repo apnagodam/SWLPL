@@ -15,13 +15,12 @@ import android.widget.Toast;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.gatepass.GatePassListingActivity;
-import com.apnagodam.staff.activity.in.gatepass.UploadGatePassClass;
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding;
-import com.apnagodam.staff.db.SharedPreferencesRepository;
+import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.utils.Utility;
 
 import java.text.SimpleDateFormat;
@@ -38,6 +37,8 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     // drop down  of meter status
     List<String> contractorName;
     boolean checked = false;
+    private List<CommudityResponse.Contractor> LabourContractoList;
+
 
     @Override
     protected int getLayoutResId() {
@@ -63,9 +64,18 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
     }
 
     private void setValueOnSpinner() {
-        for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
-            contractorName.add(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName());
-        }
+        showDialog();
+        apiService.getcommuydity_terminal_user_emp_listing("Emp").enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
+            @Override
+            protected void onSuccess(CommudityResponse body) {
+                LabourContractoList = body.getContractor_result();
+                for (int i = 0; i < body.getContractor_result().size(); i++) {
+                    contractorName.add(body.getContractor_result().get(i).getContractorName());
+                }
+                hideDialog();
+            }
+        });
+
         SpinnerControactorAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, contractorName) {
             //By using this method we will define how
             // the text appears before clicking a spinner
@@ -93,16 +103,17 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                 // selected item in the list
                 if (position != 0) {
                     contractorsID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getContractorList().size(); i++) {
-                        if (contractorsID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorName())) {
-                            binding.etContractorPhone.setText(String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getContractorPhone()));
-                            binding.etLabourRate.setText(String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getContractorList().get(i).getRate()));
+                    for (int i = 0; i < LabourContractoList.size(); i++) {
+                        if (contractorsID.equalsIgnoreCase(LabourContractoList.get(i).getContractorName())) {
+                            binding.etContractorPhone.setText(String.valueOf(LabourContractoList.get(i).getContractorPhone()));
+                            binding.etLabourRate.setText(String.valueOf(LabourContractoList.get(i).getRate()));
                         }
                     }
-                }else {
-                    contractorsID=null;
+                } else {
+                    contractorsID = null;
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // your code here
@@ -125,7 +136,12 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                                                                         binding.etLocation.setEnabled(false);
                                                                         binding.etLocation.setClickable(false);
                                                                         binding.etLocation.setFocusable(false);
-                                                                        binding.etLocation.setText("");
+                                                                        binding.etLocation.setText("N/A");
+                                                                        binding.etLabourRate.setEnabled(false);
+                                                                        binding.etLabourRate.setClickable(false);
+                                                                        binding.etLabourRate.setFocusable(false);
+                                                                        binding.etLabourRate.setText("N/A");
+
                                                                     } else {
                                                                         // not checked
                                                                         checked = false;
@@ -133,6 +149,11 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                                                                         binding.etLocation.setClickable(true);
                                                                         binding.etLocation.setFocusable(true);
                                                                         binding.etLocation.setFocusableInTouchMode(true);
+                                                                        binding.etLabourRate.setEnabled(true);
+                                                                        binding.etLabourRate.setClickable(true);
+                                                                        binding.etLabourRate.setFocusable(true);
+                                                                        binding.etLabourRate.setFocusableInTouchMode(true);
+
                                                                     }
                                                                 }
                                                             }
@@ -161,19 +182,20 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
                 if (isValid()) {
                   /*  if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
                         Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
-                    } else*/ if (contractorsID == null) {
+                    } else*/
+                    if (contractorsID == null) {
                         Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.contractor_select), Toast.LENGTH_LONG).show();
                     } else {
                         Utility.showDecisionDialog(LabourBookUploadClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
                             @Override
                             public void callback() {
                                 apiService.uploadLabourDetails(new UploadLabourDetailsPostData(
-                                        CaseID, contractorsID, stringFromView(binding.etContractorPhone),"N/A",
-                                        stringFromView(binding.etLabourRate), "N/A", "N/A",
-                                        stringFromView(binding.notes), "0000-00-00")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                        CaseID, contractorsID, stringFromView(binding.etContractorPhone), "N/A",
+                                        stringFromView(binding.etLabourRate),/* stringFromView(binding.etLabourTotal), stringFromView(binding.etTotalBags),*/
+                                        "N/A","N/A",stringFromView(binding.notes), "0000-00-00")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                                     @Override
                                     protected void onSuccess(LoginResponse body) {
-                                        Utility.showAlertDialog(LabourBookUploadClass.this, getString(R.string.alert),  body.getMessage(), new Utility.AlertCallback() {
+                                        Utility.showAlertDialog(LabourBookUploadClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
                                             @Override
                                             public void callback() {
                                                 startActivityAndClear(LabourBookListingActivity.class);
@@ -193,19 +215,20 @@ public class LabourBookUploadClass extends BaseActivity<ActivityUploadLabourDeta
         if (checked) {
 
         } else {
+            if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
+                return Utility.showEditTextError(binding.tilContractorPhone, R.string.contractor_phone_val);
+            } else if (TextUtils.isEmpty(stringFromView(binding.etLabourRate))) {
+                return Utility.showEditTextError(binding.tilLabourRate, R.string.labour_rate_val);
+            } /*else if (TextUtils.isEmpty(stringFromView(binding.etLabourTotal))) {
+                return Utility.showEditTextError(binding.tilLabourTotal, R.string.labour_total_val);
+            } else if (TextUtils.isEmpty(stringFromView(binding.etTotalBags))) {
+                return Utility.showEditTextError(binding.tilTotalBags, R.string.total_bags_val);
+            }*/
             /*if (TextUtils.isEmpty(stringFromView(binding.etLocation))) {
                 return Utility.showEditTextError(binding.tilLocation, R.string.location);
             }*/
         }
-        if (TextUtils.isEmpty(stringFromView(binding.etContractorPhone))) {
-            return Utility.showEditTextError(binding.tilContractorPhone, R.string.contractor_phone_val);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etLabourRate))) {
-            return Utility.showEditTextError(binding.tilLabourRate, R.string.labour_rate_val);
-        } /*else if (TextUtils.isEmpty(stringFromView(binding.etLabourTotal))) {
-            return Utility.showEditTextError(binding.tilLabourTotal, R.string.labour_total_val);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etTotalBags))) {
-            return Utility.showEditTextError(binding.tilTotalBags, R.string.total_bags_val);
-        }*/
+
         return true;
     }
 

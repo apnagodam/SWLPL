@@ -98,11 +98,8 @@ public class StateMapActivity extends BaseActivity<ActivityStateMapsBinding> imp
     public void onMapReady(GoogleMap googleMap) {
         googleMapHome = googleMap;
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(12).build();
-
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -120,11 +117,7 @@ public class StateMapActivity extends BaseActivity<ActivityStateMapsBinding> imp
         googleMap.getUiSettings().setRotateGesturesEnabled(true);
         googleMap.getUiSettings().setZoomGesturesEnabled(true);
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-
     }
-
-
     //create marker on lat lng
     protected Marker createMarker(double latitude, double longitude, String title, String snippet, float hueOrange) {
         return googleMapHome.addMarker(new MarkerOptions()

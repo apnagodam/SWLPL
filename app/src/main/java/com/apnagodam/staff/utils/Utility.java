@@ -77,6 +77,43 @@ public class Utility {
 
     private static File path = ApnaGodamApp.getApp().getCacheDir();
 
+    public static void showDecisionDialoerror(Context context, String title, String message, final AlertCallback callbackListener) {
+        try {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            alertDialogBuilder.setTitle(title);
+            alertDialogBuilder.setMessage(message);
+            alertDialogBuilder.setCancelable(true);
+            alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int arg1) {
+                    callbackListener.callback();
+                    dialog.dismiss();
+                }
+            });
+            alertDialogBuilder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int arg1) {
+                    dialog.dismiss();
+
+                }
+            });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public  static double getTextDouble(EditText editText){
+        if (editText.getText().toString().isEmpty()){
+            return 0.0;
+        }return  Double.parseDouble(editText.getText().toString());
+    }
+    public  static String getTextRemark(EditText editText){
+        if (editText.getText().toString().isEmpty()){
+            return "N/A";
+        }return  (editText.getText().toString().trim());
+    }
     public static String timeFromdateTime(String inputDateStr) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         DateFormat outputFormat = new SimpleDateFormat("dd-mm-yyyy");
@@ -435,6 +472,7 @@ public class Utility {
         }
     }
 
+
     public static void showSoftKeyboard(Context context, EditText editText) {
         if (editText == null)
             return;
@@ -552,7 +590,7 @@ public class Utility {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle(title);
             alertDialogBuilder.setMessage(message);
-            alertDialogBuilder.setCancelable(true);
+            alertDialogBuilder.setCancelable(false);
             alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int arg1) {
@@ -689,13 +727,11 @@ public class Utility {
     public static void setLocale(BaseActivity activity) {
         String currentLanguage = SharedPreferencesRepository.getLocale();
         String languageToLoad = Constants.ENGLISH_LOCALE;
-
         Logger.showLogE(currentLanguage);
 
         if (currentLanguage.equals(Constants.ENGLISH_LOCALE)) {
             languageToLoad = Constants.HINDI_LOCALE;
-        }
-        Logger.showLogE(languageToLoad);
+        }Logger.showLogE(languageToLoad);
 
         LocaleHelper.setLocale(activity, languageToLoad);
         Intent refresh = new Intent(activity, activity.getClass());

@@ -302,6 +302,17 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
         @Expose
         private String imge;
 
+        public String getComm_vedio() {
+            return comm_vedio;
+        }
+
+        public void setComm_vedio(String comm_vedio) {
+            this.comm_vedio = comm_vedio;
+        }
+
+        @SerializedName("comm_vedio")
+        @Expose
+        private String comm_vedio;
         public String getCommodity_img() {
             return commodity_img;
         }

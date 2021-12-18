@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Network.NetworkCallback;
+import com.apnagodam.staff.Network.NetworkCallbackWProgress;
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData;
 import com.apnagodam.staff.Network.Request.StackPostData;
 import com.apnagodam.staff.Network.Response.LoginResponse;
@@ -28,6 +29,8 @@ import com.apnagodam.staff.adapter.CustomerNameAdapter;
 import com.apnagodam.staff.databinding.ActivityCaseIdBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.AllUserListPojo;
+import com.apnagodam.staff.module.CommudityResponse;
+import com.apnagodam.staff.module.OUTComodityPojo;
 import com.apnagodam.staff.module.StackListPojo;
 import com.apnagodam.staff.module.TerminalListPojo;
 import com.apnagodam.staff.module.UserDetails;
@@ -40,9 +43,11 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     ArrayAdapter<String> SpinnerStackAdapter, SpinnerCommudityAdapter, spinnerTeerminalAdpter, SpinnerUserListAdapter, spinnerEmployeeAdpter;
     String stackID = null, commudityID = null, TerminalID = null, selectPurpose = null,
             selectInOUt = null, seleectCoustomer = null, selectConvertOther = null;
-
+    String UserUniqueID;
+    String invWeightRequestWeight = null;
     String UserID = null;
     List<String> StackName;
+    List<String> StackID;
     List<String> CommudityName;
     List<String> TerminalName;
     List<String> TerminalsID;
@@ -53,6 +58,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     List<TerminalListPojo.Datum> data;
     List<AllUserListPojo.User> Userdata;
     List<StackListPojo.Datum> Stackdata;
+    private List<CommudityResponse.Category> DataCommodity;
+    private List<OUTComodityPojo.Datum> outCommodityListData;
 
     @Override
     protected int getLayoutResId() {
@@ -68,9 +75,10 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         getSupportActionBar().setDisplayShowTitleEnabled(false);
        /* binding.RLCommodity.setVisibility(View.GONE);
         binding.RLStack.setVisibility(View.GONE);*/
-        getTerminalListLevel();
+
         clickListner();
         StackName = new ArrayList<>();
+        StackID = new ArrayList<>();
         CommudityName = new ArrayList<>();
         TerminalName = new ArrayList<>();
         TerminalsID = new ArrayList<>();
@@ -83,8 +91,10 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         TerminalName.add(getResources().getString(R.string.terminal_name1));
         CustomerName.add(getResources().getString(R.string.select_coustomer));
         LeadGenerateOtherName.add("If Lead Converted By Other");
+        setValueOnSpinner();
         try {
-            setValueOnSpinner();
+            getTerminalListLevel();
+
         } catch (Exception e) {
             e.getStackTrace();
         }
@@ -97,8 +107,23 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() != 0 && !charSequence.equals("")) {
                     double finalWeightQTl = Double.parseDouble(charSequence.toString().trim()) / 100;
-                    finalWeightQTl = Utility.round(finalWeightQTl,2);
-                    binding.etCustomerWeightQuintal.setText("" + finalWeightQTl);
+                    finalWeightQTl = Utility.round(finalWeightQTl, 2);
+                    if (invWeightRequestWeight != null) {
+                        if (finalWeightQTl > Double.parseDouble(invWeightRequestWeight)) {
+                            Utility.showAlertDialog(CaseIDGenerateClass.this, getString(R.string.alert), "This Weight Must be Less  or equal to requested Weight !!", new Utility.AlertCallback() {
+                                @Override
+                                public void callback() {
+                                    binding.etCustomerWeightQuintal.setText("" + invWeightRequestWeight);
+                                    Double qtilweight = Double.parseDouble(invWeightRequestWeight) * 100.0;
+                                    binding.etCustomerWeight.setText("" + qtilweight);
+                                }
+                            });
+                        } else {
+                            binding.etCustomerWeightQuintal.setText("" + finalWeightQTl);
+                        }
+                    } else {
+                        binding.etCustomerWeightQuintal.setText("" + finalWeightQTl);
+                    }
                 } else {
                     binding.etCustomerWeightQuintal.setText("");
                 }
@@ -110,9 +135,162 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         });
     }
 
+    private void getoutCommodity() {
+        showDialog();
+        apiService.getOutCommodityList(TerminalID, UserUniqueID).enqueue(new NetworkCallback<OUTComodityPojo>(getActivity()) {
+            @Override
+            protected void onSuccess(OUTComodityPojo body) {
+                if (selectInOUt.equalsIgnoreCase("IN")) {
+
+                } else {
+                    CommudityName.clear();
+                    if (outCommodityListData != null) {
+                        outCommodityListData.clear();
+                    }
+                    CommudityName.add(getResources().getString(R.string.commodity));
+                    outCommodityListData = body.getData();
+                    for (int i = 0; i < outCommodityListData.size(); i++) {
+                        String commodityType = outCommodityListData.get(i).getCommodityType();
+                        if (commodityType.equalsIgnoreCase("Primary")) {
+                            commodityType = "किसानी";
+                        } else {
+                            commodityType = "MTP";
+                        }
+                        CommudityName.add(outCommodityListData.get(i).getCategory() + "(" + commodityType + ")");
+                        hideDialog();
+                    }
+                    binding.RLCommodity.setVisibility(View.VISIBLE);
+                    SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
+                        //By using this method we will define how
+                        // the text appears before clicking a spinner
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View v = super.getView(position, convertView, parent);
+                            ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                            return v;
+                        }
+
+                        //By using this method we will define
+                        //how the listview appears after clicking a spinner
+                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                            View v = super.getDropDownView(position, convertView, parent);
+                            v.setBackgroundColor(Color.parseColor("#05000000"));
+                            ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                            return v;
+                        }
+                    };
+                    SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                    // Set Adapter in the spinner
+                    binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                    if (selectInOUt!=null) {
+                        if (selectInOUt.equalsIgnoreCase("IN")) {
+                            SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
+                                //By using this method we will define how
+                                // the text appears before clicking a spinner
+                                public View getView(int position, View convertView, ViewGroup parent) {
+                                    View v = super.getView(position, convertView, parent);
+                                    ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                    return v;
+                                }
+
+                                //By using this method we will define
+                                //how the listview appears after clicking a spinner
+                                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                    View v = super.getDropDownView(position, convertView, parent);
+                                    v.setBackgroundColor(Color.parseColor("#05000000"));
+                                    ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                    return v;
+                                }
+                            };
+                            SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                            // Set Adapter in the spinner
+                            binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                            binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                    // selected item in the list
+                                    if (position != 0) {
+                                        String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                                        for (int i = 0; i < DataCommodity.size(); i++) {
+                                            String commodityType = DataCommodity.get(i).getCommodityType();
+                                            if (commodityType.equalsIgnoreCase("Primary")) {
+                                                commodityType = "किसानी";
+                                            } else {
+                                                commodityType = "MTP";
+                                            }
+                                            if (presentMeterStatusID.equalsIgnoreCase(DataCommodity.get(i).getCategory() + "(" + commodityType + ")")) {
+                                                commudityID = String.valueOf(DataCommodity.get(i).getId());
+                                                getstack();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parentView) {
+                                    // your code here
+                                }
+                            });
+                        } else {
+                            SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
+                                //By using this method we will define how
+                                // the text appears before clicking a spinner
+                                public View getView(int position, View convertView, ViewGroup parent) {
+                                    View v = super.getView(position, convertView, parent);
+                                    ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                    return v;
+                                }
+
+                                //By using this method we will define
+                                //how the listview appears after clicking a spinner
+                                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                    View v = super.getDropDownView(position, convertView, parent);
+                                    v.setBackgroundColor(Color.parseColor("#05000000"));
+                                    ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                    return v;
+                                }
+                            };
+                            SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                            // Set Adapter in the spinner
+                            binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                            binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                                    // selected item in the list
+                                    if (position != 0) {
+                                        String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                                        for (int i = 0; i < outCommodityListData.size(); i++) {
+                                            String commodityType = outCommodityListData.get(i).getCommodityType();
+                                            if (commodityType.equalsIgnoreCase("Primary")) {
+                                                commodityType = "किसानी";
+                                            } else {
+                                                commodityType = "MTP";
+                                            }
+                                            if (presentMeterStatusID.equalsIgnoreCase(outCommodityListData.get(i).getCategory() + "(" + commodityType + ")")) {
+                                                commudityID = String.valueOf(outCommodityListData.get(i).getCommodity());
+                                                getstack();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> parentView) {
+                                    // your code here
+                                }
+                            });
+                        }
+                    }
+
+                }
+            }
+        });
+    }
 
     private void setValueOnSpinner() {
-        setAllData();
+
+        // setAllData();
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -174,7 +352,16 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                         // seleectCoustomer= String.valueOf((""+Integer.parseInt(part[1])).split("\\)"));
                         seleectCoustomer = (part[1]);
                         binding.inoutRl.setVisibility(View.VISIBLE);
-                        getstack();
+                        for (int i = 0; i < Userdata.size(); i++) {
+                            if (UserID.equalsIgnoreCase(Userdata.get(i).getFname() + "(" + Userdata.get(i).getPhone())) {
+                                UserUniqueID = Userdata.get(i).getUserId();
+                            }
+                        }
+                        if (seleectCoustomer == null||TerminalID == null||selectInOUt==null) {
+                        } else {
+                            getoutCommodity();
+                            getstack();
+                        }
                     } catch (Exception e) {
                         e.getStackTrace();
                     }
@@ -189,7 +376,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             }
         });
 
-        // Employee listing
+      /*  // Employee listing
         new Thread() {
             public void run() {
                 try {
@@ -216,7 +403,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 }
 
             }
-        }.start();
+        }.start();*/
         spinnerEmployeeAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, LeadGenerateOtherName) {
             //By using this method we will define how
             // the text appears before clicking a spinner
@@ -259,48 +446,110 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         });
 
         // commodity listing
-        SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
-            //By using this method we will define how
-            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
+        if (selectInOUt!=null) {
+            if (selectInOUt.equalsIgnoreCase("IN")) {
+                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
+                    //By using this method we will define how
+                    // the text appears before clicking a spinner
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getView(position, convertView, parent);
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
 
-            //By using this method we will define
-            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        // Set Adapter in the spinner
-        binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-        binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // selected item in the list
-                if (position != 0) {
-                    String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-                        if (presentMeterStatusID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory() + "(" + SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCommodityType() + ")")) {
-                            commudityID = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getId());
-                            getstack();
-                            break;
+                    //By using this method we will define
+                    //how the listview appears after clicking a spinner
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getDropDownView(position, convertView, parent);
+                        v.setBackgroundColor(Color.parseColor("#05000000"));
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+                };
+                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                // Set Adapter in the spinner
+                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // selected item in the list
+                        if (position != 0) {
+                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                            for (int i = 0; i < DataCommodity.size(); i++) {
+                                String commodityType = DataCommodity.get(i).getCommodityType();
+                                if (commodityType.equalsIgnoreCase("Primary")) {
+                                    commodityType = "किसानी";
+                                } else {
+                                    commodityType = "MTP";
+                                }
+                                if (presentMeterStatusID.equalsIgnoreCase(DataCommodity.get(i).getCategory() + "(" + commodityType + ")")) {
+                                    commudityID = String.valueOf(DataCommodity.get(i).getId());
+                                    getstack();
+                                    break;
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+                });
+            } else {
+                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
+                    //By using this method we will define how
+                    // the text appears before clicking a spinner
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getView(position, convertView, parent);
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+
+                    //By using this method we will define
+                    //how the listview appears after clicking a spinner
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getDropDownView(position, convertView, parent);
+                        v.setBackgroundColor(Color.parseColor("#05000000"));
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+                };
+                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                // Set Adapter in the spinner
+                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // selected item in the list
+                        if (position != 0) {
+                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                            for (int i = 0; i < outCommodityListData.size(); i++) {
+                                String commodityType = outCommodityListData.get(i).getCommodityType();
+                                if (commodityType.equalsIgnoreCase("Primary")) {
+                                    commodityType = "किसानी";
+                                } else {
+                                    commodityType = "MTP";
+                                }
+                                if (presentMeterStatusID.equalsIgnoreCase(outCommodityListData.get(i).getCategory() + "(" + commodityType + ")")) {
+                                    commudityID = String.valueOf(outCommodityListData.get(i).getCommodity());
+                                    getstack();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+                });
             }
-        });
+        }
+
+
+
         // layout Terminal Listing resource and list of items.
         spinnerTeerminalAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, TerminalName) {
             //By using this method we will define how
@@ -333,7 +582,11 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                         if (presentMeterStatusID.contains(data.get(i).getName())) {
                             TerminalID = String.valueOf(data.get(i).getId());
                             binding.rlUser.setVisibility(View.VISIBLE);
-                            getstack();
+                            if (seleectCoustomer == null||TerminalID == null||selectInOUt==null) {
+                            } else {
+                                getoutCommodity();
+                                getstack();
+                            }
                             break;
                         }
                     }
@@ -345,8 +598,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 // your code here
             }
         });
-
-
         // spinner purpose
         binding.spinnerPurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -365,15 +616,67 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position != 0) {
-                    if (TerminalID == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
-                    } else if (seleectCoustomer == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
-                    } else {
-                        selectInOUt = parent.getItemAtPosition(position).toString();
-                        binding.RLCommodity.setVisibility(View.VISIBLE);
-                        getstack();
+                    selectInOUt = parent.getItemAtPosition(position).toString();
+                    if (selectInOUt.equalsIgnoreCase("IN")) {
+                        commudityID=null;
+                        CommudityName.clear();
+                        if (DataCommodity != null) {
+                            DataCommodity.clear();
+                        }
+                        CommudityName.add(getResources().getString(R.string.commodity));
+                        showDialog();
+                        apiService.getcommuydity_terminal_user_emp_listing("Emp").enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
+                            @Override
+                            protected void onSuccess(CommudityResponse body) {
+                                DataCommodity = body.getCategories();
+                                for (int i = 0; i < body.getCategories().size(); i++) {
+                                    String commodityType = DataCommodity.get(i).getCommodityType();
+                                    if (commodityType.equalsIgnoreCase("Primary")) {
+                                        commodityType = "किसानी";
+                                    } else {
+                                        commodityType = "MTP";
+                                    }
+                                    CommudityName.add(DataCommodity.get(i).getCategory() + "(" + commodityType + ")");
+                                    hideDialog();
+                                }
+                                binding.RLCommodity.setVisibility(View.VISIBLE);
+                                SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
+                                    //By using this method we will define how
+                                    // the text appears before clicking a spinner
+                                    public View getView(int position, View convertView, ViewGroup parent) {
+                                        View v = super.getView(position, convertView, parent);
+                                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                        return v;
+                                    }
+
+                                    //By using this method we will define
+                                    //how the listview appears after clicking a spinner
+                                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                                        View v = super.getDropDownView(position, convertView, parent);
+                                        v.setBackgroundColor(Color.parseColor("#05000000"));
+                                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                                        return v;
+                                    }
+                                };
+                                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                                // Set Adapter in the spinner
+                                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                                getstack();
+                            }
+                        });
+
+                    }else {
+                        if (TerminalID == null) {
+                            Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
+                        } else if (seleectCoustomer == null) {
+                            Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
+                        } else {
+                            commudityID=null;
+                            getoutCommodity();
+
+                        }
                     }
+
 
                 }
             }
@@ -426,9 +729,39 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 // selected item in the list
                 if (position != 0) {
+                    try {
+                        stackID = String.valueOf(Stackdata.get(position - 1).getId());
+                        if (selectInOUt.contains("IN")) {
+                            invWeightRequestWeight = "" + Stackdata.get(position - 1).getRequestWeight();
+                            binding.etCustomerVehicle.setText("" + Stackdata.get(position - 1).getVehicle_no());
+                            binding.etCustomerWeightQuintal.setText("" + Stackdata.get(position - 1).getRequestWeight());
+                            Double qtilweight = Double.parseDouble(Stackdata.get(position - 1).getRequestWeight()) * 100.0;
+                            binding.etCustomerWeight.setText("" + qtilweight);
+                            binding.etCustomerVehicle.setClickable(false);
+                            binding.etCustomerVehicle.setFocusable(false);
+                            binding.etCustomerVehicle.setEnabled(false);
+                            binding.etCustomerVehicle.setFocusableInTouchMode(false);
+                        } else {
+                            invWeightRequestWeight = "" + Stackdata.get(position - 1).getRequestWeight();
+                            binding.etCustomerWeightQuintal.setText("" + Stackdata.get(position - 1).getRequestWeight());
+                            Double qtilweight = Double.parseDouble(Stackdata.get(position - 1).getRequestWeight()) * 100.0;
+                            binding.etCustomerWeight.setText("" + qtilweight);
+                            binding.etCustomerVehicle.setText("" + Stackdata.get(position - 1).getVehicle_no());
+                            binding.etCustomerVehicle.setClickable(false);
+                            binding.etCustomerVehicle.setFocusable(false);
+                            binding.etCustomerVehicle.setEnabled(false);
+                            binding.etCustomerVehicle.setFocusableInTouchMode(false);
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+
+                    }
                     String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < Stackdata.size(); i++) {
-                        if (presentMeterStatusID.contains(Stackdata.get(i).getStackNumber())) {
+                 /*   for (int i = 0; i < Stackdata.size(); i++) {
+                        if (Stackdata.get(position).getStackId().equalsIgnoreCase(StackID.get(i))){*/
+
+                         /*   break;
+                        }*/
+                       /* if (presentMeterStatusID.equalsIgnoreCase(Stackdata.get(i).getStackNumber())) {
                             stackID = String.valueOf(Stackdata.get(i).getId());
                             if (selectInOUt.contains("IN")) {
                                 binding.etCustomerVehicle.setText("" + Stackdata.get(i).getVehicle_no());
@@ -437,15 +770,19 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                                 binding.etCustomerVehicle.setEnabled(false);
                                 binding.etCustomerVehicle.setFocusableInTouchMode(false);
                             } else {
-                                binding.etCustomerVehicle.setText("");
-                                binding.etCustomerVehicle.setClickable(true);
-                                binding.etCustomerVehicle.setFocusable(true);
-                                binding.etCustomerVehicle.setEnabled(true);
-                                binding.etCustomerVehicle.setFocusableInTouchMode(true);
+                                 invWeightRequestWeight = "" + Stackdata.get(i).getRequestWeight();
+                                binding.etCustomerWeightQuintal.setText("" + Stackdata.get(i).getRequestWeight());
+                                Double qtilweight = Double.parseDouble(Stackdata.get(i).getRequestWeight())*100.0;
+                                binding.etCustomerWeight.setText("" +qtilweight);
+                                binding.etCustomerVehicle.setText("" + Stackdata.get(i).getVehicle_no());
+                                binding.etCustomerVehicle.setClickable(false);
+                                binding.etCustomerVehicle.setFocusable(false);
+                                binding.etCustomerVehicle.setEnabled(false);
+                                binding.etCustomerVehicle.setFocusableInTouchMode(false);
                             }
                             break;
-                        }
-                    }
+                        }*/
+                    // }
                 } else {
                     stackID = null;
                     binding.etCustomerVehicle.setClickable(true);
@@ -464,36 +801,49 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     }
 
     private void getstack() {
-        apiService.getStackList(new StackPostData(commudityID, TerminalID, seleectCoustomer, selectInOUt)).enqueue(new NetworkCallback<StackListPojo>(getActivity()) {
-            @Override
-            protected void onSuccess(StackListPojo body) {
-                StackName.clear();
-                stackID = null;
-                binding.spinnerStack.setPrompt("");
-                StackName.add("Stack Number");
-                Stackdata = body.getData();
-                for (int i = 0; i < Stackdata.size(); i++) {
-                    StackName.add(Stackdata.get(i).getStackNumber());
-                    //SpinnerStackAdapter.notifyDataSetChanged();
-                }
-                SpinnerStackAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, StackName) {
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getView(position, convertView, parent);
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
-                    }
+        if (commudityID==null){
+            Utility.showAlertDialog(CaseIDGenerateClass.this, getString(R.string.alert), "please select commodity First ", new Utility.AlertCallback() {
+                @Override
+                public void callback() {
 
-                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getDropDownView(position, convertView, parent);
-                        v.setBackgroundColor(Color.parseColor("#05000000"));
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
+                }
+            });
+        }else {
+            apiService.getStackList(new StackPostData(commudityID, TerminalID, seleectCoustomer, selectInOUt)).enqueue(new NetworkCallback<StackListPojo>(getActivity()) {
+                @Override
+                protected void onSuccess(StackListPojo body) {
+                    StackName.clear();
+                    StackID.clear();
+                    stackID = null;
+                    binding.spinnerStack.setPrompt("");
+                    StackName.add("Stack Number");
+                    StackID.add("0");
+                    Stackdata = body.getData();
+                    for (int i = 0; i < Stackdata.size(); i++) {
+                        StackName.add(Stackdata.get(i).getStackNumber());
+                        StackID.add(Stackdata.get(i).getId());
+                        //SpinnerStackAdapter.notifyDataSetChanged();
                     }
-                };
-                SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-                binding.spinnerStack.setAdapter(SpinnerStackAdapter);
-            }
-        });
+                    SpinnerStackAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, StackName) {
+                        public View getView(int position, View convertView, ViewGroup parent) {
+                            View v = super.getView(position, convertView, parent);
+                            ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                            return v;
+                        }
+
+                        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                            View v = super.getDropDownView(position, convertView, parent);
+                            v.setBackgroundColor(Color.parseColor("#05000000"));
+                            ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                            return v;
+                        }
+                    };
+                    SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                    binding.spinnerStack.setAdapter(SpinnerStackAdapter);
+                }
+            });
+        }
+
     }
 
     private void showCustomerNamePopup(List<String> getList) {
@@ -632,9 +982,9 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                                     selectPurpose = "For Storage";
                                 }
                                 apiService.doCreateCaseID(new CreateCaseIDPostData(
-                                        stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), stringFromView(binding.etCustomerLocation),
+                                        stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), /*stringFromView(binding.etCustomerLocation)*/  "",
                                         seleectCoustomer, commudityID, TerminalID, stringFromView(binding.etCustomerVehicle),
-                                        selectPurpose, stringFromView(binding.etCustomerFpo), stackID, selectConvertOther)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                        selectPurpose, stringFromView(binding.etCustomerFpo), stackID, selectConvertOther, invWeightRequestWeight)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
                                     @Override
                                     protected void onSuccess(LoginResponse body) {
                                         hideDialog();
@@ -660,9 +1010,9 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             return Utility.showEditTextError(binding.tilCustomerWeight, R.string.weight_kg);
         } /*else if (TextUtils.isEmpty(stringFromView(binding.etCustomerGatepass))) {
             return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
-        }*/ else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
+        }*/ /*else if (TextUtils.isEmpty(stringFromView(binding.etCustomerLocation))) {
             return Utility.showEditTextError(binding.tilCustomerLocation, R.string.location);
-        } else if (TextUtils.isEmpty(stringFromView(binding.etCustomerVehicle))) {
+        }*/ else if (TextUtils.isEmpty(stringFromView(binding.etCustomerVehicle))) {
             return Utility.showEditTextError(binding.tilCustomerVehicle, R.string.vehicle_no);
         }/*  else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
             return Utility.showEditTextError(binding.tilCustomerFpo, R.string.fpo_sub_useername);

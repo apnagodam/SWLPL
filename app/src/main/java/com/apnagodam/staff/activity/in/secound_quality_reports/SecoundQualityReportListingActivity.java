@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -37,7 +38,7 @@ import java.util.List;
 
 
 public class SecoundQualityReportListingActivity extends BaseActivity<ActivityListingBinding> {
-    private String ReportsFile, CommudityImage;
+    private String ReportsFile, CommudityImage,VideoFile;
     private SecoundQualityReportAdapter secoundQualityReportAdapter;
     private int pageOffset = 1;
     private int totalPage = 0;
@@ -214,6 +215,9 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
         TextView converted_by = (TextView) dialogView.findViewById(R.id.converted_by);
         ImageView reports_file = (ImageView) dialogView.findViewById(R.id.reports_file);
         ImageView commodity_file = (ImageView) dialogView.findViewById(R.id.commodity_file);
+        LinearLayout videoll = (LinearLayout) dialogView.findViewById(R.id.videoll);
+
+        ImageView videofile = (ImageView) dialogView.findViewById(R.id.videofile);
        /////////////////////////////////////////////
         if (AllCases.get(position).getImge() == null || AllCases.get(position).getImge().isEmpty()) {
             reports_file.setVisibility(View.GONE);
@@ -221,9 +225,15 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
         if (AllCases.get(position).getCommodity_img() == null || AllCases.get(position).getCommodity_img().isEmpty()) {
             commodity_file.setVisibility(View.GONE);
         }
+        if (AllCases.get(position).getComm_vedio() == null || AllCases.get(position).getComm_vedio().isEmpty()) {
+            videoll.setVisibility(View.GONE);
+        }else {
+            videoll.setVisibility(View.VISIBLE);
+        }
         ReportsFile = Constants.Secound__quality + AllCases.get(position).getImge();
        CommudityImage = Constants.Secound__quality + AllCases.get(position).getCommodity_img();
-        reports_file.setOnClickListener(new View.OnClickListener() {
+        VideoFile = Constants.Secound__quality + AllCases.get(position).getComm_vedio();
+       reports_file.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new PhotoFullPopupWindow(SecoundQualityReportListingActivity.this, R.layout.popup_photo_full, view, ReportsFile, null);
@@ -233,6 +243,32 @@ public class SecoundQualityReportListingActivity extends BaseActivity<ActivityLi
             @Override
             public void onClick(View view) {
                 new PhotoFullPopupWindow(SecoundQualityReportListingActivity.this, R.layout.popup_photo_full, view, CommudityImage, null);
+            }
+        });
+        videofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Rect displayRectangle = new Rect();
+                Window window = SecoundQualityReportListingActivity.this.getWindow();
+                window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(SecoundQualityReportListingActivity.this, R.style.CustomAlertDialog);
+                LayoutInflater inflater = ((Activity) SecoundQualityReportListingActivity.this).getLayoutInflater();
+                View dialogView = inflater.inflate(R.layout.video_priview_fullscreen, null);
+                dialogView.setMinimumWidth((int) (displayRectangle.width() * 1f));
+                dialogView.setMinimumHeight((int) (displayRectangle.height() * 1f));
+                builder.setView(dialogView);
+                final AlertDialog alertDialog = builder.create();
+                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
+                VideoView videoView = (VideoView) dialogView.findViewById(R.id.videoView);
+                cancel_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                    }
+                });
+                videoView.setVideoPath(VideoFile);
+                videoView.start();
+                alertDialog.show();
             }
         });
         case_id.setText(getResources().getString(R.string.case_idd));

@@ -12,10 +12,7 @@ import com.apnagodam.staff.utils.CustomWebChromeClient;
 import com.apnagodam.staff.utils.Utility;
 
 public class BrowserPage extends BaseActivity<WebPagesBinding> implements CustomWebChromeClient.ProgressListener {
-
-
     private String webUrl;
-
 
     @Override
     protected int getLayoutResId() {
@@ -41,7 +38,6 @@ public class BrowserPage extends BaseActivity<WebPagesBinding> implements Custom
     @Override
     public void onUpdateProgress(int progressValue) {
         binding.webProgress.setProgress(progressValue);
-
         if (progressValue == 100) {
             binding.webProgress.setVisibility(View.GONE);
             binding.webView.requestLayout();

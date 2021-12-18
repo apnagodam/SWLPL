@@ -35,7 +35,11 @@ import com.apnagodam.staff.utils.Utility;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ApprovalRequestVendorVoacherListClass extends BaseActivity<ConvencyListBinding> {
@@ -228,7 +232,19 @@ public class ApprovalRequestVendorVoacherListClass extends BaseActivity<Convency
         });
         inventory_id = "" + getOrdersList.get(position).getId();
         lead_id.setText("" + ((getOrdersList.get(position).getUniqueId()) != null ? getOrdersList.get(position).getUniqueId() : "N/A"));
-        genrated_by.setText("" + ((getOrdersList.get(position).getDate()) != null ? getOrdersList.get(position).getDate() : "N/A"));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = null;
+            try {
+                date = inputFormatter.parse((getOrdersList.get(position).getDate()));
+                DateFormat outputFormatter = new SimpleDateFormat("dd-MM-yyyy");
+                String output = outputFormatter.format(date); // Output : 01/20/2012
+                genrated_by.setText("" + ((getOrdersList.get(position).getDate()) != null ?output : "N/A"));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         customer_name.setText("" + ((getOrdersList.get(position).getFirstName()) != null ? getOrdersList.get(position).getFirstName() + " " + getOrdersList.get(position).getLastName() + "(" + getOrdersList.get(position).getEmpId() + ")" : "N/A"));
         commodity_name.setText("" + ((getOrdersList.get(position).getExpensesName()) != null ? getOrdersList.get(position).getExpensesName() : "N/A"));
         phone_no.setText("" + ((getOrdersList.get(position).getVendorFirstName()) != null ? getOrdersList.get(position).getVendorFirstName() + " " + getOrdersList.get(position).getVendorLastName() + "(" + getOrdersList.get(position).getVendorUniqueId() + ")" : "N/A"));

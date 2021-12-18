@@ -121,6 +121,8 @@
     <string name="est_quantity">Est.Quantity\n(Qtl.)</string>
     <string name="terminal">Terminal</string>
     <string name="purpose">Purpose</string>
+    <string name="error_1">Enter Description</string>
+    <string name="error_2">Enter Correction</string>
     <string name="create_date">Created On</string>
     <string name="action">Action</string>
     <string name="case_idd">Case_ID</string>
@@ -251,6 +253,12 @@
         <item>Four-wheeler</item>
         <item>Other</item>
     </string-array>
+
+    <string-array name="array_cowin_type">
+        <item>Select *</item>
+        <item>Jaipur-1</item>
+        <item>Jaipur-2</item>
+    </string-array>
     <string name="reports_file">Reports File</string>
     <string name="upload_reports_file">Upload Reports File</string>
     <string name="commudity_file">Commodity File</string>
@@ -288,6 +296,7 @@
     <string name="approved_by">Approved By</string>
     <string name="slect_conv_type">Select Conveyance Type</string>
     <string name="my_convance">My Conveyance</string>
+    <string name="my_error_logs">Error-Logs</string>
     <string name="my_convance_list">Conveyance List</string>
     <string name="con_id">Conv.ID</string>
     <string name="date_conv">Date</string>
@@ -358,4 +367,12 @@
     <string name="upload__relase">Update Release Order</string>
     <string name="upload__delierverd">Update Delivery Order</string>
     <string name="phone_number">Enter Customer  phone number</string>
+    <string name="upload_cctv">Upload CCTV</string>
+    <string name="cctv_file">CCTV File *</string>
+    <string name="click_here_to_upload_cctv_file_1">Click here to Upload CCTV File 1</string>
+    <string name="cctv_file_2">CCTV File 2 *</string>
+    <string name="click_here_to_upload_cctv_file_2">Click here to Upload CCTV File 2</string>
+    <string name="ivr_tagging">IVR Tagging List</string>
+    <string name="ivr_upload">IVR Tagging</string>
+    <string name="total_displedge_bags">Total Displedge Bags</string>
 </resources>

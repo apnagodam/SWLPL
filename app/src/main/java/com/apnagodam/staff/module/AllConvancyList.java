@@ -273,6 +273,18 @@ public class AllConvancyList extends BaseResponse {
         @Expose
         private String lname;
 
+        public String getUSerempId() {
+            return USerempId;
+        }
+
+        public void setUSerempId(String USerempId) {
+            this.USerempId = USerempId;
+        }
+
+        @SerializedName("empId")
+        @Expose
+        private String USerempId;
+
         public Integer getId() {
             return id;
         }

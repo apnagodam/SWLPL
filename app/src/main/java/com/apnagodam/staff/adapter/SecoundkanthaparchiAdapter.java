@@ -127,7 +127,7 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
                             for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
                                     if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                                        if (Leads.get(position).getF_q_case_id()!=null){
+                                        if (Leads.get(position).getApna_pv_caseId()!=null){
                                             tvPhone.setVisibility(View.VISIBLE);
                                         }else {
                                             tvPhone.setVisibility(View.GONE);
