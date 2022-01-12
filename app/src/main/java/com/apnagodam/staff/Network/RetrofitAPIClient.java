@@ -1,5 +1,7 @@
 package com.apnagodam.staff.Network;
 
+import android.util.Log;
+
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.utils.Constants;
 import com.google.gson.Gson;
@@ -39,6 +41,13 @@ public class RetrofitAPIClient {
     public static OkHttpClient okHttpClient() {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+
+        httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                Log.i("response", message);
+            }
+        });
 
         httpClient.addInterceptor(new Interceptor() {
             @Override

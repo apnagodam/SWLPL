@@ -15,15 +15,15 @@ public class Constants {
     public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";*/
 
     // for live server
-    public static final String IMAGE_BASE_URL = "https://apnagodam.com/resources/assets/upload/employyes/";
-    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/resources/assets/upload/";
-    public static final String API_BASE_URL = "https://apnagodam.com/";
-    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";
+//    public static final String IMAGE_BASE_URL = "https://apnagodam.com/resources/assets/upload/employyes/";
+//    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/resources/assets/upload/";
+//    public static final String API_BASE_URL = "https://apnagodam.com/";
+//    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";
     // for demo server
-    /*public static final String IMAGE_BASE_URL = "https://apnagodam.com/demo/resources/assets/upload/employees/";
+    public static final String IMAGE_BASE_URL = "https://apnagodam.com/demo/resources/assets/upload/employees/";
     public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/demo/resources/assets/upload/";
     public static final String API_BASE_URL = "https://apnagodam.com/demo/";
-    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";*/
+    public static final String API_COWIN_BASE_URL = "https://cdn-api.co-vin.in/";
 
     public static final String ENDPOINT = API_BASE_URL;
     public static final String First_kata = IMAGE_BASE_URL_kanta_photo + "kanta_parchi/";

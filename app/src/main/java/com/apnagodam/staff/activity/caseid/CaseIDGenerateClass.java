@@ -77,6 +77,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         binding.RLStack.setVisibility(View.GONE);*/
 
         clickListner();
+
         StackName = new ArrayList<>();
         StackID = new ArrayList<>();
         CommudityName = new ArrayList<>();
@@ -87,17 +88,20 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         LeadGenerateOtherName = new ArrayList<>();
         LeadGenerateOtheID = new ArrayList<>();
 
-        CommudityName.add(getResources().getString(R.string.commodity_name));
         TerminalName.add(getResources().getString(R.string.terminal_name1));
         CustomerName.add(getResources().getString(R.string.select_coustomer));
+        CommudityName.add(getResources().getString(R.string.commodity_name));
+        StackName.add(getResources().getString(R.string.select_stack_number));
         LeadGenerateOtherName.add("If Lead Converted By Other");
+
         setValueOnSpinner();
+
         try {
             getTerminalListLevel();
-
         } catch (Exception e) {
             e.getStackTrace();
         }
+
         binding.etCustomerWeight.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -548,8 +552,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
             }
         }
 
-
-
         // layout Terminal Listing resource and list of items.
         spinnerTeerminalAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, TerminalName) {
             //By using this method we will define how
@@ -598,6 +600,28 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 // your code here
             }
         });
+
+        SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
+            //By using this method we will define how
+            // the text appears before clicking a spinner
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+
+            //By using this method we will define
+            //how the listview appears after clicking a spinner
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+        };
+        SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+        // Set Adapter in the spinner
+        binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
         // spinner purpose
         binding.spinnerPurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -611,6 +635,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 // can leave this empty
             }
         });
+
+
         // spinner in/out
         binding.spinnerInOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -797,7 +823,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 // your code here
             }
         });
-
     }
 
     private void getstack() {
@@ -843,7 +868,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 }
             });
         }
-
     }
 
     private void showCustomerNamePopup(List<String> getList) {
@@ -906,7 +930,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                 for (int i = 0; i < data.size(); i++) {
                     TerminalName.add(data.get(i).getName() + "(" + data.get(i).getWarehouseCode() + ")");
                 }
-                getUserList();
             }
         });
     }

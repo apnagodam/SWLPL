@@ -35,7 +35,7 @@
     <string name="change_language">Change Language</string>
     <string name="change_mobile_no">Change Mobile Number</string>
     <string name="commodity_price">commodity Price</string>
-    <string name="commodity_name">commodity Name</string>
+    <string name="commodity_name">Commodity Name</string>
     <string name="upload_aadhar_picture"> Aadhar card  picture</string>
     <string name="hint_otp">Please type varification code sent to </string>
     <string name="Profile_Screen">Profile Screen</string>
@@ -93,12 +93,13 @@
         <item>For Sale</item>
         <item>For Storage</item>
     </string-array>
-    <string name="terminal_name1">Terminal Name</string>
+    <string name="terminal_name1">Select Terminal Name</string>
+    <string name="select_stack_number">Select Stack Number</string>
 
     // case id
     <string name="case_id">Create Case ID</string>
     <string name="weight_kg">Enter Weight in KG *</string>
-    <string name="vehicle_no">ENTER VEHICLE/TRUCK NO.</string>
+    <string name="vehicle_no">VEHICLE/TRUCK NO.</string>
     <string name="location">Enter Location *</string>
     <string name="weight_quintal">Weight(Quintal)</string>
     <string name="gate_pass">Enter Gate Pass No. *</string>
@@ -107,7 +108,7 @@
     <string name="case_list">Case IDs List</string>
 
     <string-array name="array_in_out">
-        <item>IN/OUT</item>
+        <item>Select IN/OUT</item>
         <item>IN</item>
         <item>OUT</item>
     </string-array>

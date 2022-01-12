@@ -85,6 +85,7 @@
                     android:padding="@dimen/_10sdp"
                     android:spinnerMode="dropdown"
                     android:visibility="gone" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -119,43 +120,7 @@
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
-                <RelativeLayout
-                    android:id="@+id/rlUser"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:visibility="gone"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
-                    <com.apnagodam.staff.utils.SearchableSpinner
-                        android:id="@+id/spinner_userName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_pupose"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -195,15 +160,15 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
+
                 <RelativeLayout
-                    android:id="@+id/RLCommodity"
+                    android:id="@+id/rlUser"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_marginEnd="@dimen/_3sdp"
                     android:layout_marginRight="3dp"
                     android:layout_weight=".28"
-                    android:visibility="gone"
                     android:background="@drawable/white_back_black_border"
                     android:orientation="horizontal"
                     android:paddingEnd="@dimen/_5sdp"
@@ -211,8 +176,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
 
-                    <Spinner
-                        android:id="@+id/spinner_commudity"
+                    <com.apnagodam.staff.utils.SearchableSpinner
+                        android:id="@+id/spinner_userName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
@@ -232,6 +197,43 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/RLCommodity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_3sdp"
+                    android:layout_marginRight="3dp"
+                    android:layout_weight=".28"
+                    android:background="@drawable/white_back_black_border"
+                    android:orientation="horizontal"
+                    android:paddingEnd="@dimen/_5sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/spinner_in_out">
+
+                    <Spinner
+                        android:id="@+id/spinner_commudity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@color/transparent"
+                        android:gravity="right"
+                        android:padding="@dimen/_10sdp"
+                        android:spinnerMode="dropdown"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_arrow_drop_down" />
+                </RelativeLayout>
+
                 <RelativeLayout
                     android:id="@+id/RLStack"
                     android:layout_width="match_parent"
@@ -268,6 +270,7 @@
                         android:layout_gravity="center"
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -305,7 +308,6 @@
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
 
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_location"
                     style="@style/TextInputStyle"
@@ -331,8 +333,30 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilBags"
+                    style="@style/TextInputStyle"
+                    android:layout_marginTop="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter No. of Bags">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/eTextBags"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_weight"
                     style="@style/TextInputStyle"
+                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter approx. Weight in KG *">
@@ -352,6 +376,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_weight_quintal"
+                    android:layout_marginTop="10dp"
                     style="@style/TextInputStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -374,20 +399,6 @@
                         android:singleLine="true"
                         android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-
-                <!--  <TextView
-                      android:id="@+id/spinner_userName"
-                      android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:layout_marginTop="@dimen/_5sdp"
-                      android:background="@drawable/white_back_black_border"
-                      android:text="@string/select_coustomer"
-                      android:padding="@dimen/_10sdp"/>-->
-
-
-
-
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_gatepass"
@@ -416,6 +427,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_vehicle"
                     style="@style/TextInputStyle"
+                    android:layout_marginTop="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/vehicle_no">
@@ -425,8 +437,11 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
@@ -470,7 +485,6 @@
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
 
-
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_fpo"
                     style="@style/TextInputStyle"
@@ -508,7 +522,11 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/spinner_terminal"
                     app:layout_constraintWidth_default="wrap" />
+
             </LinearLayout>
+
         </ScrollView>
+
     </LinearLayout>
+
 </layout>
