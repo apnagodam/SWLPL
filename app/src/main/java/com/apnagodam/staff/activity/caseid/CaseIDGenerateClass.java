@@ -1,6 +1,8 @@
 package com.apnagodam.staff.activity.caseid;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,6 +13,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +31,12 @@ import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.adapter.CustomerNameAdapter;
 import com.apnagodam.staff.databinding.ActivityCaseIdBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
+import com.apnagodam.staff.model.CommodityData;
+import com.apnagodam.staff.model.CommodityResp;
+import com.apnagodam.staff.model.CustomerData;
+import com.apnagodam.staff.model.CustomerResp;
+import com.apnagodam.staff.model.StackData;
+import com.apnagodam.staff.model.StackResp;
 import com.apnagodam.staff.module.AllUserListPojo;
 import com.apnagodam.staff.module.CommudityResponse;
 import com.apnagodam.staff.module.OUTComodityPojo;
@@ -61,6 +70,31 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
     private List<CommudityResponse.Category> DataCommodity;
     private List<OUTComodityPojo.Datum> outCommodityListData;
 
+    private Context mContext;
+
+    /**
+     * value = IN
+     * value = OUT
+     */
+    private String inOutType = "";
+    private String customerId = "";
+    private String commodityId = "";
+    private String stackId = "";
+
+    private CustomerResp customerResp;
+    private ArrayList<String> customerDataArrayList;
+    private ArrayAdapter<String> mCustomerAdapter;
+
+    private CommodityResp commodityResp;
+    private ArrayList<CommodityData> commodityDataArrayList;
+    private ArrayAdapter<CommodityData> mCommodityAdapter;
+
+    private StackResp stackResp;
+    private StackData selectedStackData;
+    private ArrayList<StackData> stackDataArrayList;
+    private ArrayAdapter<StackData> mStackAdapter;
+
+
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_case_id;
@@ -68,6 +102,8 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
 
     @Override
     protected void setUp() {
+        mContext = CaseIDGenerateClass.this;
+
         binding.etCustomerGatepass.setEnabled(false);
         binding.etCustomerGatepass.setFocusable(false);
         binding.etCustomerGatepass.setClickable(false);
@@ -139,6 +175,472 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         });
     }
 
+    private void setValueOnSpinner() {
+        manageTerminalSpinner();
+
+        manageInOutSpinner();
+
+        customerDataArrayList = new ArrayList<>();
+        manageCustomerSpinner();
+
+        commodityDataArrayList = new ArrayList<>();
+        manageCommoditySpinner();
+
+        stackDataArrayList = new ArrayList<>();
+        manageStackSpinner();
+
+        spinnerEmployeeAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, LeadGenerateOtherName) {
+            //By using this method we will define how
+            // the text appears before clicking a spinner
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+
+            //By using this method we will define
+            //how the listview appears after clicking a spinner
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+        };
+        spinnerEmployeeAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+        // Set Adapter in the spinner
+        binding.spinnerLeadConvertOther.setAdapter(spinnerEmployeeAdpter);
+        binding.spinnerLeadConvertOther.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // selected item in the list
+                if (position != 0) {
+                    String EmpID = parentView.getItemAtPosition(position).toString();
+                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
+                        if (EmpID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() + "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")")) {
+                            selectConvertOther = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getUserId());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+
+        // commodity listing
+        if (selectInOUt != null) {
+            if (selectInOUt.equalsIgnoreCase("IN")) {
+                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
+                    //By using this method we will define how
+                    // the text appears before clicking a spinner
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getView(position, convertView, parent);
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+
+                    //By using this method we will define
+                    //how the listview appears after clicking a spinner
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getDropDownView(position, convertView, parent);
+                        v.setBackgroundColor(Color.parseColor("#05000000"));
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+                };
+                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                // Set Adapter in the spinner
+                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // selected item in the list
+                        if (position != 0) {
+                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                            for (int i = 0; i < DataCommodity.size(); i++) {
+                                String commodityType = DataCommodity.get(i).getCommodityType();
+                                if (commodityType.equalsIgnoreCase("Primary")) {
+                                    commodityType = "किसानी";
+                                } else {
+                                    commodityType = "MTP";
+                                }
+                                if (presentMeterStatusID.equalsIgnoreCase(DataCommodity.get(i).getCategory() + "(" + commodityType + ")")) {
+                                    commudityID = String.valueOf(DataCommodity.get(i).getId());
+                                    getstack();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+                });
+            } else {
+                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
+                    //By using this method we will define how
+                    // the text appears before clicking a spinner
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getView(position, convertView, parent);
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+
+                    //By using this method we will define
+                    //how the listview appears after clicking a spinner
+                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                        View v = super.getDropDownView(position, convertView, parent);
+                        v.setBackgroundColor(Color.parseColor("#05000000"));
+                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                        return v;
+                    }
+                };
+                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+                // Set Adapter in the spinner
+                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
+                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                        // selected item in the list
+                        if (position != 0) {
+                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                            for (int i = 0; i < outCommodityListData.size(); i++) {
+                                String commodityType = outCommodityListData.get(i).getCommodityType();
+                                if (commodityType.equalsIgnoreCase("Primary")) {
+                                    commodityType = "किसानी";
+                                } else {
+                                    commodityType = "MTP";
+                                }
+                                if (presentMeterStatusID.equalsIgnoreCase(outCommodityListData.get(i).getCategory() + "(" + commodityType + ")")) {
+                                    commudityID = String.valueOf(outCommodityListData.get(i).getCommodity());
+                                    getstack();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parentView) {
+                        // your code here
+                    }
+                });
+            }
+        }
+
+        // spinner purpose
+        binding.spinnerPurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0)
+                    selectPurpose = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // can leave this empty
+            }
+        });
+
+
+    }
+
+    private void manageTerminalSpinner() {
+        spinnerTeerminalAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, TerminalName) {
+            //By using this method we will define how
+            // the text appears before clicking a spinner
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+
+            //By using this method we will define
+            //how the listview appears after clicking a spinner
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+        };
+
+        spinnerTeerminalAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+
+        binding.spinnerTerminal.setAdapter(spinnerTeerminalAdpter);
+
+        binding.spinnerTerminal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == 0) {
+
+                } else {
+                    String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
+                    for (int i = 0; i < data.size(); i++) {
+                        if (presentMeterStatusID.contains(data.get(i).getName())) {
+                            TerminalID = String.valueOf(data.get(i).getId());
+                            binding.rlUser.setVisibility(View.VISIBLE);
+                            if (seleectCoustomer == null || TerminalID == null || selectInOUt == null) {
+                                // TODO: 13-01-2022
+                            } else {
+                                getoutCommodity();
+                                getstack();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+    }
+
+    private void manageInOutSpinner() {
+        binding.spinnerInOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (TerminalID == null) {
+                    // TODO: 13-01-2022 nothing for first time
+                    TerminalID = "";
+
+                } else if (TerminalID.length() == 0) {
+                    Toast.makeText(mContext, "Select at least one Terminal", Toast.LENGTH_LONG).show();
+                    inOutType = "";
+                    binding.spinnerInOut.setSelection(0);
+                } else {
+                    if (position == 0) {
+                        // TODO: 13-01-2022  clear all customer and other spinner values
+                        inOutType = "";
+                    } else {
+
+                        if (position == 1) {
+                            inOutType = "IN";
+                        } else if (position == 2) {
+                            inOutType = "OUT";
+                        }
+
+                        getCustomerList();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // can leave this empty
+            }
+        });
+    }
+
+    private void manageCustomerSpinner() {
+        customerDataArrayList.add(0, "Select Customer");
+
+        mCustomerAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, customerDataArrayList) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+                return v;
+            }
+        };
+
+        mCustomerAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+
+        binding.spinnerUserName.setAdapter(mCustomerAdapter);
+
+        binding.spinnerUserName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == 0) {
+                    // TODO: 13-01-2022  
+                } else {
+                    customerId = customerResp.data.get(position - 1).id;
+                    getCommodityList();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+        });
+    }
+
+    private void manageCommoditySpinner() {
+        CommodityData commodityData = new CommodityData();
+        commodityData.category = "Select Commodity";
+        commodityDataArrayList.add(0, commodityData);
+
+        mCommodityAdapter = new ArrayAdapter<CommodityData>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, commodityDataArrayList) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+
+                ((TextView) v).setText("" + commodityDataArrayList.get(position).category);
+
+                return v;
+            }
+
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+
+                ((TextView) v).setText("" + commodityDataArrayList.get(position).category);
+
+                return v;
+            }
+        };
+
+        mCommodityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+
+        binding.spinnerCommudity.setAdapter(mCommodityAdapter);
+
+        binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    // TODO: 13-01-2022
+                } else {
+                    commodityId = commodityDataArrayList.get(position).id;
+                    getStackList();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO: 13-01-2022  
+            }
+        });
+    }
+
+    private void manageStackSpinner() {
+        StackData stackData = new StackData();
+        stackData.stack_number = "Select Stack";
+        stackDataArrayList.add(0, stackData);
+
+        mStackAdapter = new ArrayAdapter<StackData>(this, R.layout.multiline_spinner_item, stackDataArrayList) {
+
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+
+                ((TextView) v).setText("" + stackDataArrayList.get(position).stack_number);
+                return v;
+            }
+
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getDropDownView(position, convertView, parent);
+                v.setBackgroundColor(Color.parseColor("#05000000"));
+                ((TextView) v).setTextColor(Color.parseColor("#000000"));
+
+                ((TextView) v).setText("" + stackDataArrayList.get(position).stack_number);
+
+                return v;
+            }
+        };
+
+        mStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
+
+        binding.spinnerStack.setAdapter(mStackAdapter);
+
+        binding.spinnerStack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == 0) {
+                    // TODO: 13-01-2022  
+                } else {
+                    selectedStackData = stackDataArrayList.get(position);
+                    stackId = selectedStackData.stack_id;
+
+                    binding.etCustomerWeight.setText("" + selectedStackData.request_weight);
+
+                    double weightInQ = Double.parseDouble(selectedStackData.request_weight) / 100;
+                    binding.etCustomerWeightQuintal.setText("" + weightInQ);
+
+                    binding.etCustomerVehicle.setText("" + selectedStackData.vehicle_no);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+        });
+    }
+
+    private void getTerminalListLevel() {
+        apiService.getTerminalListLevel().enqueue(new NetworkCallback<TerminalListPojo>(getActivity()) {
+            @Override
+            protected void onSuccess(TerminalListPojo body) {
+                data = body.getData();
+                for (int i = 0; i < data.size(); i++) {
+                    TerminalName.add(data.get(i).getName() + "(" + data.get(i).getWarehouseCode() + ")");
+                }
+            }
+        });
+    }
+
+    private void getCustomerList() {
+        apiService.getCustomers(TerminalID, inOutType).enqueue(new NetworkCallback<CustomerResp>(getActivity()) {
+            @Override
+            protected void onSuccess(CustomerResp data) {
+                customerResp = data;
+
+                customerDataArrayList = new ArrayList<>();
+                for (int i = 0; i < customerResp.data.size(); i++) {
+                    customerDataArrayList.add(customerResp.data.get(i).fname);
+                }
+
+                manageCustomerSpinner();
+            }
+        });
+    }
+
+    private void getCommodityList() {
+        apiService.getCommodities(TerminalID, inOutType, customerId).enqueue(new NetworkCallback<CommodityResp>(getActivity()) {
+            @Override
+            protected void onSuccess(CommodityResp data) {
+                commodityResp = data;
+
+                commodityDataArrayList = new ArrayList<>();
+                commodityDataArrayList.addAll(commodityResp.data);
+
+                manageCommoditySpinner();
+            }
+        });
+    }
+
+    private void getStackList() {
+        apiService.getStacks(TerminalID, inOutType, customerId, commodityId).enqueue(new NetworkCallback<StackResp>(getActivity()) {
+            @Override
+            protected void onSuccess(StackResp data) {
+                stackResp = data;
+
+                stackDataArrayList = new ArrayList<>();
+                stackDataArrayList.addAll(stackResp.data);
+
+                manageStackSpinner();
+            }
+        });
+    }
+
     private void getoutCommodity() {
         showDialog();
         apiService.getOutCommodityList(TerminalID, UserUniqueID).enqueue(new NetworkCallback<OUTComodityPojo>(getActivity()) {
@@ -185,7 +687,7 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
                     SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
                     // Set Adapter in the spinner
                     binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-                    if (selectInOUt!=null) {
+                    if (selectInOUt != null) {
                         if (selectInOUt.equalsIgnoreCase("IN")) {
                             SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
                                 //By using this method we will define how
@@ -292,548 +794,15 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         });
     }
 
-    private void setValueOnSpinner() {
-
-        // setAllData();
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-//                    CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
-//                    TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName()
-//                            + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
-//                    CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-//                    if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
-//                            SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
-//                        LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
-//                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
-//                                "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
-//                    }
-//                }
-//            }
-//        });
-
-        // UserList listing
-
-        SpinnerUserListAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CustomerName) {
-            //            //By using this method we will define how
-//            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-
-            //
-//            //By using this method we will define
-//            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-//
-        SpinnerUserListAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-//        // Set Adapter in the spinner
-        binding.spinnerUserName.setAdapter(SpinnerUserListAdapter);
-        binding.spinnerUserName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-//                // selected item in the list
-                if (position != 0) {
-                    try {
-                        UserID = parentView.getItemAtPosition(position).toString();
-                        String[] part = UserID.split("(?<=\\D)(?=\\d)");
-                        //    System.out.println(part[0]);
-                        // seleectCoustomer= String.valueOf((""+Integer.parseInt(part[1])).split("\\)"));
-                        seleectCoustomer = (part[1]);
-                        binding.inoutRl.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < Userdata.size(); i++) {
-                            if (UserID.equalsIgnoreCase(Userdata.get(i).getFname() + "(" + Userdata.get(i).getPhone())) {
-                                UserUniqueID = Userdata.get(i).getUserId();
-                            }
-                        }
-                        if (seleectCoustomer == null||TerminalID == null||selectInOUt==null) {
-                        } else {
-                            getoutCommodity();
-                            getstack();
-                        }
-                    } catch (Exception e) {
-                        e.getStackTrace();
-                    }
-                }
-                // SpinnerUserListAdapter.notifyDataSetChanged();
-            }
-
-            //
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-//                // your code here
-            }
-        });
-
-      /*  // Employee listing
-        new Thread() {
-            public void run() {
-                try {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            new Thread() {
-                                public void run() {
-                                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-                                        if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
-                                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
-                                            LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
-                                                    SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
-                                                    "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
-                                        }
-                                    }
-                                }
-                            }.start();
-                        }
-                    });
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }.start();*/
-        spinnerEmployeeAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, LeadGenerateOtherName) {
-            //By using this method we will define how
-            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-
-            //By using this method we will define
-            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        spinnerEmployeeAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        // Set Adapter in the spinner
-        binding.spinnerLeadConvertOther.setAdapter(spinnerEmployeeAdpter);
-        binding.spinnerLeadConvertOther.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // selected item in the list
-                if (position != 0) {
-                    String EmpID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-                        if (EmpID.equalsIgnoreCase(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() + "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")")) {
-                            selectConvertOther = String.valueOf(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getUserId());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
-
-        // commodity listing
-        if (selectInOUt!=null) {
-            if (selectInOUt.equalsIgnoreCase("IN")) {
-                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
-                    //By using this method we will define how
-                    // the text appears before clicking a spinner
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getView(position, convertView, parent);
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
-                    }
-
-                    //By using this method we will define
-                    //how the listview appears after clicking a spinner
-                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getDropDownView(position, convertView, parent);
-                        v.setBackgroundColor(Color.parseColor("#05000000"));
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
-                    }
-                };
-                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-                // Set Adapter in the spinner
-                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // selected item in the list
-                        if (position != 0) {
-                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                            for (int i = 0; i < DataCommodity.size(); i++) {
-                                String commodityType = DataCommodity.get(i).getCommodityType();
-                                if (commodityType.equalsIgnoreCase("Primary")) {
-                                    commodityType = "किसानी";
-                                } else {
-                                    commodityType = "MTP";
-                                }
-                                if (presentMeterStatusID.equalsIgnoreCase(DataCommodity.get(i).getCategory() + "(" + commodityType + ")")) {
-                                    commudityID = String.valueOf(DataCommodity.get(i).getId());
-                                    getstack();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // your code here
-                    }
-                });
-            } else {
-                SpinnerCommudityAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, CommudityName) {
-                    //By using this method we will define how
-                    // the text appears before clicking a spinner
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getView(position, convertView, parent);
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
-                    }
-
-                    //By using this method we will define
-                    //how the listview appears after clicking a spinner
-                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                        View v = super.getDropDownView(position, convertView, parent);
-                        v.setBackgroundColor(Color.parseColor("#05000000"));
-                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                        return v;
-                    }
-                };
-                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-                // Set Adapter in the spinner
-                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-                binding.spinnerCommudity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                        // selected item in the list
-                        if (position != 0) {
-                            String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                            for (int i = 0; i < outCommodityListData.size(); i++) {
-                                String commodityType = outCommodityListData.get(i).getCommodityType();
-                                if (commodityType.equalsIgnoreCase("Primary")) {
-                                    commodityType = "किसानी";
-                                } else {
-                                    commodityType = "MTP";
-                                }
-                                if (presentMeterStatusID.equalsIgnoreCase(outCommodityListData.get(i).getCategory() + "(" + commodityType + ")")) {
-                                    commudityID = String.valueOf(outCommodityListData.get(i).getCommodity());
-                                    getstack();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parentView) {
-                        // your code here
-                    }
-                });
-            }
-        }
-
-        // layout Terminal Listing resource and list of items.
-        spinnerTeerminalAdpter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, TerminalName) {
-            //By using this method we will define how
-            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-
-            //By using this method we will define
-            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        spinnerTeerminalAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        // Set Adapter in the spinner
-        binding.spinnerTerminal.setAdapter(spinnerTeerminalAdpter);
-        binding.spinnerTerminal.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // selected item in the list
-                if (position != 0) {
-                    String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                    for (int i = 0; i < data.size(); i++) {
-                        if (presentMeterStatusID.contains(data.get(i).getName())) {
-                            TerminalID = String.valueOf(data.get(i).getId());
-                            binding.rlUser.setVisibility(View.VISIBLE);
-                            if (seleectCoustomer == null||TerminalID == null||selectInOUt==null) {
-                            } else {
-                                getoutCommodity();
-                                getstack();
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
-
-        SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
-            //By using this method we will define how
-            // the text appears before clicking a spinner
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-
-            //By using this method we will define
-            //how the listview appears after clicking a spinner
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        // Set Adapter in the spinner
-        binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-        // spinner purpose
-        binding.spinnerPurpose.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0)
-                    selectPurpose = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // can leave this empty
-            }
-        });
-
-
-        // spinner in/out
-        binding.spinnerInOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0) {
-                    selectInOUt = parent.getItemAtPosition(position).toString();
-                    if (selectInOUt.equalsIgnoreCase("IN")) {
-                        commudityID=null;
-                        CommudityName.clear();
-                        if (DataCommodity != null) {
-                            DataCommodity.clear();
-                        }
-                        CommudityName.add(getResources().getString(R.string.commodity));
-                        showDialog();
-                        apiService.getcommuydity_terminal_user_emp_listing("Emp").enqueue(new NetworkCallbackWProgress<CommudityResponse>(getActivity()) {
-                            @Override
-                            protected void onSuccess(CommudityResponse body) {
-                                DataCommodity = body.getCategories();
-                                for (int i = 0; i < body.getCategories().size(); i++) {
-                                    String commodityType = DataCommodity.get(i).getCommodityType();
-                                    if (commodityType.equalsIgnoreCase("Primary")) {
-                                        commodityType = "किसानी";
-                                    } else {
-                                        commodityType = "MTP";
-                                    }
-                                    CommudityName.add(DataCommodity.get(i).getCategory() + "(" + commodityType + ")");
-                                    hideDialog();
-                                }
-                                binding.RLCommodity.setVisibility(View.VISIBLE);
-                                SpinnerCommudityAdapter = new ArrayAdapter<String>(CaseIDGenerateClass.this, R.layout.multiline_spinner_item, CommudityName) {
-                                    //By using this method we will define how
-                                    // the text appears before clicking a spinner
-                                    public View getView(int position, View convertView, ViewGroup parent) {
-                                        View v = super.getView(position, convertView, parent);
-                                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                                        return v;
-                                    }
-
-                                    //By using this method we will define
-                                    //how the listview appears after clicking a spinner
-                                    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                                        View v = super.getDropDownView(position, convertView, parent);
-                                        v.setBackgroundColor(Color.parseColor("#05000000"));
-                                        ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                                        return v;
-                                    }
-                                };
-                                SpinnerCommudityAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-                                // Set Adapter in the spinner
-                                binding.spinnerCommudity.setAdapter(SpinnerCommudityAdapter);
-                                getstack();
-                            }
-                        });
-
-                    }else {
-                        if (TerminalID == null) {
-                            Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.terminal_name), Toast.LENGTH_LONG).show();
-                        } else if (seleectCoustomer == null) {
-                            Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_coustomer), Toast.LENGTH_LONG).show();
-                        } else {
-                            commudityID=null;
-                            getoutCommodity();
-
-                        }
-                    }
-
-
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // can leave this empty
-            }
-        });
-
-     /*   // spinner select other generated
-        binding.spinnerLeadConvertOther.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 0)
-                    selectConvertOther = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // can leave this empty
-            }
-        });*/
-
-      /*  binding.spinnerUserName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCustomerNamePopup(CustomerName);
-            }
-        });*/
-        // layout Terminal Listing resource and list of items.
-        SpinnerStackAdapter = new ArrayAdapter<String>(this, R.layout.multiline_spinner_item, StackName) {
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View v = super.getView(position, convertView, parent);
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-
-            public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                View v = super.getDropDownView(position, convertView, parent);
-                v.setBackgroundColor(Color.parseColor("#05000000"));
-                ((TextView) v).setTextColor(Color.parseColor("#000000"));
-                return v;
-            }
-        };
-        SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item);
-        binding.spinnerStack.setAdapter(SpinnerStackAdapter);
-        binding.spinnerStack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // selected item in the list
-                if (position != 0) {
-                    try {
-                        stackID = String.valueOf(Stackdata.get(position - 1).getId());
-                        if (selectInOUt.contains("IN")) {
-                            invWeightRequestWeight = "" + Stackdata.get(position - 1).getRequestWeight();
-                            binding.etCustomerVehicle.setText("" + Stackdata.get(position - 1).getVehicle_no());
-                            binding.etCustomerWeightQuintal.setText("" + Stackdata.get(position - 1).getRequestWeight());
-                            Double qtilweight = Double.parseDouble(Stackdata.get(position - 1).getRequestWeight()) * 100.0;
-                            binding.etCustomerWeight.setText("" + qtilweight);
-                            binding.etCustomerVehicle.setClickable(false);
-                            binding.etCustomerVehicle.setFocusable(false);
-                            binding.etCustomerVehicle.setEnabled(false);
-                            binding.etCustomerVehicle.setFocusableInTouchMode(false);
-                        } else {
-                            invWeightRequestWeight = "" + Stackdata.get(position - 1).getRequestWeight();
-                            binding.etCustomerWeightQuintal.setText("" + Stackdata.get(position - 1).getRequestWeight());
-                            Double qtilweight = Double.parseDouble(Stackdata.get(position - 1).getRequestWeight()) * 100.0;
-                            binding.etCustomerWeight.setText("" + qtilweight);
-                            binding.etCustomerVehicle.setText("" + Stackdata.get(position - 1).getVehicle_no());
-                            binding.etCustomerVehicle.setClickable(false);
-                            binding.etCustomerVehicle.setFocusable(false);
-                            binding.etCustomerVehicle.setEnabled(false);
-                            binding.etCustomerVehicle.setFocusableInTouchMode(false);
-                        }
-                    } catch (IndexOutOfBoundsException e) {
-
-                    }
-                    String presentMeterStatusID = parentView.getItemAtPosition(position).toString();
-                 /*   for (int i = 0; i < Stackdata.size(); i++) {
-                        if (Stackdata.get(position).getStackId().equalsIgnoreCase(StackID.get(i))){*/
-
-                         /*   break;
-                        }*/
-                       /* if (presentMeterStatusID.equalsIgnoreCase(Stackdata.get(i).getStackNumber())) {
-                            stackID = String.valueOf(Stackdata.get(i).getId());
-                            if (selectInOUt.contains("IN")) {
-                                binding.etCustomerVehicle.setText("" + Stackdata.get(i).getVehicle_no());
-                                binding.etCustomerVehicle.setClickable(false);
-                                binding.etCustomerVehicle.setFocusable(false);
-                                binding.etCustomerVehicle.setEnabled(false);
-                                binding.etCustomerVehicle.setFocusableInTouchMode(false);
-                            } else {
-                                 invWeightRequestWeight = "" + Stackdata.get(i).getRequestWeight();
-                                binding.etCustomerWeightQuintal.setText("" + Stackdata.get(i).getRequestWeight());
-                                Double qtilweight = Double.parseDouble(Stackdata.get(i).getRequestWeight())*100.0;
-                                binding.etCustomerWeight.setText("" +qtilweight);
-                                binding.etCustomerVehicle.setText("" + Stackdata.get(i).getVehicle_no());
-                                binding.etCustomerVehicle.setClickable(false);
-                                binding.etCustomerVehicle.setFocusable(false);
-                                binding.etCustomerVehicle.setEnabled(false);
-                                binding.etCustomerVehicle.setFocusableInTouchMode(false);
-                            }
-                            break;
-                        }*/
-                    // }
-                } else {
-                    stackID = null;
-                    binding.etCustomerVehicle.setClickable(true);
-                    binding.etCustomerVehicle.setFocusable(true);
-                    binding.etCustomerVehicle.setEnabled(true);
-                    binding.etCustomerVehicle.setFocusableInTouchMode(true);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
-    }
-
     private void getstack() {
-        if (commudityID==null){
+        if (commudityID == null) {
             Utility.showAlertDialog(CaseIDGenerateClass.this, getString(R.string.alert), "please select commodity First ", new Utility.AlertCallback() {
                 @Override
                 public void callback() {
 
                 }
             });
-        }else {
+        } else {
             apiService.getStackList(new StackPostData(commudityID, TerminalID, seleectCoustomer, selectInOUt)).enqueue(new NetworkCallback<StackListPojo>(getActivity()) {
                 @Override
                 protected void onSuccess(StackListPojo body) {
@@ -922,17 +891,6 @@ public class CaseIDGenerateClass extends BaseActivity<ActivityCaseIdBinding> imp
         }.start();
     }
 
-    private void getTerminalListLevel() {
-        apiService.getTerminalListLevel().enqueue(new NetworkCallback<TerminalListPojo>(getActivity()) {
-            @Override
-            protected void onSuccess(TerminalListPojo body) {
-                data = body.getData();
-                for (int i = 0; i < data.size(); i++) {
-                    TerminalName.add(data.get(i).getName() + "(" + data.get(i).getWarehouseCode() + ")");
-                }
-            }
-        });
-    }
 
     private void getUserList() {
         apiService.getUserList().enqueue(new NetworkCallback<AllUserListPojo>(getActivity()) {

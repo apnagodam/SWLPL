@@ -42,6 +42,9 @@ import com.apnagodam.staff.Network.Response.AttendanceResponse;
 import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
 import com.apnagodam.staff.Network.Response.VersionCodeResponse;
+import com.apnagodam.staff.model.CommodityResp;
+import com.apnagodam.staff.model.CustomerResp;
+import com.apnagodam.staff.model.StackResp;
 import com.apnagodam.staff.module.AllCaseIDResponse;
 import com.apnagodam.staff.module.AllConvancyList;
 import com.apnagodam.staff.module.AllIntantionList;
@@ -195,32 +198,32 @@ public interface ApiService {
     Call<LoginResponse> doClosedCase(@Body ClosedCasesPostData closedCasesPostData);
 
     @POST("emp_api/apna_emp_addPrice")
-    Call<LoginResponse>setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
+    Call<LoginResponse> setPricing(@Body CreatePricingSetPostData createPricingSetPostData);
 
     // tuck book
     @GET("emp_api/apna_emp_get_truckbook")
-    Call<AllTruckBookListResponse>getTruckBookList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
+    Call<AllTruckBookListResponse> getTruckBookList(@Query("limit") String limit, @Query("page") int page, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_update_truckbook")
-    Call<LoginResponse>uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
+    Call<LoginResponse> uploadTruckDetails(@Body UploadTruckDetailsPostData uploadTruckDetailsPostData);
 
     // labour book
     @GET("emp_api/apna_emp_get_labourbook")
-    Call<AllLabourBookListResponse>getLabourBookList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<AllLabourBookListResponse> getLabourBookList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_update_labour")
-    Call<LoginResponse>uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
+    Call<LoginResponse> uploadLabourDetails(@Body UploadLabourDetailsPostData uploadLabourDetailsPostData);
 
     // first katha parchi
     @GET("emp_api/apna_emp_get_kanta_prachi")
-    Call<FirstkanthaParchiListResponse>getf_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<FirstkanthaParchiListResponse> getf_kanthaParchiList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_kanta_parchi")
-    Call<LoginResponse>uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
+    Call<LoginResponse> uploadFirstkantaParchi(@Body UploadFirstkantaParchiPostData uploadFirstkantaParchiPostData);
 
     // first quality reports
     @GET("emp_api/apna_emp_get_quality")
-    Call<FirstQuilityReportListResponse>getf_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+    Call<FirstQuilityReportListResponse> getf_qualityReportsList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     @POST("emp_api/apna_emp_f_quality")
     Call<LoginResponse> uploadFirstQualityReports(@Body UploadFirstQualityPostData uploadFirstQualityPostData);
@@ -411,14 +414,17 @@ public interface ApiService {
     /*CCTV*/
     @POST("emp_api/apna_emp_cctv_update")
     Call<LoginResponse> uploadCCTVFile(@Body UploadCCTVPostData uploadCCTVPostData);
+
     @GET("emp_api/apna_emp_get_cctv")
     Call<CCTVListPojo> getCCTVList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
 
     /*IVR*/
     @POST("emp_api/apna_emp_ivr_update")
     Call<LoginResponse> uploadIVRFile(@Body UploadIVRPostData uploadIVRPostData);
+
     @GET("emp_api/apna_emp_get_ivr")
     Call<IVRListPojo> getIVRList(@Query("limit") String limit, @Query("page") String page_no, @Query("in_out") String in_out, @Query("search") String search);
+
     @GET("emp_api/apna_emp_user_terminal_commodity")
     Call<OUTComodityPojo> getOutCommodityList(@Query("terminal_id") String terminal_id, @Query("user_id") String user_id);
 
@@ -445,21 +451,40 @@ public interface ApiService {
     /*emp feedback */
     @GET("api/designation_list")
     Call<FeedbackPojo> getDepartmentList();
+
     @POST("emp_api/apna_emp_feedback_submit")
     Call<LoginResponse> doCreateEmpSuggestion(@Body EmpFeedbackRequest empFeedbackRequest);
+
     @GET("emp_api/apna_emp_get_feedback")
     Call<FeedbackListPojo> getAllFeedbackList();
+
     @GET("emp_api/apna_emp_feedback_request")
     Call<FeedbackApprovalLisPojo> getAllRequestList();
+
     @GET("emp_api/apna_emp_feedback_action")
-    Call<LoginResponse> getcancelapproveFeedback(@Query("row_id") String row_id,@Query("action") String action);
+    Call<LoginResponse> getcancelapproveFeedback(@Query("row_id") String row_id, @Query("action") String action);
 
 
-/*gatepasss break */
-@POST("emp_api/apna_emp_ivr_wb_update")
-Call<LoginResponse> doCreateEmpGatepasssUpdate(@Body EmpUpdateGartepassRequest empUpdateGartepassRequest);
+    /*gatepasss break */
+    @POST("emp_api/apna_emp_ivr_wb_update")
+    Call<LoginResponse> doCreateEmpGatepasssUpdate(@Body EmpUpdateGartepassRequest empUpdateGartepassRequest);
+
     @GET("emp_api/apna_emp_get_pre_gatepass")
     Call<ApproveGatepassPojo> getPreApproveGatePassData(@Query("case_id") String case_id);
+
+
+    /**
+     * apis by vishal
+     */
+    @GET("emp_api/apna_emp_get_stack_request_customers")
+    Call<CustomerResp> getCustomers(@Query("terminal_id") String terminalId, @Query("in_out") String inOut);
+
+    @GET("emp_api/apna_emp_get_stack_commodity")
+    Call<CommodityResp> getCommodities(@Query("terminal_id") String terminalId, @Query("in_out") String inOut, @Query("user_id") String user_id);
+
+    @GET("emp_api/apna_emp_get_stack_requests")
+    Call<StackResp> getStacks(@Query("terminal_id") String terminalId, @Query("in_out") String inOut,
+                              @Query("customer_id") String customer_id, @Query("commodity_id") String commodity_id);
 
 }
 
