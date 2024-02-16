@@ -1,0 +1,159 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+android {
+    signingConfigs {
+        release {
+              keyAlias 'employee'
+              keyPassword 'apnagodamemp'
+              storeFile file('/B:/backup/employee/play_store/newFolder/keystoreFile.jks')
+              storePassword 'apnagodamemp'
+        }
+    }
+    //... removed for brevity
+    bundle {
+        // Specifies that the app bundle should not support
+        // configuration APKs for language resources. These
+        // resources are instead packaged with each base and
+        // dynamic feature APK.
+        language {
+            enableSplit = false
+        }
+    }
+    compileSdkVersion 34
+
+    dataBinding {
+        enabled = true
+    }
+
+    defaultConfig {
+        applicationId "com.apnagodam.staff"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 4
+        versionName "1.0.3"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.debug
+    //        useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+        }
+        release {
+            signingConfig signingConfigs.release
+            multiDexEnabled true
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type.
+            minifyEnabled true
+            debuggable false
+    //        useProguard true
+            // Enables resource shrinking, which is performed by the
+            // Android Gradle plugin.
+            shrinkResources true
+            crunchPngs true
+            pseudoLocalesEnabled false
+            zipAlignEnabled true
+            jniDebuggable false
+            renderscriptDebuggable false
+            // Includes the default ProGuard rules files that are packaged with
+            // the Android Gradle plugin.
+            // R8 configuration files.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    namespace 'com.apnagodam.staff'
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.core:core:1.2.0'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    //dimen
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    //custom font
+    implementation 'io.github.inflationx:calligraphy3:3.1.1'
+    implementation 'io.github.inflationx:viewpump:2.0.3'
+    //Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+
+    //Permissions
+    implementation 'com.karumi:dexter:6.0.2'
+    //location
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    // material spinner
+    implementation 'com.github.tiper:MaterialSpinner:1.4.1'
+
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    //Multidex
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'org.jetbrains:annotations:15.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    //sms otp
+    implementation 'com.google.android.gms:play-services-base:17.0.0'
+    implementation 'com.google.android.gms:play-services-identity:17.0.0'
+    //Optional for phone number hint
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.1.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    // Used For OTP View In OtpActivity
+    implementation 'com.github.aabhasr1:OtpView:1.0.5'
+//Used For   Phone No Country Code Picker
+    implementation 'com.github.joielechong:countrycodepicker:2.2.0'
+    //cropLib
+    implementation 'com.github.yalantis:ucrop:2.2.1-native'
+
+    //map
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.11.0'
+    annotationProcessor 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.github.hotstu:sasuke:1.0.0'
+    /*zoomimage*/
+    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
+    implementation 'com.android.support:palette-v7:29.0.3'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.2.0'
+    //for camera and gallery
+    implementation 'com.wang.avi:library:2.1.3'
+    implementation  'com.fxn769:pix:1.5.3'
+    // for printer
+    implementation 'com.github.DantSu:ESCPOS-ThermalPrinter-Android:2.0.6'
+
+    //rx java
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+}

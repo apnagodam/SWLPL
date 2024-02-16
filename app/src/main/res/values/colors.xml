@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#750c0e</color>
+    <color name="colorPrimaryDark">#750c0e</color>
+    <color name="colorAccent">#03DAC5</color>
+
+    <color name="home_red">#ee473e</color>
+    <color name="iconGray">#939393</color>
+    <color name="tw__solid_white">#FFFFFFFF</color>
+    <color name="black_back">#454545</color>
+    <color name="colorRed">#fb0113</color>
+    <color name="colorGreen">#3cc617</color>
+    <color name="colorBlackLight">#3a3a3a</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="dark_gray_shade">#333333</color>
+    <color name="disabledColor">#06000000</color>
+    <!--    <color name="focusedBorderColor">#5FDDD9</color>-->
+    <color name="colorBlackDark">#000000</color>
+    <color name="lightGray">#ebebeb</color>
+    <color name="darkYellow">#FEC426</color>
+    <color name="darkGray">#dcdcdc</color>
+    <color name="darkGeay">#363636</color>
+    <color name="color_top100">#4c4c4c</color>
+    <color name="view_color">#acacac</color>
+    <color name="textColor">#8f6f86</color>
+    <color name="lead_btn">#1ab394</color>
+    <color name="yellow">#f0ad4e</color>
+    <color name="lightgray">#eee</color>
+</resources>
