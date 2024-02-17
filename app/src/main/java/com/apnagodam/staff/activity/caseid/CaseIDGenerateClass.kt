@@ -13,13 +13,16 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
 import com.apnagodam.staff.Network.Request.StackPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.LeadsViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.CustomerNameAdapter
@@ -30,10 +33,11 @@ import com.apnagodam.staff.module.CommodityResponseData
 import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnClickListener,
     AdapterView.OnItemSelectedListener {
    lateinit var SpinnerStackAdapter: ArrayAdapter<String>
@@ -61,7 +65,10 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     lateinit   var Userdata: ArrayList<AllUserListPojo.User>
     lateinit   var Stackdata: ArrayList<StackListPojo.Datum>
     lateinit var commodityData: ArrayList<CommodityResponseData.Data>
+
+    val leadsViewModel by viewModels<LeadsViewModel>()
     override fun getLayoutResId(): Int {
+
         return R.layout.activity_case_id
     }
 
@@ -735,15 +742,22 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     }
 
     private fun terminalListLevel(){
-        apiService.terminalListLevel.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {  body->
-                data = body.data as ArrayList<TerminalListPojo.Datum>
-                for (i in data.indices) {
-                    TerminalName!!.add(data.get(i).name + "(" + data.get(i).warehouseCode + ")")
+        leadsViewModel.getTerminalList()
+        leadsViewModel.response.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    data = it.data!!.data as ArrayList<TerminalListPojo.Datum>
+                    for (i in data.indices) {
+                        TerminalName.add(data.get(i).name + "(" + data.get(i).warehouseCode + ")")
+                    }
                 }
-                //            getUserList();
-            }.subscribe()
+            }
+
+            //            getUser
+        }
+
     }
     private val userList: Unit
         private get() {

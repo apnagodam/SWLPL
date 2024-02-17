@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.apnagodam.staff.BuildConfig;
-import com.apnagodam.staff.GlideApp;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.StaffProfileActivity;
@@ -24,6 +23,7 @@ import com.apnagodam.staff.interfaces.OnProfileClickListener;
 import com.apnagodam.staff.module.MenuItem;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Constants;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (getItemViewType(position) == VIEW_TYPE_HEADER) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
             if (userDetailsValues.getProfileImage() != null) {
-                GlideApp.with(headerViewHolder.profileImage.getContext())
+                Glide.with(headerViewHolder.profileImage.getContext())
                         .load(Constants.IMAGE_BASE_URL + userDetailsValues.getProfileImage())
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .placeholder(R.drawable.user_shape)

@@ -10,12 +10,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallbackWProgress
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.TruckBookAdapter
@@ -23,18 +26,22 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var truckBookAdapter: TruckBookAdapter? = null
     private var pageOffset = 1
     private var totalPage = 0
     private var AllCases: MutableList<AllTruckBookListResponse.Datum?>? = null
     private var TruckImage: String? = null
+
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
+    private val truckViewModel  : TruckBookViewModel by viewModels<TruckBookViewModel>()
 
     override fun setUp() {
         AllCases = arrayListOf()
@@ -47,7 +54,8 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
+        getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
@@ -135,28 +143,35 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
-        apiService.getTruckBookList("10",pageOffset,"IN",search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { showDialog() }
-            .doOnError{hideDialog()}
-            .doOnNext{body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.truckBookCollection == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
-                    // AllCases=body.getTruckBookCollection().getData();
+        truckViewModel.getTruckBookList("10",pageOffset,"IN",search)
+        truckViewModel.response.observe(this){
+            when(it){
+
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+                is NetworkResult.Success ->{
+                    binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
-                    totalPage = body.truckBookCollection.lastPage
-                    AllCases!!.addAll(body.truckBookCollection.data)
-                    truckBookAdapter!!.notifyDataSetChanged()
-                    //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
+                    if (it.data!!.truckBookCollection == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        // AllCases=body.getTruckBookCollection().getData();
+                        AllCases!!.clear()
+                        totalPage = it.data.truckBookCollection.lastPage
+                        AllCases!!.addAll(it.data.truckBookCollection.data)
+                        truckBookAdapter!!.notifyDataSetChanged()
+                        //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
+                    }
                 }
             }
-            .subscribe()
+
+        }
 
     }
 

@@ -22,21 +22,21 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
     public CustomTypefaceSpan(int color) {
         this.color = color;
     //    this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/GothamBold.ttf");
-        this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/RobotoLight.ttf");
-        size = ApnaGodamApp.getApp().getResources().getDimensionPixelSize(R.dimen._14ssp);
+        this.typeface = Typeface.createFromAsset(ApnaGodamApp.app.getAssets(), "fonts/RobotoLight.ttf");
+        size = ApnaGodamApp.app.getResources().getDimensionPixelSize(R.dimen._14ssp);
     }
 
     public CustomTypefaceSpan(int color, float size) {
         this.color = color;
    //     this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/GothamBold.ttf");
-        this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/RobotoLight.ttf");
+        this.typeface = Typeface.createFromAsset(ApnaGodamApp.app.getAssets(), "fonts/RobotoLight.ttf");
         this.size = size * 2;
     }
 
     public CustomTypefaceSpan() {
  //       this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/GothamBold.ttf");
-        this.typeface = Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/RobotoLight.ttf");
-        size = ApnaGodamApp.getApp().getResources().getDimensionPixelSize(R.dimen._14ssp);
+        this.typeface = Typeface.createFromAsset(ApnaGodamApp.app.getAssets(), "fonts/RobotoLight.ttf");
+        size = ApnaGodamApp.app.getResources().getDimensionPixelSize(R.dimen._14ssp);
     }
 
     public static SpannableStringBuilder getSpannableString(String string, String part) {

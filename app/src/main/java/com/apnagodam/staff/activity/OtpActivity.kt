@@ -1,92 +1,83 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity
 
-import android.annotation.TargetApi;
-import android.content.IntentFilter;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.Toast;
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Request.LoginPostData;
-import com.apnagodam.staff.Network.Request.OTPData;
-import com.apnagodam.staff.Network.Response.LoginResponse;
-import com.apnagodam.staff.Network.Response.OTPvarifedResponse;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
-import com.apnagodam.staff.adapter.TruckBookAdapter;
-import com.apnagodam.staff.databinding.ActivityOtpBinding;
-import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
-import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
-import com.apnagodam.staff.reciever.SMSReceiver;
-import com.apnagodam.staff.utils.Utility;
-import com.google.android.gms.auth.api.phone.SmsRetriever;
+import android.annotation.TargetApi
+import android.content.IntentFilter
+import android.os.Build
+import android.os.CountDownTimer
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.LoginPostData
+import com.apnagodam.staff.Network.Request.OTPData
+import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.OTPvarifedResponse
+import com.apnagodam.staff.Network.viewmodel.LoginViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.StaffDashBoardActivity
+import com.apnagodam.staff.databinding.ActivityOtpBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.reciever.SMSReceiver
+import com.apnagodam.staff.reciever.SMSReceiver.OTPReceiveListener
+import com.apnagodam.staff.utils.Utility
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+@AndroidEntryPoint
+class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
+    private var smsReceiver: SMSReceiver? = null
+    var mobileNumbewr: String? = null
+    var empID: String? = null
+    var setting: String? = ""
+    var counter = 0
+    private var userInfo: OTPvarifedResponse? = null
 
-public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMSReceiver.OTPReceiveListener {
-    private SMSReceiver smsReceiver;
-    String mobileNumbewr,empID,setting = "";
-    public int counter;
-    private OTPvarifedResponse userInfo;
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_otp;
+    private val loginViewModel by viewModels<LoginViewModel>()
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_otp
     }
+
     @TargetApi(Build.VERSION_CODES.O)
-    @Override
-    protected void setUp() {
-        Bundle bundle = getIntent().getBundleExtra(BUNDLE);
+    override fun setUp() {
+        val bundle = intent.getBundleExtra(BUNDLE)
         // To retrieve object in second Activity
         if (bundle != null) {
-            mobileNumbewr = bundle.getString("mobile");
-            setting = bundle.getString("setting");
-            empID = bundle.getString("empID");
+            mobileNumbewr = bundle.getString("mobile")
+            setting = bundle.getString("setting")
+            empID = bundle.getString("empID")
         }
-        binding.txtHead.setText(this.getString(R.string.hint_otp)+" :- " + mobileNumbewr);
-        smsReceiver = new SMSReceiver();
-        smsReceiver.setOTPListener((SMSReceiver.OTPReceiveListener) this);
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION);
-        this.registerReceiver(smsReceiver, intentFilter);
-        binding.btnVerfyOtp.setOnClickListener(v -> getvarifedOtp());
-        binding.btnResendOtp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                binding.etOtpNumber.setText(null);
-                getRersendOTP();
-                binding.timer.setVisibility(View.VISIBLE);
-                countDownTime();
+        binding!!.txtHead.text = this.getString(R.string.hint_otp) + " :- " + mobileNumbewr
+        smsReceiver = SMSReceiver()
+        smsReceiver!!.setOTPListener(this as OTPReceiveListener)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
+        this.registerReceiver(smsReceiver, intentFilter)
+        binding!!.btnVerfyOtp.setOnClickListener { v: View? -> getvarifedOtp() }
+        binding!!.btnResendOtp.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                binding!!.etOtpNumber.setText(null)
+                rersendOTP
+                binding!!.timer.visibility = View.VISIBLE
+                countDownTime()
             }
-        });
-        countDownTime();
-        binding.etOtpNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length()>5)
-                    getvarifedOtp();
-               /* if (getvarifedOtp()){
+        })
+        countDownTime()
+        binding!!.etOtpNumber.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                if (s.length > 5) getvarifedOtp()
+                /* if (getvarifedOtp()){
 
                 }
                 if (s.toString().equals("1234")) {
@@ -96,97 +87,89 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
                     binding.etOtpNumber.setText(null);
                 }*/
             }
-        });
+        })
     }
 
-    private void countDownTime() {
-        new CountDownTimer(30000,1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                binding.timer.setText("0."+String.valueOf(counter)+" sec");
-                counter++;
+    private fun countDownTime() {
+        object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                binding!!.timer.text = "0.$counter sec"
+                counter++
             }
-            @Override
-            public void onFinish() {
-                binding.btnResendOtp.setVisibility(View.VISIBLE);
-                binding.timer.setVisibility(View.GONE);
+
+            override fun onFinish() {
+                binding!!.btnResendOtp.visibility = View.VISIBLE
+                binding!!.timer.visibility = View.GONE
             }
-        }.start();
+        }.start()
     }
 
-    private void getvarifedOtp() {
-        if (isValid()) {
+    private fun getvarifedOtp() {
+        if (isValid) {
             /// apply otp varifed api here
-            varifedOTP();
+            varifedOTP()
         }
     }
 
-    private void getRersendOTP() {
-        /// apply resend otp api here
-        ResendOTP();
-    }
-
-    private void ResendOTP() {
-
-        Observable<LoginResponse> doLoginObservable = apiService.doLogin(new LoginPostData(empID, "Emp"))
-                        .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread());
-
-        doLoginObservable.subscribe(
-                new Observer<LoginResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(LoginResponse loginResponse) {
-                        Toast.makeText(OtpActivity.this, loginResponse.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                }
-        );
-
-    }
-
-    boolean isValid() {
-        if (TextUtils.isEmpty(stringFromView(binding.etOtpNumber))) {
-            return Utility.showEditTextError(binding.tilOtpNumber, R.string.error_validateotp);
+    private val rersendOTP: Unit
+        private get() {
+            /// apply resend otp api here
+            ResendOTP()
         }
-        return true;
-    }
 
-    void varifedOTP() {
-        apiService.doOTPVerify(new OTPData(stringFromView(binding.etOtpNumber), mobileNumbewr)).enqueue(new NetworkCallback<OTPvarifedResponse>(getActivity()) {
-            @Override
-            protected void onSuccess(OTPvarifedResponse body) {
-                userInfo =body;
-                SharedPreferencesRepository.getDataManagerInstance().saveSessionToken(body.getAccessToken());
-                SharedPreferencesRepository.getDataManagerInstance().setBankNameList(body.getBanks());
-                SharedPreferencesRepository.getDataManagerInstance().saveUserData(body.getUserDetails());
-                Toast.makeText(OtpActivity.this, body.getMessage(), Toast.LENGTH_LONG).show();
-                SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true);
-                if (setting.equalsIgnoreCase("changeMobileNumber")) {
-                    startActivityAndClear(SettingActivity.class);
+    private fun ResendOTP() {
+        loginViewModel.doLogin(LoginPostData(empID, "Emp"))
+        loginViewModel.response.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
                 }
-                else {
-                    // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
-                    startActivityAndClear(StaffDashBoardActivity.class);
+
+                is NetworkResult.Loading -> {
+                    showDialog()
                 }
-               // getAllPermission();
+
+                is NetworkResult.Success -> {
+                    Toast.makeText(this@OtpActivity, it.data!!.message, Toast.LENGTH_LONG).show()
+
+                }
             }
-        });
+        }
     }
-    private void getAllPermission() {
+
+    val isValid: Boolean
+        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etOtpNumber))) {
+            Utility.showEditTextError(binding!!.tilOtpNumber, R.string.error_validateotp)
+        } else true
+
+    fun varifedOTP() {
+        loginViewModel.dpVerifyOtp(OTPData(stringFromView(binding!!.etOtpNumber), mobileNumbewr))
+
+        loginViewModel.Otpresponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    userInfo = it.data
+                    SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
+                    SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
+                    SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
+                    Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
+                    SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
+                    if (setting.equals("changeMobileNumber", ignoreCase = true)) {
+                        startActivityAndClear(SettingActivity::class.java)
+                    } else {
+                        // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                        startActivityAndClear(StaffDashBoardActivity::class.java)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private val allPermission: Unit
+        private get() {
 //
 //        apiService.getPermission(userInfo.getUserDetails().getRole_id(),userInfo.getUserDetails().getLevel_id()).enqueue(new NetworkCallback<AllUserPermissionsResultListResponse>(getActivity()) {
 //            @Override
@@ -205,39 +188,32 @@ public class OtpActivity extends BaseActivity<ActivityOtpBinding> implements SMS
 //                }
 //            }
 //        });
-    }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        }
+
+    override fun onDestroy() {
+        super.onDestroy()
         if (smsReceiver != null) {
-            unregisterReceiver(smsReceiver);
+            unregisterReceiver(smsReceiver)
         }
     }
 
-
-    @Override
-    public void onOTPReceived(String otp) {
-      //  Toast.makeText(this, "Otp Received " + otp, Toast.LENGTH_LONG).show();
-        binding.etOtpNumber.setText(otp);
+    override fun onOTPReceived(otp: String) {
+        //  Toast.makeText(this, "Otp Received " + otp, Toast.LENGTH_LONG).show();
+        binding!!.etOtpNumber.setText(otp)
         /*if (isValid()) {
             /// apply otp varifed api here
             varifedOTP();
-        }*/
-        if (smsReceiver != null) {
-            unregisterReceiver(smsReceiver);
-            smsReceiver = null;
+        }*/if (smsReceiver != null) {
+            unregisterReceiver(smsReceiver)
+            smsReceiver = null
         }
     }
 
-    @Override
-    public void onOTPTimeOut() {
-        Toast.makeText(this, "Time out, please resend", Toast.LENGTH_LONG).show();
-        binding.btnResendOtp.setVisibility(View.VISIBLE);
-        binding.timer.setVisibility(View.GONE);
+    override fun onOTPTimeOut() {
+        Toast.makeText(this, "Time out, please resend", Toast.LENGTH_LONG).show()
+        binding!!.btnResendOtp.visibility = View.VISIBLE
+        binding!!.timer.visibility = View.GONE
     }
 
-    @Override
-    public void onOTPReceivedError(String error) {
-
-    }
+    override fun onOTPReceivedError(error: String) {}
 }

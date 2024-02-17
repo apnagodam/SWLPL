@@ -7,10 +7,13 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.LoginPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityLoginBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -25,9 +28,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     private var smsReceiver: SMSReceiver? = null
     private var RESOLVE_HINT = 2
@@ -37,7 +41,7 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     private var lat: String? = null
     private var Long: String? = null
     private var settingScreen = ""
-
+    val loginViewModel : LoginViewModel by viewModels<LoginViewModel>()
      override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
@@ -79,6 +83,7 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     }
 
     override fun onBackPressed() {
+
         finish()
     }
 
@@ -94,20 +99,28 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
             var sharedPrefences = SharedPreferencesRepository.getDataManagerInstance();
             sharedPrefences.savelat(lat)
             sharedPrefences.savelong(Long)
-            var loginObservable = apiService.doLogin(
-                LoginPostData(
+
+            loginViewModel.doLogin(  LoginPostData(
                     stringFromView(binding!!.etPhoneNumber).toString(),
                     "Emp"
-                )
-            )
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-            loginObservable.doOnNext {
-                Toast.makeText(this@LoginActivity, it.getMessage(), Toast.LENGTH_LONG)
-                    .show()
-                // SMS Listener for listing auto read message lsitner
-                startSMSListener(it.getPhone())
-            }.subscribe();
+            ))
+            loginViewModel.response.observe(this)
+            {
+                when(it){
+                    is NetworkResult.Error -> {}
+                    is NetworkResult.Loading ->{
+                        showDialog()
+                    }
+                    is NetworkResult.Success ->{
+                        hideDialog()
+                        Toast.makeText(this@LoginActivity, it.data!!.getMessage(), Toast.LENGTH_LONG)
+                                .show()
+                        // SMS Listener for listing auto read message lsitner
+                        startSMSListener(it.data.getPhone())
+                    }
+                }
+            }
+
 
         } else {
             Utility.showAlertDialog(

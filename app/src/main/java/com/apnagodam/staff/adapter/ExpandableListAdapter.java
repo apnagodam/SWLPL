@@ -94,7 +94,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
         TextView lblListHeader = convertView.findViewById(R.id.lblListHeader);
    //     lblListHeader.setTypeface(null, Typeface.BOLD);
-        lblListHeader.setTypeface(Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/RobotoLight.ttf"), Typeface.BOLD);
+        lblListHeader.setTypeface(Typeface.createFromAsset(ApnaGodamApp.app.getAssets(), "fonts/RobotoLight.ttf"), Typeface.BOLD);
     //    Typeface.createFromAsset(ApnaGodamApp.getApp().getAssets(), "fonts/RobotoLight.ttf")
         lblListHeader.setText(headerTitle);
 

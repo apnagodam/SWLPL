@@ -46,7 +46,8 @@ public abstract class BaseRecyclerViewAdapter extends RecyclerView.Adapter<BaseV
     }
 
     public int getColor(@ColorRes int color) {
-        return ApnaGodamApp.getApp().getResources().getColor(color);
+
+        return ApnaGodamApp.app.getResources().getColor(color);
     }
 
     @Override

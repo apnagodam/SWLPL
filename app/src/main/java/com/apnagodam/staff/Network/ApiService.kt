@@ -1,5 +1,6 @@
 package com.apnagodam.staff.Network
 
+import androidx.lifecycle.LiveData
 import com.apnagodam.staff.Network.Request.ApprovedConveyancePOst
 import com.apnagodam.staff.Network.Request.ApprovedIntantionPOst
 import com.apnagodam.staff.Network.Request.ApprovedRejectConveyancePOst
@@ -78,6 +79,7 @@ import com.apnagodam.staff.module.VendorExpensionNamePojo
 import com.apnagodam.staff.module.VendorNamePojo
 import io.reactivex.Observable
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -133,13 +135,13 @@ interface ApiService {
     fun doGatePassOTP(@Body oTPGatePassData: OTPGatePassData?): Observable<LoginResponse>
 
     @POST("api/apna_send_otp")
-    fun doLogin(@Body loginPostData: LoginPostData?): Observable<LoginResponse>
+   suspend fun doLogin(@Body loginPostData: LoginPostData): Response<LoginResponse>
 
     @POST("api/apna_user_logout")
     fun doLogout(): Observable<LoginResponse>
 
     @POST("api/apna_verify_otp")
-    fun doOTPVerify(@Body oTPData: OTPData?): Call<OTPvarifedResponse?>?
+   suspend fun doOTPVerify(@Body oTPData: OTPData): Response<OTPvarifedResponse>
 
     @POST("emp_api/apna_emp_vendor_voucher_create")
     fun doVendorCreateConveyance(@Body createVendorConveyancePostData: CreateVendorConveyancePostData?): Observable<LoginResponse>
@@ -151,12 +153,12 @@ interface ApiService {
     fun empyConveyanceDelate(@Body selfRejectConveyancePOst: SelfRejectConveyancePOst?): Observable<LoginResponse>
 
     @GET("emp_api/apna_emp_get_caseid")
-    fun getAllCase(
+    suspend fun getAllCase(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("status") str2: String?,
         @Query("search") str3: String?
-    ): Observable<AllCaseIDResponse>
+    ): Response<AllCaseIDResponse>
 
     @GET("emp_api/apna_emp_leads")
     fun getAllLeads(
@@ -194,8 +196,8 @@ interface ApiService {
         @Query("search") str2: String?
     ): Observable<AllConvancyList>
 
-    @get:GET("emp_api/apna_emp_dashboard")
-    val dashboardData: Observable<DashBoardData>
+    @GET("emp_api/apna_emp_dashboard")
+    suspend fun dashboardData(): Response<DashBoardData>
 
     @GET("emp_api/apna_emp_delivery_order")
     fun getDeliveredOrderList(
@@ -231,10 +233,10 @@ interface ApiService {
     ): Observable<AllLabourBookListResponse>
 
     @GET("emp_api/apna_emp_permissions")
-    fun getPermission(
+    suspend fun getPermission(
         @Query("designation_id") str: String?,
         @Query("emp_level_id") str2: String?
-    ): Observable<AllUserPermissionsResultListResponse>
+    ): Response<AllUserPermissionsResultListResponse>
 
     @GET("emp_api/apna_emp_release_order")
     fun getReleaseOrderList(
@@ -276,8 +278,8 @@ interface ApiService {
     @POST("emp_api/apna_emp_get_stack_number")
     fun getStackList(@Body stackPostData: StackPostData?): Observable<StackListPojo>
 
-    @get:GET("emp_api/apna_emp_levelwise_terminal")
-    val terminalListLevel: Observable<TerminalListPojo>
+    @GET("emp_api/apna_emp_levelwise_terminal")
+    fun terminalListLevel(): Response<TerminalListPojo>
 
     @GET("emp_api/apna_emp_transpoter_detail")
     fun getTransporterDetails(@Query("transport_id") str: String?): Observable<TransporterDetailsPojo>
@@ -286,12 +288,12 @@ interface ApiService {
     val transporterList: Observable<TransporterListPojo>
 
     @GET("emp_api/apna_emp_get_truckbook")
-    fun getTruckBookList(
+   suspend fun getTruckBookList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
         @Query("search") str3: String?
-    ): Observable<AllTruckBookListResponse>
+    ): Response<AllTruckBookListResponse>
 
     @GET("emp_api/apna_emp_get_user_data")
     fun getUserList(

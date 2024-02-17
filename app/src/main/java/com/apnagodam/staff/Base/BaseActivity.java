@@ -73,6 +73,7 @@ import java.util.Date;
 import java.util.List;
 
 
+import dagger.hilt.android.AndroidEntryPoint;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -797,14 +798,17 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     public void loadImage(Uri resultUri, ImageView passbookImage) {
         BitmapLoadUtils.decodeBitmapInBackground(this, resultUri, null, 400, 400, new BitmapLoadCallback() {
             @Override
-            public void onBitmapLoaded(@NonNull Bitmap bitmap, @NonNull ExifInfo exifInfo, @NonNull String imageInputPath, @Nullable String imageOutputPath) {
+            public void onBitmapLoaded(@NonNull Bitmap bitmap, @NonNull ExifInfo exifInfo, @NonNull Uri imageInputUri, @Nullable Uri imageOutputUri) {
                 passbookImage.setImageBitmap(bitmap);
+
             }
 
             @Override
             public void onFailure(@NonNull Exception bitmapWorkerException) {
+
             }
-        });
+        }
+        );
     }
 
     public void handleCropError(@NonNull Intent result) {

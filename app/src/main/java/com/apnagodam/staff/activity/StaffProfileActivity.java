@@ -2,12 +2,12 @@ package com.apnagodam.staff.activity;
 
 import android.view.View;
 import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.GlideApp;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.databinding.StaffProfileBinding;
 import com.apnagodam.staff.db.SharedPreferencesRepository;
 import com.apnagodam.staff.module.UserDetails;
 import com.apnagodam.staff.utils.Constants;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 public class StaffProfileActivity extends BaseActivity<StaffProfileBinding> {
@@ -38,7 +38,7 @@ public class StaffProfileActivity extends BaseActivity<StaffProfileBinding> {
         if (userDetails.getAadharImage()!=null&&!userDetails.getAadharImage().isEmpty()){
             binding.aadhar.setVisibility(View.VISIBLE);
             binding.cardAadhar.setVisibility(View.VISIBLE);
-            GlideApp.with(binding.AaadharImage.getContext())
+            Glide.with(binding.AaadharImage.getContext())
                     .load(Constants.IMAGE_BASE_URL+ userDetails.getAadharImage())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.AaadharImage);
@@ -46,19 +46,19 @@ public class StaffProfileActivity extends BaseActivity<StaffProfileBinding> {
         if (userDetails.getChequeImage()!=null&&!userDetails.getChequeImage().isEmpty()){
             binding.passporttext.setVisibility(View.VISIBLE);
             binding.cardPassport.setVisibility(View.VISIBLE);
-            GlideApp.with(binding.PassbookImage.getContext())
+            Glide.with(binding.PassbookImage.getContext())
                     .load(Constants.IMAGE_BASE_URL+ userDetails.getChequeImage())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(binding.PassbookImage);
         }
         if (userDetails.getProfileImage() != null && !userDetails.getProfileImage().isEmpty()) {
-            GlideApp.with(binding.imgProfile.getContext())
+            Glide.with(binding.imgProfile.getContext())
                     .load(Constants.IMAGE_BASE_URL + userDetails.getProfileImage())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .circleCrop()
                     .into(binding.imgProfile);
         } else {
-            GlideApp.with(binding.imgProfile.getContext())
+            Glide.with(binding.imgProfile.getContext())
                     .load(Constants.IMAGE_BASE_URL + userDetails.getProfileImage())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.user_shape)

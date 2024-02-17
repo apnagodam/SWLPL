@@ -40,9 +40,9 @@ public class SharedPreferencesRepository implements Tags {
 
     public SharedPreferencesRepository() {
         //static {
-        loginSharedPreferences = ApnaGodamApp.getApp().getSharedPreferences(LANG, Context.MODE_PRIVATE);
+        loginSharedPreferences = ApnaGodamApp.app.getSharedPreferences(LANG, Context.MODE_PRIVATE);
         loginPrefEditor = loginSharedPreferences.edit();
-        sharedPreferences = ApnaGodamApp.getApp().getSharedPreferences(DATA, Context.MODE_PRIVATE);
+        sharedPreferences = ApnaGodamApp.app.getSharedPreferences(DATA, Context.MODE_PRIVATE);
         sharedPrefEditor = sharedPreferences.edit();
     }
 

@@ -16,8 +16,8 @@ import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 import androidx.palette.graphics.Palette;
 
-import com.apnagodam.staff.GlideApp;
 import com.apnagodam.staff.R;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
@@ -79,7 +79,8 @@ public class PhotoFullPopupWindow extends PopupWindow {
         } else {
             loading.setIndeterminate(true);
             loading.setVisibility(View.VISIBLE);
-            GlideApp.with(ctx) .asBitmap()
+            Glide.with
+            (ctx) .asBitmap()
                     .load(imageUrl)
 
                     .error(R.drawable.logo)

@@ -14,11 +14,14 @@ import android.widget.DatePicker
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateLeadsPostData
 import com.apnagodam.staff.Network.Request.UpdateLeadsPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.LeadsViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.databinding.ActivityGeenerteLeadsBinding
@@ -27,13 +30,14 @@ import com.apnagodam.staff.module.AllLeadsResponse.Lead
 import com.apnagodam.staff.module.TerminalListPojo
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
+@AndroidEntryPoint
 class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.OnClickListener,
     AdapterView.OnItemSelectedListener {
     lateinit var SpinnerCommudityAdapter: ArrayAdapter<String>
@@ -51,6 +55,7 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
     private var isUpdate = false
     lateinit var getLeadId: String
     lateinit var data: List<TerminalListPojo.Datum>
+    val leadsViewModel by viewModels<LeadsViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_geenerte_leads
     }
@@ -70,17 +75,26 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
     }
 
      private fun terminalListLevel(){
-         apiService.terminalListLevel.subscribeOn(Schedulers.io())
-             .observeOn(AndroidSchedulers.mainThread())
-             .doOnNext { body ->
-                 data = body.data
-                 for (i in data.indices) {
-                     TerminalName!!.add(data.get(i).name + "(" + data.get(i).warehouseCode + ")")
+         leadsViewModel.getTerminalList()
+         leadsViewModel.response.observe(this){
+             when(it){
+                 is NetworkResult.Error -> {hideDialog()}
+                 is NetworkResult.Loading -> {
+                     showDialog()
                  }
+                 is NetworkResult.Success -> {
+                     data = it.data!!.data
+                     for (i in data.indices) {
+                         TerminalName!!.add(data.get(i).name + "(" + data.get(i).warehouseCode + ")")
+                     }
 
-                 spinnerTeerminalAdpter =
-                     ArrayAdapter(this, R.layout.multiline_spinner_item, (TerminalName)!!)
-//        object :
+                     spinnerTeerminalAdpter =
+                             ArrayAdapter(this, R.layout.multiline_spinner_item, (TerminalName)!!)
+
+                     spinnerTeerminalAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
+                     // Set Adapter in the spinner
+                     binding!!.spinnerTerminal.adapter = spinnerTeerminalAdpter
+                     //        object :
 //            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item) {
 //            //By using this method we will define how
 //            // the text appears before clicking a spinner
@@ -103,41 +117,40 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
 //                return v
 //            }
 //        }
-                 spinnerTeerminalAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-                 // Set Adapter in the spinner
-                 binding!!.spinnerTerminal.adapter = spinnerTeerminalAdpter
-                 binding!!.spinnerTerminal.onItemSelectedListener =
-                     object : AdapterView.OnItemSelectedListener {
-                         override fun onItemSelected(
-                             parentView: AdapterView<*>,
-                             selectedItemView: View,
-                             position: Int,
-                             id: Long
-                         ) {
-                             // selected item in the list
-                             if (position != 0) {
-                                 val presentMeterStatusID: String =
-                                     parentView.getItemAtPosition(position).toString()
-                                 for (i in data!!.indices) {
-                                     if (presentMeterStatusID.contains(
-                                             data!!.get(i).name + "(" + data!!.get(
-                                                 i
-                                             ).warehouseCode + ")"
-                                         )
-                                     ) {
-                                         TerminalID = data!!.get(i).id.toString()
+                     binding!!.spinnerTerminal.onItemSelectedListener =
+                             object : AdapterView.OnItemSelectedListener {
+                                 override fun onItemSelected(
+                                         parentView: AdapterView<*>,
+                                         selectedItemView: View,
+                                         position: Int,
+                                         id: Long
+                                 ) {
+                                     // selected item in the list
+                                     if (position != 0) {
+                                         val presentMeterStatusID: String =
+                                                 parentView.getItemAtPosition(position).toString()
+                                         for (i in data!!.indices) {
+                                             if (presentMeterStatusID.contains(
+                                                             data!!.get(i).name + "(" + data!!.get(
+                                                                     i
+                                                             ).warehouseCode + ")"
+                                                     )
+                                             ) {
+                                                 TerminalID = data!!.get(i).id.toString()
+                                             }
+                                         }
                                      }
                                  }
-                             }
-                         }
 
-                         override fun onNothingSelected(parentView: AdapterView<*>?) {
-                             // your code here
-                         }
-                     }
+                                 override fun onNothingSelected(parentView: AdapterView<*>?) {
+                                     // your code here
+                                 }
+                             }
+                 }
              }
-             .doOnComplete { setValueOnSpinner() }
-             .subscribe()
+
+         }
+
     }
 
     private fun setValueOnSpinner() {

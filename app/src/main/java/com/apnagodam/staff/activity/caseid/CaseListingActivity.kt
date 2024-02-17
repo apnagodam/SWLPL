@@ -9,24 +9,32 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllCaseIDResponse
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-
+import kotlinx.coroutines.flow.observeOn
+import kotlinx.coroutines.flow.onCompletion
+import javax.inject.Inject
+@AndroidEntryPoint
 class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var casesTopAdapter: CasesTopAdapter? = null
     private var pageOffset = 1
     private var totalPage = 0
     private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null
+
+    val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -130,29 +138,36 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
-        apiService.getAllCase("15",pageOffset,"1",search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { showDialog() }
-            .doOnComplete {hideDialog() }
-            .doOnError{hideDialog()}
-            .doOnNext{body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.getaCase() == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
+
+        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
+        caseIdViewModel.response.observe(this){
+            body->
+            when(body){
+                is NetworkResult.Success->
+                {
+                    binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
-                    totalPage = body.getaCase().lastPage
-                    AllCases!!.addAll(body.getaCase().data)
-                    casesTopAdapter!!.notifyDataSetChanged()
-                    //  AllCases=body.getCases();
-                    // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    if (body.data!!.getaCase() == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = body.data.getaCase().lastPage
+                        AllCases!!.addAll(body.data.getaCase().data)
+                        casesTopAdapter!!.notifyDataSetChanged()
+                        //  AllCases=body.getCases();
+                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    }
                 }
+
+                is NetworkResult.Error -> print("error")
+                is NetworkResult.Loading -> print("loading")
             }
-            .subscribe()
+
+
+        }
+
 
     }
 

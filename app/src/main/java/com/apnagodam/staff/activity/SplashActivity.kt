@@ -21,6 +21,7 @@ import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.CommudityResponse
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable

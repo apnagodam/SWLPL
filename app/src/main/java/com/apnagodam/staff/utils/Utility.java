@@ -75,7 +75,7 @@ public class Utility {
     private static int TYPE_MOBILE = 2;
     private static int TYPE_NOT_CONNECTED = 0;
     private static CustomProgressDialog mCustomProgressDialog;
-    private static File path = ApnaGodamApp.getApp().getCacheDir();
+    private static File path = ApnaGodamApp.app.getCacheDir();
 
     public static String timeFromdateTime(String inputDateStr) {
         DateFormat inputFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
@@ -93,7 +93,7 @@ public class Utility {
     }
 
     public static void copyAssets(String fileName) {
-        AssetManager assetManager = ApnaGodamApp.getApp().getAssets();
+        AssetManager assetManager = ApnaGodamApp.app.getAssets();
         InputStream in = null;
         OutputStream out = null;
         try {
