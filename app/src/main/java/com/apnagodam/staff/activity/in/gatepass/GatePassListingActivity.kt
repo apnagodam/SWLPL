@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.gatepass
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -10,11 +11,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.GatePassViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.GatePassPDFPrieviewClass
 import com.apnagodam.staff.activity.StaffDashBoardActivity
@@ -23,12 +27,13 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.GatePassListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class GatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var firstkantaParchiFile: String? = null
     private val TruckImage: String? = null
@@ -36,6 +41,8 @@ class GatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var pageOffset = 1
     private var totalPage = 0
     private lateinit var AllCases: ArrayList<GatePassListResponse.Datum>
+
+    val gatePassViewModel by viewModels<GatePassViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -139,25 +146,32 @@ class GatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
-        apiService.getGatePass("10",pageOffset.toString(),"IN",search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.gatePassData == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
-                    AllCases!!.clear()
-                    totalPage = body.gatePassData.lastPage
-                    AllCases!!.addAll(body.gatePassData.data)
-                    gatepassAdapter!!.notifyDataSetChanged()
-                    // AllCases = body.getData();
-                    //  binding.rvDefaultersStatus.setAdapter(new GatepassAdapter(body.getData(), GatePassListingActivity.this));
+        gatePassViewModel.getGatePassList("10",pageOffset.toString(),"IN",search)
+        gatePassViewModel.gatePassList.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+
+                    if(it.data!=null){
+                        binding!!.swipeRefresherStock.isRefreshing = false
+                        AllCases!!.clear()
+                        if (it.data.gatePassData == null) {
+                            binding!!.txtemptyMsg.visibility = View.VISIBLE
+                            binding!!.rvDefaultersStatus.visibility = View.GONE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                        } else {
+                            AllCases!!.clear()
+                            totalPage = it.data.gatePassData.lastPage
+                            AllCases!!.addAll(it.data.gatePassData.data)
+                            gatepassAdapter!!.notifyDataSetChanged()
+                            // AllCases = body.getData();
+                            //  binding.rvDefaultersStatus.setAdapter(new GatepassAdapter(body.getData(), GatePassListingActivity.this));
+                        }
+                    }
                 }
-            }.subscribe()
+            }
+        }
 
     }
 
@@ -274,12 +288,20 @@ class GatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     fun checkVeehicleNo(postion: Int) {
         val bundle = Bundle()
+        bundle.putString("no_bags",AllCases[postion].noOfBags)
+        bundle.putString("weight",AllCases[postion].totalWeight)
+
+        bundle.putString("avg_weight",AllCases[postion].gatepass_avgWeight)
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
         bundle.putString("terminal_name", AllCases!![postion]!!.terminal_name)
         bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
         bundle.putString("stackNo", AllCases!![postion]!!.stack_number)
         bundle.putString("INOUT", AllCases!![postion]!!.inOut)
-        startActivity(UploadGatePassClass::class.java, bundle)
+
+        var intent = Intent(this,UploadGatePassClass::class.java)
+        intent.putExtra("all_case",AllCases[postion])
+
+        startActivity(intent)
     }
 }

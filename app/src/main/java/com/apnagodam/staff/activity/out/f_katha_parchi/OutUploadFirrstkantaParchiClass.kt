@@ -3,18 +3,23 @@ package com.apnagodam.staff.activity.out.f_katha_parchi
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 
+@AndroidEntryPoint
 class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var fileKantha: File? = null
     var fileTruck: File? = null
@@ -28,6 +33,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
     //Options options;
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
+    val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
@@ -133,24 +139,27 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
             truckImageImage = "" + Utility.transferImageToBase64(fileTruck)
         }
         //else {
-
-        apiService.uploadFirstkantaParchi(            UploadFirstkantaParchiPostData(
-            CaseID, stringFromView(
-                binding!!.notes
-            ), KanthaImage, truckImageImage
+        kantaParchiViewModel.uploadFirstKantaParchi(
+                UploadFirstkantaParchiPostData(
+                        CaseID, stringFromView(
+                        binding!!.notes
+                ), KanthaImage, truckImageImage
+                )
         )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                Utility.showAlertDialog(
-                    this@OutUploadFirrstkantaParchiClass,
-                    getString(R.string.alert),
-                    body.message
-                ) { startActivityAndClear(OutFirstkanthaParchiListingActivity::class.java) }
+        kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> TODO()
+                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Success -> {
+                    Utility.showAlertDialog(
+                            this@OutUploadFirrstkantaParchiClass,
+                            getString(R.string.alert),
+                            it.data!!.message
+                    ) { startActivityAndClear(OutFirstkanthaParchiListingActivity::class.java) }
+                }
             }
-            .subscribe()
+        }
 
-        // }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

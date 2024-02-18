@@ -10,10 +10,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.activity.`in`.first_quality_reports.UploadFirstQualtityReportsClass
@@ -22,12 +25,14 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.FirstQuilityReportListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>() {
     private lateinit var outFirstQualityReportAdapter: OutFirstQualityReportAdapter
     private var pageOffset = 1
@@ -35,6 +40,8 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
     private lateinit var AllCases: ArrayList<FirstQuilityReportListResponse.Datum>
     private var ReportsFile: String? = null
     private var CommudityImage: String? = null
+
+    val qualityReportViewModel by viewModels<QualitReportViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -123,25 +130,30 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
     }
 
     private fun getAllCases(search: String) {
-
-        apiService.getf_qualityReportsList("10", "" + pageOffset, "OUT", search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {   body->   binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.quilityReport == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
+        qualityReportViewModel.getFirstQualityListing("10", "" + pageOffset, "OUT", search)
+        qualityReportViewModel.fQualityResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
-                    totalPage = body.quilityReport.lastPage
-                    AllCases!!.addAll(body.quilityReport.data)
-                    outFirstQualityReportAdapter!!.notifyDataSetChanged()
-                    // AllCases = body.getData();
-                    // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
-                }}
-            .subscribe()
+                    if (it.data!!.quilityReport == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = it.data!!.quilityReport.lastPage
+                        AllCases!!.addAll(it.data!!.quilityReport.data)
+                        outFirstQualityReportAdapter!!.notifyDataSetChanged()
+                        // AllCases = body.getData();
+                        // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
+                    }
+                }
+            }
+        }
+
 
 
     }

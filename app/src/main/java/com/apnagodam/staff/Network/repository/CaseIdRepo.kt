@@ -4,6 +4,7 @@ import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.module.TerminalListPojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,6 +24,10 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService) : BaseA
 
         }.flowOn(Dispatchers.IO)
     }
-
+   suspend fun getTerminalList(): Flow<NetworkResult<TerminalListPojo>> {
+        return flow{
+            emit(safeApiCall { apiService.terminalListLevel() })
+        }.flowOn(Dispatchers.IO)
+    }
 
 }

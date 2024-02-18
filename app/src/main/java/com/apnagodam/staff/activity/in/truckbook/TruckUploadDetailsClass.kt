@@ -2,10 +2,15 @@ package com.apnagodam.staff.activity.`in`.truckbook
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -17,6 +22,7 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
@@ -34,9 +40,13 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(), View.OnClickListener,
     AdapterView.OnItemSelectedListener {
@@ -48,7 +58,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     var fileBiltyImage: File? = null
     var BiltyImageFile = false
     private var BiltyFile: String? = null
-    var options: Options? = null
+    lateinit var options: Options
     var data: List<TransporterListPojo.Datum>? = null
     var TransporterName: MutableList<String> = arrayListOf()
     lateinit var spinnerTransporterAdpter: ArrayAdapter<String>
@@ -58,7 +68,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     override fun setUp() {
-        TransporterName.add("Select")
         TransporterName.add("Select")
         calender = Calendar.getInstance()
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -335,7 +344,8 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         binding!!.lpEndDate.setOnClickListener(this)
         binding!!.uploadTruck.setOnClickListener {
             BiltyImageFile = true
-            callImageSelector(REQUEST_CAMERA)
+//            callImageSelector(REQUEST_CAMERA)
+            dispatchTakePictureIntent()
         }
         binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isChecked) {
@@ -350,37 +360,65 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
     private fun callImageSelector(requestCamera: Int) {
         options = Options.init()
-            .setRequestCode(requestCamera) //Request code for activity results
-            .setCount(1) //Number of images to restict selection count
-            .setFrontfacing(false) //Front Facing camera on start
-            .setExcludeVideos(false) //Option to exclude videos
-            .setVideoDurationLimitinSeconds(30) //Option to exclude videos
-            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
-            .setPath("/apnagodam/lp/images") //Custom Path For media Storage
+        options.let {
+            it.count = 1                                                   //Number of images to restrict selection count
+            it.spanCount = 4                                               //Number for columns in grid
+            it.path = "/apnagodam/lp/images"                                         //Custom Path For media Storage
+            it.isFrontfacing = false                                       //Front Facing camera on start
+            it.videoDurationLimitinSeconds = 0                            //Duration for video recording
+            it.mode = Options.Mode.Picture
+            it.requestCode = requestCamera
+        }
+
+
         Pix.start(this@TruckUploadDetailsClass, options)
     }
+
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == RESULT_OK) {
-                if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
-                    val returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
-                    Log.e("getImageesValue", returnValue[0].toString())
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (BiltyImageFile) {
-                            BiltyImageFile = false
-                            fileBiltyImage = File(compressImage(returnValue[0].toString()))
-                            val uri = Uri.fromFile(fileBiltyImage)
-                            BiltyFile = uri.toString()
-                            binding!!.TruckImage.setImageURI(uri)
-                        }
-                    }
-                }
+                val imageBitmap = data?.extras?.get("data") as Bitmap
+                fileBiltyImage = File(compressImage(bitmapToFile(imageBitmap).toString()))
+                val uri = Uri.fromFile(fileBiltyImage)
+                BiltyFile = uri.toString()
+                binding!!.TruckImage.setImageURI(uri)
             }
         }
     }
+    override fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        var path = this.filesDir.absolutePath
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
 
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+
+    }
+    private fun bitmapToFile(bitmap:Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -393,7 +431,8 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Pix.start(this, options)
                 } else {
-                    callImageSelector(REQUEST_CAMERA)
+                    dispatchTakePictureIntent()
+                   // callImageSelector(REQUEST_CAMERA)
                     Toast.makeText(
                         this,
                         "Approve permissions to open Pix ImagePicker",

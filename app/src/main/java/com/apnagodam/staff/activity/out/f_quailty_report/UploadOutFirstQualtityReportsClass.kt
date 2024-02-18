@@ -1,8 +1,14 @@
 package com.apnagodam.staff.activity.out.f_quailty_report
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -22,6 +28,10 @@ import com.fxn.utility.PermUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.UUID
 
 class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
     var fileReport: File? = null
@@ -110,12 +120,12 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
             CommudityFileSelect = false
-            callImageSelector(REQUEST_CAMERA)
+            dispatchTakePictureIntent()
         }
         binding!!.uploadCommudity.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = true
-            callImageSelector(REQUEST_CAMERA)
+            dispatchTakePictureIntent()
         }
         binding!!.ReportsImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -221,33 +231,71 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
 } else if (TextUtils.isEmpty(stringFromView(binding.etLive))) {
   return Utility.showEditTextError(binding.tilLive, R.string.live_count);
 }*/
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == RESULT_OK) {
-                if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
-                    val returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
-                    Log.e("getImageesValue", returnValue[0])
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (ReportsFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileReport = File(compressImage(returnValue[0]))
-                            val uri = Uri.fromFile(fileReport)
-                            reportFile = uri.toString()
-                            binding!!.ReportsImage.setImageURI(uri)
-                        } else if (CommudityFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileCommudity = File(compressImage(returnValue[0]))
-                            val uri = Uri.fromFile(fileCommudity)
-                            commudityFile = uri.toString()
-                            binding!!.CommudityImage.setImageURI(uri)
-                        }
+        try {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CAMERA) {
+
+                    if (ReportsFileSelect) {
+                        val imageBitmap = data?.extras?.get("data") as Bitmap
+
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileReport)
+                        reportFile = uri.toString()
+                        binding!!.ReportsImage.setImageURI(uri)
+                    } else if (CommudityFileSelect) {
+                        val imageBitmap = data?.extras?.get("data") as Bitmap
+
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileCommudity)
+                        commudityFile = uri.toString()
+                        binding!!.CommudityImage.setImageURI(uri)
                     }
+
                 }
             }
+        } catch (e: Exception) {
         }
+
+    }
+
+
+    override fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+
+    }
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
     }
 
     override fun onRequestPermissionsResult(
@@ -262,7 +310,7 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Pix.start(this, options)
                 } else {
-                    callImageSelector(REQUEST_CAMERA)
+                    dispatchTakePictureIntent()
                     Toast.makeText(
                         this,
                         "Approve permissions to open Pix ImagePicker",

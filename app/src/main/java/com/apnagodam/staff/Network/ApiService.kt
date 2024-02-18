@@ -138,7 +138,7 @@ interface ApiService {
    suspend fun doLogin(@Body loginPostData: LoginPostData): Response<LoginResponse>
 
     @POST("api/apna_user_logout")
-    fun doLogout(): Observable<LoginResponse>
+    suspend fun doLogout(): Response<LoginResponse>
 
     @POST("api/apna_verify_otp")
    suspend fun doOTPVerify(@Body oTPData: OTPData): Response<OTPvarifedResponse>
@@ -147,7 +147,7 @@ interface ApiService {
     fun doVendorCreateConveyance(@Body createVendorConveyancePostData: CreateVendorConveyancePostData?): Observable<LoginResponse>
 
     @POST("emp_api/apna_emp_gatepass_otp_verification")
-    fun doVerifyGatePassOTP(@Body oTPVerifyGatePassData: OTPVerifyGatePassData?): Observable<LoginResponse>
+    suspend fun doVerifyGatePassOTP(@Body oTPVerifyGatePassData: OTPVerifyGatePassData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_delete")
     fun empyConveyanceDelate(@Body selfRejectConveyancePOst: SelfRejectConveyancePOst?): Observable<LoginResponse>
@@ -200,12 +200,12 @@ interface ApiService {
     suspend fun dashboardData(): Response<DashBoardData>
 
     @GET("emp_api/apna_emp_delivery_order")
-    fun getDeliveredOrderList(
+   suspend fun getDeliveredOrderList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
         @Query("search") str3: String?
-    ): Call<ReleaseOrderPojo?>?
+    ): Response<ReleaseOrderPojo>
 
     @get:GET("emp_api/apna_emp_dhramkanta_list")
     val dharmaKanthaListLevel: Observable<DharmaKanthaPostData>
@@ -214,23 +214,23 @@ interface ApiService {
     val fastCaseList: Call<ResponseFastcaseList?>?
 
     @GET("emp_api/apna_emp_get_gatepass")
-    fun getGatePass(
+    suspend fun getGatePass(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<GatePassListResponse>
+    ): Response<GatePassListResponse>
 
     @GET("emp_api/apna_emp_generate_gate_pass")
     fun getGatePassPDf(@Query("case_id") str: String?): Call<GatePassPDFPojo?>?
 
     @GET("emp_api/apna_emp_get_labourbook")
-    fun getLabourBookList(
+    suspend fun getLabourBookList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<AllLabourBookListResponse>
+    ): Response<AllLabourBookListResponse>
 
     @GET("emp_api/apna_emp_permissions")
     suspend fun getPermission(
@@ -247,20 +247,20 @@ interface ApiService {
     ): Call<ReleaseOrderPojo?>?
 
     @GET("emp_api/apna_emp_get_s_k_p")
-    fun getS_kanthaParchiList(
+    suspend fun getS_kanthaParchiList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<SecoundkanthaParchiListResponse>
+    ): Response<SecoundkanthaParchiListResponse>
 
     @GET("emp_api/apna_emp_get_s_quality")
-    fun getS_qualityReportsList(
+    suspend fun getS_qualityReportsList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<SecoundQuilityReportListResponse>
+    ): Response<SecoundQuilityReportListResponse>
 
     @GET("emp_api/apna_emp_get_spot_deals")
     fun getSpotSellDealTrackList(
@@ -279,7 +279,7 @@ interface ApiService {
     fun getStackList(@Body stackPostData: StackPostData?): Observable<StackListPojo>
 
     @GET("emp_api/apna_emp_levelwise_terminal")
-    fun terminalListLevel(): Response<TerminalListPojo>
+   suspend fun terminalListLevel(): Response<TerminalListPojo>
 
     @GET("emp_api/apna_emp_transpoter_detail")
     fun getTransporterDetails(@Query("transport_id") str: String?): Observable<TransporterDetailsPojo>
@@ -335,20 +335,20 @@ interface ApiService {
     fun getcommuydity_terminal_user_emp_listing(@Query("app_type") str: String?): Observable<CommudityResponse>
 
     @GET("emp_api/apna_emp_get_kanta_prachi")
-    fun getf_kanthaParchiList(
+    suspend fun getf_kanthaParchiList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<FirstkanthaParchiListResponse>
+    ): Response<FirstkanthaParchiListResponse>
 
     @GET("emp_api/apna_emp_get_quality")
-    fun getf_qualityReportsList(
+   suspend fun getf_qualityReportsList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
         @Query("search") str4: String?
-    ): Observable<FirstQuilityReportListResponse>
+    ): Response<FirstQuilityReportListResponse>
 
     @GET("emp_api/apna_emp_get_intentionToSell_request")
     fun getintentionList(
@@ -385,13 +385,13 @@ interface ApiService {
     fun updateLeads(@Body updateLeadsPostData: UpdateLeadsPostData?): Observable<LoginResponse>
 
     @POST("emp_api/apna_emp_update_deliverorder")
-    fun uploadDeliveredOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData?): Call<LoginResponse?>?
+    suspend fun uploadDeliveredOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_f_quality")
     fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?): Observable<LoginResponse>
 
     @POST("emp_api/apna_emp_kanta_parchi")
-    fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData?): Observable<LoginResponse>
+    suspend fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_gatepass")
     fun uploadGatePass(@Body uploadGatePassPostData: UploadGatePassPostData?): Call<LoginResponse?>?
@@ -406,7 +406,7 @@ interface ApiService {
     fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData?): Call<LoginResponse?>?
 
     @POST("emp_api/apna_emp_s_quality")
-    fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?): Observable<LoginResponse>
+    suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_kanta_parchi")
     fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?): Observable<LoginResponse>

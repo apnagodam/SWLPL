@@ -72,6 +72,8 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
         TerminalsID = ArrayList()
         CommudityName.add(resources.getString(R.string.commodity_name))
         TerminalName.add(resources.getString(R.string.terminal_name1))
+        setValueOnSpinner()
+
     }
 
      private fun terminalListLevel(){

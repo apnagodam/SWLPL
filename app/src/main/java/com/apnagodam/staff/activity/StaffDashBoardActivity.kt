@@ -27,11 +27,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.AttendancePostData
-import com.apnagodam.staff.Network.Response.AttendanceResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
+import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
@@ -60,8 +59,6 @@ import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.databinding.StaffDashboardBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.interfaces.OnProfileClickListener
-import com.apnagodam.staff.module.AllUserPermissionsResultListResponse
-import com.apnagodam.staff.module.DashBoardData
 import com.apnagodam.staff.module.MenuModel
 import com.apnagodam.staff.module.UserDetails
 import com.apnagodam.staff.utils.Constants
@@ -73,7 +70,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
-import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
@@ -87,15 +83,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
+
 @AndroidEntryPoint
 class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.OnClickListener,
     OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener,
@@ -123,6 +114,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     var childList = HashMap<MenuModel, List<MenuModel>?>()
     var font: Typeface? = null
     val homeViewModel by viewModels<HomeViewModel>()
+    val loginViewModel by viewModels<LoginViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.staff_dashboard
     }
@@ -227,7 +219,30 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.fastcase_list)) {
                         startActivity(FastCaseListActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
-                        logout(resources.getString(R.string.logout_alert), "Logout")
+                        loginViewModel.doLogout()
+                        loginViewModel.logoutResponse.observe(this){
+                            when(it){
+                                is NetworkResult.Error -> {
+                                    showToast(it.message)
+
+                                }
+                                is NetworkResult.Loading -> {
+
+
+                                }
+                                is NetworkResult.Success ->{
+                                    SharedPreferencesRepository.getDataManagerInstance().clear()
+                                    SharedPreferencesRepository.setIsUserName(false)
+                                    SharedPreferencesRepository.saveSessionToken("")
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    intent.putExtra("setting", "")
+                                    startActivity(LoginActivity::class.java)
+                                    this.finish()
+
+                                }
+                            }
+                        }
+                                // logout(resources.getString(R.string.logout_alert), "Logout")
                     }
                 }
             }
@@ -1375,8 +1390,32 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 10 -> startActivity(SecoundkanthaParchiListingActivity::class.java)
                 11 -> startActivity(SecoundQualityReportListingActivity::class.java)
                 12 -> startActivity(GatePassListingActivity::class.java)
-                13 ->                     //call logout api
-                    logout(resources.getString(R.string.logout_alert), "Logout")
+                13 ->             {
+                    loginViewModel.doLogout()
+                    loginViewModel.logoutResponse.observe(this){
+                        when(it){
+                            is NetworkResult.Error -> {
+                                showToast(it.message)
+
+                            }
+                            is NetworkResult.Loading -> {
+
+
+                            }
+                            is NetworkResult.Success ->{
+                                SharedPreferencesRepository.getDataManagerInstance().clear()
+                                SharedPreferencesRepository.setIsUserName(false)
+                                SharedPreferencesRepository.saveSessionToken("")
+                                val intent = Intent(this, LoginActivity::class.java)
+                                intent.putExtra("setting", "")
+                                startActivity(LoginActivity::class.java)
+                                this.finish()
+
+                            }
+                        }
+                    }
+                }        //call logout api
+
             }
         }, 100)
     }

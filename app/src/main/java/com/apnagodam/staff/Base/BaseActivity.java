@@ -226,34 +226,6 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
     private void callBidderLogout() {
 
-        apiService.doLogout().subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<LoginResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(LoginResponse loginResponse) {
-                        SharedPreferencesRepository.getDataManagerInstance().clear();
-                        SharedPreferencesRepository.getDataManagerInstance().setIsUserName(false);
-                        SharedPreferencesRepository.getDataManagerInstance().saveSessionToken("");
-                        Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
-                        intent.putExtra("setting", "");
-                        BaseActivity.this.startActivity(intent);
-                        BaseActivity.this.finish();
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
 
     }
 

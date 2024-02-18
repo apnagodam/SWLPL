@@ -1,9 +1,15 @@
 package com.apnagodam.staff.activity.out.gatepass
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -16,14 +22,17 @@ import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkCallbackWProgress
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.DharmaKanthaPostData
 import com.apnagodam.staff.Network.Request.OTPGatePassData
 import com.apnagodam.staff.Network.Request.OTPVerifyGatePassData
 import com.apnagodam.staff.Network.Request.UploadGatePassPostDataNew
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.GatePassViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityGatePassBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -33,10 +42,16 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.UUID
 
+@AndroidEntryPoint
 class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
     RadioGroup.OnCheckedChangeListener {
     lateinit var SpinnerKanthaAdapter: ArrayAdapter<String>
@@ -61,6 +76,8 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
     var InBardhanaID = "0"
     private var TotalBag = 0
     private var TOtalWeight: Double? = null
+
+    val gatePassViewModel by viewModels<GatePassViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_gate_pass
     }
@@ -307,39 +324,43 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                                     Toast.LENGTH_LONG
                                 ).show()
                             } else {
-                                apiService.doVerifyGatePassOTP(
-                                    OTPVerifyGatePassData(
+                                gatePassViewModel.verifyGatePassOtp(OTPVerifyGatePassData(
                                         "" + CaseID, (stringFromView(
-                                            binding!!.etOtp
-                                        ))
-                                    )
-                                ).subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnNext { body ->
-                                        Utility.showAlertDialog(
-                                            this@OutUploadGatePassClass,
-                                            getString(R.string.alert),
-                                            body.message,
-                                            object : Utility.AlertCallback {
-                                                override fun callback() {
-                                                    binding!!.ll.visibility = View.GONE
-                                                    binding!!.etDriverPhone.isEnabled = false
-                                                    binding!!.etDriverPhone.isClickable = false
-                                                    binding!!.etDriverPhone.isFocusable = false
-                                                    binding!!.etOldDriverName.isEnabled = false
-                                                    binding!!.etOldDriverName.isClickable = false
-                                                    binding!!.etOldDriverName.isFocusable = false
-                                                    binding!!.btnSubmit.visibility = View.VISIBLE
-                                                    binding!!.etOldDriverName.setBackgroundColor(
-                                                        resources.getColor(R.color.lightgray)
-                                                    )
-                                                    binding!!.etDriverPhone.setBackgroundColor(
-                                                        resources.getColor(R.color.lightgray)
-                                                    )
-                                                }
-                                            })
+                                        binding!!.etOtp
+                                ))
+                                ))
+
+                                gatePassViewModel.gatePassOtpResponse.observe(this@OutUploadGatePassClass){
+                                    when(it){
+                                        is NetworkResult.Error -> {}
+                                        is NetworkResult.Loading -> {}
+                                        is NetworkResult.Success -> {
+                                            Utility.showAlertDialog(
+                                                    this@OutUploadGatePassClass,
+                                                    getString(R.string.alert),
+                                                    it.data!!.message,
+                                                    object : Utility.AlertCallback {
+                                                        override fun callback() {
+                                                            binding!!.ll.visibility = View.GONE
+                                                            binding!!.etDriverPhone.isEnabled = false
+                                                            binding!!.etDriverPhone.isClickable = false
+                                                            binding!!.etDriverPhone.isFocusable = false
+                                                            binding!!.etOldDriverName.isEnabled = false
+                                                            binding!!.etOldDriverName.isClickable = false
+                                                            binding!!.etOldDriverName.isFocusable = false
+                                                            binding!!.btnSubmit.visibility = View.VISIBLE
+                                                            binding!!.etOldDriverName.setBackgroundColor(
+                                                                    resources.getColor(R.color.lightgray)
+                                                            )
+                                                            binding!!.etDriverPhone.setBackgroundColor(
+                                                                    resources.getColor(R.color.lightgray)
+                                                            )
+                                                        }
+                                                    })
+                                        }
                                     }
-                                    .subscribe()
+                                }
+
 
 
                             }
@@ -486,7 +507,7 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
         binding!!.uploadGatePass.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
                 GatePassFileSelect = true
-                callImageSelector(REQUEST_CAMERA)
+                dispatchTakePictureIntent()
             }
         })
         binding!!.GatePassImage.setOnClickListener(object : View.OnClickListener {
@@ -631,24 +652,56 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == RESULT_OK) {
+
                 if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
-                    val returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)
-                    assert(returnValue != null)
-                    Log.e("getImageesValue", returnValue!![0].toString())
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (GatePassFileSelect) {
-                            GatePassFileSelect = false
-                            fileGatePass = File(compressImage(returnValue[0].toString()))
-                            val uri = Uri.fromFile(fileGatePass)
-                            GatePassFile = uri.toString()
-                            binding!!.GatePassImage.setImageURI(uri)
-                        }
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
+                    if (GatePassFileSelect) {
+                        GatePassFileSelect = false
+                        fileGatePass = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileGatePass)
+                        GatePassFile = uri.toString()
+                        binding!!.GatePassImage.setImageURI(uri)
                     }
                 }
             }
         }
     }
 
+
+
+
+
+    override fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+
+    }
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -661,7 +714,7 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Pix.start(this, options)
                 } else {
-                    callImageSelector(REQUEST_CAMERA)
+                    dispatchTakePictureIntent()
                     Toast.makeText(
                         this,
                         "Approve permissions to open Pix ImagePicker",

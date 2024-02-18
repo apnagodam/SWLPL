@@ -13,10 +13,12 @@ import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 
+@AndroidEntryPoint
 class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     // role of image
     var UserName: String? = null

@@ -10,12 +10,15 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.SecoundQualityReportAdapter
@@ -23,9 +26,11 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.SecoundQuilityReportListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var ReportsFile: String? = null
     private var CommudityImage: String? = null
@@ -37,6 +42,7 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         return R.layout.activity_listing
     }
 
+    val qualityReportViewModel by viewModels<QualitReportViewModel>()
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
@@ -139,27 +145,30 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
 
     private fun getAllCases(search: String) {
         showDialog()
-        apiService.getS_qualityReportsList("10", "" + pageOffset, "IN", search)
-            .subscribeOn(Schedulers.io())
-
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.quilityReport == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
+        qualityReportViewModel.getSecondQualityListing("10", "" + pageOffset, "IN", search)
+        qualityReportViewModel.sQualityResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading ->showDialog()
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
-                    totalPage = body.quilityReport.lastPage
-                    AllCases!!.addAll(body.quilityReport.data)
-                    secoundQualityReportAdapter!!.notifyDataSetChanged()
-                    //     AllCases = body.getData();
-                    //     binding.rvDefaultersStatus.setAdapter(new SecoundQualityReportAdapter(body.getData(), SecoundQualityReportListingActivity.this));
+                    if (it.data!!.quilityReport == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = it.data!!.quilityReport.lastPage
+                        AllCases!!.addAll(it.data!!.quilityReport.data)
+                        secoundQualityReportAdapter!!.notifyDataSetChanged()
+                        //     AllCases = body.getData();
+                        //     binding.rvDefaultersStatus.setAdapter(new SecoundQualityReportAdapter(body.getData(), SecoundQualityReportListingActivity.this));
+                    }
                 }
             }
-            .subscribe()
+        }
+
 
     }
 

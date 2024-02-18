@@ -1,334 +1,254 @@
-package com.apnagodam.staff.activity.in.first_quality_reports;
+package com.apnagodam.staff.activity.`in`.first_quality_reports
 
-import android.app.Activity;
-import android.graphics.Rect;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.app.Activity
+import android.graphics.Rect
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.adapter.FirstQualityReportAdapter
+import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.module.FirstQuilityReportListResponse
+import com.apnagodam.staff.utils.Constants
+import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.StaffDashBoardActivity;
-import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
-import com.apnagodam.staff.adapter.FirstQualityReportAdapter;
-import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter;
-import com.apnagodam.staff.adapter.TruckBookAdapter;
-import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
-import com.apnagodam.staff.module.FirstQuilityReportListResponse;
-import com.apnagodam.staff.module.FirstkanthaParchiListResponse;
-import com.apnagodam.staff.utils.Constants;
-import com.apnagodam.staff.utils.PhotoFullPopupWindow;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
-
-public class FirstQualityReportListingActivity extends BaseActivity<ActivityListingBinding> {
-    private FirstQualityReportAdapter firstQualityReportAdapter;
-    private int pageOffset = 1;
-    private int totalPage = 0;
-    private List<FirstQuilityReportListResponse.Datum> AllCases;
-    private String ReportsFile, CommudityImage;
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_listing;
+@AndroidEntryPoint
+class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>() {
+    private var firstQualityReportAdapter: FirstQualityReportAdapter? = null
+    private var pageOffset = 1
+    private var totalPage = 0
+    private var AllCases: MutableList<FirstQuilityReportListResponse.Datum?>? = null
+    private var ReportsFile: String? = null
+    private var CommudityImage: String? = null
+    val qualitReportViewModel by viewModels<QualitReportViewModel>()
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_listing
     }
 
-    @Override
-    protected void setUp() {
-        binding.pageNextPrivious.setVisibility(View.VISIBLE);
-        AllCases = new ArrayList();
-        setAdapter();
-        setSupportActionBar(binding.toolbar);
-        binding.titleHeader.setText(getResources().getString(R.string.f_quality_repots));
-        binding.tvId.setText(getResources().getString(R.string.case_idd));
-        binding.tvMoreView.setText(getResources().getString(R.string.more_view_truck));
-        binding.tvPhone.setText(getResources().getString(R.string.quality_repots));
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-     /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
+    override fun setUp() {
+        binding!!.pageNextPrivious.visibility = View.VISIBLE
+        AllCases = arrayListOf()
+        setAdapter()
+        setSupportActionBar(binding!!.toolbar)
+        binding!!.titleHeader.text = resources.getString(R.string.f_quality_repots)
+        binding!!.tvId.text = resources.getString(R.string.case_idd)
+        binding!!.tvMoreView.text = resources.getString(R.string.more_view_truck)
+        binding!!.tvPhone.text = resources.getString(R.string.quality_repots)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        getAllCases("");
-        binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getAllCases("");
-            }
-        });
-        binding.ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-               // startActivityAndClear(StaffDashBoardActivity.class);
-            }
-        });
-        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (pageOffset != 1) {
-                    pageOffset--;
-                    getAllCases("");
-                }
-            }
-        });
-        binding.tvNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (totalPage != pageOffset) {
-                    pageOffset++;
-                    getAllCases("");
-                }
-            }
-        });
-        binding.filterIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(FirstQualityReportListingActivity.this);
-                LayoutInflater inflater = ((Activity) FirstQualityReportListingActivity.this).getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.fiter_diloag, null);
-                EditText notes = (EditText) dialogView.findViewById(R.id.notes);
-                Button submit = (Button) dialogView.findViewById(R.id.btn_submit);
-                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
-                builder.setView(dialogView);
-                builder.setCancelable(false);
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                cancel_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
-                submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (notes.getText().toString().trim() != null && !notes.getText().toString().trim().isEmpty()) {
-                            alertDialog.dismiss();
-                            pageOffset = 1;
-                            getAllCases(notes.getText().toString().trim());
-                            //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Please Fill Text", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                //  setDateTimeField();
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-//        startActivityAndClear(StaffDashBoardActivity.class);
-    }
-
-    private void setAdapter() {
-        binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
-        binding.rvDefaultersStatus.setHasFixedSize(true);
-        binding.rvDefaultersStatus.setNestedScrollingEnabled(false);
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);
-        firstQualityReportAdapter = new FirstQualityReportAdapter(AllCases, FirstQualityReportListingActivity.this,getActivity());
-        binding.rvDefaultersStatus.setAdapter(firstQualityReportAdapter);
-
-    }
-    private void getAllCases(String search) {
-
-        Observable<FirstQuilityReportListResponse> qualityReport = apiService.getf_qualityReportsList("10",""+pageOffset,"IN",search)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-
-        qualityReport.subscribe(
-                new Observer<FirstQuilityReportListResponse>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        showDialog();
-                    }
-
-                    @Override
-                    public void onNext(FirstQuilityReportListResponse body) {
-                        binding.swipeRefresherStock.setRefreshing(false);
-                        AllCases.clear();
-                        if (body.getQuilityReport() == null ) {
-                            binding.txtemptyMsg.setVisibility(View.VISIBLE);
-                            binding.rvDefaultersStatus.setVisibility(View.GONE);
-                            binding.pageNextPrivious.setVisibility(View.GONE);
-                        } else {
-                            AllCases.clear();
-                            totalPage = body.getQuilityReport().getLastPage();
-                            AllCases.addAll(body.getQuilityReport().getData());
-                            firstQualityReportAdapter.notifyDataSetChanged();
-                            // AllCases = body.getData();
-                            // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
-                        }
-
-                        hideDialog();
-                    }
-
-
-                    @Override
-                    public void onError(Throwable e) {
-                        hideDialog();
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        hideDialog();
-
-                    }
-                }
-        );
-
-    }
-
-    public void ViewData(int position) {
-        Rect displayRectangle = new Rect();
-        Window window = this.getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(FirstQualityReportListingActivity.this, R.style.CustomAlertDialog);
-        LayoutInflater inflater = ((Activity) FirstQualityReportListingActivity.this).getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.lead_view, null);
-        dialogView.setMinimumWidth((int) (displayRectangle.width() * 1f));
-        dialogView.setMinimumHeight((int) (displayRectangle.height() * 1f));
-        builder.setView(dialogView);
-        final AlertDialog alertDialog = builder.create();
-        ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
-        TextView lead_id = (TextView) dialogView.findViewById(R.id.lead_id);
-        TextView genrated_by = (TextView) dialogView.findViewById(R.id.genrated_by);
-        TextView customer_name = (TextView) dialogView.findViewById(R.id.customer_name);
-        TextView phone_no = (TextView) dialogView.findViewById(R.id.phone_no);
-        TextView location_title = (TextView) dialogView.findViewById(R.id.location_title);
-        TextView commodity_name = (TextView) dialogView.findViewById(R.id.commodity_name);
-        TextView est_quantity_nmae = (TextView) dialogView.findViewById(R.id.est_quantity_nmae);
-        TextView terminal_name = (TextView) dialogView.findViewById(R.id.terminal_name);
-        TextView purpose_name = (TextView) dialogView.findViewById(R.id.purpose_name);
-        TextView commitemate_date = (TextView) dialogView.findViewById(R.id.commitemate_date);
-        TextView total_weights = (TextView) dialogView.findViewById(R.id.vehicle_no);
-        TextView total_bags = (TextView) dialogView.findViewById(R.id.in_out);
-        TextView create_date = (TextView) dialogView.findViewById(R.id.create_date);
-        TextView case_id = (TextView) dialogView.findViewById(R.id.a1);
-        TextView username = (TextView) dialogView.findViewById(R.id.a2);
-        TextView vehicle_no = (TextView) dialogView.findViewById(R.id.a4);
-        TextView processing_fees = (TextView) dialogView.findViewById(R.id.a5);
-        TextView inteerset_rate = (TextView) dialogView.findViewById(R.id.a6);
-        TextView transport_rate = (TextView) dialogView.findViewById(R.id.a7);
-        TextView loan = (TextView) dialogView.findViewById(R.id.a8);
-        TextView price = (TextView) dialogView.findViewById(R.id.a9);
-        TextView rent = (TextView) dialogView.findViewById(R.id.a10);
-        TextView labour_rent = (TextView) dialogView.findViewById(R.id.a11);
-        TextView total_weight = (TextView) dialogView.findViewById(R.id.a12);
-        TextView notes = (TextView) dialogView.findViewById(R.id.a13);
-        TextView bags = (TextView) dialogView.findViewById(R.id.a14);
-        LinearLayout case_extra = (LinearLayout) dialogView.findViewById(R.id.case_extra);
-        case_extra.setVisibility(View.VISIBLE);
-        LinearLayout price_extra = (LinearLayout) dialogView.findViewById(R.id.price_extra);
-        price_extra.setVisibility(View.VISIBLE);
-        LinearLayout photo_extra = (LinearLayout) dialogView.findViewById(R.id.photo_extra);
-        photo_extra.setVisibility(View.VISIBLE);
-        TextView gate_pass = (TextView) dialogView.findViewById(R.id.gate_pass);
-        TextView user = (TextView) dialogView.findViewById(R.id.user);
-        TextView coldwin = (TextView) dialogView.findViewById(R.id.coldwin);
-        TextView purchase_details = (TextView) dialogView.findViewById(R.id.purchase_details);
-        TextView loan_details = (TextView) dialogView.findViewById(R.id.loan_details);
-        TextView selas_details = (TextView) dialogView.findViewById(R.id.selas_details);
-        TextView converted_by = (TextView) dialogView.findViewById(R.id.converted_by);
-        ImageView reports_file = (ImageView) dialogView.findViewById(R.id.reports_file);
-        ImageView commodity_file = (ImageView) dialogView.findViewById(R.id.commodity_file);
-       /////////////////////////////////////////////
-        if (AllCases.get(position).getImge() == null || AllCases.get(position).getImge().isEmpty()) {
-            reports_file.setVisibility(View.GONE);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
+        binding!!.ivClose.setOnClickListener {
+            finish()
+            // startActivityAndClear(StaffDashBoardActivity.class);
         }
-        if (AllCases.get(position).getCommodity_img() == null || AllCases.get(position).getCommodity_img().isEmpty()) {
-            commodity_file.setVisibility(View.GONE);
+        binding!!.tvPrevious.setOnClickListener {
+            if (pageOffset != 1) {
+                pageOffset--
+                getAllCases("")
+            }
         }
-        ReportsFile = Constants.First_quality + AllCases.get(position).getImge();
-        CommudityImage = Constants.First_quality + AllCases.get(position).getCommodity_img();
-        reports_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new PhotoFullPopupWindow(FirstQualityReportListingActivity.this, R.layout.popup_photo_full, view, ReportsFile, null);
+        binding!!.tvNext.setOnClickListener {
+            if (totalPage != pageOffset) {
+                pageOffset++
+                getAllCases("")
             }
-        });
-        commodity_file.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new PhotoFullPopupWindow(FirstQualityReportListingActivity.this, R.layout.popup_photo_full, view, CommudityImage, null);
+        }
+        binding!!.filterIcon.setOnClickListener {
+            val builder = AlertDialog.Builder(this@FirstQualityReportListingActivity)
+            val inflater = (this@FirstQualityReportListingActivity as Activity).layoutInflater
+            val dialogView = inflater.inflate(R.layout.fiter_diloag, null)
+            val notes = dialogView.findViewById<View>(R.id.notes) as EditText
+            val submit = dialogView.findViewById<View>(R.id.btn_submit) as Button
+            val cancel_btn = dialogView.findViewById<View>(R.id.cancel_btn) as ImageView
+            builder.setView(dialogView)
+            builder.setCancelable(false)
+            val alertDialog = builder.create()
+            alertDialog.show()
+            cancel_btn.setOnClickListener { alertDialog.dismiss() }
+            submit.setOnClickListener {
+                if (notes.text.toString().trim { it <= ' ' } != null && !notes.text.toString().trim { it <= ' ' }.isEmpty()) {
+                    alertDialog.dismiss()
+                    pageOffset = 1
+                    getAllCases(notes.text.toString().trim { it <= ' ' })
+                    //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
+                } else {
+                    Toast.makeText(applicationContext, "Please Fill Text", Toast.LENGTH_LONG).show()
+                }
             }
-        });
-        case_id.setText(getResources().getString(R.string.case_idd));
-        username.setText(getResources().getString(R.string.total_weight));
-        lead_id.setText("" + AllCases.get(position).getCaseId());
-        genrated_by.setText("" + ((AllCases.get(position).getTotalWeight()) != null ? AllCases.get(position).getTotalWeight() : "N/A"));
-        customer_name.setText("" + AllCases.get(position).getCustFname());
-        vehicle_no.setText(getResources().getString(R.string.moisture_level));
-        phone_no.setText("" + ((AllCases.get(position).getMoistureLevel()) != null ? AllCases.get(position).getMoistureLevel() : "N/A"));
-        processing_fees.setText(getResources().getString(R.string.tcw));
-        location_title.setText("" + ((AllCases.get(position).getThousandCrownW()) != null ? AllCases.get(position).getThousandCrownW() : "N/A"));
-        inteerset_rate.setText(getResources().getString(R.string.broken));
-        commodity_name.setText("" + ((AllCases.get(position).getBroken()) != null ? AllCases.get(position).getBroken() : "N/A"));
-        transport_rate.setText(getResources().getString(R.string.fm_level));
-        est_quantity_nmae.setText("" + ((AllCases.get(position).getForeignMatter()) != null ? AllCases.get(position).getForeignMatter() : "N/A"));
-        loan.setText(getResources().getString(R.string.thin));
-        terminal_name.setText("" + ((AllCases.get(position).getThin()) != null ? AllCases.get(position).getThin() : "N/A"));
-        price.setText(getResources().getString(R.string.dehuck));
-        purpose_name.setText("" + ((AllCases.get(position).getDamage()) != null ? AllCases.get(position).getDamage() : "N/A"));
-        rent.setText(getResources().getString(R.string.discolor));
-        commitemate_date.setText("" + ((AllCases.get(position).getBlackSmith()) != null ? AllCases.get(position).getBlackSmith() : "N/A"));
-        labour_rent.setText(getResources().getString(R.string.infested));
-        create_date.setText("" + ((AllCases.get(position).getInfested()) != null ? AllCases.get(position).getInfested() : "N/A"));
-        total_weight.setText(getResources().getString(R.string.live));
-        converted_by.setText("" + ((AllCases.get(position).getLiveInsects()) != null ? AllCases.get(position).getLiveInsects() : "N/A"));
-        notes.setText(getResources().getString(R.string.packaging));
-        total_weights.setText("" + ((AllCases.get(position).getPackagingType()) != null ? AllCases.get(position).getPackagingType() : "N/A"));
-        bags.setText(getResources().getString(R.string.notes));
-        total_bags.setText("" + ((AllCases.get(position).getNotes()) != null ? AllCases.get(position).getNotes() : "N/A"));
-        gate_pass.setText("Gaatepass/CDF Name : " + ((AllCases.get(position).getGatePassCdfUserName()) != null ? AllCases.get(position).getGatePassCdfUserName() : "N/A"));
-        coldwin.setText("ColdWin Name: " + ((AllCases.get(position).getColdwinName()) != null ? AllCases.get(position).getColdwinName() : "N/A"));
-        user.setText("User : " + ((AllCases.get(position).getFpoUserId()) != null ? AllCases.get(position).getFpoUserId() : "N/A"));
-        purchase_details.setText("purchase Details : " + ((AllCases.get(position).getPurchaseName()) != null ? AllCases.get(position).getPurchaseName() : "N/A"));
-        loan_details.setText("Loan Details : " + ((AllCases.get(position).getLoanName()) != null ? AllCases.get(position).getLoanName() : "N/A"));
-        selas_details.setText("Sale Details : " + ((AllCases.get(position).getSaleName()) != null ? AllCases.get(position).getSaleName() : "N/A"));
+            //  setDateTimeField();
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+        //        startActivityAndClear(StaffDashBoardActivity.class);
+    }
+
+    private fun setAdapter() {
+        binding!!.rvDefaultersStatus.addItemDecoration(DividerItemDecoration(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL))
+        binding!!.rvDefaultersStatus.setHasFixedSize(true)
+        binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
+        val horizontalLayoutManager = LinearLayoutManager(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL, false)
+        binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
+        firstQualityReportAdapter = FirstQualityReportAdapter(AllCases, this@FirstQualityReportListingActivity, activity)
+        binding!!.rvDefaultersStatus.adapter = firstQualityReportAdapter
+    }
+
+    private fun getAllCases(search: String) {
+        qualitReportViewModel.getFirstQualityListing("10",pageOffset.toString(),"IN",search)
+        qualitReportViewModel.fQualityResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
+                    AllCases!!.clear()
+                    if (it.data!!.quilityReport == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = it.data.quilityReport.lastPage
+                        AllCases!!.addAll(it.data.quilityReport.data)
+                        firstQualityReportAdapter!!.notifyDataSetChanged()
+                        // AllCases = body.getData();
+                        // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
+                    }
+                    hideDialog()
+                }
+            }
+        }
+
+    }
+
+    fun ViewData(position: Int) {
+        val displayRectangle = Rect()
+        val window = this.window
+        window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
+        val builder = AlertDialog.Builder(this@FirstQualityReportListingActivity, R.style.CustomAlertDialog)
+        val inflater = (this@FirstQualityReportListingActivity as Activity).layoutInflater
+        val dialogView = inflater.inflate(R.layout.lead_view, null)
+        dialogView.minimumWidth = (displayRectangle.width() * 1f).toInt()
+        dialogView.minimumHeight = (displayRectangle.height() * 1f).toInt()
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        val cancel_btn = dialogView.findViewById<View>(R.id.cancel_btn) as ImageView
+        val lead_id = dialogView.findViewById<View>(R.id.lead_id) as TextView
+        val genrated_by = dialogView.findViewById<View>(R.id.genrated_by) as TextView
+        val customer_name = dialogView.findViewById<View>(R.id.customer_name) as TextView
+        val phone_no = dialogView.findViewById<View>(R.id.phone_no) as TextView
+        val location_title = dialogView.findViewById<View>(R.id.location_title) as TextView
+        val commodity_name = dialogView.findViewById<View>(R.id.commodity_name) as TextView
+        val est_quantity_nmae = dialogView.findViewById<View>(R.id.est_quantity_nmae) as TextView
+        val terminal_name = dialogView.findViewById<View>(R.id.terminal_name) as TextView
+        val purpose_name = dialogView.findViewById<View>(R.id.purpose_name) as TextView
+        val commitemate_date = dialogView.findViewById<View>(R.id.commitemate_date) as TextView
+        val total_weights = dialogView.findViewById<View>(R.id.vehicle_no) as TextView
+        val total_bags = dialogView.findViewById<View>(R.id.in_out) as TextView
+        val create_date = dialogView.findViewById<View>(R.id.create_date) as TextView
+        val case_id = dialogView.findViewById<View>(R.id.a1) as TextView
+        val username = dialogView.findViewById<View>(R.id.a2) as TextView
+        val vehicle_no = dialogView.findViewById<View>(R.id.a4) as TextView
+        val processing_fees = dialogView.findViewById<View>(R.id.a5) as TextView
+        val inteerset_rate = dialogView.findViewById<View>(R.id.a6) as TextView
+        val transport_rate = dialogView.findViewById<View>(R.id.a7) as TextView
+        val loan = dialogView.findViewById<View>(R.id.a8) as TextView
+        val price = dialogView.findViewById<View>(R.id.a9) as TextView
+        val rent = dialogView.findViewById<View>(R.id.a10) as TextView
+        val labour_rent = dialogView.findViewById<View>(R.id.a11) as TextView
+        val total_weight = dialogView.findViewById<View>(R.id.a12) as TextView
+        val notes = dialogView.findViewById<View>(R.id.a13) as TextView
+        val bags = dialogView.findViewById<View>(R.id.a14) as TextView
+        val case_extra = dialogView.findViewById<View>(R.id.case_extra) as LinearLayout
+        case_extra.visibility = View.VISIBLE
+        val price_extra = dialogView.findViewById<View>(R.id.price_extra) as LinearLayout
+        price_extra.visibility = View.VISIBLE
+        val photo_extra = dialogView.findViewById<View>(R.id.photo_extra) as LinearLayout
+        photo_extra.visibility = View.VISIBLE
+        val gate_pass = dialogView.findViewById<View>(R.id.gate_pass) as TextView
+        val user = dialogView.findViewById<View>(R.id.user) as TextView
+        val coldwin = dialogView.findViewById<View>(R.id.coldwin) as TextView
+        val purchase_details = dialogView.findViewById<View>(R.id.purchase_details) as TextView
+        val loan_details = dialogView.findViewById<View>(R.id.loan_details) as TextView
+        val selas_details = dialogView.findViewById<View>(R.id.selas_details) as TextView
+        val converted_by = dialogView.findViewById<View>(R.id.converted_by) as TextView
+        val reports_file = dialogView.findViewById<View>(R.id.reports_file) as ImageView
+        val commodity_file = dialogView.findViewById<View>(R.id.commodity_file) as ImageView
+        /////////////////////////////////////////////
+        if (AllCases!![position]!!.imge == null || AllCases!![position]!!.imge.isEmpty()) {
+            reports_file.visibility = View.GONE
+        }
+        if (AllCases!![position]!!.commodity_img == null || AllCases!![position]!!.commodity_img.isEmpty()) {
+            commodity_file.visibility = View.GONE
+        }
+        ReportsFile = Constants.First_quality + AllCases!![position]!!.imge
+        CommudityImage = Constants.First_quality + AllCases!![position]!!.commodity_img
+        reports_file.setOnClickListener { view -> PhotoFullPopupWindow(this@FirstQualityReportListingActivity, R.layout.popup_photo_full, view, ReportsFile, null) }
+        commodity_file.setOnClickListener { view -> PhotoFullPopupWindow(this@FirstQualityReportListingActivity, R.layout.popup_photo_full, view, CommudityImage, null) }
+        case_id.text = resources.getString(R.string.case_idd)
+        username.text = resources.getString(R.string.total_weight)
+        lead_id.text = "" + AllCases!![position]!!.caseId
+        genrated_by.text = "" + if (AllCases!![position]!!.totalWeight != null) AllCases!![position]!!.totalWeight else "N/A"
+        customer_name.text = "" + AllCases!![position]!!.custFname
+        vehicle_no.text = resources.getString(R.string.moisture_level)
+        phone_no.text = "" + if (AllCases!![position]!!.moistureLevel != null) AllCases!![position]!!.moistureLevel else "N/A"
+        processing_fees.text = resources.getString(R.string.tcw)
+        location_title.text = "" + if (AllCases!![position]!!.thousandCrownW != null) AllCases!![position]!!.thousandCrownW else "N/A"
+        inteerset_rate.text = resources.getString(R.string.broken)
+        commodity_name.text = "" + if (AllCases!![position]!!.broken != null) AllCases!![position]!!.broken else "N/A"
+        transport_rate.text = resources.getString(R.string.fm_level)
+        est_quantity_nmae.text = "" + if (AllCases!![position]!!.foreignMatter != null) AllCases!![position]!!.foreignMatter else "N/A"
+        loan.text = resources.getString(R.string.thin)
+        terminal_name.text = "" + if (AllCases!![position]!!.thin != null) AllCases!![position]!!.thin else "N/A"
+        price.text = resources.getString(R.string.dehuck)
+        purpose_name.text = "" + if (AllCases!![position]!!.damage != null) AllCases!![position]!!.damage else "N/A"
+        rent.text = resources.getString(R.string.discolor)
+        commitemate_date.text = "" + if (AllCases!![position]!!.blackSmith != null) AllCases!![position]!!.blackSmith else "N/A"
+        labour_rent.text = resources.getString(R.string.infested)
+        create_date.text = "" + if (AllCases!![position]!!.infested != null) AllCases!![position]!!.infested else "N/A"
+        total_weight.text = resources.getString(R.string.live)
+        converted_by.text = "" + if (AllCases!![position]!!.liveInsects != null) AllCases!![position]!!.liveInsects else "N/A"
+        notes.text = resources.getString(R.string.packaging)
+        total_weights.text = "" + if (AllCases!![position]!!.packagingType != null) AllCases!![position]!!.packagingType else "N/A"
+        bags.text = resources.getString(R.string.notes)
+        total_bags.text = "" + if (AllCases!![position]!!.notes != null) AllCases!![position]!!.notes else "N/A"
+        gate_pass.text = "Gaatepass/CDF Name : " + if (AllCases!![position]!!.gatePassCdfUserName != null) AllCases!![position]!!.gatePassCdfUserName else "N/A"
+        coldwin.text = "ColdWin Name: " + if (AllCases!![position]!!.coldwinName != null) AllCases!![position]!!.coldwinName else "N/A"
+        user.text = "User : " + if (AllCases!![position]!!.fpoUserId != null) AllCases!![position]!!.fpoUserId else "N/A"
+        purchase_details.text = "purchase Details : " + if (AllCases!![position]!!.purchaseName != null) AllCases!![position]!!.purchaseName else "N/A"
+        loan_details.text = "Loan Details : " + if (AllCases!![position]!!.loanName != null) AllCases!![position]!!.loanName else "N/A"
+        selas_details.text = "Sale Details : " + if (AllCases!![position]!!.saleName != null) AllCases!![position]!!.saleName else "N/A"
         ///////////////////////////////////////////////////
-        cancel_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-        alertDialog.show();
+        cancel_btn.setOnClickListener { alertDialog.dismiss() }
+        alertDialog.show()
     }
 
-    public void checkVeehicleNo(int postion) {
-        Bundle bundle = new Bundle();
-        bundle.putString("user_name", AllCases.get(postion).getCustFname());
-        bundle.putString("case_id", AllCases.get(postion).getCaseId());
-        bundle.putString("vehicle_no", AllCases.get(postion).getVehicleNo());
-        startActivity(UploadFirstQualtityReportsClass.class,bundle);
+    fun checkVeehicleNo(postion: Int) {
+        val bundle = Bundle()
+        bundle.putString("user_name", AllCases!![postion]!!.custFname)
+        bundle.putString("case_id", AllCases!![postion]!!.caseId)
+        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        startActivity(UploadFirstQualtityReportsClass::class.java, bundle)
     }
-
 }

@@ -9,10 +9,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.SecoundkanthaparchiAdapter
@@ -20,12 +23,13 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>() {
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
@@ -33,6 +37,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     private var pageOffset = 1
     private var totalPage = 0
     private lateinit var AllCases: ArrayList<SecoundkanthaParchiListResponse.Datum>
+    val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -40,6 +45,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        getAllCases("")
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.secoundkanta_parchi)
@@ -113,27 +119,34 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     }
 
     private fun getAllCases(search: String) {
-        apiService.getS_kanthaParchiList("10", pageOffset.toString(), "IN", search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.secoundKataParchiDatum == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
-                    AllCases!!.clear()
-                    totalPage = body.secoundKataParchiDatum.lastPage
-                    AllCases!!.addAll(body.secoundKataParchiDatum.data)
-                    secoundkanthaparchiAdapter!!.notifyDataSetChanged()
-                    //  AllCases = body.getData();
-                    //  binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
+        kantaParchiViewModel.getSKantaParchiListing("10",pageOffset.toString(),"IN",search)
+        kantaParchiViewModel.sKantaParchiResponse.observe(this)
+        {
+            when(it){
+                is NetworkResult.Error -> showErrorSnackBar("Something went wrong")
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    hideDialog()
+                    if(it.data!=null){
+                        binding!!.swipeRefresherStock.isRefreshing = false
+                        AllCases!!.clear()
+                        if (it.data.secoundKataParchiDatum == null) {
+                            binding!!.txtemptyMsg.visibility = View.VISIBLE
+                            binding!!.rvDefaultersStatus.visibility = View.GONE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                        } else {
+                            AllCases!!.clear()
+                            totalPage = it.data.secoundKataParchiDatum.lastPage
+                            AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
+                            secoundkanthaparchiAdapter!!.notifyDataSetChanged()
+                            //  AllCases = body.getData();
+                            //  binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
+                        }
+                    }
                 }
             }
-            .doOnError{}
-            .subscribe()
+        }
+
 
     }
 

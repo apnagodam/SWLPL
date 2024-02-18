@@ -378,7 +378,6 @@
     <string-array name="array_truck_rate_type">
         <item>Select Rate Type</item>
         <item>Qtl</item>
-        <item>KM</item>
     </string-array>
 
     <string name="out_relase_book">Release Order</string>

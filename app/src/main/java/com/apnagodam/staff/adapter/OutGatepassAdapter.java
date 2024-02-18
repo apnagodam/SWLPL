@@ -101,6 +101,7 @@ public class OutGatepassAdapter extends BaseRecyclerViewAdapter {
                     if (context instanceof OutGatePassListingActivity) {
                         ((OutGatePassListingActivity) context).ViewData(position);
                     }
+
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {

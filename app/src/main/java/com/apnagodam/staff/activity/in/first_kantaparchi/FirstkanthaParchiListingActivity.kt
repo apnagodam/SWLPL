@@ -9,12 +9,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter
@@ -22,9 +25,11 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private lateinit var firstkanthaparchiAdapter: FirstkanthaparchiAdapter
     private var pageOffset = 1
@@ -32,6 +37,8 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     private lateinit var AllCases: ArrayList<FirstkanthaParchiListResponse.Datum>
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
+
+    val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -135,26 +142,30 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
 
     private fun getAllCases(search: String) {
         showDialog()
-        apiService.getf_kanthaParchiList("10", "" + pageOffset, "IN", search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases!!.clear()
-                if (body.firstKataParchiData == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else {
+        kantaParchiViewModel.getKantaParchiListing("10", "" + pageOffset, "IN", search)
+        kantaParchiViewModel.kantaParchiResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
-                    totalPage = body.firstKataParchiData.lastPage
-                    AllCases!!.addAll(body.firstKataParchiData.data)
-                    firstkanthaparchiAdapter!!.notifyDataSetChanged()
-                    //   AllCases = body.getFirstKataParchiData();
-                    //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
+                    if (it.data!!.firstKataParchiData == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = it.data!!.firstKataParchiData.lastPage
+                        AllCases!!.addAll(it.data!!.firstKataParchiData.data)
+                        firstkanthaparchiAdapter!!.notifyDataSetChanged()
+                        //   AllCases = body.getFirstKataParchiData();
+                        //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
+                    }
                 }
             }
-            .subscribe()
+        }
+
 
     }
 

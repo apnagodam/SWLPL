@@ -1,18 +1,26 @@
 package com.apnagodam.staff.activity.`in`.secound_quality_reports
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -20,10 +28,16 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.UUID
 
+@AndroidEntryPoint
 class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
     var packagingTypeID: String? = null
 
@@ -37,6 +51,8 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     private var reportFile: String? = null
     private var commudityFile: String? = null
     var options: Options? = null
+
+    val qualitReportViewModel by viewModels<QualitReportViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
@@ -53,7 +69,6 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         binding!!.caseId.text = CaseID
         clickListner()
         // spinner purpose
-        binding!!.rlpackgingType.visibility = View.GONE
         binding!!.spinnerPackagingtype.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -103,12 +118,12 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
             CommudityFileSelect = false
-            callImageSelector(REQUEST_CAMERA)
+          dispatchTakePictureIntent()
         }
         binding!!.uploadCommudity.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = true
-            callImageSelector(REQUEST_CAMERA)
+           dispatchTakePictureIntent()
         }
         binding!!.ReportsImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -142,6 +157,73 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         Pix.start(this@UploadSecoundQualtityReportsClass, options)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        try {
+            if (resultCode == Activity.RESULT_OK) {
+                if (requestCode == REQUEST_CAMERA) {
+
+
+                    if (requestCode == REQUEST_CAMERA) {
+                        val imageBitmap = data?.extras?.get("data") as Bitmap
+
+                        if (ReportsFileSelect) {
+                            ReportsFileSelect = false
+                            CommudityFileSelect = false
+                            fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
+                            val uri = Uri.fromFile(fileReport)
+                            reportFile = uri.toString()
+                            binding!!.ReportsImage.setImageURI(uri)
+                        } else if (CommudityFileSelect) {
+                            val imageBitmap = data?.extras?.get("data") as Bitmap
+                            ReportsFileSelect = false
+                            CommudityFileSelect = false
+                            fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
+                            val uri = Uri.fromFile(fileCommudity)
+                            commudityFile = uri.toString()
+                            binding!!.CommudityImage.setImageURI(uri)
+                        }
+                    }
+
+                }
+            }
+        } catch (e: Exception) {
+        }
+
+    }
+
+
+    override fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }
+
+    }
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+
+        try{
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
     // update file
     fun onNext() {
         var KanthaImage = ""
@@ -153,38 +235,42 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
         }
         //else {
-
-        apiService.uploadSecoundQualityReports(
-            UploadSecoundQualityPostData(
+        qualitReportViewModel.uploadSecondQualityReport(UploadSecoundQualityPostData(
                 CaseID,
                 KanthaImage,
                 stringFromView(
-                    binding!!.etMoistureLevel
+                        binding!!.etMoistureLevel
                 ),
                 stringFromView(binding!!.etTcw),
                 stringFromView(binding!!.etFmLevel),
                 stringFromView(
-                    binding!!.etThin
+                        binding!!.etThin
                 ),
                 stringFromView(binding!!.etDehuck),
                 stringFromView(binding!!.etDiscolor),
                 stringFromView(
-                    binding!!.etBroken
+                        binding!!.etBroken
                 ),
                 stringFromView(binding!!.etInfested),
                 stringFromView(binding!!.etLive),
                 stringFromView(binding!!.notes),
-                CommudityFileSelectImage
-            )
-        ).doOnNext {body->
-            Utility.showAlertDialog(
-                this@UploadSecoundQualtityReportsClass,
-                getString(R.string.alert),
-                body.getMessage()
-            ) { startActivityAndClear(SecoundQualityReportListingActivity::class.java) }
-        }.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+                CommudityFileSelectImage,
+                packagingTypeID
+        ))
+        qualitReportViewModel.sQualityUploadResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    Utility.showAlertDialog(
+                            this@UploadSecoundQualtityReportsClass,
+                            getString(R.string.alert),
+                            it.data!!.getMessage()
+                    ) { startActivityAndClear(SecoundQualityReportListingActivity::class.java) }
+                }
+            }
+        }
+
 
     }
 
@@ -213,35 +299,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 } else if (TextUtils.isEmpty(stringFromView(binding.etLive))) {
   return Utility.showEditTextError(binding.tilLive, R.string.live_count);
 }*/
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
-                    val returnValue: ArrayList<String> =
-                        data.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
-                    Log.e("getImageesValue", returnValue[0])
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (ReportsFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileReport = File(compressImage(returnValue[0]))
-                            val uri = Uri.fromFile(fileReport)
-                            reportFile = uri.toString()
-                            binding!!.ReportsImage.setImageURI(uri)
-                        } else if (CommudityFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileCommudity = File(compressImage(returnValue[0]))
-                            val uri = Uri.fromFile(fileCommudity)
-                            commudityFile = uri.toString()
-                            binding!!.CommudityImage.setImageURI(uri)
-                        }
-                    }
-                }
-            }
-        }
-    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -255,7 +313,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Pix.start(this, options)
                 } else {
-                    callImageSelector(REQUEST_CAMERA)
+                    dispatchTakePictureIntent()
                     Toast.makeText(
                         this,
                         "Approve permissions to open Pix ImagePicker",

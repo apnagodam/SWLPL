@@ -121,6 +121,7 @@ public class LaabourBookAdapter extends BaseRecyclerViewAdapter {
                     if (context instanceof LabourBookListingActivity) {
                         ((LabourBookListingActivity) context).ViewData(position);
                     }
+
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {

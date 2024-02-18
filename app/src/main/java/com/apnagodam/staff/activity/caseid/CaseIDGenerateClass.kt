@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.caseid
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Color
 import android.text.Editable
@@ -626,6 +627,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         ArrayAdapter(this@CaseIDGenerateClass,
                             R.layout.multiline_spinner_item,
                             (CommudityName)!!)
+                        @SuppressLint("SuspiciousIndentation")
                         object : ArrayAdapter<String?>(
                         this@CaseIDGenerateClass,
                         R.layout.multiline_spinner_item,
@@ -748,7 +750,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
-                    data = it.data!!.data as ArrayList<TerminalListPojo.Datum>
+                    data = it.data!!.data
                     for (i in data.indices) {
                         TerminalName.add(data.get(i).name + "(" + data.get(i).warehouseCode + ")")
                     }

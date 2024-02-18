@@ -37,7 +37,7 @@ public class UploadSecoundQualityPostData {
     @Expose
     private String black_smith;
 
-    @SerializedName("packaging_type")
+    @SerializedName("extra_claim")
     @Expose
     private String packaging_type;
     @SerializedName("infested")
@@ -64,7 +64,7 @@ public class UploadSecoundQualityPostData {
 
     public UploadSecoundQualityPostData(String case_id, String report_file, String moisture_level,
                                         String thousand_crown_w, String foreign_matter, String thin, String damage, String black_smith
-            , String broken,  String infested, String live_insects, String notes,String commodity_img) {
+            , String broken,  String infested, String live_insects, String notes,String commodity_img,String packaging_type) {
         this.case_id = case_id;
         this.report_file = report_file;
         this.moisture_level = moisture_level;
@@ -78,6 +78,7 @@ public class UploadSecoundQualityPostData {
         this.live_insects = live_insects;
         this.notes=notes;
         this.commodity_img=commodity_img;
+        this.packaging_type = packaging_type;
     }
 }
 

@@ -10,26 +10,31 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.LaabourBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllLabourBookListResponse
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     lateinit var laabourBookAdapter: LaabourBookAdapter
     private var pageOffset = 1
     private var totalPage = 0
     lateinit var AllCases: MutableList<AllLabourBookListResponse.Datum>
+    val labourViewModel by viewModels<LabourViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
@@ -120,34 +125,37 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
-
-        apiService.getLabourBookList("10", "" + pageOffset, "IN", search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body->
-                binding!!.swipeRefresherStock.isRefreshing = false
-                AllCases.clear()
-                if (body.labour.data == null) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else if (body.labour.lastPage == 1) {
-                    binding!!.txtemptyMsg.visibility = View.GONE
-                    binding!!.rvDefaultersStatus.visibility = View.VISIBLE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                    totalPage = body.labour.lastPage
-                    AllCases!!.addAll(body.labour.data)
-                    laabourBookAdapter!!.notifyDataSetChanged()
-                } else {
-                    AllCases!!.clear()
-                    totalPage = body.labour.lastPage
-                    AllCases!!.addAll(body.labour.data)
-                    laabourBookAdapter!!.notifyDataSetChanged()
-                    // AllCases = body.getCurrentPageCollection();
-                    // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
+    labourViewModel.getLabourList("10",  pageOffset.toString(), "IN", search)
+        labourViewModel.labourResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
+                    AllCases.clear()
+                    if (it.data == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else if (it.data.labour.lastPage == 1) {
+                        binding!!.txtemptyMsg.visibility = View.GONE
+                        binding!!.rvDefaultersStatus.visibility = View.VISIBLE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                        totalPage = it.data.labour.lastPage
+                        AllCases!!.addAll(it.data.labour.data)
+                        laabourBookAdapter!!.notifyDataSetChanged()
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = it.data.labour.lastPage
+                        AllCases!!.addAll(it.data.labour.data)
+                        laabourBookAdapter!!.notifyDataSetChanged()
+                        // AllCases = body.getCurrentPageCollection();
+                        // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
+                    }
                 }
             }
-            .subscribe()
+        }
+
 
     }
 

@@ -8,10 +8,13 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -19,10 +22,11 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-
+@AndroidEntryPoint
 class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
     var fileReport: File? = null
     var fileCommudity: File? = null
@@ -36,6 +40,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
     var options: Options? = null
     private var reportFile: String? = null
     private var commudityFile: String? = null
+    val qualityReportViewModel by viewModels<QualitReportViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
@@ -158,39 +163,43 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         }
         //else {
 
-
-        apiService.uploadSecoundQualityReports(
-            UploadSecoundQualityPostData(
+        qualityReportViewModel.uploadSecondQualityReport( UploadSecoundQualityPostData(
                 CaseID,
                 KanthaImage,
                 stringFromView(
-                    binding!!.etMoistureLevel
+                        binding!!.etMoistureLevel
                 ),
                 stringFromView(binding!!.etTcw),
                 stringFromView(binding!!.etFmLevel),
                 stringFromView(
-                    binding!!.etThin
+                        binding!!.etThin
                 ),
                 stringFromView(binding!!.etDehuck),
                 stringFromView(binding!!.etDiscolor),
                 stringFromView(
-                    binding!!.etBroken
+                        binding!!.etBroken
                 ),
                 stringFromView(binding!!.etInfested),
                 stringFromView(binding!!.etLive),
                 stringFromView(binding!!.notes),
-                CommudityFileSelectImage
-            )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                Utility.showAlertDialog(
-                    this@OutUploadSecoundQualtityReportsClass,
-                    getString(R.string.alert),
-                    body.message
-                ) { startActivityAndClear(OutSecoundQualityReportListingActivity::class.java) }
+                CommudityFileSelectImage,
+                packagingTypeID
+        ))
+        qualityReportViewModel.sQualityUploadResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    Utility.showAlertDialog(
+                            this@OutUploadSecoundQualtityReportsClass,
+                            getString(R.string.alert),
+                            it.data!!.message
+                    ) { startActivityAndClear(OutSecoundQualityReportListingActivity::class.java) }
+                }
             }
-            .subscribe()
+        }
+
+
 
 
 

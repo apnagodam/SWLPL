@@ -4,17 +4,18 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TerminalListPojo  extends BaseResponse {
     @SerializedName("data")
     @Expose
-    private List<Datum> data = null;
-    public List<Datum> getData() {
+    private ArrayList<Datum> data = null;
+    public ArrayList<Datum> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(ArrayList<Datum> data) {
         this.data = data;
     }
     public class Datum {

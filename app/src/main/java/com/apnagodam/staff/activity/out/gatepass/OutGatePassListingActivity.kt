@@ -10,11 +10,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.GatePassViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.GatePassPDFPrieviewClass
 import com.apnagodam.staff.activity.StaffDashBoardActivity
@@ -23,11 +26,13 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.GatePassListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var firstkantaParchiFile: String? = null
     private val TruckImage: String? = null
@@ -38,7 +43,7 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
-
+    val gatePassViewModel by viewModels<GatePassViewModel>()
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
@@ -141,42 +146,33 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
-        val getGatePass = apiService.getGatePass("10", "" + pageOffset, "OUT", search)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-        getGatePass.subscribe(
-            object : Observer<GatePassListResponse> {
-                override fun onSubscribe(d: Disposable) {
-                    showDialog()
-                }
-
-                override fun onNext(body: GatePassListResponse) {
-                    binding!!.swipeRefresherStock.isRefreshing = false
-                    AllCases!!.clear()
-                    if (body.gatePassData == null) {
-                        binding!!.txtemptyMsg.visibility = View.VISIBLE
-                        binding!!.rvDefaultersStatus.visibility = View.GONE
-                        binding!!.pageNextPrivious.visibility = View.GONE
-                    } else {
+        gatePassViewModel.getGatePassList("10", "" + pageOffset, "OUT", search)
+        gatePassViewModel.gatePassList.observe(this){
+            when(it){
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+                    if (it.data!=null){
+                        binding!!.swipeRefresherStock.isRefreshing = false
                         AllCases!!.clear()
-                        totalPage = body.gatePassData.lastPage
-                        AllCases!!.addAll(body.gatePassData.data)
-                        outGatepassAdapter!!.notifyDataSetChanged()
-                        // AllCases = body.getData();
-                        //  binding.rvDefaultersStatus.setAdapter(new GatepassAdapter(body.getData(), GatePassListingActivity.this));
+                        if (it.data.gatePassData == null) {
+                            binding!!.txtemptyMsg.visibility = View.VISIBLE
+                            binding!!.rvDefaultersStatus.visibility = View.GONE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                        } else {
+                            AllCases!!.clear()
+                            totalPage = it.data.gatePassData.lastPage
+                            AllCases!!.addAll(it.data.gatePassData.data)
+                            outGatepassAdapter!!.notifyDataSetChanged()
+                            // AllCases = body.getData();
+                            //  binding.rvDefaultersStatus.setAdapter(new GatepassAdapter(body.getData(), GatePassListingActivity.this));
+                        }
+                        hideDialog()
                     }
-                    hideDialog()
-                }
-
-                override fun onError(e: Throwable) {
-                    hideDialog()
-                }
-
-                override fun onComplete() {
-                    hideDialog()
                 }
             }
-        )
+        }
+
     }
 
     fun ViewData(position: Int) {
