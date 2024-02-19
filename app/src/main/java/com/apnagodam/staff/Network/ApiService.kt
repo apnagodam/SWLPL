@@ -161,12 +161,12 @@ interface ApiService {
     ): Response<AllCaseIDResponse>
 
     @GET("emp_api/apna_emp_leads")
-    fun getAllLeads(
+   suspend fun getAllLeads(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
         @Query("search") str3: String?
-    ): Call<AllLeadsResponse?>?
+    ): Response<AllLeadsResponse>
 
     @GET("emp_api/apna_emp_get_pricing")
     fun getAllpricingList(
