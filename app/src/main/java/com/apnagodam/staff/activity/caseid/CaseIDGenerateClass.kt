@@ -38,14 +38,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+
 @AndroidEntryPoint
 class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnClickListener,
     AdapterView.OnItemSelectedListener {
-   lateinit var SpinnerStackAdapter: ArrayAdapter<String>
-    lateinit  var SpinnerCommudityAdapter: ArrayAdapter<String>
-    lateinit   var spinnerTeerminalAdpter: ArrayAdapter<String>
-    lateinit   var SpinnerUserListAdapter: ArrayAdapter<String>
-    lateinit  var spinnerEmployeeAdpter: ArrayAdapter<String>
+    lateinit var SpinnerStackAdapter: ArrayAdapter<String>
+    lateinit var SpinnerCommudityAdapter: ArrayAdapter<String>
+    lateinit var spinnerTeerminalAdpter: ArrayAdapter<String>
+    lateinit var SpinnerUserListAdapter: ArrayAdapter<String>
+    lateinit var spinnerEmployeeAdpter: ArrayAdapter<String>
     var stackID: String? = null
     var commudityID: String? = null
     var TerminalID: String? = null
@@ -54,17 +55,17 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     var seleectCoustomer: String? = null
     var selectConvertOther: String? = null
     var UserID: String? = null
-   lateinit var StackName: ArrayList<String>
+    lateinit var StackName: ArrayList<String>
     lateinit var CommudityName: ArrayList<String>
     lateinit var TerminalName: ArrayList<String>
-    lateinit  var TerminalsID: List<String>
-    lateinit  var CustomerName: ArrayList<String>
-    lateinit  var CustomerID: ArrayList<String>
-    lateinit   var LeadGenerateOtherName: ArrayList<String>
-    lateinit  var LeadGenerateOtheID: ArrayList<String>
-    lateinit  var data: ArrayList<TerminalListPojo.Datum>
-    lateinit   var Userdata: ArrayList<AllUserListPojo.User>
-    lateinit   var Stackdata: ArrayList<StackListPojo.Datum>
+    lateinit var TerminalsID: List<String>
+    lateinit var CustomerName: ArrayList<String>
+    lateinit var CustomerID: ArrayList<String>
+    lateinit var LeadGenerateOtherName: ArrayList<String>
+    lateinit var LeadGenerateOtheID: ArrayList<String>
+    lateinit var data: ArrayList<TerminalListPojo.Datum>
+    lateinit var Userdata: ArrayList<AllUserListPojo.User>
+    lateinit var Stackdata: ArrayList<StackListPojo.Datum>
     lateinit var commodityData: ArrayList<CommodityResponseData.Data>
 
     val leadsViewModel by viewModels<LeadsViewModel>()
@@ -144,7 +145,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 //        });
 
         // UserList listing
-        SpinnerUserListAdapter = ArrayAdapter(this, R.layout.multiline_spinner_item, (CustomerName)!!)
+        SpinnerUserListAdapter =
+            ArrayAdapter(this, R.layout.multiline_spinner_item, (CustomerName)!!)
 
 //        SpinnerUserListAdapter = object :
 //            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (CustomerName)!!) {
@@ -241,9 +243,11 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 }
             }
         }.start()
-        spinnerEmployeeAdpter = ArrayAdapter(this,
+        spinnerEmployeeAdpter = ArrayAdapter(
+            this,
             R.layout.multiline_spinner_item,
-            (LeadGenerateOtherName)!!)
+            (LeadGenerateOtherName)!!
+        )
 
 //            object : ArrayAdapter<String?>(
 //            this,
@@ -523,12 +527,15 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                             if (presentMeterStatusID.contains(Stackdata!!.get(i).stackNumber)) {
                                 stackID = Stackdata!!.get(i).id.toString()
                                 if (selectInOUt!!.contains("IN")) {
+                                    binding!!.etCustomerWeight.setText(""+Stackdata!!.get(i).requestWeight)
                                     binding!!.etCustomerVehicle.setText("" + Stackdata!!.get(i).vehicle_no)
                                     binding!!.etCustomerVehicle.isClickable = false
                                     binding!!.etCustomerVehicle.isFocusable = false
                                     binding!!.etCustomerVehicle.isEnabled = false
                                     binding!!.etCustomerVehicle.isFocusableInTouchMode = false
                                 } else {
+                                    binding!!.etCustomerWeight.setText("")
+
                                     binding!!.etCustomerVehicle.setText("")
                                     binding!!.etCustomerVehicle.isClickable = true
                                     binding!!.etCustomerVehicle.isFocusable = true
@@ -553,6 +560,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             }
     }
 
+    fun onVerifyOtp(){
+        binding!!.tvVerifyOtp.setOnClickListener {
+
+        }
+    }
+
     private fun getstack() {
         apiService.getStackList(
             StackPostData(
@@ -563,7 +576,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             )
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
+            .doOnNext { body ->
                 StackName!!.clear()
                 stackID = null
                 binding!!.spinnerStack.prompt = ""
@@ -573,9 +586,11 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     StackName!!.add(Stackdata.get(i).stackNumber)
                     //SpinnerStackAdapter.notifyDataSetChanged();
                 }
-                SpinnerStackAdapter = ArrayAdapter(this@CaseIDGenerateClass,
+                SpinnerStackAdapter = ArrayAdapter(
+                    this@CaseIDGenerateClass,
                     R.layout.multiline_spinner_item,
-                    (StackName)!!)
+                    (StackName)!!
+                )
 //                        object : ArrayAdapter<String?>(
 //                        this@CaseIDGenerateClass,
 //                        R.layout.multiline_spinner_item,
@@ -613,7 +628,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             apiService.getCommodityList(TerminalID, selectInOUt, seleectCoustomer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext{body->
+                .doOnNext { body ->
                     CommudityName!!.clear()
                     commudityID = null
                     binding!!.spinnerCommudity.prompt = ""
@@ -624,11 +639,13 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         //SpinnerStackAdapter.notifyDataSetChanged();
                     }
                     SpinnerCommudityAdapter =
-                        ArrayAdapter(this@CaseIDGenerateClass,
+                        ArrayAdapter(
+                            this@CaseIDGenerateClass,
                             R.layout.multiline_spinner_item,
-                            (CommudityName)!!)
-                        @SuppressLint("SuspiciousIndentation")
-                        object : ArrayAdapter<String?>(
+                            (CommudityName)!!
+                        )
+                    @SuppressLint("SuspiciousIndentation")
+                    object : ArrayAdapter<String?>(
                         this@CaseIDGenerateClass,
                         R.layout.multiline_spinner_item,
                     ) {
@@ -743,10 +760,10 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         }.start()
     }
 
-    private fun terminalListLevel(){
+    private fun terminalListLevel() {
         leadsViewModel.getTerminalList()
-        leadsViewModel.response.observe(this){
-            when(it){
+        leadsViewModel.response.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
@@ -761,11 +778,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         }
 
     }
+
     private val userList: Unit
         private get() {
             apiService.getUserList(TerminalID, selectInOUt).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {body->
+                .doOnNext { body ->
                     Userdata = body.users as ArrayList<AllUserListPojo.User>
                     for (i in Userdata.indices) {
                         CustomerName!!.add(Userdata.get(i).fname + "(" + Userdata.get(i).phone)
@@ -869,26 +887,28 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 //                                    }
 //                                });
 
-                                apiService.doCreateCaseID( CreateCaseIDPostData(
-                                    TerminalID,
-                                    selectInOUt,
-                                    seleectCoustomer,
-                                    commudityID,
-                                    "",
-                                    stackID,
-                                    stringFromView(binding!!.etCustomerBags),
-                                    stringFromView(binding!!.etCustomerWeight),
-                                    stringFromView(
-                                        binding!!.etCustomerWeightQuantal
-                                    ),
-                                    stringFromView(binding!!.etCustomerVehicle),
-                                    stringFromView(binding!!.etSpotToken),
-                                    "",
-                                    "",
-                                    ""
-                                )).subscribeOn(Schedulers.io())
+                                apiService.doCreateCaseID(
+                                    CreateCaseIDPostData(
+                                        TerminalID,
+                                        selectInOUt,
+                                        seleectCoustomer,
+                                        commudityID,
+                                        "",
+                                        stackID,
+                                        stringFromView(binding!!.etCustomerBags),
+                                        stringFromView(binding!!.etCustomerWeight),
+                                        stringFromView(
+                                            binding!!.etCustomerWeightQuantal
+                                        ),
+                                        stringFromView(binding!!.etCustomerVehicle),
+                                        stringFromView(binding!!.etSpotToken),
+                                        "",
+                                        "",
+                                        ""
+                                    )
+                                ).subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnNext {body->
+                                    .doOnNext { body ->
                                         Utility.showAlertDialog(
                                             this@CaseIDGenerateClass,
                                             getString(R.string.alert),

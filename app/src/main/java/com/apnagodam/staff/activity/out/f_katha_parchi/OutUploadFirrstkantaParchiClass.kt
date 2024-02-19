@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.f_katha_parchi
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -12,8 +13,11 @@ import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.leo.searchablespinner.SearchableSpinner
+import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,16 +27,23 @@ import java.io.File
 class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var fileKantha: File? = null
     var fileTruck: File? = null
+    var fileTruck2:File?=null
 
     // role of image
     var UserName: String? = null
     var CaseID: String? = ""
     var firstKanthaFile = false
     var truckImage = false
-
+    var truckImage2 = false;
+    lateinit var searchableSpinner: SearchableSpinner
+    lateinit var dharamKantas: ArrayList<FirstkanthaParchiListResponse.DharemKanta>
+    var listOfKantaNames = arrayListOf<String>()
     //Options options;
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
+    private var TruckImage2: String? = null
+    var kantaId = 0
+    var kantaName = "";
     val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
@@ -49,6 +60,61 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
         clickListner()
+
+        searchableSpinner = SearchableSpinner(this)
+
+        getKantaList("")
+
+
+
+
+
+        binding!!.etKantaParchi.setOnClickListener {
+            searchableSpinner.show()
+        }
+    }
+
+    private fun getKantaList(search: String) {
+        kantaParchiViewModel.getKantaParchiListing("10", "0", "IN", search)
+        kantaParchiViewModel.kantaParchiResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Success -> {
+
+                    if (it.data != null) {
+                        if (it.data.dharemKantas != null) {
+                            searchableSpinner.windowTitle = "Select Kanta"
+
+                            dharamKantas.clear()
+                            for (i in it.data.dharemKantas) {
+                                listOfKantaNames.add(i.name)
+                            }
+                            searchableSpinner.setSpinnerListItems(listOfKantaNames)
+
+                            searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+                                override fun setOnItemSelectListener(
+                                    position: Int,
+                                    selectedString: String
+                                ) {
+                                    binding!!.etKantaParchi.setText(selectedString)
+                                    kantaId = it.data.dharemKantas[position].id
+                                }
+                            }
+                        }
+
+//            //Setting Visibility for views in SearchableSpinner
+//            searchableSpinner.searchViewVisibility = SearchableSpinner.SpinnerView.GONE
+//            searchableSpinner.negativeButtonVisibility = SearchableSpinner.SpinnerView.GONE
+//            searchableSpinner.windowTitleVisibility = SearchableSpinner.SpinnerView.GONE
+                        //Setting up list items for spinner
+
+                    }
+                }
+            }
+        }
+
+
     }
 
     override fun onBackPressed() {
@@ -88,15 +154,29 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         binding!!.uploadKantha.setOnClickListener {
             firstKanthaFile = true
             truckImage = false
+            truckImage2 = false
             onImageSelected()
-            //   callImageSelector(REQUEST_CAMERA);
+
+            //  onImageSelected()
+            // callImageSelector(REQUEST_CAMERA);
         }
         binding!!.uploadTruck.setOnClickListener {
             firstKanthaFile = false
             truckImage = true
+            truckImage2 = false
             onImageSelected()
-            //  callImageSelector(REQUEST_CAMERA);
+            // onImageSelected()
+            //   callImageSelector(REQUEST_CAMERA);
         }
+        binding!!.uploadTruck2.setOnClickListener {
+            firstKanthaFile = false
+            truckImage = false
+            truckImage2 = true
+            onImageSelected()
+        }
+
+
+
         binding!!.KanthaImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
                 this@OutUploadFirrstkantaParchiClass,
@@ -112,6 +192,15 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                 R.layout.popup_photo_full,
                 view,
                 TruckImage,
+                null
+            )
+        }
+        binding!!.truckImage2.setOnClickListener {
+            PhotoFullPopupWindow(
+                this@OutUploadFirrstkantaParchiClass,
+                R.layout.popup_photo_full,
+                it,
+                TruckImage2,
                 null
             )
         }
@@ -132,24 +221,30 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
     fun onNext() {
         var KanthaImage = ""
         var truckImageImage = ""
+        var truck2Image = ""
         if (fileKantha != null) {
             KanthaImage = "" + Utility.transferImageToBase64(fileKantha)
         }
         if (fileTruck != null) {
             truckImageImage = "" + Utility.transferImageToBase64(fileTruck)
         }
+        if(fileTruck2 !=null){
+            truck2Image =""+Utility.transferImageToBase64(fileTruck2)
+        }
         //else {
         kantaParchiViewModel.uploadFirstKantaParchi(
                 UploadFirstkantaParchiPostData(
                         CaseID, stringFromView(
                         binding!!.notes
-                ), KanthaImage, truckImageImage
+                ), KanthaImage, truckImageImage,truck2Image,kantaId.toString(),binding!!.etKantaParchiNum.text.toString()
                 )
         )
+
+
         kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this){
             when(it){
-                is NetworkResult.Error -> TODO()
-                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     Utility.showAlertDialog(
                             this@OutUploadFirrstkantaParchiClass,
@@ -171,6 +266,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                         if (firstKanthaFile) {
                             firstKanthaFile = false
                             truckImage = false
+                            truckImage2= false
                             fileKantha = File(compressImage(camUri.path.toString()))
                             val uri = Uri.fromFile(fileKantha)
                             firstkantaParchiFile = uri.toString()
@@ -178,10 +274,19 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                         } else if (truckImage) {
                             firstKanthaFile = false
                             truckImage = false
+                            truckImage2= false
                             fileTruck = File(compressImage(camUri.path.toString()))
                             val uri = Uri.fromFile(fileTruck)
                             TruckImage = uri.toString()
                             binding!!.TruckImage.setImageURI(uri)
+                        } else if(truckImage2){
+                            firstKanthaFile = false
+                            truckImage = false
+                            truckImage2 = false
+                            fileTruck2 = File(compressImage(camUri.path.toString()))
+                            val uri = Uri.fromFile(fileTruck2)
+                            TruckImage2 = uri.toString()
+                            binding!!.truckImage2.setImageURI(uri)
                         }
                     }
                 }

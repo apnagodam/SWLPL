@@ -10,20 +10,25 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(),
     View.OnClickListener, AdapterView.OnItemSelectedListener {
     var UserName: String? = null
@@ -34,6 +39,8 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
     // drop down  of meter status
     lateinit var contractorName: ArrayList<String>
+
+    val labourViewModel by viewModels<LabourViewModel>()
     var checked = false
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_labour_details
@@ -147,28 +154,36 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                         getString(R.string.alert),
                         "Are You Sure to Summit?"
                     ) {
-                        apiService.uploadLabourDetails(
-                            UploadLabourDetailsPostData(
-                                CaseID,
-                                contractorsID,
-                                stringFromView(binding!!.etContractorPhone),
-                                "N/A",
-                                stringFromView(binding!!.etLabourRate),
-                                "N/A",
-                                "N/A",
-                                stringFromView(binding!!.notes),
-                                "0000-00-00"
-                            )
-                        ).subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnNext {body->
-                                Utility.showAlertDialog(
-                                    this@OUTLabourBookUploadClass,
-                                    getString(R.string.alert),
-                                    body.message
-                                ) { startActivityAndClear(OUTLabourBookListingActivity::class.java) }
+                        labourViewModel.uploadLabourDetails( UploadLabourDetailsPostData(
+                            CaseID,
+                            contractorsID,
+                            stringFromView(binding!!.etContractorPhone),
+                            "N/A",
+                            stringFromView(binding!!.etLabourRate),
+                            "N/A",
+                            "N/A",
+                            stringFromView(binding!!.notes),
+                            "0000-00-00"
+                        ))
+                        labourViewModel.labourDetailsUploadResponse.observe(this)
+                        {
+                            when(it){
+                                is NetworkResult.Error -> {
+
+                                }
+                                is NetworkResult.Loading -> {}
+                                is NetworkResult.Success -> {
+                                    if(it.data!=null){
+                                        Utility.showAlertDialog(
+                                            this@OUTLabourBookUploadClass,
+                                            getString(R.string.alert),
+                                            it.data.message
+                                        ) { startActivityAndClear(OUTLabourBookListingActivity::class.java) }
+                                    }
+                                }
                             }
-                            .subscribe()
+                        }
+
 
                     }
                 }

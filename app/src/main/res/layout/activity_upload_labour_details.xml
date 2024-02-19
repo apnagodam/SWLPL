@@ -132,6 +132,11 @@
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/layoutLabour"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_contractor_phone"
@@ -335,6 +340,7 @@
                         android:textSize="@dimen/_12ssp" />
                 </RelativeLayout>
 
+            </LinearLayout>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_login"
                     style="@style/ButtonStyle"

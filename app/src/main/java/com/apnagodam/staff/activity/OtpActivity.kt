@@ -56,12 +56,13 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
             setting = bundle.getString("setting")
             empID = bundle.getString("empID")
         }
-        binding!!.txtHead.text = this.getString(R.string.hint_otp) + " :- " + mobileNumbewr
         smsReceiver = SMSReceiver()
         smsReceiver!!.setOTPListener(this as OTPReceiveListener)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
-        this.registerReceiver(smsReceiver, intentFilter)
+        this.registerReceiver(smsReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
+        binding!!.txtHead.text = this.getString(R.string.hint_otp) + " :- " + mobileNumbewr
+
         binding!!.btnVerfyOtp.setOnClickListener { v: View? -> getvarifedOtp() }
         binding!!.btnResendOtp.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
@@ -122,6 +123,7 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
         loginViewModel.response.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
+                    Toast.makeText(this@OtpActivity, it.data!!.message, Toast.LENGTH_LONG).show()
                     hideDialog()
                 }
 
@@ -130,7 +132,9 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }
 
                 is NetworkResult.Success -> {
-                    Toast.makeText(this@OtpActivity, it.data!!.message, Toast.LENGTH_LONG).show()
+                   if(it.data!=null){
+                       Toast.makeText(this@OtpActivity, it.data!!.message, Toast.LENGTH_LONG).show()
+                   }
 
                 }
             }
@@ -144,24 +148,25 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
 
     fun varifedOTP() {
         loginViewModel.dpVerifyOtp(OTPData(stringFromView(binding!!.etOtpNumber), mobileNumbewr))
-
         loginViewModel.Otpresponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
-                    userInfo = it.data
-                    SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
-                    SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
-                    SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
-                    Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
-                    SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
-                    if (setting.equals("changeMobileNumber", ignoreCase = true)) {
-                        startActivityAndClear(SettingActivity::class.java)
-                    } else {
-                        // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
-                        startActivityAndClear(StaffDashBoardActivity::class.java)
-                    }
+                   if(it.data!=null){
+                       userInfo = it.data
+                       SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
+                       SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
+                       SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
+                       Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
+                       SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
+                       if (setting.equals("changeMobileNumber", ignoreCase = true)) {
+                           startActivityAndClear(SettingActivity::class.java)
+                       } else {
+                           // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                           startActivityAndClear(StaffDashBoardActivity::class.java)
+                       }
+                   }
                 }
             }
         }

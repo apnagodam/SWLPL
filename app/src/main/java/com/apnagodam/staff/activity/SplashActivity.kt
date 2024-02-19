@@ -8,13 +8,16 @@ import android.net.Uri
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.apnagodam.staff.ApnaGodamApp
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkCallbackWProgress
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Response.VersionCodeResponse
+import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.LoginActivity
 import com.apnagodam.staff.databinding.ActivitySplashBinding
@@ -27,9 +30,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     var market_uri = "https://play.google.com/store/apps/details?id=com.apnagodam.staff&hl=en"
-override    fun getLayoutResId(): Int {
+
+    val homeViewModel by viewModels<HomeViewModel>()
+    override fun getLayoutResId(): Int {
         Utility.changeLanguage(
             this,
             SharedPreferencesRepository.getDataManagerInstance().selectedLanguage
@@ -68,9 +74,9 @@ override    fun getLayoutResId(): Int {
         val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
         val name = SharedPreferencesRepository.isUSerName()
 
-        when(name){
-            true-> startActivityAndClear(StaffDashBoardActivity::class.java)
-            else ->{
+        when (name) {
+            true -> startActivityAndClear(StaffDashBoardActivity::class.java)
+            else -> {
                 if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
                     startActivityAndClear(StaffDashBoardActivity::class.java)
                 } else {
@@ -142,19 +148,18 @@ override    fun getLayoutResId(): Int {
         }, 3000);
     }*/
     private fun getappVersion() {
-        var getVersionObservable = apiService.getversionCode("Emp")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
-
-        getVersionObservable.doOnNext { body ->
-            if (BuildConfig.APPLICATION_ID != null) {
-                if (body.version.toInt() > BuildConfig.VERSION_CODE) {
-                    showUpdateDialogue()
-                } else {
+        homeViewModel.getAppVersion("Emp")
+        homeViewModel.appVersionResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
                     getCommodityList()
+
                 }
             }
-        }.subscribe()
+        }
+
 
     }
 
@@ -199,22 +204,25 @@ override    fun getLayoutResId(): Int {
         dialogue.show()
     }
 
-    private fun getCommodityList(){
-        val getCommodity = apiService.getcommuydity_terminal_user_emp_listing("Emp")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-
-        getCommodity.doOnNext { body->
-            if (BuildConfig.APPLICATION_ID != null) {
-                SharedPreferencesRepository.getDataManagerInstance()
-                    .setCommdity(body.categories)
-                SharedPreferencesRepository.getDataManagerInstance().employee =
-                    body.employee
-                SharedPreferencesRepository.getDataManagerInstance()
-                    .setContractor(body.contractor_result)
+    private fun getCommodityList() { homeViewModel.getCommodities("Emp")
+        homeViewModel.commoditiesReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> TODO()
+                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Success -> {
+                    if (BuildConfig.APPLICATION_ID != null) {
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setCommdity(it.data!!.categories)
+                        SharedPreferencesRepository.getDataManagerInstance().employee =
+                            it.data!!.employee
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setContractor(it.data
+                                .labourList)
+                    }
+                }
             }
         }
-            .subscribe();
+
 
     }
 

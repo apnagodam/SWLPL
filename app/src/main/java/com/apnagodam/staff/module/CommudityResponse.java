@@ -4,6 +4,7 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 public class CommudityResponse extends BaseResponse {
@@ -27,6 +28,11 @@ public class CommudityResponse extends BaseResponse {
     @Expose
     private List<Employee> employee = null;
 
+    @SerializedName("labour")
+    @Expose
+    private List<Labour> labour = null
+            ;
+
     public List<User> getUsers() {
         return users;
     }
@@ -43,6 +49,13 @@ public class CommudityResponse extends BaseResponse {
         this.employee = employee;
     }
 
+    public List<Labour> getLabourList() {
+        return labour;
+    }
+
+    public void setLaboutList(List<Labour> labourList) {
+        this.labour = labourList;
+    }
     public List<Contractor> getContractor_result() {
         return contractor_result;
     }
@@ -1635,4 +1648,145 @@ public class CommudityResponse extends BaseResponse {
             this.updatedAt = updatedAt;
         }
     }
+
+    public class Labour {
+        @SerializedName("id")
+        @Expose
+        private long id;
+        @SerializedName("contractor_name")
+        @Expose
+        private String contractorName;
+        @SerializedName("contractor_phone")
+        @Expose
+        private String contractorPhone;
+        @SerializedName("location")
+        @Expose
+        private String location;
+        @SerializedName("bank_name")
+        @Expose
+        private String bankName;
+        @SerializedName("bank_ifsc")
+        @Expose
+
+        private String bankIfsc;
+        @SerializedName("account_no")
+        @Expose
+        private String accountNo;
+        @SerializedName("rate")
+        @Expose
+        private String rate;
+        @SerializedName("pan_number")
+        @Expose
+        private String panNumber;
+        @SerializedName("gst_number")
+        @Expose
+        private String gstNumber;
+        @SerializedName("aadhar_no")
+        @Expose
+        private String aadharNo;
+        @SerializedName("aadhar_image")
+        @Expose
+        private String aadharImage;
+        @SerializedName("pancard_image")
+        @Expose
+        private String pancardImage;
+        @SerializedName("passbook_image")
+        @Expose
+        private String passbookImage;
+
+       
+        public long getid() { return id; }
+        @SerializedName("id")
+
+        public long setid(long value) { return id; }
+
+        @SerializedName("contractor_name")
+        public String getContractorName() { return contractorName; }
+        @SerializedName("contractor_name")
+        public void setContractorName(String value) { this.contractorName = value; }
+
+        @SerializedName("contractor_phone")
+        public String getContractorPhone() { return contractorPhone; }
+        @SerializedName("contractor_phone")
+        public void setContractorPhone(String value) { this.contractorPhone = value; }
+
+        @SerializedName("location")
+        public String getLocation() { return location; }
+        @SerializedName("location")
+        public void setLocation(String value) { this.location = value; }
+
+        @SerializedName("bank_name")
+        public String getBankName() { return bankName; }
+        @SerializedName("bank_name")
+        public void setBankName(String value) { this.bankName = value; }
+
+        @SerializedName("bank_ifsc")
+        public String getBankIfsc() { return bankIfsc; }
+        @SerializedName("bank_ifsc")
+        public void setBankIfsc(String value) { this.bankIfsc = value; }
+
+        @SerializedName("account_no")
+        public String getAccountNo() { return accountNo; }
+        @SerializedName("account_no")
+        public void setAccountNo(String value) { this.accountNo = value; }
+
+        @SerializedName("rate")
+        public String getRate() { return rate; }
+        @SerializedName("rate")
+        public void setRate(String value) { this.rate = value; }
+
+        @SerializedName("pan_number")
+        public String getPanNumber() { return panNumber; }
+        @SerializedName("pan_number")
+        public void setPanNumber(String value) { this.panNumber = value; }
+
+        @SerializedName("gst_number")
+        public String getGstNumber() { return gstNumber; }
+        @SerializedName("gst_number")
+        public void setGstNumber(String value) { this.gstNumber = value; }
+
+        @SerializedName("aadhar_no")
+        public Object getAadharNo() { return aadharNo; }
+        @SerializedName("aadhar_no")
+        public void setAadharNo(String value) { this.aadharNo = value; }
+
+        @SerializedName("aadhar_image")
+        public Object getAadharImage() { return aadharImage; }
+        @SerializedName("aadhar_image")
+        public void setAadharImage(String value) { this.aadharImage = value; }
+
+        @SerializedName("pancard_image")
+        public Object getPancardImage() { return pancardImage; }
+        @SerializedName("pancard_image")
+        public void setPancardImage(String value) { this.pancardImage = value; }
+
+        @SerializedName("passbook_image")
+        public Object getPassbookImage() { return passbookImage; }
+        @SerializedName("passbook_image")
+        public void setPassbookImage(String value) { this.passbookImage = value; }
+
+//        @SerializedName("created_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public Date getCreatedAt() { return createdAt; }
+//        @SerializedName("created_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public void setCreatedAt(Date value) { this.createdAt = value; }
+//
+//        @SerializedName("updated_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public Date getUpdatedAt() { return updatedAt; }
+//        @SerializedName("updated_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public void setCreatedAt(Date value) { this.createdAt = value; }
+//
+//        @SerializedName("updated_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public Date getUpdatedAt() { return updatedAt; }
+//        @SerializedName("updated_at")
+//        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssX", timezone = "UTC")
+//        public void setUpdatedAt(Date value) { this.updatedAt = value; }
+//        public void setUpdatedAt(Date value) { this.updatedAt = value; }
+    }
+
 }

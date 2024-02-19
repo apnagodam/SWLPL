@@ -4,6 +4,8 @@ import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.module.AllTruckBookListResponse
+import com.apnagodam.staff.module.TransporterDetailsPojo
+import com.apnagodam.staff.module.TransporterListPojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,6 +19,19 @@ class TuckBookRepo @Inject constructor(var apiService: ApiService):BaseApiRespon
             emit(safeApiCall {
                 apiService.getTruckBookList(str,i,str2,str3)
             })
+        }.flowOn(Dispatchers.IO)
+    }
+    suspend fun transporterList():Flow<NetworkResult<TransporterListPojo>>{
+        return  flow {
+            emit(safeApiCall {
+                apiService.transporterList()
+            })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getTransporterDetails(transport_id:String):Flow<NetworkResult<TransporterDetailsPojo>>{
+        return flow {
+            emit(safeApiCall { apiService.getTransporterDetails(transport_id) })
         }.flowOn(Dispatchers.IO)
     }
 }

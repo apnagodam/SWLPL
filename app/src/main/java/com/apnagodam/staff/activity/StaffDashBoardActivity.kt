@@ -27,6 +27,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.AttendancePostData
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
@@ -836,6 +837,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }
 
     private fun getdashboardData() {
+        homeViewModel.getCommodities("Emp")
         homeViewModel.getDashboardData()
 
         homeViewModel.homeDataResponse.observe(this){
@@ -864,7 +866,25 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         }
 
-
+        homeViewModel.commoditiesReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    showToast(it.message)
+                }
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+                is NetworkResult.Success -> {
+                    if (BuildConfig.APPLICATION_ID != null) { SharedPreferencesRepository.getDataManagerInstance()
+                            .setCommdity(it.data!!.categories)
+                        SharedPreferencesRepository.getDataManagerInstance().employee =
+                            it.data!!.employee
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setContractor(it.data.labourList)
+                    }
+                }
+            }
+        }
         //     font = Typeface.createFromAsset(getAssets(), "FontAwesome.ttf" );
         try {
             userDetails = SharedPreferencesRepository.getDataManagerInstance().user

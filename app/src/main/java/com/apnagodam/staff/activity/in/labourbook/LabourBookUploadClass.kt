@@ -10,21 +10,27 @@ import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.HomeViewModel
+import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(),
     View.OnClickListener, AdapterView.OnItemSelectedListener {
     var UserName: String? = null
@@ -34,7 +40,10 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     var contractorsID: String? = null
 
     // drop down  of meter status
-   lateinit var contractorName: ArrayList<String>
+    lateinit var contractorName: ArrayList<String>
+    val homeViewModel by viewModels<HomeViewModel>()
+    val labourViewModel by viewModels<LabourViewModel>()
+
     var checked = false
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_labour_details
@@ -53,17 +62,16 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
         contractorName = ArrayList()
-        contractorName.add(resources.getString(R.string.contractor_select))
 
-       getCommodityList()
+        getCommodityList()
     }
 
     private fun setValueOnSpinner() {
         for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
             contractorName!!.add(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName)
         }
-        SpinnerControactorAdapter =   ArrayAdapter(this, R.layout.multiline_spinner_item, contractorName!!)
-
+        SpinnerControactorAdapter =
+            ArrayAdapter(this, R.layout.multiline_spinner_item, contractorName!!)
 
 
 //            object :
@@ -102,48 +110,65 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 ) {
                     // selected item in the list
                     if (position != 0) {
-                        contractorsID = parentView.getItemAtPosition(position).toString()
-                        for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
-                            if (contractorsID.equals(
-                                    SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
-                                    ignoreCase = true
-                                )
-                            ) {
-                                binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
-                                binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
-                            }
-                        }
+                        binding!!.layoutLabour.visibility = View.VISIBLE
+
+
                     } else {
-                        contractorsID = null
+                        binding!!.layoutLabour.visibility = View.GONE
+                    }
+                    contractorsID = parentView.getItemAtPosition(position).toString()
+                    for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
+                        if (contractorsID.equals(
+                                SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
+                                ignoreCase = true
+                            )
+                        ) {
+                            binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
+                            binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+                        }
                     }
                 }
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {
                     // your code here
+                    binding!!.layoutLabour!!.visibility = View.GONE
                 }
             }
     }
-    private fun getCommodityList(){
-        val getCommodity = apiService.getcommuydity_terminal_user_emp_listing("Emp")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
 
-        getCommodity.doOnNext { body->
-            if (BuildConfig.APPLICATION_ID != null) {
-                SharedPreferencesRepository.getDataManagerInstance()
-                    .setCommdity(body.categories)
-                SharedPreferencesRepository.getDataManagerInstance().employee =
-                    body.employee
-                SharedPreferencesRepository.getDataManagerInstance()
-                    .setContractor(body.contractor_result)
-            }
-            if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
-                setValueOnSpinner()
+    private fun getCommodityList() {
+        homeViewModel.getCommodities("Emp")
+        homeViewModel.commoditiesReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (BuildConfig.APPLICATION_ID != null) {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setCommdity(it.data.categories)
+                            SharedPreferencesRepository.getDataManagerInstance().employee =
+                                it.data.employee
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setContractor(it.data.labourList)
+                        }
+                        if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
+                            setValueOnSpinner()
+                        }
+                    }
+                }
             }
         }
-            .subscribe();
+
 
     }
+
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener(this)
         binding!!.btnLogin.setOnClickListener(this)
@@ -182,19 +207,14 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 /*  if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
                         Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
                     } else*/
-                if (contractorsID == null) {
-                    Toast.makeText(
-                        this@LabourBookUploadClass,
-                        resources.getString(R.string.contractor_select),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Utility.showDecisionDialog(
-                        this@LabourBookUploadClass,
-                        getString(R.string.alert),
-                        "Are You Sure to Summit?"
-                    ) {
-                        apiService.uploadLabourDetails( UploadLabourDetailsPostData(
+
+                Utility.showDecisionDialog(
+                    this@LabourBookUploadClass,
+                    getString(R.string.alert),
+                    "Are You Sure to Summit?"
+                ) {
+                    labourViewModel.uploadLabourDetails(
+                        UploadLabourDetailsPostData(
                             CaseID,
                             contractorsID,
                             stringFromView(binding!!.etContractorPhone),
@@ -204,19 +224,35 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                             "N/A",
                             stringFromView(binding!!.notes),
                             "0000-00-00"
-                        ))
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .doOnNext {body->
-                                Utility.showAlertDialog(
-                                    this@LabourBookUploadClass,
-                                    getString(R.string.alert),
-                                    body.getMessage()
-                                ) { startActivityAndClear(LabourBookListingActivity::class.java) }
-                            }.subscribe()
-
+                        )
+                    )
+                    labourViewModel.labourDetailsUploadResponse.observe(this) {
+                        when (it) {
+                            is NetworkResult.Error -> {}
+                            is NetworkResult.Loading -> {}
+                            is NetworkResult.Success -> {
+                                if (it.data != null) {
+                                    Utility.showAlertDialog(
+                                        this@LabourBookUploadClass,
+                                        getString(R.string.alert),
+                                        it.data.getMessage()
+                                    ) { startActivityAndClear(LabourBookListingActivity::class.java) }
+                                }
+                            }
+                        }
                     }
+
+
                 }
+//                if (contractorsID == null) {
+//                    Toast.makeText(
+//                        this@LabourBookUploadClass,
+//                        resources.getString(R.string.contractor_select),
+//                        Toast.LENGTH_LONG
+//                    ).show()
+//                } else {
+//
+//                }
             }
         }
     }
@@ -247,7 +283,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     fun popUpDatePicker() {
         val dateDialog = DatePickerDialog(
             this, date, calender
-               !! .get(Calendar.YEAR), calender!![Calendar.MONTH],
+            !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
             calender!![Calendar.DAY_OF_MONTH]
         )
         dateDialog.getDatePicker().setMinDate(System.currentTimeMillis())

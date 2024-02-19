@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.first_kantaparchi
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -37,7 +38,6 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     private lateinit var AllCases: ArrayList<FirstkanthaParchiListResponse.Datum>
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
-
     val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
@@ -156,6 +156,7 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
                         AllCases!!.clear()
+
                         totalPage = it.data!!.firstKataParchiData.lastPage
                         AllCases!!.addAll(it.data!!.firstKataParchiData.data)
                         firstkanthaparchiAdapter!!.notifyDataSetChanged()
@@ -260,10 +261,13 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     }
 
     fun checkVeehicleNo(postion: Int) {
+
         val bundle = Bundle()
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(UploadFirstkantaParchiClass::class.java, bundle)
+        val intent = Intent(this, UploadFirstkantaParchiClass::class.java)
+        intent.putExtra("all_cases", AllCases[postion])
+        startActivity(intent)
     }
 
     override fun onBackPressed() {

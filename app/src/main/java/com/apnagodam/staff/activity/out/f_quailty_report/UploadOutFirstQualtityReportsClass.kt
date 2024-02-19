@@ -14,10 +14,13 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -25,6 +28,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -32,7 +36,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
-
+@AndroidEntryPoint
 class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
     var fileReport: File? = null
     var fileCommudity: File? = null
@@ -46,6 +50,7 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
     var options: Options? = null
     private var reportFile: String? = null
     private var commudityFile: String? = null
+    val qualitReportViewModel by viewModels<QualitReportViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
@@ -170,7 +175,7 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
         }
         //else {
-        apiService.uploadFirstQualityReports(   UploadFirstQualityPostData(
+        qualitReportViewModel.uploadFirstQualityReport(UploadFirstQualityPostData(
             CaseID,
             ReportImage,
             stringFromView(
@@ -192,16 +197,22 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
             stringFromView(binding!!.notes),
             CommudityFileSelectImage
         ))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                Utility.showAlertDialog(
-                    this@UploadOutFirstQualtityReportsClass,
-                    getString(R.string.alert),
-                    body.message
-                ) { startActivityAndClear(OutFirstQualityReportListingActivity::class.java) }
+
+        qualitReportViewModel.fQualityUploadResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success ->
+                    {
+                        Utility.showAlertDialog(
+                            this@UploadOutFirstQualtityReportsClass,
+                            getString(R.string.alert),
+                            it.data!!.message
+                        ) { startActivityAndClear(OutFirstQualityReportListingActivity::class.java) }
+                    }
             }
-            .subscribe()
+        }
+
 
         // }
     }

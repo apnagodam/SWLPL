@@ -133,7 +133,9 @@ public class TruckBookAdapter extends BaseRecyclerViewAdapter {
                         ((TruckBookListingActivity) context).ViewData(position);
                     }
 
-
+                    if (context instanceof TruckBookListingActivity) {
+                        ((TruckBookListingActivity) context).checkVeehicleNo(position);
+                    }
                 }
             });
 

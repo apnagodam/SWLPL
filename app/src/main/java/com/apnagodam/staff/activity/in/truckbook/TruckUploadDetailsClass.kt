@@ -22,11 +22,14 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.net.toUri
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding
 import com.apnagodam.staff.module.TransporterDetailsPojo
@@ -36,6 +39,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -47,7 +51,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
-
+@AndroidEntryPoint
 class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(), View.OnClickListener,
     AdapterView.OnItemSelectedListener {
     var UserName: String? = null
@@ -56,6 +60,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     var checked = false
     var spinnerRateType: String? = null
     var fileBiltyImage: File? = null
+    lateinit var transportTypeAdapter: ArrayAdapter<String>
     var BiltyImageFile = false
     private var BiltyFile: String? = null
     lateinit var options: Options
@@ -63,24 +68,33 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     var TransporterName: MutableList<String> = arrayListOf()
     lateinit var spinnerTransporterAdpter: ArrayAdapter<String>
     var TransporterID: String? = null
+    var transTypeList = arrayListOf<String>()
+
+    val truckBookViewModel by viewModels<TruckBookViewModel>()
    override  fun getLayoutResId(): Int {
         return R.layout.activity_upload_details
     }
 
     override fun setUp() {
-        TransporterName.add("Select")
+        transTypeList.add("Select")
+        transTypeList.add("Client Transport")
+        transTypeList.add("Company Transport")
         calender = Calendar.getInstance()
         val bundle = intent.getBundleExtra(BUNDLE)
         if (bundle != null) {
             UserName = bundle.getString("user_name")
             CaseID = bundle.getString("case_id")
         }
+        transportTypeAdapter =
+            ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, transTypeList)
         transporterList()
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         clickListner()
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
+        binding!!.tilTransportRate.visibility = View.VISIBLE
+
         binding!!.spinnerRatetYpe.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -101,6 +115,31 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     // can leave this empty
                 }
             }
+        binding!!.spinnerTransportType.adapter =
+            transportTypeAdapter
+        binding!!.spinnerTransportType.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (position==1){
+                        Checked()
+                    }
+                    else{
+                        NotChecked()
+                    }
+
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+
+                }
+
+            }
         binding!!.spinnerTransporterName.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -110,27 +149,29 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     id: Long
                 ) {
                     // selected item in the list
-                    if (position != 0) {
-                        val presentMeterStatusID = parentView.getItemAtPosition(position).toString()
-                        for (i in data!!.indices) {
-                            if (presentMeterStatusID.contains(data!![i].transporterName + "(" + data!![i].transporterUniqueId + ")")) {
-                                TransporterID = data!![i].id.toString()
-                                break
-                            }
-                        }
-                        getTransporterDetails(TransporterID)
-                        if (presentMeterStatusID.contains("Client")) {
-                            Checked()
-                        } else {
-                            NotChecked()
-                        }
-                    }
+
+                   if(data!=null){
+                       val presentMeterStatusID = parentView.getItemAtPosition(position).toString()
+                       for (i in data!!.indices) {
+                           if (presentMeterStatusID.contains(data!![i].transporterName + "(" + data!![i].transporterUniqueId + ")")) {
+                               TransporterID = data!![i].id.toString()
+                               break
+                           }
+                       }
+                       getTransporterDetails(TransporterID!!)
+                   }
+//                    if (presentMeterStatusID.contains("Client")) {
+//                        Checked()
+//                    } else {
+//                        NotChecked()
+//                    }
                 }
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {
                     // your code here
                 }
             }
+
         /*    binding.etAdvancePatyment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -264,38 +305,50 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         });*/
     }
 
-    private fun getTransporterDetails(transporterID: String?) {
-        apiService.getTransporterDetails(transporterID)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                binding!!.etVehicleNo.setText("" + body.data.vehicleNo)
-                binding!!.etDriverName.setText("" + body.data.transporterName)
-                binding!!.etDriverPhoneNo.setText("" + body.data.transporterPhoneNo)
+    private fun getTransporterDetails(transporterID: String) {
+        truckBookViewModel.getTransporterDetails(transporterID)
+        truckBookViewModel.transporterDetailsResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                   if (it.data!=null){
+                       binding!!.etVehicleNo.setText("" + it.data.data.vehicleNo)
+                       binding!!.etDriverName.setText("" + it.data.data.transporterName)
+                       binding!!.etDriverPhoneNo.setText("" + it.data.data.transporterPhoneNo)
+                   }
+                }
             }
-            .doOnError {
-                hideDialog()
-            }
-            .doOnSubscribe { showDialog() }
-            .doOnComplete { hideDialog()
-            }
-            .subscribe();
+        }
+
 
     }
 
     fun  transporterList(){
-        apiService.transporterList.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                data = body.data
-                for (i in data!!.indices) {
-                    TransporterName!!.add(data!!.get(i).transporterName + "(" + data!!.get(i).transporterUniqueId + ")")
+        truckBookViewModel.transporterList()
+        truckBookViewModel.transporterResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {
+                    hideDialog()
                 }
-                var spinnerTransporterAdpter = ArrayAdapter(
-                    this@TruckUploadDetailsClass,
-                    R.layout.multiline_spinner_dropdown_item, TransporterName!!
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+                is NetworkResult.Success -> {
+                    data = it.data!!.data
+                    for (i in data!!.indices) {
+                        if(!data!![i].transporterName.contains("Client Transport")){
+                            TransporterName!!.add(data!!.get(i).transporterName + "(" + data!!.get(i).transporterUniqueId + ")")
 
-                )
+                        }
+                    }
+                     spinnerTransporterAdpter = ArrayAdapter(
+                        this@TruckUploadDetailsClass,
+                        R.layout.multiline_spinner_dropdown_item, TransporterName!!
+
+                    )
 //
 //            spinnerTransporterAdpter = object : ArrayAdapter<String?>(
 //                this@TruckUploadDetailsClass,
@@ -327,10 +380,12 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 //                }
 //            }
 //            spinnerTransporterAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-                // Set Adapter in the spinner
-                binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
+                    // Set Adapter in the spinner
+                    binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
+                }
             }
-            .subscribe()
+        }
+
     }
 
 
@@ -445,6 +500,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     private fun Checked() {
+        binding!!.layoutTransport.visibility = View.GONE
         checked = true
         /*  binding.etTransporterName.setEnabled(false);
         binding.etTransporterName.setClickable(false);
@@ -538,6 +594,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     private fun NotChecked() {
+        binding!!.layoutTransport.visibility = View.VISIBLE
         checked = false
         /*  binding.etTransporterName.setEnabled(true);
         binding.etTransporterName.setClickable(true);
@@ -615,13 +672,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             R.id.et_end_date_time -> EnddatePicker()
             R.id.btn_login -> if (isValid) {
                 if (checked) {
-                    if (binding!!.notes.text.toString().trim { it <= ' ' }.isEmpty()) {
-                        Toast.makeText(
-                            this@TruckUploadDetailsClass,
-                            "Enter Notes Here!!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else if (TransporterID == null) {
+                 if (TransporterID == null) {
                         Toast.makeText(
                             this@TruckUploadDetailsClass,
                             "Select Transport Name!!",

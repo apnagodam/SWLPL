@@ -173,7 +173,7 @@ public class SharedPreferencesRepository implements Tags {
         return userArray;
     }
 
-    public void setContractor(List<CommudityResponse.Contractor> datumMonthlyLedger) {
+    public void setContractor(List<CommudityResponse.Labour> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
         sharedPrefEditor.putString(Contractor, data).commit();
     }

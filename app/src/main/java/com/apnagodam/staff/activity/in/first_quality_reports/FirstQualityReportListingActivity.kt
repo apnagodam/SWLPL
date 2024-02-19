@@ -38,11 +38,15 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     private var ReportsFile: String? = null
     private var CommudityImage: String? = null
     val qualitReportViewModel by viewModels<QualitReportViewModel>()
+
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
 
     override fun setUp() {
+
+
+
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
         setAdapter()

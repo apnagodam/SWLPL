@@ -186,7 +186,7 @@
     <string name="transporter">Transporter</string>
     <string name="transporter_name">Enter Transporter *</string>
     <string name="driver_name">Driver Name</string>
-    <string name="driver_phone_no">Driver Phone No</string>
+    <string name="driver_phone_no">Driver Phone No*</string>
     <string name="transport_rate">Transport Rate/KM</string>
     <string name="min_weight">Min Weight (Qtl.)</string>
     <string name="max_weight">Max Weight (Qtl.)</string>
@@ -378,6 +378,11 @@
     <string-array name="array_truck_rate_type">
         <item>Select Rate Type</item>
         <item>Qtl</item>
+    </string-array>
+
+    <string-array name="trans_type">
+        <item>Client Transport</item>
+        <item>Company Transport</item>
     </string-array>
 
     <string name="out_relase_book">Release Order</string>

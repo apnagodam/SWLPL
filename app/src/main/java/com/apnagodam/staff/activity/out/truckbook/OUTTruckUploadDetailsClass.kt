@@ -15,10 +15,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding
 import com.apnagodam.staff.module.TransporterDetailsPojo
@@ -27,6 +30,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -35,6 +39,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     View.OnClickListener, AdapterView.OnItemSelectedListener {
     var UserName: String? = null
@@ -50,13 +55,15 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     lateinit var TransporterName: java.util.ArrayList<String>
     var spinnerTransporterAdpter: ArrayAdapter<String?>? = null
     var TransporterID: String? = null
+    val truckBookViewModel by viewModels<TruckBookViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_details
     }
 
     override fun setUp() {
+
         TransporterName = arrayListOf()
-        (TransporterName ).add("Select")
+        (TransporterName).add("Select")
         transporterList
         calender = Calendar.getInstance()
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -70,6 +77,12 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         clickListner()
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
+
+
+
+
+
+
         binding!!.spinnerRatetYpe.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -195,67 +208,77 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
     private fun getTransporterDetails(transporterID: String?) {
-        apiService.getTransporterDetails(transporterID)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext{body->
-                binding!!.etVehicleNo.setText("" + body.data.vehicleNo)
-                binding!!.etDriverName.setText("" + body.data.transporterName)
-                binding!!.etDriverPhoneNo.setText("" + body.data.transporterPhoneNo)
+        truckBookViewModel.getTransporterDetails(transporterID!!)
+        truckBookViewModel.transporterDetailsResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                 if(it.data!=null){
+                     binding!!.etVehicleNo.setText("" + it.data.data.vehicleNo)
+                     binding!!.etDriverName.setText("" + it.data.data.transporterName)
+                     binding!!.etDriverPhoneNo.setText("" + it.data.data.transporterPhoneNo)
+                 }
+                }
             }
-            .doOnError{
-                hideDialog()
-            }
-            .doOnSubscribe { showDialog() }
-            .subscribe()
+        }
+
 
 
     }
 
     private val transporterList: Unit
         private get() {
+            truckBookViewModel.transporterList()
+            truckBookViewModel.transporterResponse.observe(this) {
+                when (it) {
+                    is NetworkResult.Error -> TODO()
+                    is NetworkResult.Loading -> TODO()
+                    is NetworkResult.Success -> {
+                        for (i in it.data!!.data!!.indices) {
+                            TransporterName!!.add(
+                                it.data!!.data!!.get(i).transporterName + "(" + it.data!!.data!!.get(
+                                    i
+                                ).transporterUniqueId + ")"
+                            )
+                        }
+                        spinnerTransporterAdpter = object : ArrayAdapter<String?>(
+                            this@OUTTruckUploadDetailsClass,
+                            R.layout.multiline_spinner_dropdown_item,
+                            TransporterName!! as List<String?>
+                        ) {
+                            //By using this method we will define how
+                            // the text appears before clicking a spinner
+                            override fun getView(
+                                position: Int,
+                                convertView: View?,
+                                parent: ViewGroup
+                            ): View {
+                                val v = super.getView(position, convertView, parent)
+                                (v as TextView).setTextColor(Color.parseColor("#000000"))
+                                return v
+                            }
 
-            apiService.transporterList.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext{body->
-                    for (i in body.data!!.indices) {
-                        TransporterName!!.add(body.data!!.get(i).transporterName + "(" + body.data!!.get(i).transporterUniqueId + ")")
-                    }
-                    spinnerTransporterAdpter = object : ArrayAdapter<String?>(
-                        this@OUTTruckUploadDetailsClass,
-                        R.layout.multiline_spinner_dropdown_item,
-                        TransporterName!! as List<String?>
-                    ) {
-                        //By using this method we will define how
-                        // the text appears before clicking a spinner
-                        override fun getView(
-                            position: Int,
-                            convertView: View?,
-                            parent: ViewGroup
-                        ): View {
-                            val v = super.getView(position, convertView, parent)
-                            (v as TextView).setTextColor(Color.parseColor("#000000"))
-                            return v
+                            //By using this method we will define
+                            //how the listview appears after clicking a spinner
+                            override fun getDropDownView(
+                                position: Int,
+                                convertView: View,
+                                parent: ViewGroup
+                            ): View {
+                                val v = super.getDropDownView(position, convertView, parent)
+                                v.setBackgroundColor(Color.parseColor("#05000000"))
+                                (v as TextView).setTextColor(Color.parseColor("#000000"))
+                                return v
+                            }
                         }
 
-                        //By using this method we will define
-                        //how the listview appears after clicking a spinner
-                        override fun getDropDownView(
-                            position: Int,
-                            convertView: View,
-                            parent: ViewGroup
-                        ): View {
-                            val v = super.getDropDownView(position, convertView, parent)
-                            v.setBackgroundColor(Color.parseColor("#05000000"))
-                            (v as TextView).setTextColor(Color.parseColor("#000000"))
-                            return v
-                        }
+                        // Set Adapter in the spinner
+                        binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
                     }
-
-                    // Set Adapter in the spinner
-                    binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
                 }
-                .subscribe()
+            }
+
 
         }
 
@@ -338,6 +361,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
     private fun Checked() {
+
         checked = true
         /* binding.etTransporterName.setEnabled(false);
         binding.etTransporterName.setClickable(false);
@@ -572,40 +596,42 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         if (fileBiltyImage != null) {
             BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage)
         }
-        apiService.uploadTruckDetails( UploadTruckDetailsPostData(
-            CaseID,
-            TransporterID,
-            stringFromView(binding!!.etVehicleNo),
-            stringFromView(binding!!.etDriverName),
-            stringFromView(binding!!.etDriverPhoneNo),
-            stringFromView(
-                binding!!.etMinWeight
-            ),
-            stringFromView(binding!!.etMaxWeight),
-            stringFromView(binding!!.etTurnaroundTime),
-            stringFromView(
-                binding!!.etTotalWeight
-            ),
-            stringFromView(binding!!.etBags),
-            stringFromView(binding!!.etTotalTransCost),
-            stringFromView(
-                binding!!.etAdvancePatyment
-            ),
-            stringFromView(binding!!.etStartDateTime),
-            stringFromView(binding!!.etFinalSettalementAmount),
-            stringFromView(binding!!.etEndDateTime),
-            stringFromView(
-                binding!!.notes
-            ),
-            TransporterID,
-            BiltyImage,
-            spinnerRateType,
-            stringFromView(binding!!.etRealteCaseid)
-        ))
+        apiService.uploadTruckDetails(
+            UploadTruckDetailsPostData(
+                CaseID,
+                TransporterID,
+                stringFromView(binding!!.etVehicleNo),
+                stringFromView(binding!!.etDriverName),
+                stringFromView(binding!!.etDriverPhoneNo),
+                stringFromView(
+                    binding!!.etMinWeight
+                ),
+                stringFromView(binding!!.etMaxWeight),
+                stringFromView(binding!!.etTurnaroundTime),
+                stringFromView(
+                    binding!!.etTotalWeight
+                ),
+                stringFromView(binding!!.etBags),
+                stringFromView(binding!!.etTotalTransCost),
+                stringFromView(
+                    binding!!.etAdvancePatyment
+                ),
+                stringFromView(binding!!.etStartDateTime),
+                stringFromView(binding!!.etFinalSettalementAmount),
+                stringFromView(binding!!.etEndDateTime),
+                stringFromView(
+                    binding!!.notes
+                ),
+                TransporterID,
+                BiltyImage,
+                spinnerRateType,
+                stringFromView(binding!!.etRealteCaseid)
+            )
+        )
             .doOnSubscribe {
                 showDialog()
             }
-            .doOnNext{ body->
+            .doOnNext { body ->
                 Utility.showAlertDialog(
                     this@OUTTruckUploadDetailsClass,
                     getString(R.string.alert),
@@ -693,7 +719,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     fun popUpDatePicker() {
         val dateDialog = DatePickerDialog(
             this, date, calender
-                !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
+            !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
             calender!![Calendar.DAY_OF_MONTH]
         )
         dateDialog.datePicker.minDate = System.currentTimeMillis()
@@ -729,7 +755,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     fun EnddatePicker() {
         val dateDialog = DatePickerDialog(
             this, dateeend, calender
-               !! .get(Calendar.YEAR), calender!![Calendar.MONTH],
+            !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
             calender!![Calendar.DAY_OF_MONTH]
         )
         dateDialog.datePicker.minDate = System.currentTimeMillis()

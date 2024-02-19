@@ -4,9 +4,10 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class FirstkanthaParchiListResponse extends BaseResponse {
+public class FirstkanthaParchiListResponse extends BaseResponse implements Serializable {
 
 
     public FirstKataParchiDatum getFirstKataParchiData() {
@@ -16,11 +17,20 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
     public void setFirstKataParchiData(FirstKataParchiDatum firstKataParchiData) {
         this.firstKataParchiData = firstKataParchiData;
     }
+    public List<DharemKanta> getDharemKantas() {
+        return dharemKantas;
+    }
 
+    public void setDharemKanta(List<DharemKanta> dharemKanta) {
+        this.dharemKantas = dharemKanta;
+    }
     @SerializedName("data")
     @Expose
     private FirstKataParchiDatum firstKataParchiData;
 
+    @SerializedName("dharem_kanta")
+    @Expose
+    private List<DharemKanta> dharemKantas;
     public class FirstKataParchiDatum {
         @SerializedName("current_page")
         @Expose
@@ -28,6 +38,8 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         @SerializedName("data")
         @Expose
         private List<Datum> data = null;
+
+
         @SerializedName("first_page_url")
         @Expose
         private String firstPageUrl;
@@ -59,6 +71,7 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         @Expose
         private Integer total;
 
+
         public Integer getCurrentPage() {
             return currentPage;
         }
@@ -74,6 +87,8 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         public void setData(List<Datum> data) {
             this.data = data;
         }
+
+
 
         public String getFirstPageUrl() {
             return firstPageUrl;
@@ -154,10 +169,114 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         public void setTotal(Integer total) {
             this.total = total;
         }
+
     }
 
+    public class DharemKanta {
 
-    public class Datum {
+        @SerializedName("id")
+        int id;
+
+        @SerializedName("name")
+        String name;
+
+        @SerializedName("operator_name")
+        String operatorName;
+
+        @SerializedName("phone")
+        String phone;
+
+        @SerializedName("location")
+        String location;
+
+        @SerializedName("length")
+        String length;
+
+        @SerializedName("capicity")
+        String capicity;
+
+        @SerializedName("created_at")
+        String createdAt;
+
+        @SerializedName("updated_at")
+        String updatedAt;
+
+        @SerializedName("status")
+        int status;
+
+
+        public void setId(int id) {
+            this.id = id;
+        }
+        public int getId() {
+            return id;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+        public String getName() {
+            return name;
+        }
+
+        public void setOperatorName(String operatorName) {
+            this.operatorName = operatorName;
+        }
+        public String getOperatorName() {
+            return operatorName;
+        }
+
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
+        public String getPhone() {
+            return phone;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLength(String length) {
+            this.length = length;
+        }
+        public String getLength() {
+            return length;
+        }
+
+        public void setCapicity(String capicity) {
+            this.capicity = capicity;
+        }
+        public String getCapicity() {
+            return capicity;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setUpdatedAt(String updatedAt) {
+            this.updatedAt = updatedAt;
+        }
+        public String getUpdatedAt() {
+            return updatedAt;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+        public int getStatus() {
+            return status;
+        }
+
+    }
+    public class Datum  implements Serializable{
 
         @SerializedName("id")
         @Expose
@@ -285,6 +404,10 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         @SerializedName("file_2")
         @Expose
         private String file2;
+
+        @SerializedName("file_3")
+        @Expose
+        private String file3;
         @SerializedName("notes")
         @Expose
         private String notes;
@@ -297,6 +420,9 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
         @SerializedName("l_b_case_id")
         @Expose
         private String lBCaseId;
+        @SerializedName("dharam_kanta")
+        @Expose
+        private String dharamKanta;
 
         public String getF_q_case_id() {
             return f_q_case_id;
@@ -646,6 +772,14 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
             this.file2 = file2;
         }
 
+        public String getFile3() {
+            return file3;
+        }
+
+        public void setFile3(String file3) {
+            this.file3 = file3;
+        }
+
         public String getNotes() {
             return notes;
         }
@@ -676,6 +810,14 @@ public class FirstkanthaParchiListResponse extends BaseResponse {
 
         public void setLBCaseId(String lBCaseId) {
             this.lBCaseId = lBCaseId;
+        }
+
+        public String getDharamKanta() {
+            return dharamKanta;
+        }
+
+        public void setDharamKanta(String dharamKanta) {
+            this.dharamKanta = dharamKanta;
         }
 
     }

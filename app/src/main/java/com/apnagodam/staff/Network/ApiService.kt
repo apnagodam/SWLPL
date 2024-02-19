@@ -36,6 +36,7 @@ import com.apnagodam.staff.Network.Response.AttendanceResponse
 import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
+import com.apnagodam.staff.Network.Response.QualityParamsResponse
 import com.apnagodam.staff.Network.Response.ResponseFastcaseList
 import com.apnagodam.staff.Network.Response.ResponseSendOtp
 import com.apnagodam.staff.Network.Response.ResponseStackData
@@ -139,6 +140,8 @@ interface ApiService {
 
     @POST("api/apna_user_logout")
     suspend fun doLogout(): Response<LoginResponse>
+    @POST("api/apna_user_logout")
+    fun doLogout1(): Observable<LoginResponse>
 
     @POST("api/apna_verify_otp")
    suspend fun doOTPVerify(@Body oTPData: OTPData): Response<OTPvarifedResponse>
@@ -282,10 +285,10 @@ interface ApiService {
    suspend fun terminalListLevel(): Response<TerminalListPojo>
 
     @GET("emp_api/apna_emp_transpoter_detail")
-    fun getTransporterDetails(@Query("transport_id") str: String?): Observable<TransporterDetailsPojo>
+    suspend fun getTransporterDetails(@Query("transport_id") str: String?): Response<TransporterDetailsPojo>
 
-    @get:GET("emp_api/apna_emp_transpoter_name")
-    val transporterList: Observable<TransporterListPojo>
+    @GET("emp_api/apna_emp_transpoter_name")
+    suspend fun transporterList(): Response<TransporterListPojo>
 
     @GET("emp_api/apna_emp_get_truckbook")
    suspend fun getTruckBookList(
@@ -332,7 +335,7 @@ interface ApiService {
     fun getattendanceStatus(): Call<AttendanceResponse?>?
 
     @GET("api/apna_default_list")
-    fun getcommuydity_terminal_user_emp_listing(@Query("app_type") str: String?): Observable<CommudityResponse>
+    suspend fun getcommuydity_terminal_user_emp_listing(@Query("app_type") str: String?): Response<CommudityResponse>
 
     @GET("emp_api/apna_emp_get_kanta_prachi")
     suspend fun getf_kanthaParchiList(
@@ -364,7 +367,7 @@ interface ApiService {
     fun getvendorUserList(): Observable<VendorNamePojo>
 
     @GET("api/app_version")
-    fun getversionCode(@Query("app_type") str: String?): Observable<VersionCodeResponse>
+    suspend fun getversionCode(@Query("app_type") str: String?): Response<VersionCodeResponse>
 
     @POST("emp_api/fc_offline_store")
     fun offlineFastCase(@Body requestOfflineCaseData: RequestOfflineCaseData?): Call<BaseResponse?>?
@@ -388,7 +391,7 @@ interface ApiService {
     suspend fun uploadDeliveredOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_f_quality")
-    fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?): Observable<LoginResponse>
+    suspend fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_kanta_parchi")
     suspend fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData): Response<LoginResponse>
@@ -400,7 +403,7 @@ interface ApiService {
     fun uploadGatePassNew(@Body uploadGatePassPostDataNew: UploadGatePassPostDataNew?): Observable<LoginResponse>
 
     @POST("emp_api/apna_emp_update_labour")
-    fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData?): Observable<LoginResponse>
+    suspend fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_releaseorder")
     fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData?): Call<LoginResponse?>?
@@ -428,4 +431,7 @@ interface ApiService {
         @Query("spot_token") str: String?,
         @Query("intention_otp") str2: String?
     ): Call<VerifyOtpFastcase?>?
+
+    @POST("emp_api/apna_emp_qulaity_paramters?")
+    suspend fun  getCommodityParams(@Query("case_id") case_id:String):Response<QualityParamsResponse>
 }

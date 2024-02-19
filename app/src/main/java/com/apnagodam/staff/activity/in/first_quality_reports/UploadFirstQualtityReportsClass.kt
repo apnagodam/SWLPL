@@ -13,11 +13,15 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -25,6 +29,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -34,6 +39,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.util.UUID
 
+@AndroidEntryPoint
 class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
     var packagingTypeID: String? = null
 
@@ -47,15 +53,72 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
     private var reportFile: String? = null
     private var commudityFile: String? = null
     var options: Options? = null
+    var paramList = arrayListOf<String>()
+    var ed = arrayListOf<EditText>()
+
+    val qualitReportViewModel by viewModels<QualitReportViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
 
     override fun setUp() {
+
         val bundle = intent.getBundleExtra(BUNDLE)
         if (bundle != null) {
             UserName = bundle.getString("user_name")
             CaseID = bundle.getString("case_id")
+
+
+            qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
+            qualitReportViewModel.commodityResponse.observe(this){
+                when(it){
+                    is NetworkResult.Error -> {}
+                    is NetworkResult.Loading -> {}
+                    is NetworkResult.Success -> {
+                        if(it.data!=null){
+
+                            for(data in it.data.data){
+                                var editText = EditText(this)
+                                editText.setHint(data.name)
+                                ed.add(editText)
+                                binding!!.llDocument.addView(editText)
+                            }
+
+
+                        }
+                    }
+                }
+            }
+
+            /*    "Dead" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Admixture" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "Damage" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "Counts" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Fungus" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "weevil" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "Recovery" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Danthal" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "Fatkan" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "Black" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Tikki" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "SMB" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "Black Tip" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Red Green" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "Potia" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "KB" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "HL" -> binding!!.tilTcw.visibility = View.VISIBLE
+                "Dana" -> binding!!.tilDehuck.visibility = View.VISIBLE
+                "Oil" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Moisture" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
+                "Broken" -> binding!!.tilBroken.visibility = View.VISIBLE
+                "Thin" -> binding!!.tilThin.visibility = View.VISIBLE
+                "FM" -> binding!!.tilFmLevel.visibility = View.VISIBLE
+                "TCW" -> binding!!.tilTcw.visibility = View.VISIBLE*/
+            var i =0;
+            paramList.forEach {
+
+
+            }
         }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -88,6 +151,9 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             )
         }
         binding!!.btnSubmit.setOnClickListener {
+            for(editext in ed){
+                showToast(editext.text.toString())
+            }
             Utility.showDecisionDialog(
                 this@UploadFirstQualtityReportsClass,
                 getString(R.string.alert),
@@ -166,7 +232,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
         }
         //else {
-        apiService.uploadFirstQualityReports(
+        qualitReportViewModel.uploadFirstQualityReport(
             UploadFirstQualityPostData(
                 CaseID,
                 ReportImage,
@@ -189,14 +255,21 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                 stringFromView(binding!!.notes),
                 CommudityFileSelectImage
             )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body->  Utility.showAlertDialog(
-                this@UploadFirstQualtityReportsClass,
-                getString(R.string.alert),
-                body.getMessage()
-            ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) } }
-            .subscribe()
+        )
+        qualitReportViewModel.fQualityUploadResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    Utility.showAlertDialog(
+                        this@UploadFirstQualtityReportsClass,
+                        getString(R.string.alert),
+                        it.data!!.getMessage()
+                    ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
+                }
+            }
+        }
+
 
         // }
     }
