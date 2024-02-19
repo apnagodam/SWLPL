@@ -401,12 +401,25 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
         } catch (pe: ParseException) {
             Log.e("getValueException", pe.toString())
         }
-        binding!!.spinnerPurpose.setSelection(
-            getIndex(
-                binding!!.spinnerPurpose,
-                lead.data[0].purpose
-            )
-        )
+        when(lead.data[0].purpose){
+            null->{
+                binding!!.spinnerPurpose.setSelection(
+                    getIndex(
+                        binding!!.spinnerPurpose,
+                        ""
+                    )
+                )
+            }
+            else->{
+                binding!!.spinnerPurpose.setSelection(
+                    getIndex(
+                        binding!!.spinnerPurpose,
+                        lead.data[0].purpose
+                    )
+                )
+            }
+        }
+
         binding!!.spinnerCommudity.setSelection(
             getIndex(
                 binding!!.spinnerCommudity,

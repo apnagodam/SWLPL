@@ -189,7 +189,7 @@ public class AllLeadsResponse extends BaseResponse implements Serializable {
         private String commodityDate;
         @SerializedName("purpose")
         @Expose
-        private String purpose;
+        private String purpose="";
         @SerializedName("status")
         @Expose
         private String status;

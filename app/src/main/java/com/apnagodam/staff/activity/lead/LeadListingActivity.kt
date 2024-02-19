@@ -48,7 +48,9 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LeadListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LeadListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/binding!!.TitleWaititngEdititng.setVisibility(
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
+
+        binding!!.TitleWaititngEdititng.setVisibility(
             View.VISIBLE
         )
         //        binding.layoutLoader.setVisibility(View.GONE);
