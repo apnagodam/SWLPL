@@ -4,9 +4,10 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SecoundkanthaParchiListResponse extends BaseResponse {
+public class SecoundkanthaParchiListResponse extends BaseResponse implements Serializable {
     public SecoundKataParchiDatum getSecoundKataParchiDatum() {
         return secoundKataParchiDatum;
     }
@@ -55,6 +56,7 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
         @SerializedName("total")
         @Expose
         private Integer total;
+
 
         public Integer getCurrentPage() {
             return currentPage;
@@ -151,10 +153,13 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
         public void setTotal(Integer total) {
             this.total = total;
         }
+
+
+
     }
 
 
-    public class Datum {
+    public class Datum implements  Serializable{
         @SerializedName("id")
         @Expose
         private Integer id;
@@ -334,6 +339,10 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
         @SerializedName("f_q_case_id")
         @Expose
         private String f_q_case_id;
+
+        @SerializedName("file_3")
+        @Expose
+        private String file3;
 
         public Integer getId() {
             return id;
@@ -685,6 +694,13 @@ public class SecoundkanthaParchiListResponse extends BaseResponse {
 
         public void setUserPriceLname(String userPriceLname) {
             this.userPriceLname = userPriceLname;
+        }
+        public String getFile3() {
+            return file3;
+        }
+
+        public void setFile3(String file3) {
+            this.file3 = file3;
         }
     }
 }

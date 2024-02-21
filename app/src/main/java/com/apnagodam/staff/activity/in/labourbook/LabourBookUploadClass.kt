@@ -23,6 +23,8 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
+import com.leo.searchablespinner.SearchableSpinner
+import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -43,6 +45,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     lateinit var contractorName: ArrayList<String>
     val homeViewModel by viewModels<HomeViewModel>()
     val labourViewModel by viewModels<LabourViewModel>()
+    lateinit var searchableSpinner: SearchableSpinner
 
     var checked = false
     override fun getLayoutResId(): Int {
@@ -50,6 +53,8 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     }
 
     override fun setUp() {
+        searchableSpinner = SearchableSpinner(this)
+
         calender = Calendar.getInstance()
         val bundle = intent.getBundleExtra(BUNDLE)
         if (bundle != null) {
@@ -67,11 +72,41 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     }
 
     private fun setValueOnSpinner() {
+
         for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
             contractorName!!.add(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName)
         }
+
+        searchableSpinner.windowTitle = "Select Kanta"
+
+
+        searchableSpinner.setSpinnerListItems(contractorName)
+
+        searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+            override fun setOnItemSelectListener(
+                position: Int,
+                selectedString: String
+            ) {
+                binding!!.etContractor.setText(selectedString)
+                contractorsID = contractorName.get(position)
+                for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
+                    if (contractorsID.equals(
+                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
+                            ignoreCase = true
+                        )
+                    ) {
+                        binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
+                        binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+                    }
+                }            }
+        }
+
+        var itemList = arrayListOf<String>()
+        itemList.add("Select Type")
+        itemList.add("Client Labour")
+        itemList.add("Company Labour")
         SpinnerControactorAdapter =
-            ArrayAdapter(this, R.layout.multiline_spinner_item, contractorName!!)
+            ArrayAdapter(this, R.layout.multiline_spinner_item, itemList!!)
 
 
 //            object :
@@ -109,24 +144,13 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     id: Long
                 ) {
                     // selected item in the list
-                    if (position != 0) {
+                    if (position >1) {
                         binding!!.layoutLabour.visibility = View.VISIBLE
-
 
                     } else {
                         binding!!.layoutLabour.visibility = View.GONE
                     }
-                    contractorsID = parentView.getItemAtPosition(position).toString()
-                    for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
-                        if (contractorsID.equals(
-                                SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
-                                ignoreCase = true
-                            )
-                        ) {
-                            binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
-                            binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
-                        }
-                    }
+
                 }
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {
@@ -174,23 +198,27 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.btnLogin.setOnClickListener(this)
         binding!!.etStartDateTime.setOnClickListener(this)
         binding!!.lpCommiteDate.setOnClickListener(this)
-        binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isChecked) {
-                // checked
-                checked = true
-                binding!!.etLocation.isEnabled = false
-                binding!!.etLocation.isClickable = false
-                binding!!.etLocation.isFocusable = false
-                binding!!.etLocation.setText("")
-            } else {
-                // not checked
-                checked = false
-                binding!!.etLocation.isEnabled = true
-                binding!!.etLocation.isClickable = true
-                binding!!.etLocation.isFocusable = true
-                binding!!.etLocation.isFocusableInTouchMode = true
-            }
+
+        binding!!.etContractor.setOnClickListener {
+            searchableSpinner.show()
         }
+//        binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (buttonView.isChecked) {
+//                // checked
+//                checked = true
+//                binding!!.etLocation.isEnabled = false
+//                binding!!.etLocation.isClickable = false
+//                binding!!.etLocation.isFocusable = false
+//                binding!!.etLocation.setText("")
+//            } else {
+//                // not checked
+//                checked = false
+//                binding!!.etLocation.isEnabled = true
+//                binding!!.etLocation.isClickable = true
+//                binding!!.etLocation.isFocusable = true
+//                binding!!.etLocation.isFocusableInTouchMode = true
+//            }
+//        }
     }
 
     override fun onBackPressed() {
@@ -204,9 +232,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
-                /*  if (TextUtils.isEmpty(stringFromView(binding.etStartDateTime))) {
-                        Toast.makeText(LabourBookUploadClass.this, getResources().getString(R.string.booking_date_val), Toast.LENGTH_LONG).show();
-                    } else*/
+
 
                 Utility.showDecisionDialog(
                     this@LabourBookUploadClass,
@@ -228,16 +254,24 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     )
                     labourViewModel.labourDetailsUploadResponse.observe(this) {
                         when (it) {
-                            is NetworkResult.Error -> {}
+                            is NetworkResult.Error -> {
+                                Utility.showAlertDialog(
+                                    this@LabourBookUploadClass,
+                                    getString(R.string.alert),
+                                    it.message
+                                ) {
+                                    startActivityAndClear(LabourBookListingActivity::class.java)
+
+                                }
+                            }
                             is NetworkResult.Loading -> {}
                             is NetworkResult.Success -> {
-                                if (it.data != null) {
-                                    Utility.showAlertDialog(
-                                        this@LabourBookUploadClass,
-                                        getString(R.string.alert),
-                                        it.data.getMessage()
-                                    ) { startActivityAndClear(LabourBookListingActivity::class.java) }
-                                }
+                                startActivityAndClear(LabourBookListingActivity::class.java)
+                                Utility.showAlertDialog(
+                                    this@LabourBookUploadClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) {  }
                             }
                         }
                     }

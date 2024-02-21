@@ -8,8 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.StackPostData
+import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.repository.CaseIdRepo
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,21 +23,41 @@ import retrofit2.Call
 import javax.inject.Inject
 
 @HiltViewModel
-class CaseIdViewModel @Inject constructor(private val repository: CaseIdRepo,
-                                          application: Application) : AndroidViewModel(application) {
+class CaseIdViewModel @Inject constructor(
+    private val repository: CaseIdRepo,
+    application: Application
+) : AndroidViewModel(application) {
     private val _response: MutableLiveData<NetworkResult<AllCaseIDResponse>> = MutableLiveData()
-    private val terminalResponse: MutableLiveData<NetworkResult<TerminalListPojo>> = MutableLiveData()
+    private val terminalResponse: MutableLiveData<NetworkResult<TerminalListPojo>> =
+        MutableLiveData()
 
+     val driverOtpResponse = MutableLiveData<NetworkResult<DriverOtpResponse>>()
     val response: LiveData<NetworkResult<AllCaseIDResponse>> = _response
-    fun getCaseId(str: String?, i: Int, str2: String?, str3: String?)=viewModelScope.launch {
-        repository.getCaseId(str,i,str2,str3).collect { values ->
+
+    val stackReponse = MutableLiveData<NetworkResult<StackListPojo>>()
+    fun getCaseId(str: String?, i: Int, str2: String?, str3: String?) = viewModelScope.launch {
+        repository.getCaseId(str, i, str2, str3).collect { values ->
             _response.value = values
         }
     }
-    fun getTerminalList()=viewModelScope.launch {
-        repository.getTerminalList().collect(){
+
+    fun getTerminalList() = viewModelScope.launch {
+        repository.getTerminalList().collect() {
             terminalResponse.value = it;
         }
 
+    }
+
+    fun driverOtp(phone: String, stackId: String, inOut: String, otp: String = "") =
+        viewModelScope.launch {
+            repository.driverOtp(phone, stackId, inOut, otp).collect() {
+                driverOtpResponse.value = it
+            }
+        }
+
+    fun getStackList(stackPostData: StackPostData) = viewModelScope.launch {
+        repository.getStackList(stackPostData).collect() {
+            stackReponse.value = it
+        }
     }
 }

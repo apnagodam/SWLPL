@@ -236,7 +236,11 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                 UploadFirstkantaParchiPostData(
                         CaseID, stringFromView(
                         binding!!.notes
-                ), KanthaImage, truckImageImage,truck2Image,kantaId.toString(),binding!!.etKantaParchiNum.text.toString()
+                ), KanthaImage, truckImageImage,truck2Image,kantaId.toString(),binding!!.etKantaParchiNum.text.toString(),
+                    "oldKanthaImage",
+                    binding!!.etKantaOldParchiNum.text.toString(),
+                    binding!!.etOldWeightQt.text.toString(),
+                    binding!!.etOldNoOfBags.text.toString()
                 )
         )
 

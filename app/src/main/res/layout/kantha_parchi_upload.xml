@@ -117,9 +117,10 @@
 
                         <LinearLayout
                             android:id="@+id/llKanta"
-                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
                             <androidx.cardview.widget.CardView
                                 android:id="@+id/cardKanta"
                                 android:layout_width="match_parent"
@@ -301,31 +302,375 @@
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
 
-                            <EditText
-                                android:id="@+id/etKantaParchiNum"
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardKantaOld"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                style="@style/TextStyleBold"
+                                android:visibility="gone"
+                                android:layout_margin="@dimen/_5sdp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="wrap">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="Old Kanta Parchi *"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_90sdp"
+                                        android:orientation="horizontal"
+                                        android:weightSum="2">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_80sdp"
+                                            android:layout_margin="@dimen/_5sdp"
+                                            android:layout_weight="1"
+                                            android:background="@drawable/white_back_black_border"
+                                            android:gravity="left">
+
+                                            <ImageView
+                                                android:id="@+id/KanthaImageOld"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:scaleType="fitXY" />
+                                        </RelativeLayout>
+
+                                        <LinearLayout
+                                            android:id="@+id/uploadKanthaOld"
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_120sdp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_marginLeft="@dimen/_40sdp"
+                                            android:layout_marginTop="@dimen/_15sdp"
+                                            android:layout_weight="1"
+                                            android:orientation="vertical">
+
+                                            <ImageView
+                                                android:layout_width="25dp"
+                                                android:layout_height="25dp"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/upload" />
+
+                                            <TextView
+                                                style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:layout_marginTop="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:maxLines="7"
+                                                android:text="Upload Old Kanta Parchi file"
+                                                android:textColor="@color/dark_gray_shade" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etKantaParchiNum"
+                                style="@style/TextInputStyle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/_10sdp"
                                 android:background="@drawable/white_back_black_border"
+                                android:editable="true"
                                 android:hint="@string/kanta_parchi_number"
                                 android:imeOptions="actionDone"
                                 android:lines="1"
                                 android:padding="@dimen/_10sdp"
                                 android:textSize="@dimen/_12ssp" />
-                            <EditText
+
+                            <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/etKantaParchi"
+                                style="@style/TextStyleNormal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                style="@style/TextStyleBold"
-                                android:editable="false"
                                 android:layout_marginVertical="@dimen/_10sdp"
                                 android:background="@drawable/white_back_black_border"
+                                android:editable="false"
                                 android:hint="@string/kanta_name"
                                 android:imeOptions="actionDone"
                                 android:lines="1"
                                 android:padding="@dimen/_10sdp"
                                 android:textSize="@dimen/_12ssp" />
+
+                            <LinearLayout
+                                android:id="@+id/llBags"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etWeight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Weight(Qtl)"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etNoOfBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Total No of Bags*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etNoOfDispleasedBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Total No of Displeased Bags*"
+                                        android:imeOptions="actionDone"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="@dimen/_5sdp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="@string/taupline_radio"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <RadioGroup
+                                        android:id="@+id/genderRadio"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_6sdp"
+                                        android:orientation="horizontal">
+
+                                        <RadioButton
+                                            android:id="@+id/radioSeller"
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:buttonTint="@color/colorPrimary"
+                                            android:text="@string/yes"
+                                            android:textSize="@dimen/_18ssp" />
+
+                                        <RadioButton
+                                            android:id="@+id/radioBuyer"
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_6sdp"
+                                            android:checked="true"
+                                            android:buttonTint="@color/colorPrimary"
+                                            android:text="@string/no"
+                                            android:textColor="@android:color/black"
+                                            android:textSize="@dimen/_18ssp" />
+                                    </RadioGroup>
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1dp"
+                                        android:background="@color/lightGray"></View>
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="@dimen/_5sdp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="@string/wet_radio"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <RadioGroup
+                                        android:id="@+id/gender"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/_6sdp"
+                                        android:orientation="horizontal">
+
+                                        <RadioButton
+                                            android:id="@+id/radioyes"
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:buttonTint="@color/colorPrimary"
+
+                                            android:text="@string/yes"
+                                            android:textSize="@dimen/_18ssp" />
+
+                                        <RadioButton
+                                            android:id="@+id/radiono"
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_6sdp"
+                                            android:buttonTint="@color/colorPrimary"
+                                            android:text="@string/no"
+                                            android:checked="true"
+                                            android:textColor="@android:color/black"
+                                            android:textSize="@dimen/_18ssp" />
+                                    </RadioGroup>
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="1dp"
+                                        android:background="@color/lightGray"></View>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/llOldBags"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldParchiNum"
+                                        style="@style/TextInputStyle"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:background="@drawable/white_back_black_border"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Number"
+                                        android:imeOptions="actionDone"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etOldWeightQt"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="@string/weight_quintal"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etOldNoOfBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Old No of Bags*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etWeightQt"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="@string/weight_quintal"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                            </LinearLayout>
+
+
                         </LinearLayout>
 
                         <androidx.cardview.widget.CardView
@@ -333,6 +678,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/_5sdp"
+                            android:visibility="visible"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintWidth_default="wrap">
@@ -386,8 +732,8 @@
                                         android:orientation="vertical">
 
                                         <ImageView
-                                            android:layout_width="25dp"
-                                            android:layout_height="25dp"
+                                            android:layout_width="20dp"
+                                            android:layout_height="23dp"
                                             android:layout_gravity="center_horizontal"
                                             android:src="@drawable/upload" />
 
@@ -417,6 +763,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5ssp"
                         android:background="@drawable/white_back_black_border"
+                        android:gravity="top"
                         android:hint="Notes"
                         android:imeOptions="actionDone"
                         android:lines="5"

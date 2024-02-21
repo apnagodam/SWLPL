@@ -342,6 +342,8 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
         bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        bundle.putString("skp_bags",AllCases[postion].skpBags)
+        bundle.putString("skp_weight",AllCases[postion].skpWeight)
         startActivity(UploadSecoundQualtityReportsClass::class.java, bundle)
     }
 

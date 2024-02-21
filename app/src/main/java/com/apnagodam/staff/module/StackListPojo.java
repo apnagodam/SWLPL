@@ -62,6 +62,31 @@ public class StackListPojo extends BaseResponse {
         @Expose
         private String updatedAt;
 
+
+        @SerializedName("driver_number")
+        @Expose
+        private String driverNumber;
+
+
+        @SerializedName("otp")
+        @Expose
+        private String otp;
+
+
+        public String getDriverNumber(){
+            return  driverNumber;
+        }
+
+        public void setDriverNumber(String driverNumber){
+            this.driverNumber = driverNumber;
+        }
+        public String getOtp(){
+            return  otp;
+        }
+
+        public void setOtp(String otp){
+            this.id = otp;
+        }
         public String getId() {
             return id;
         }

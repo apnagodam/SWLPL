@@ -47,8 +47,9 @@
                     android:layout_height="match_parent"
                     android:text="@string/home"
                     android:textAllCaps="true"
+                    android:textStyle="bold"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/_10ssp" />
+                    android:textSize="@dimen/_14ssp" />
 
             </RelativeLayout>
 
@@ -84,6 +85,7 @@
                         android:gravity="center"
                         android:src="@drawable/ic_baseline_notifications_24"
                         android:text="@string/ivr"
+                        android:visibility="gone"
                         android:textColor="@color/colorWhite"
                         android:textSize="@dimen/_14sdp"
                         android:textStyle="bold" />

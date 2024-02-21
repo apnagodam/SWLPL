@@ -116,7 +116,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
-                        android:entries="@array/array_transaction_type"
+                        android:entries="@array/labour_type"
                         android:gravity="right"
                         android:padding="@dimen/_10sdp"
                         android:spinnerMode="dropdown"
@@ -132,12 +132,36 @@
                         android:src="@drawable/ic_arrow_drop_down" />
                 </RelativeLayout>
 
+
             <LinearLayout
                 android:id="@+id/layoutLabour"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilContractor"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/select_contractor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_transporter_name">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etContractor"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:enabled="true"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:imeOptions="actionNext"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_contractor_phone"
                     style="@style/TextInputStyle"
@@ -317,28 +341,28 @@
                     android:padding="@dimen/_5sdp"
                     android:textSize="@dimen/_12ssp" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/_5sdp">
+<!--                <RelativeLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="center"-->
+<!--                    android:layout_margin="@dimen/_5sdp">-->
 
-                    <CheckBox
-                        android:id="@+id/check_not_requried"
-                        android:layout_width="@dimen/_20ssp"
-                        android:layout_height="@dimen/_20ssp" />
+<!--                    <CheckBox-->
+<!--                        android:id="@+id/check_not_requried"-->
+<!--                        android:layout_width="@dimen/_20ssp"-->
+<!--                        android:layout_height="@dimen/_20ssp" />-->
 
-                    <TextView
-                        android:id="@+id/termTxt"
-                        style="@style/Base.TextAppearance.AppCompat.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_10ssp"
-                        android:layout_toRightOf="@+id/check_not_requried"
-                        android:text="Not Required"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/_12ssp" />
-                </RelativeLayout>
+<!--                    <TextView-->
+<!--                        android:id="@+id/termTxt"-->
+<!--                        style="@style/Base.TextAppearance.AppCompat.Caption"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginLeft="@dimen/_10ssp"-->
+<!--                        android:layout_toRightOf="@+id/check_not_requried"-->
+<!--                        android:text="Not Required"-->
+<!--                        android:textColor="@android:color/black"-->
+<!--                        android:textSize="@dimen/_12ssp" />-->
+<!--                </RelativeLayout>-->
 
             </LinearLayout>
                 <com.google.android.material.button.MaterialButton

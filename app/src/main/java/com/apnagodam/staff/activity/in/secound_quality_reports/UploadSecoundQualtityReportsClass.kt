@@ -1,25 +1,30 @@
 package com.apnagodam.staff.activity.`in`.secound_quality_reports
 
-import android.app.Activity
+import android.R.attr.src
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.net.Uri
 import android.provider.MediaStore
-import android.text.TextUtils
-import android.util.Log
+import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.content.res.ResourcesCompat
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.QualityParamsResponse
 import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
@@ -28,14 +33,18 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.UUID
+import kotlin.math.roundToInt
+
 
 @AndroidEntryPoint
 class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
@@ -51,8 +60,14 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     private var reportFile: String? = null
     private var commudityFile: String? = null
     var options: Options? = null
-
+    var paramList = arrayListOf<String>()
+    var ed = arrayListOf<TextInputLayout>()
+    var listOfQualityParams = ArrayList<UploadFirstQualityPostData.CommodityData>()
+    var isFieldEmpty = true;
+    var listOfParams = arrayListOf<QualityParamsResponse.Datum>()
     val qualitReportViewModel by viewModels<QualitReportViewModel>()
+    var skpBags = 0;
+    var skpWeight = 0;
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
@@ -62,11 +77,46 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         if (bundle != null) {
             UserName = bundle.getString("user_name")
             CaseID = bundle.getString("case_id")
+            skpBags = bundle.getString("skp_bags").toString().toInt()
+            skpWeight = bundle.getString("skp_weight").toString().toInt()
+
+
+           binding!!.etAvgWeight.setText( (skpWeight*100/skpBags).toString())
         }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
+        binding!!.tilExtraClaim.visibility = View.VISIBLE
+
+        qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
+        qualitReportViewModel.commodityResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        listOfParams = it.data.data as ArrayList<QualityParamsResponse.Datum>
+                        for (data in it.data.data) {
+                            var textInputField =
+                                TextInputLayout(this, null, R.attr.customTextInputStyle)
+                            var editText = TextInputEditText(textInputField.context)
+                            editText.inputType = InputType.TYPE_CLASS_NUMBER
+                            textInputField.setHint(data.name)
+                            textInputField.addView(editText)
+
+                            ed.add(textInputField)
+                            binding!!.llDynamic.addView(textInputField)
+//                               var data = Datum()
+//                                listOfQualityParams.add(Datum())
+
+                        }
+
+
+                    }
+                }
+            }
+        }
         clickListner()
         // spinner purpose
         binding!!.spinnerPackagingtype.onItemSelectedListener =
@@ -100,30 +150,32 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 "Are You Sure to Summit?",
                 object : Utility.AlertCallback {
                     override fun callback() {
-                        if (isValid) {
-
-                            /* if (fileReport == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
-                        } else if (fileCommudity == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_commodity_file, Toast.LENGTH_LONG).show();
-                        } else if (packagingTypeID == null) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
-                        } else {*/
+                        if (packagingTypeID != null) {
                             onNext()
-                            // }
+
+
+                        } else {
+                            Utility.showAlertDialog(
+                                this@UploadSecoundQualtityReportsClass,
+                                getString(R.string.alert),
+                                resources.getString(R.string.packaging)
+                            ) {
+
+                            }
                         }
+
                     }
                 })
         }
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
             CommudityFileSelect = false
-          dispatchTakePictureIntent()
+            dispatchTakePictureIntent()
         }
         binding!!.uploadCommudity.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = true
-           dispatchTakePictureIntent()
+            dispatchTakePictureIntent()
         }
         binding!!.ReportsImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -160,32 +212,31 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
-            if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA) {
+
+
                 if (requestCode == REQUEST_CAMERA) {
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
 
+                    if (ReportsFileSelect) {
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
 
-                    if (requestCode == REQUEST_CAMERA) {
+                        fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileReport)
+                        reportFile = uri.toString()
+                        binding!!.ReportsImage.setImageURI(uri)
+                    } else if (CommudityFileSelect) {
                         val imageBitmap = data?.extras?.get("data") as Bitmap
-
-                        if (ReportsFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
-                            val uri = Uri.fromFile(fileReport)
-                            reportFile = uri.toString()
-                            binding!!.ReportsImage.setImageURI(uri)
-                        } else if (CommudityFileSelect) {
-                            val imageBitmap = data?.extras?.get("data") as Bitmap
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
-                            val uri = Uri.fromFile(fileCommudity)
-                            commudityFile = uri.toString()
-                            binding!!.CommudityImage.setImageURI(uri)
-                        }
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileCommudity)
+                        commudityFile = uri.toString()
+                        binding!!.CommudityImage.setImageURI(uri)
                     }
-
                 }
+
             }
         } catch (e: Exception) {
         }
@@ -203,70 +254,133 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         }
 
     }
+
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
 
         // Initialize a new file instance to save bitmap object
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file,"${UUID.randomUUID()}.jpg")
+        file = File(file, "${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             // Compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
+
+    private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 78, text: String): Bitmap {
+
+        val canvas = Canvas(bitmap)
+
+        // new antialised Paint - empty constructor does also work
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = Color.BLACK
+
+        // text size in pixels
+        val scale = resources.displayMetrics.density
+        paint.textSize = (textSize * scale).roundToInt().toFloat()
+
+        //custom fonts or a default font
+        val fontFace =
+            ResourcesCompat.getFont(this@UploadSecoundQualtityReportsClass, R.style.TextStyleNormal)
+        paint.typeface = Typeface.create(fontFace, Typeface.NORMAL)
+        val w: Float = bitmap.width.toFloat()
+        val h: Float = bitmap.height.toFloat()
+
+        // draw text to the Canvas center
+        val bounds = Rect()
+        //draw the text
+        paint.getTextBounds(text, 0, text.length, bounds)
+
+        //x and y defines the position of the text, starting in the top left corner
+        canvas.drawText(text, 0.0f, h, paint)
+        return bitmap
+    }
+
     // update file
     fun onNext() {
-        var KanthaImage = ""
+
+
+        var ReportImage = ""
         var CommudityFileSelectImage = ""
         if (fileReport != null) {
-            KanthaImage = "" + Utility.transferImageToBase64(fileReport)
+            ReportImage = "" + Utility.transferImageToBase64(fileReport)
         }
         if (fileCommudity != null) {
-            CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
+            CommudityFileSelectImage =
+                "" + Utility.transferImageToBase64(fileCommudity)
         }
-        //else {
-        qualitReportViewModel.uploadSecondQualityReport(UploadSecoundQualityPostData(
-                CaseID,
-                KanthaImage,
-                stringFromView(
-                        binding!!.etMoistureLevel
-                ),
-                stringFromView(binding!!.etTcw),
-                stringFromView(binding!!.etFmLevel),
-                stringFromView(
-                        binding!!.etThin
-                ),
-                stringFromView(binding!!.etDehuck),
-                stringFromView(binding!!.etDiscolor),
-                stringFromView(
-                        binding!!.etBroken
-                ),
-                stringFromView(binding!!.etInfested),
-                stringFromView(binding!!.etLive),
-                stringFromView(binding!!.notes),
-                CommudityFileSelectImage,
-                packagingTypeID
-        ))
-        qualitReportViewModel.sQualityUploadResponse.observe(this){
-            when(it){
-                is NetworkResult.Error -> hideDialog()
-                is NetworkResult.Loading -> showDialog()
-                is NetworkResult.Success -> {
-                    Utility.showAlertDialog(
+
+        listOfQualityParams.clear()
+
+
+        for (i in listOfParams.indices) {
+            var datum =
+                UploadFirstQualityPostData.CommodityData(
+                    listOfParams[i].id,
+                    listOfParams[i].name,
+                    "",
+                    listOfParams[i].min,
+                    listOfParams[i].max
+                )
+            listOfQualityParams.add(datum)
+
+        }
+
+        for (editext in ed.indices) {
+            if (ed[editext].editText!!.text.isEmpty()) {
+                isFieldEmpty = true;
+                ed[editext].error = "This field cannot be empty!"
+            } else {
+                listOfQualityParams[editext].value =
+                    ed[editext].editText!!.text.toString()
+                isFieldEmpty = false;
+            }
+        }
+        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty()) {
+            qualitReportViewModel.uploadSecondQualityReport(
+                UploadSecoundQualityPostData(
+                    CaseID,
+                    ReportImage,
+                    listOfQualityParams,
+                    packagingTypeID,
+                    "1",
+                    stringFromView(binding!!.etLive),
+                    stringFromView(binding!!.notes),
+                    CommudityFileSelectImage,
+                    binding!!.etExtraClaim.text!!.toString()
+                )
+            )
+
+            qualitReportViewModel.sQualityUploadResponse.observe(this@UploadSecoundQualtityReportsClass) {
+                when (it) {
+                    is NetworkResult.Error -> {
+                        showToast(it.message)
+                    }
+
+                    is NetworkResult.Loading -> {}
+                    is NetworkResult.Success -> {
+                        Utility.showAlertDialog(
                             this@UploadSecoundQualtityReportsClass,
                             getString(R.string.alert),
                             it.data!!.getMessage()
-                    ) { startActivityAndClear(SecoundQualityReportListingActivity::class.java) }
+                        ) {
+                            startActivityAndClear(
+                                SecoundQualityReportListingActivity::class.java
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -274,13 +388,13 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     }
 
-    val isValid: Boolean
-        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
-            Utility.showEditTextError(
-                binding!!.tilMoistureLevel,
-                R.string.moisture_level
-            )
-        } else true
+//    val isValid: Boolean
+//        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
+//            Utility.showEditTextError(
+//                binding!!.tilMoistureLevel,
+//                R.string.moisture_level
+//            )
+//        } else true
 
     /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
   return Utility.showEditTextError(binding.tilTcw, R.string.tcw);

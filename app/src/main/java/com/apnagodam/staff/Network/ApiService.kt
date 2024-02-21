@@ -34,6 +34,8 @@ import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
 import com.apnagodam.staff.Network.Response.AttendanceResponse
 import com.apnagodam.staff.Network.Response.BaseResponse
+import com.apnagodam.staff.Network.Response.DharamKanta
+import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
 import com.apnagodam.staff.Network.Response.QualityParamsResponse
@@ -163,6 +165,14 @@ interface ApiService {
         @Query("search") str3: String?
     ): Response<AllCaseIDResponse>
 
+
+    @POST("emp_api/apna_emp_caseid_otp")
+    suspend fun driverOtp(
+        @Query("phone") phone: String,
+        @Query("stack_id") stackId: String,
+        @Query("type") inOut: String,
+        @Query("otp") otp: String?
+    ): Response<DriverOtpResponse>
     @GET("emp_api/apna_emp_leads")
    suspend fun getAllLeads(
         @Query("limit") str: String?,
@@ -279,7 +289,7 @@ interface ApiService {
     ): Call<ResponseStackData?>?
 
     @POST("emp_api/apna_emp_get_stack_number")
-    fun getStackList(@Body stackPostData: StackPostData?): Observable<StackListPojo>
+    suspend fun getStackList(@Body stackPostData: StackPostData?): Response<StackListPojo>
 
     @GET("emp_api/apna_emp_levelwise_terminal")
    suspend fun terminalListLevel(): Response<TerminalListPojo>
@@ -412,7 +422,7 @@ interface ApiService {
     suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_kanta_parchi")
-    fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?): Observable<LoginResponse>
+    suspend fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_truckbook")
     fun uploadTruckDetails(@Body uploadTruckDetailsPostData: UploadTruckDetailsPostData?): Observable<LoginResponse>
@@ -432,6 +442,10 @@ interface ApiService {
         @Query("intention_otp") str2: String?
     ): Call<VerifyOtpFastcase?>?
 
-    @POST("emp_api/apna_emp_qulaity_paramters?")
+    @POST("emp_api/apna_emp_qulaity_paramters")
     suspend fun  getCommodityParams(@Query("case_id") case_id:String):Response<QualityParamsResponse>
+
+
+    @POST("emp_api/apna_emp_getkantaparchi")
+    suspend fun  getDharamKanta(@Query("case_id") case_id:String):Response<DharamKanta>
 }

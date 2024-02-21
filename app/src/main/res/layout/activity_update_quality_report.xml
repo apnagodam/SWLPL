@@ -99,190 +99,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/case_id" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_moisture_level"
-                    style="@style/TextInputStyle"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/moisture_level">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:id="@+id/llDynamic"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_moisture_level"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_tcw"
-                    style="@style/TextInputStyle"
-                    android:visibility="gone"
-
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/tcw">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_tcw"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_broken"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-
-                    android:hint="@string/broken"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_broken"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_fm_level"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-
-                    android:hint="@string/fm_level"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_location">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_fm_level"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_thin"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:visibility="gone"
-
-                    android:layout_height="wrap_content"
-                    android:hint="@string/thin">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_thin"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusedByDefault="false"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_dehuck"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/dehuck"
-                    android:visibility="gone"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_weight_quintal">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_dehuck"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_discolor"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/discolor"
-                    android:visibility="gone"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_location">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_discolor"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_infested"
-                    style="@style/TextInputStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-
-                    android:hint="@string/infested">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_infested"
-                        style="@style/TextStyleNormal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_live"
@@ -306,7 +129,52 @@
                         android:maxLines="1"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilExtraClaim"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:hint="Extra Claim"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_customer_weight_quintal">
 
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etExtraClaim"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_avg_weight"
+                    style="@style/TextInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Avg. Weight"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/til_customer_weight_quintal">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_avg_weight"
+                        style="@style/TextStyleNormal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:editable="false"
+                        android:focusedByDefault="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
                 <RelativeLayout
                     android:id="@+id/rlpackgingType"
                     android:layout_width="match_parent"

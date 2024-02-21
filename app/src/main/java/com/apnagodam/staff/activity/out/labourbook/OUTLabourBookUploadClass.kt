@@ -109,23 +109,23 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
         binding!!.btnLogin.setOnClickListener(this)
         binding!!.etStartDateTime.setOnClickListener(this)
         binding!!.lpCommiteDate.setOnClickListener(this)
-        binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
-            if (buttonView.isChecked) {
-                // checked
-                checked = true
-                binding!!.etLocation.isEnabled = false
-                binding!!.etLocation.isClickable = false
-                binding!!.etLocation.isFocusable = false
-                binding!!.etLocation.setText("")
-            } else {
-                // not checked
-                checked = false
-                binding!!.etLocation.isEnabled = true
-                binding!!.etLocation.isClickable = true
-                binding!!.etLocation.isFocusable = true
-                binding!!.etLocation.isFocusableInTouchMode = true
-            }
-        }
+//        binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
+//            if (buttonView.isChecked) {
+//                // checked
+//                checked = true
+//                binding!!.etLocation.isEnabled = false
+//                binding!!.etLocation.isClickable = false
+//                binding!!.etLocation.isFocusable = false
+//                binding!!.etLocation.setText("")
+//            } else {
+//                // not checked
+//                checked = false
+//                binding!!.etLocation.isEnabled = true
+//                binding!!.etLocation.isClickable = true
+//                binding!!.etLocation.isFocusable = true
+//                binding!!.etLocation.isFocusableInTouchMode = true
+//            }
+//        }
     }
 
     override fun onBackPressed() {

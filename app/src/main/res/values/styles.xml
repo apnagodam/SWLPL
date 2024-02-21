@@ -9,6 +9,8 @@
         <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_arrow_back</item>
         <item name="android:windowAnimationStyle">@style/CustomActivityAnimation</item>
+        <item name="customTextInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+
     </style>
 
     <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">

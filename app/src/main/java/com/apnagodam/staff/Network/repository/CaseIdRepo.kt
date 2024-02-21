@@ -3,7 +3,10 @@ package com.apnagodam.staff.Network.repository
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.StackPostData
+import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +31,19 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService) : BaseA
         return flow{
             emit(safeApiCall { apiService.terminalListLevel() })
         }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun driverOtp(phone:String,stackId:String,inOut:String,otp:String=""):Flow<NetworkResult<DriverOtpResponse>>{
+        return flow {
+            emit(safeApiCall { apiService.driverOtp(phone, stackId, inOut, otp) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+
+    suspend fun getStackList(stackPostData: StackPostData):Flow<NetworkResult<StackListPojo>>{
+        return  flow {
+            emit(safeApiCall { apiService.getStackList(stackPostData) })
+        }
     }
 
 }

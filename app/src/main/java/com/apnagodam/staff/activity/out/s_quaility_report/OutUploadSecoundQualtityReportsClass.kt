@@ -94,18 +94,8 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
                 "Are You Sure to Summit?",
                 object : Utility.AlertCallback {
                     override fun callback() {
-                        if (isValid) {
+                        onNext()
 
-                            /* if (fileReport == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
-                        } else if (fileCommudity == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_commodity_file, Toast.LENGTH_LONG).show();
-                        } else if (packagingTypeID == null) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.packaging), Toast.LENGTH_LONG).show();
-                        } else {*/
-                            onNext()
-                            // }
-                        }
                     }
                 })
         }
@@ -163,28 +153,28 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         }
         //else {
 
-        qualityReportViewModel.uploadSecondQualityReport( UploadSecoundQualityPostData(
-                CaseID,
-                KanthaImage,
-                stringFromView(
-                        binding!!.etMoistureLevel
-                ),
-                stringFromView(binding!!.etTcw),
-                stringFromView(binding!!.etFmLevel),
-                stringFromView(
-                        binding!!.etThin
-                ),
-                stringFromView(binding!!.etDehuck),
-                stringFromView(binding!!.etDiscolor),
-                stringFromView(
-                        binding!!.etBroken
-                ),
-                stringFromView(binding!!.etInfested),
-                stringFromView(binding!!.etLive),
-                stringFromView(binding!!.notes),
-                CommudityFileSelectImage,
-                packagingTypeID
-        ))
+//        qualityReportViewModel.uploadSecondQualityReport( UploadSecoundQualityPostData(
+//                CaseID,
+//                KanthaImage,
+//                stringFromView(
+//                        binding!!.etMoistureLevel
+//                ),
+//                stringFromView(binding!!.etTcw),
+//                stringFromView(binding!!.etFmLevel),
+//                stringFromView(
+//                        binding!!.etThin
+//                ),
+//                stringFromView(binding!!.etDehuck),
+//                stringFromView(binding!!.etDiscolor),
+//                stringFromView(
+//                        binding!!.etBroken
+//                ),
+//                stringFromView(binding!!.etInfested),
+//                stringFromView(binding!!.etLive),
+//                stringFromView(binding!!.notes),
+//                CommudityFileSelectImage,
+//                packagingTypeID
+//        ))
         qualityReportViewModel.sQualityUploadResponse.observe(this){
             when(it){
                 is NetworkResult.Error -> hideDialog()
@@ -207,13 +197,13 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         // }
     }
 
-    val isValid: Boolean
-        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
-            Utility.showEditTextError(
-                binding!!.tilMoistureLevel,
-                R.string.moisture_level
-            )
-        } else true
+//    val isValid: Boolean
+//        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
+//            Utility.showEditTextError(
+//                binding!!.tilMoistureLevel,
+//                R.string.moisture_level
+//            )
+//        } else true
 
     /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
   return Utility.showEditTextError(binding.tilTcw, R.string.tcw);

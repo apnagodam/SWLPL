@@ -8,31 +8,35 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
+import android.text.InputType
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData.CommodityData
+import com.apnagodam.staff.Network.Response.QualityParamsResponse.Datum
 import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
+import com.apnagodam.staff.module.CommodityResponseData
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -54,15 +58,19 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
     private var commudityFile: String? = null
     var options: Options? = null
     var paramList = arrayListOf<String>()
-    var ed = arrayListOf<EditText>()
-
+    var ed = arrayListOf<TextInputLayout>()
+    var listOfQualityParams = ArrayList<CommodityData>()
+    var isFieldEmpty = true;
     val qualitReportViewModel by viewModels<QualitReportViewModel>()
+    var listOfParams = arrayListOf<Datum>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun setUp() {
 
+        binding!!.tilAvgWeight.visibility = View.GONE
         val bundle = intent.getBundleExtra(BUNDLE)
         if (bundle != null) {
             UserName = bundle.getString("user_name")
@@ -70,18 +78,26 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
             qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
-            qualitReportViewModel.commodityResponse.observe(this){
-                when(it){
+            qualitReportViewModel.commodityResponse.observe(this) {
+                when (it) {
                     is NetworkResult.Error -> {}
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
-                        if(it.data!=null){
+                        if (it.data != null) {
+                            listOfParams = it.data.data as ArrayList<Datum>
+                            for (data in it.data.data) {
+                                var textInputField =
+                                    TextInputLayout(this, null, R.attr.customTextInputStyle)
+                                var editText = TextInputEditText(textInputField.context)
+                                editText.inputType = InputType.TYPE_CLASS_NUMBER
+                                textInputField.setHint(data.name)
+                                textInputField.addView(editText)
 
-                            for(data in it.data.data){
-                                var editText = EditText(this)
-                                editText.setHint(data.name)
-                                ed.add(editText)
-                                binding!!.llDocument.addView(editText)
+                                ed.add(textInputField)
+                                binding!!.llDynamic.addView(textInputField)
+//                               var data = Datum()
+//                                listOfQualityParams.add(Datum())
+
                             }
 
 
@@ -114,7 +130,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                 "Thin" -> binding!!.tilThin.visibility = View.VISIBLE
                 "FM" -> binding!!.tilFmLevel.visibility = View.VISIBLE
                 "TCW" -> binding!!.tilTcw.visibility = View.VISIBLE*/
-            var i =0;
+            var i = 0;
             paramList.forEach {
 
 
@@ -151,33 +167,101 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             )
         }
         binding!!.btnSubmit.setOnClickListener {
-            for(editext in ed){
-                showToast(editext.text.toString())
-            }
+
+//if(listOfQualityParams.isNotEmpty()){
+//    for (i in listOfQualityParams){
+//        showToast(i.datum.name)
+//
+//    }
+//}
             Utility.showDecisionDialog(
                 this@UploadFirstQualtityReportsClass,
                 getString(R.string.alert),
                 "Are You Sure to Summit?",
                 object : Utility.AlertCallback {
                     override fun callback() {
-                        if (isValid) {
-                            /*   if (fileReport == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_reports_file, Toast.LENGTH_LONG).show();
-                        } else if (fileCommudity == null) {
-                            Toast.makeText(getApplicationContext(), R.string.upload_commodity_file, Toast.LENGTH_LONG).show();
-                        } else*/
-                            if (packagingTypeID == null) {
-                                Utility.showAlertDialog(
-                                    this@UploadFirstQualtityReportsClass,
-                                    getString(R.string.alert),
-                                    resources.getString(R.string.packaging)
-                                ) { }
+                        if (packagingTypeID == null) {
+                            Utility.showAlertDialog(
+                                this@UploadFirstQualtityReportsClass,
+                                getString(R.string.alert),
+                                resources.getString(R.string.packaging)
+                            ) {
+
+                            }
+                        } else {
+                            onNext()
+                        }
+                        var ReportImage = ""
+                        var CommudityFileSelectImage = ""
+                        if (fileReport != null) {
+                            ReportImage = "" + Utility.transferImageToBase64(fileReport)
+                        }
+                        if (fileCommudity != null) {
+                            CommudityFileSelectImage =
+                                "" + Utility.transferImageToBase64(fileCommudity)
+                        }
+                        listOfQualityParams.clear()
+
+
+                       val map =  listOfParams.associateBy ({it.id},{it.name})
+                        for (i in listOfParams.indices)
+                        {
+                            var datum =
+                                CommodityData(
+                                    listOfParams[i].id,
+                                    listOfParams[i].name,
+                                    "",
+                                    listOfParams[i].min,
+                                    listOfParams[i].max
+                                )
+                            listOfQualityParams.add(datum)
+
+                        }
+
+                        for (editext in ed.indices) {
+                            if (ed[editext].editText!!.text.isEmpty()) {
+                                isFieldEmpty = true;
+                                ed[editext].error = "This field cannot be empty!"
                             } else {
-                                onNext()
+                                listOfQualityParams[editext].value = ed[editext].editText!!.text.toString()
+                                isFieldEmpty = false;
                             }
                         }
+                        if (!isFieldEmpty  && binding!!.etLive.text!!.isNotEmpty()) {
+                            qualitReportViewModel.uploadFirstQualityReport(
+                                UploadFirstQualityPostData(
+                                    CaseID,
+                                    ReportImage,
+                                    listOfQualityParams,
+                                    packagingTypeID,
+                                    "1",
+                                    stringFromView(binding!!.etLive),
+                                    stringFromView(binding!!.notes),
+                                    CommudityFileSelectImage
+                                )
+                            )
+
+                            qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {
+                                when (it) {
+                                    is NetworkResult.Error -> {
+                                        showToast(it.message)
+                                    }
+
+                                    is NetworkResult.Loading -> {}
+                                    is NetworkResult.Success -> {
+                                        Utility.showAlertDialog(
+                                            this@UploadFirstQualtityReportsClass,
+                                            getString(R.string.alert),
+                                            it.data!!.getMessage()
+                                        ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 })
+
         }
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
@@ -232,43 +316,43 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
         }
         //else {
-        qualitReportViewModel.uploadFirstQualityReport(
-            UploadFirstQualityPostData(
-                CaseID,
-                ReportImage,
-                stringFromView(
-                    binding!!.etMoistureLevel
-                ),
-                stringFromView(binding!!.etTcw),
-                stringFromView(binding!!.etFmLevel),
-                stringFromView(
-                    binding!!.etThin
-                ),
-                stringFromView(binding!!.etDehuck),
-                stringFromView(binding!!.etDiscolor),
-                stringFromView(
-                    binding!!.etBroken
-                ),
-                packagingTypeID,
-                stringFromView(binding!!.etInfested),
-                stringFromView(binding!!.etLive),
-                stringFromView(binding!!.notes),
-                CommudityFileSelectImage
-            )
-        )
-        qualitReportViewModel.fQualityUploadResponse.observe(this){
-            when(it){
-                is NetworkResult.Error -> {}
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    Utility.showAlertDialog(
-                        this@UploadFirstQualtityReportsClass,
-                        getString(R.string.alert),
-                        it.data!!.getMessage()
-                    ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
-                }
-            }
-        }
+//        qualitReportViewModel.uploadFirstQualityReport(
+//            UploadFirstQualityPostData(
+//                CaseID,
+//                ReportImage,
+//                stringFromView(
+//                    binding!!.etMoistureLevel
+//                ),
+//                stringFromView(binding!!.etTcw),
+//                stringFromView(binding!!.etFmLevel),
+//                stringFromView(
+//                    binding!!.etThin
+//                ),
+//                stringFromView(binding!!.etDehuck),
+//                stringFromView(binding!!.etDiscolor),
+//                stringFromView(
+//                    binding!!.etBroken
+//                ),
+//                packagingTypeID,
+//                stringFromView(binding!!.etInfested),
+//                stringFromView(binding!!.etLive),
+//                stringFromView(binding!!.notes),
+//                CommudityFileSelectImage
+//            )
+//        )
+//        qualitReportViewModel.fQualityUploadResponse.observe(this){
+//            when(it){
+//                is NetworkResult.Error -> {}
+//                is NetworkResult.Loading -> {}
+//                is NetworkResult.Success -> {
+//                    Utility.showAlertDialog(
+//                        this@UploadFirstQualtityReportsClass,
+//                        getString(R.string.alert),
+//                        it.data!!.getMessage()
+//                    ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
+//                }
+//            }
+//        }
 
 
         // }
@@ -279,13 +363,13 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         startActivityAndClear(FirstQualityReportListingActivity::class.java)
     }
 
-    val isValid: Boolean
-        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
-            Utility.showEditTextError(
-                binding!!.tilMoistureLevel,
-                R.string.moisture_level
-            )
-        } else true
+//    val isValid: Boolean
+//        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
+//            Utility.showEditTextError(
+//                binding!!.tilMoistureLevel,
+//                R.string.moisture_level
+//            )
+//        } else true
 
     /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
   return Utility.showEditTextError(binding.tilTcw, R.string.tcw);
@@ -306,9 +390,6 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 }*/
 
 
-
-
-
     override fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
@@ -319,27 +400,29 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         }
 
     }
+
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
 
         // Initialize a new file instance to save bitmap object
         var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file,"${UUID.randomUUID()}.jpg")
+        file = File(file, "${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             // Compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CAMERA) {

@@ -120,7 +120,7 @@
     <string name="weight_kg">Enter Weight in KG *</string>
     <string name="vehicle_no">ENTER VEHICLE/TRUCK NO.</string>
     <string name="location">Enter Location *</string>
-    <string name="weight_quintal">Weight(Quintal)</string>
+    <string name="weight_quintal">Old Weight(Qtl)</string>
     <string name="gate_pass">Enter Gate Pass No. *</string>
     <string name="fpo_sub_useername">Enter FPO Sub User Name </string>
     <string name="spot_token">Enter Spot Token </string>
@@ -172,6 +172,9 @@
         <item>FPO</item>
         <item>Rent</item>
     </string-array>
+    <string-array name="labour_type">
+        <item>Labour Type *</item>
+    </string-array>
     <string name="labour_rent_bag">Labour Rent (50KG /Bag) *</string>
     <string name="gatepass_cdf">User Name for GatePass / CDF</string>
     <string name="cold_win">User Name for Coldwin</string>
@@ -201,6 +204,8 @@
     <string name="settleememt_amount">Settlement Amount</string>
     <string name="upload_truck_book">Upload Truck Book</string>
 
+    <string name="taupline_radio">1. Did the truck come with towing and tarpaulin in Inward?</string>
+    <string name="wet_radio">2. Were some of the bags wet in Inward?</string>
     <string name="driver_name_validation">Enter Driver Name *</string>
     <string name="driver_phone_no_enter">Enter Driver Phone No *</string>
     <string name="transport_rate_validation">Enter Transport Rate/KM *</string>

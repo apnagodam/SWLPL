@@ -245,6 +245,12 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
         @Expose
         private String custLname;
 
+        @SerializedName("s_k_p_bags")
+        @Expose
+        private String skpBags;
+        @SerializedName("s_k_p_weight")
+        @Expose
+        private String skpWeight;
         public String getS_q_r_case_id() {
             return s_q_r_case_id;
         }
@@ -681,5 +687,20 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
             this.userPriceLname = userPriceLname;
         }
 
-          }
+        public String getSkpBags() {
+            return skpBags;
+        }
+
+        public void setSkpBags(String skpBags) {
+            this.skpBags = skpBags;
+        }
+
+        public String getSkpWeight() {
+            return skpWeight;
+        }
+
+        public void setSkpWeight(String skpWeight) {
+            this.skpWeight = skpWeight;
+        }
+    }
 }

@@ -110,35 +110,35 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                 .subscribe()
 
         }
-        binding!!.etWeightKg.onFocusChangeListener = object : OnFocusChangeListener {
-            override fun onFocusChange(v: View, hasFocus: Boolean) {
-                if (!hasFocus) {
-                    if ((binding!!.etWeightQt.text.toString()
-                            .trim { it <= ' ' } != null) && !binding!!.etWeightQt.text.toString()
-                            .trim { it <= ' ' }
-                            .isEmpty() && inout.equals("OUT", ignoreCase = true)
-                    ) {
-                        val weight: Double =
-                            (binding!!.etWeightQt.text.toString().trim { it <= ' ' }
-                                .toDouble())
-                        if (weight > (TOtalWeight)!!) {
-                            Utility.showAlertDialog(
-                                this@OutUploadGatePassClass,
-                                getString(R.string.alert),
-                                "Weight must be Less or equal to Total weight !!!",
-                                object : Utility.AlertCallback {
-                                    override fun callback() {
-                                        binding!!.etWeightQt.setText("")
-                                        binding!!.etWeightKg.setText("")
-                                    }
-                                })
-                        } else {
-                        }
-                    }
-                } else {
-                }
-            }
-        }
+//        binding!!.etWeightKg.onFocusChangeListener = object : OnFocusChangeListener {
+//            override fun onFocusChange(v: View, hasFocus: Boolean) {
+//                if (!hasFocus) {
+//                    if ((binding!!.etWeightQt.text.toString()
+//                            .trim { it <= ' ' } != null) && !binding!!.etWeightQt.text.toString()
+//                            .trim { it <= ' ' }
+//                            .isEmpty() && inout.equals("OUT", ignoreCase = true)
+//                    ) {
+//                        val weight: Double =
+//                            (binding!!.etWeightQt.text.toString().trim { it <= ' ' }
+//                                .toDouble())
+//                        if (weight > (TOtalWeight)!!) {
+//                            Utility.showAlertDialog(
+//                                this@OutUploadGatePassClass,
+//                                getString(R.string.alert),
+//                                "Weight must be Less or equal to Total weight !!!",
+//                                object : Utility.AlertCallback {
+//                                    override fun callback() {
+//                                        binding!!.etWeightQt.setText("")
+//                                        binding!!.etWeightKg.setText("")
+//                                    }
+//                                })
+//                        } else {
+//                        }
+//                    }
+//                } else {
+//                }
+//            }
+//        }
         binding!!.etBags.onFocusChangeListener = object : OnFocusChangeListener {
             override fun onFocusChange(v: View, hasFocus: Boolean) {
                 if (!hasFocus) {
@@ -166,58 +166,58 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                 }
             }
         }
-        binding!!.etBags.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                if (charSequence.length != 0 && charSequence != "") {
-                    try {
-                        if (binding!!.etWeightKg.text.toString()
-                                .trim { it <= ' ' } != null && !binding!!.etWeightKg.text.toString()
-                                .trim { it <= ' ' }
-                                .isEmpty()
-                        ) {
-                            val wrightkg =
-                                binding!!.etWeightKg.text.toString().trim { it <= ' ' }.toDouble()
-                            val bags =
-                                binding!!.etBags.text.toString().trim { it <= ' ' }.toDouble()
-                            var finalWeightQTl = wrightkg / bags
-                            finalWeightQTl = Utility.round(finalWeightQTl, 2)
-                            binding!!.etAvgWeight.setText("" + finalWeightQTl)
-                        }
-                    } catch (e: Exception) {
-                    }
-                } else {
-                    binding!!.etAvgWeight.setText("0.0")
-                }
-            }
-
-            override fun afterTextChanged(editable: Editable) {}
-        })
-        binding!!.etWeightKg.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
-            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                if (charSequence.length != 0 && charSequence != "") {
-                    if (binding!!.etBags.text.toString()
-                            .trim { it <= ' ' } != null && !binding!!.etBags.text.toString()
-                            .trim { it <= ' ' }
-                            .isEmpty()
-                    ) {
-                        val wrightkg =
-                            binding!!.etWeightKg.text.toString().trim { it <= ' ' }.toDouble()
-                        val bags = binding!!.etBags.text.toString().trim { it <= ' ' }.toDouble()
-                        var finalWeightQTl = wrightkg / bags
-                        finalWeightQTl = Utility.round(finalWeightQTl, 2)
-                        binding!!.etAvgWeight.setText("" + finalWeightQTl)
-                        // binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
-                    }
-                } else {
-                    binding!!.etAvgWeight.setText("0.0")
-                    // binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
-                }
-            }
-
-            override fun afterTextChanged(editable: Editable) {}
-        })
+//        binding!!.etBags.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+//            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+//                if (charSequence.length != 0 && charSequence != "") {
+//                    try {
+//                        if (binding!!.etWeightKg.text.toString()
+//                                .trim { it <= ' ' } != null && !binding!!.etWeightKg.text.toString()
+//                                .trim { it <= ' ' }
+//                                .isEmpty()
+//                        ) {
+//                            val wrightkg =
+//                                binding!!.etWeightKg.text.toString().trim { it <= ' ' }.toDouble()
+//                            val bags =
+//                                binding!!.etBags.text.toString().trim { it <= ' ' }.toDouble()
+//                            var finalWeightQTl = wrightkg / bags
+//                            finalWeightQTl = Utility.round(finalWeightQTl, 2)
+//                            binding!!.etAvgWeight.setText("" + finalWeightQTl)
+//                        }
+//                    } catch (e: Exception) {
+//                    }
+//                } else {
+//                    binding!!.etAvgWeight.setText("0.0")
+//                }
+//            }
+//
+//            override fun afterTextChanged(editable: Editable) {}
+//        })
+//        binding!!.etWeightKg.addTextChangedListener(object : TextWatcher {
+//            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+//            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+//                if (charSequence.length != 0 && charSequence != "") {
+//                    if (binding!!.etBags.text.toString()
+//                            .trim { it <= ' ' } != null && !binding!!.etBags.text.toString()
+//                            .trim { it <= ' ' }
+//                            .isEmpty()
+//                    ) {
+//                        val wrightkg =
+//                            binding!!.etWeightKg.text.toString().trim { it <= ' ' }.toDouble()
+//                        val bags = binding!!.etBags.text.toString().trim { it <= ' ' }.toDouble()
+//                        var finalWeightQTl = wrightkg / bags
+//                        finalWeightQTl = Utility.round(finalWeightQTl, 2)
+//                        binding!!.etAvgWeight.setText("" + finalWeightQTl)
+//                        // binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
+//                    }
+//                } else {
+//                    binding!!.etAvgWeight.setText("0.0")
+//                    // binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
+//                }
+//            }
+//
+//            override fun afterTextChanged(editable: Editable) {}
+//        })
         kanthaList
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.customerName.text = "Customer Name:-  $UserName"
@@ -227,30 +227,30 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
         binding!!.etStackNo.setText(" $stackNo")
         clickListner()
         try {
-            binding!!.etWeightKg.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    charSequence: CharSequence,
-                    i: Int,
-                    i1: Int,
-                    i2: Int
-                ) {
-                }
-
-                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                    if (charSequence.length != 0 && charSequence != "") {
-                        var finalWeightQTl =
-                            charSequence.toString().trim { it <= ' ' }.toDouble() / 100
-                        finalWeightQTl = Utility.round(finalWeightQTl, 2)
-                        binding!!.etWeightQt.setText("" + finalWeightQTl)
-                        //  binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
-                    } else {
-                        binding!!.etWeightQt.setText("")
-                        // binding.etWeightKg.setText("");
-                    }
-                }
-
-                override fun afterTextChanged(editable: Editable) {}
-            })
+//            binding!!.etWeightKg.addTextChangedListener(object : TextWatcher {
+//                override fun beforeTextChanged(
+//                    charSequence: CharSequence,
+//                    i: Int,
+//                    i1: Int,
+//                    i2: Int
+//                ) {
+//                }
+//
+//                override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+//                    if (charSequence.length != 0 && charSequence != "") {
+//                        var finalWeightQTl =
+//                            charSequence.toString().trim { it <= ' ' }.toDouble() / 100
+//                        finalWeightQTl = Utility.round(finalWeightQTl, 2)
+//                        binding!!.etWeightQt.setText("" + finalWeightQTl)
+//                        //  binding.etWeightKg.setText("" + Utility.round(Double.parseDouble(binding.etWeightKg.getText().toString().trim()), 2));
+//                    } else {
+//                        binding!!.etWeightQt.setText("")
+//                        // binding.etWeightKg.setText("");
+//                    }
+//                }
+//
+//                override fun afterTextChanged(editable: Editable) {}
+//            })
         } catch (e: Exception) {
             e.stackTrace
         }
@@ -345,13 +345,13 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                                                             binding!!.etDriverPhone.isEnabled = false
                                                             binding!!.etDriverPhone.isClickable = false
                                                             binding!!.etDriverPhone.isFocusable = false
-                                                            binding!!.etOldDriverName.isEnabled = false
-                                                            binding!!.etOldDriverName.isClickable = false
-                                                            binding!!.etOldDriverName.isFocusable = false
+//                                                            binding!!.etOldDriverName.isEnabled = false
+//                                                            binding!!.etOldDriverName.isClickable = false
+//                                                            binding!!.etOldDriverName.isFocusable = false
                                                             binding!!.btnSubmit.visibility = View.VISIBLE
-                                                            binding!!.etOldDriverName.setBackgroundColor(
-                                                                    resources.getColor(R.color.lightgray)
-                                                            )
+//                                                            binding!!.etOldDriverName.setBackgroundColor(
+//                                                                    resources.getColor(R.color.lightgray)
+//                                                            )
                                                             binding!!.etDriverPhone.setBackgroundColor(
                                                                     resources.getColor(R.color.lightgray)
                                                             )
@@ -407,15 +407,15 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                                                     binding!!.etDriverPhone.setBackgroundColor(
                                                         resources.getColor(R.color.lightgray)
                                                     )
-                                                    binding!!.etOldDriverName.setBackgroundColor(
-                                                        resources.getColor(R.color.lightgray)
-                                                    )
+//                                                    binding!!.etOldDriverName.setBackgroundColor(
+//                                                        resources.getColor(R.color.lightgray)
+//                                                    )
                                                     binding!!.etDriverPhone.isEnabled = false
                                                     binding!!.etDriverPhone.isClickable = false
                                                     binding!!.etDriverPhone.isFocusable = false
-                                                    binding!!.etOldDriverName.isEnabled = false
-                                                    binding!!.etOldDriverName.isClickable = false
-                                                    binding!!.etOldDriverName.isFocusable = false
+//                                                    binding!!.etOldDriverName.isEnabled = false
+//                                                    binding!!.etOldDriverName.isClickable = false
+//                                                    binding!!.etOldDriverName.isFocusable = false
                                                 }
                                             })
                                     }
@@ -455,13 +455,13 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
                                 binding!!.reSendOtp.visibility = View.VISIBLE
                                 binding!!.sendOtp.text = "Verify OTP"
                                 binding!!.etDriverPhone.setBackgroundColor(resources.getColor(R.color.lightgray))
-                                binding!!.etOldDriverName.setBackgroundColor(resources.getColor(R.color.lightgray))
+                               // binding!!.etOldDriverName.setBackgroundColor(resources.getColor(R.color.lightgray))
                                 binding!!.etDriverPhone.isEnabled = false
                                 binding!!.etDriverPhone.isClickable = false
                                 binding!!.etDriverPhone.isFocusable = false
-                                binding!!.etOldDriverName.isEnabled = false
-                                binding!!.etOldDriverName.isClickable = false
-                                binding!!.etOldDriverName.isFocusable = false
+//                                binding!!.etOldDriverName.isEnabled = false
+//                                binding!!.etOldDriverName.isClickable = false
+//                                binding!!.etOldDriverName.isFocusable = false
                             }.subscribe()
 
 
@@ -537,114 +537,118 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
 
     // update file
     fun onNext() {
-        val Weightkg = "" + Utility.round(
-            stringFromView(
-                binding!!.etWeightKg
-            ).toDouble(), 2
-        )
-        apiService.uploadGatePassNew(
-            UploadGatePassPostDataNew(
-                CaseID,
-                Weightkg,
-                stringFromView(
-                    binding!!.etBags
-                ),
-                stringFromView(binding!!.notes),
-                stringFromView(binding!!.etStackNo),
-                stringFromView(binding!!.etTransportotName),
-                stringFromView(
-                    binding!!.etTranPhone
-                ),
-                stringFromView(binding!!.etAvgWeight),
-                stringFromView(binding!!.etKathaParchiNo),
-                InTrackID,
-                InBardhanaID,
-                stringFromView(binding!!.etOldKathaParchiNo),
-                stringFromView(
-                    binding!!.etOldTotalWeight
-                ),
-                stringFromView(binding!!.etOldOriginalWeight),
-                stringFromView(binding!!.etOldKanthaName),
-                stringFromView(
-                    binding!!.etOldDriverName
-                ),
-                stringFromView(binding!!.etDriverPhone),
-                kanthaID
-            )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                Utility.showAlertDialog(
-                    this@OutUploadGatePassClass,
-                    getString(R.string.alert),
-                    body.message,
-                    object : Utility.AlertCallback {
-                        override fun callback() {
-                            startActivityAndClear(OutGatePassListingActivity::class.java)
-                        }
-                    })
-            }.subscribe()
+//        val Weightkg = "" + Utility.round(
+//            stringFromView(
+//                binding!!.etWeightKg
+//            ).toDouble(), 2
+//        )
+//        apiService.uploadGatePassNew(
+//            UploadGatePassPostDataNew(
+//                CaseID,
+//                Weightkg,
+//                stringFromView(
+//                    binding!!.etBags
+//                ),
+//                stringFromView(binding!!.notes),
+//                stringFromView(binding!!.etStackNo),
+//                stringFromView(binding!!.etTransportotName),
+//                stringFromView(
+//                    binding!!.etTranPhone
+//                ),
+//                stringFromView(binding!!.etAvgWeight),
+//                stringFromView(binding!!.etKathaParchiNo),
+//                InTrackID,
+//                InBardhanaID,
+//                stringFromView(binding!!.etOldKathaParchiNo),
+//                stringFromView(
+//                    binding!!.etOldTotalWeight
+//                ),
+//                stringFromView(binding!!.etOldOriginalWeight),
+//                stringFromView(binding!!.etOldKanthaName),
+//                stringFromView(
+//                    binding!!.etOldDriverName
+//                ),
+//                stringFromView(binding!!.etDriverPhone),
+//                kanthaID
+//            )
+//        ).subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .doOnNext { body ->
+//                Utility.showAlertDialog(
+//                    this@OutUploadGatePassClass,
+//                    getString(R.string.alert),
+//                    body.message,
+//                    object : Utility.AlertCallback {
+//                        override fun callback() {
+//                            startActivityAndClear(OutGatePassListingActivity::class.java)
+//                        }
+//                    })
+//            }.subscribe()
 
 
     }
 
     val isOTPValid: Boolean
         get() {
-            if (TextUtils.isEmpty(stringFromView(binding!!.etOldDriverName))) {
-                return Utility.showEditTextError(binding!!.tilOldDriverName, "Enter Driver Name")
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etDriverPhone))) {
+//            if (TextUtils.isEmpty(stringFromView(binding!!.etOldDriverName))) {
+//                return Utility.showEditTextError(binding!!.tilOldDriverName, "Enter Driver Name")
+//            }
+//
+//            else
+
+                if (TextUtils.isEmpty(stringFromView(binding!!.etDriverPhone))) {
                 return Utility.showEditTextError(binding!!.tilDriverPhone, "Enter Driver Phone")
             }
             return true
         }
     val isValid: Boolean
         get() {
-            if (TextUtils.isEmpty(stringFromView(binding!!.etStackNo))) {
-                return Utility.showEditTextError(binding!!.tilStackNo, "Enter Stack No")
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etWeightKg))) {
-                return Utility.showEditTextError(binding!!.tilWeightKg, R.string.weight_kg)
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etBags))) {
-                return Utility.showEditTextError(binding!!.tilBags, R.string.bags_gatepass)
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportotName))) {
-                return Utility.showEditTextError(
-                    binding!!.tilTransportotName,
-                    "Enter Transporter Name"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etTranPhone))) {
-                return Utility.showEditTextError(binding!!.tilTranPhone, "Enter Transporter Phone")
-            } else if ((stringFromView(binding!!.etTranPhone)).length < 10 || (stringFromView(
-                    binding!!.etTranPhone
-                )).length > 10
-            ) {
-                return Utility.showEditTextError(
-                    binding!!.tilTranPhone,
-                    "please Enter Valid Mobile Number"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etAvgWeight))) {
-                return Utility.showEditTextError(
-                    binding!!.tilAvgWeight,
-                    "Enter Average Weight (KG)"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etKathaParchiNo))) {
-                return Utility.showEditTextError(binding!!.tilKathaParchiNo, "Kanta Parchi No")
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldKathaParchiNo))) {
-                return Utility.showEditTextError(
-                    binding!!.tilOldKathaParchiNo,
-                    "Enter Old Kanta Parchi"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldTotalWeight))) {
-                return Utility.showEditTextError(
-                    binding!!.tilOldTotalWeight,
-                    "Enter Old Total Weight"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldOriginalWeight))) {
-                return Utility.showEditTextError(
-                    binding!!.tilOldOriginalWeight,
-                    "Old Original Weight"
-                )
-            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldKanthaName))) {
-                return Utility.showEditTextError(binding!!.tilOldKanthaName, "Old Kanta Name")
-            }
+//            if (TextUtils.isEmpty(stringFromView(binding!!.etStackNo))) {
+//                return Utility.showEditTextError(binding!!.tilStackNo, "Enter Stack No")
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etWeightKg))) {
+//                return Utility.showEditTextError(binding!!.tilWeightKg, R.string.weight_kg)
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etBags))) {
+//                return Utility.showEditTextError(binding!!.tilBags, R.string.bags_gatepass)
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportotName))) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilTransportotName,
+//                    "Enter Transporter Name"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etTranPhone))) {
+//                return Utility.showEditTextError(binding!!.tilTranPhone, "Enter Transporter Phone")
+//            } else if ((stringFromView(binding!!.etTranPhone)).length < 10 || (stringFromView(
+//                    binding!!.etTranPhone
+//                )).length > 10
+//            ) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilTranPhone,
+//                    "please Enter Valid Mobile Number"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etAvgWeight))) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilAvgWeight,
+//                    "Enter Average Weight (KG)"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etKathaParchiNo))) {
+//                return Utility.showEditTextError(binding!!.tilKathaParchiNo, "Kanta Parchi No")
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldKathaParchiNo))) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilOldKathaParchiNo,
+//                    "Enter Old Kanta Parchi"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldTotalWeight))) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilOldTotalWeight,
+//                    "Enter Old Total Weight"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldOriginalWeight))) {
+//                return Utility.showEditTextError(
+//                    binding!!.tilOldOriginalWeight,
+//                    "Old Original Weight"
+//                )
+//            } else if (TextUtils.isEmpty(stringFromView(binding!!.etOldKanthaName))) {
+//                return Utility.showEditTextError(binding!!.tilOldKanthaName, "Old Kanta Name")
+//            }
             return true
         }
 
@@ -727,18 +731,18 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
     }
 
     override fun onCheckedChanged(radioGroup: RadioGroup, i: Int) {
-        if (radioGroup.checkedRadioButtonId == R.id.radioSeller) {
-            InTrackType = "Yes"
-            InTrackID = "1"
-        } else if (radioGroup.checkedRadioButtonId == R.id.radioBuyer) {
-            InTrackType = "No"
-            InTrackID = "0"
-        } else if (radioGroup.checkedRadioButtonId == R.id.radioyes) {
-            InBardhanaType = "Yes"
-            InBardhanaID = "1"
-        } else if (radioGroup.checkedRadioButtonId == R.id.radiono) {
-            InBardhanaType = "No"
-            InBardhanaID = "0"
-        }
+//        if (radioGroup.checkedRadioButtonId == R.id.radioSeller) {
+//            InTrackType = "Yes"
+//            InTrackID = "1"
+//        } else if (radioGroup.checkedRadioButtonId == R.id.radioBuyer) {
+//            InTrackType = "No"
+//            InTrackID = "0"
+//        } else if (radioGroup.checkedRadioButtonId == R.id.radioyes) {
+//            InBardhanaType = "Yes"
+//            InBardhanaID = "1"
+//        } else if (radioGroup.checkedRadioButtonId == R.id.radiono) {
+//            InBardhanaType = "No"
+//            InBardhanaID = "0"
+//        }
     }
 }

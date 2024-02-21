@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.secound_kanthaparchi
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -236,7 +237,9 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
         val bundle = Bundle()
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(UploadSecoundkantaParchiClass::class.java, bundle)
+        val intent = Intent(this, UploadSecoundkantaParchiClass::class.java)
+        intent.putExtra("all_cases", AllCases[postion])
+        startActivity(intent)
     }
 
     override fun onBackPressed() {

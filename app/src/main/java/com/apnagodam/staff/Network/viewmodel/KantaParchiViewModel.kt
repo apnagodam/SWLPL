@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
+import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
+import com.apnagodam.staff.Network.Response.DharamKanta
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.repository.KantaParchiRepo
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
@@ -21,6 +23,11 @@ class KantaParchiViewModel @Inject constructor(val kantaParchiRepo: KantaParchiR
     var sKantaParchiResponse = MutableLiveData<NetworkResult<SecoundkanthaParchiListResponse>>();
 
     var uploadFirstKantaParchiResponse = MutableLiveData<NetworkResult<LoginResponse>>()
+
+    var uploadSecondKantaParchiResponse = MutableLiveData<NetworkResult<LoginResponse>>()
+
+
+    var dharamKantaResponse = MutableLiveData<NetworkResult<DharamKanta>>()
     fun getKantaParchiListing(limit:String,page:String,inOut:String,search:String)= viewModelScope.launch {
         kantaParchiRepo.getKantaParchiListing(limit,page,inOut,search).collect(){
             kantaParchiResponse.value = it
@@ -33,9 +40,21 @@ class KantaParchiViewModel @Inject constructor(val kantaParchiRepo: KantaParchiR
             uploadFirstKantaParchiResponse.value = it
         }
     }
+    fun uploadSecondKantaParchi(uploadFirstkantaParchiPostData: UploadSecoundkantaParchiPostData)=viewModelScope.launch {
+        kantaParchiRepo.uploadSecondKantaParchi(uploadFirstkantaParchiPostData).collect()
+        {
+            uploadSecondKantaParchiResponse.value = it
+        }
+    }
     fun getSKantaParchiListing(limit:String,page:String,inOut:String,search:String)= viewModelScope.launch {
         kantaParchiRepo.getSecondKantaParchiList(limit,page,inOut,search).collect(){
             sKantaParchiResponse.value = it
+        }
+    }
+
+    fun getKantaDetails(caseId:String)=viewModelScope.launch {
+        kantaParchiRepo.getDharamKantaDetails(caseId).collect(){
+            dharamKantaResponse.value = it
         }
     }
 }

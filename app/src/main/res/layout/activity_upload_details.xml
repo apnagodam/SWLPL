@@ -102,8 +102,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
                     android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
                     android:background="@drawable/white_back_black_border"
                     android:orientation="horizontal"
                     android:paddingEnd="@dimen/_5sdp"
@@ -137,7 +137,7 @@
                     android:id="@+id/layout_transport"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:layout_margin="@dimen/_10ssp"
                     android:orientation="vertical">
 
@@ -344,7 +344,7 @@
                             android:singleLine="true" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
+                 <!--   <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_min_weight"
                         style="@style/TextInputStyle"
                         android:layout_width="match_parent"
@@ -463,7 +463,7 @@
                             android:maxLines="1"
                             android:singleLine="true" />
                     </com.google.android.material.textfield.TextInputLayout>
-
+-->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_advance_patyment"
                         style="@style/TextInputStyle"
@@ -628,6 +628,7 @@
                             </LinearLayout>
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
+<!--
                     <RelativeLayout
                         android:id="@+id/lp_commite_date"
                         android:layout_width="match_parent"
@@ -668,6 +669,8 @@
                             android:textCursorDrawable="@null"
                             tools:ignore="Deprecated" />
                     </RelativeLayout>
+-->
+<!--
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_start_date_time"
@@ -734,7 +737,7 @@
                             android:textCursorDrawable="@null"
                             tools:ignore="Deprecated" />
                     </RelativeLayout>
-
+-->
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_final_settalement_amount"
                         style="@style/TextInputStyle"
@@ -759,6 +762,29 @@
                             android:singleLine="true" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLocation"
+                        style="@style/TextInputStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:hint="@string/location"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/til_advance_patyment">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLocation"
+                            style="@style/TextStyleNormal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:focusable="true"
+                            android:focusedByDefault="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:singleLine="true" />
+                    </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/til_end_date_time"
                         style="@style/TextInputStyle"

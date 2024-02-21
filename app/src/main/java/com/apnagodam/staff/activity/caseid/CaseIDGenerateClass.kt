@@ -21,8 +21,12 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
+import com.apnagodam.staff.Network.Request.OTPGatePassData
+import com.apnagodam.staff.Network.Request.OTPVerifyGatePassData
 import com.apnagodam.staff.Network.Request.StackPostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
+import com.apnagodam.staff.Network.viewmodel.GatePassViewModel
 import com.apnagodam.staff.Network.viewmodel.LeadsViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
@@ -33,6 +37,7 @@ import com.apnagodam.staff.module.AllUserListPojo
 import com.apnagodam.staff.module.CommodityResponseData
 import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
+import com.apnagodam.staff.module.UserDetails
 import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
@@ -67,8 +72,11 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     lateinit var Userdata: ArrayList<AllUserListPojo.User>
     lateinit var Stackdata: ArrayList<StackListPojo.Datum>
     lateinit var commodityData: ArrayList<CommodityResponseData.Data>
+    val gatePassViewModel by viewModels<GatePassViewModel>()
 
+    var otpData = mapOf<String, Any>()
     val leadsViewModel by viewModels<LeadsViewModel>()
+    val caseIdViewModel by viewModels<CaseIdViewModel>()
     override fun getLayoutResId(): Int {
 
         return R.layout.activity_case_id
@@ -96,11 +104,134 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         TerminalName.add(resources.getString(R.string.terminal_name1))
         CustomerName.add(resources.getString(R.string.select_coustomer))
         LeadGenerateOtherName.add("If Lead Converted By Other")
+        binding!!.sendOtp.setOnClickListener {
+            onSendOtp()
+        }
+
+        binding!!.verifyOtp.setOnClickListener {
+            verifyOtp()
+        }
         try {
             setValueOnSpinner()
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        //        binding!!.sendOtp.setOnClickListener(object : View.OnClickListener {
+        //            override fun onClick(view: View) {
+        //                if (isOTPValid) {
+        //                    if (Utility.isNetworkAvailable(this@CaseIDGenerateClass)) {
+        //                        if ((stringFromView(binding!!.sendOtp)).contains("Verify")) {
+        //                            if (TextUtils.isEmpty(stringFromView(binding!!.etOtp))) {
+        //                                Toast.makeText(
+        //                                    applicationContext,
+        //                                    "please Enter Mobile Number OTP Here!",
+        //                                    Toast.LENGTH_LONG
+        //                                ).show()
+        //                            } else {
+        //                                gatePassViewModel.verifyGatePassOtp(
+        //                                    OTPVerifyGatePassData(
+        //                                        "" + CaseID, (stringFromView(
+        //                                            binding!!.etOtp
+        //                                        ))
+        //                                    )
+        //                                )
+        //
+        //                                gatePassViewModel.gatePassOtpResponse.observe(this@CaseIDGenerateClass) {
+        //                                    when (it) {
+        //                                        is NetworkResult.Error -> {}
+        //                                        is NetworkResult.Loading -> {}
+        //                                        is NetworkResult.Success -> {
+        //                                            Utility.showAlertDialog(
+        //                                                this@CaseIDGenerateClass,
+        //                                                getString(R.string.alert),
+        //                                                it.data!!.getMessage(),
+        //                                                object : Utility.AlertCallback {
+        //                                                    override fun callback() {
+        //                                                        binding!!.ll.visibility = View.GONE
+        //                                                        binding!!.etDriverPhone.isEnabled = false
+        //                                                        binding!!.etDriverPhone.isClickable = false
+        //                                                        binding!!.etDriverPhone.isFocusable = false
+        //
+        //                                                        binding!!.btnCreateeCase.visibility = View.VISIBLE
+        //
+        //                                                        binding!!.etDriverPhone.setBackgroundColor(
+        //                                                            resources.getColor(R.color.lightgray)
+        //                                                        )
+        //                                                    }
+        //                                                })
+        //                                        }
+        //                                    }
+        //                                }
+        //
+        //
+        //                            }
+        //                        } else {
+        //                            val userDetails: UserDetails =
+        //                                SharedPreferencesRepository.getDataManagerInstance().getUser()
+        //                            if ((stringFromView(binding!!.etDriverPhone)).equals(
+        //                                    userDetails.getPhone(),
+        //                                    ignoreCase = true
+        //                                )
+        //                            ) {
+        //                                Toast.makeText(
+        //                                    applicationContext,
+        //                                    "please Enter Valid Mobile Number",
+        //                                    Toast.LENGTH_LONG
+        //                                ).show()
+        //                            } else if ((stringFromView(binding!!.etDriverPhone)).length < 10 || (stringFromView(
+        //                                    binding!!.etDriverPhone
+        //                                )).length > 10
+        //                            ) {
+        //                                Toast.makeText(
+        //                                    applicationContext,
+        //                                    "please Enter Valid Mobile Number",
+        //                                    Toast.LENGTH_LONG
+        //                                ).show()
+        //                            } else {
+        //                                apiService.doGatePassOTP(
+        //                                    OTPGatePassData(
+        //                                        stringFromView(binding!!.etDriverPhone),
+        //                                        CaseID
+        //                                    )
+        //                                ).subscribeOn(Schedulers.io())
+        //                                    .observeOn(AndroidSchedulers.mainThread())
+        //                                    .doOnNext { body ->
+        //                                        Utility.showAlertDialog(
+        //                                            this@CaseIDGenerateClass,
+        //                                            getString(R.string.alert),
+        //                                            body.getMessage(),
+        //                                            object : Utility.AlertCallback {
+        //                                                override fun callback() {
+        //                                                    binding!!.tilOtp.visibility = View.VISIBLE
+        //                                                    binding!!.reSendOtp.visibility =
+        //                                                        View.VISIBLE
+        //                                                    binding!!.sendOtp.text = "Verify OTP"
+        //                                                    binding!!.etDriverPhone.setBackgroundColor(
+        //                                                        resources.getColor(R.color.lightgray)
+        //                                                    )
+        //
+        //                                                    binding!!.etDriverPhone.isEnabled = false
+        //                                                    binding!!.etDriverPhone.isClickable = false
+        //                                                    binding!!.etDriverPhone.isFocusable = false
+        //
+        //                                                }
+        //                                            })
+        //                                    }
+        //                                    .subscribe()
+        //
+        //
+        //                            }
+        //                        }
+        //                    } else {
+        //                        Utility.showAlertDialog(
+        //                            this@CaseIDGenerateClass,
+        //                            getString(R.string.alert),
+        //                            getString(R.string.no_internet_connection)
+        //                        )
+        //                    }
+        //                }
+        //            }
+        //        })
         binding!!.etCustomerWeight.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -117,61 +248,69 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         })
     }
 
+    val isOTPValid: Boolean
+        get() {
+            if (TextUtils.isEmpty(stringFromView(binding!!.etDriverMobileNumber))) {
+                return Utility.showEditTextError(binding!!.itlMobileNumber, "Enter Driver Phone")
+            }
+            return true
+        }
+
     private fun setValueOnSpinner() {
         setAllData()
 
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
-//                    CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
-//                    TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName()
-//                            + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
-//                    CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
-//                }
-//                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
-//                    if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
-//                            SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
-//                        LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
-//                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
-//                                "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
-//                    }
-//                }
-//            }
-//        });
+        //        runOnUiThread(new Runnable() {
+        //            @Override
+        //            public void run() {
+        //                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getCommudity().size(); i++) {
+        //                    CommudityName.add(SharedPreferencesRepository.getDataManagerInstance().getCommudity().get(i).getCategory());
+        //                }
+        //                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().GetTerminal().size(); i++) {
+        //                    TerminalName.add(SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getName()
+        //                            + "(" + SharedPreferencesRepository.getDataManagerInstance().GetTerminal().get(i).getWarehouseCode() + ")");
+        //                }
+        //                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getuserlist().size(); i++) {
+        //                    CustomerName.add(SharedPreferencesRepository.getDataManagerInstance().getuserlist().get(i).getFname());
+        //                }
+        //                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getEmployee().size(); i++) {
+        //                    if (SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("6") ||
+        //                            SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getDesignationId().equalsIgnoreCase("7")) {
+        //                        LeadGenerateOtherName.add(SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getFirstName() + " " +
+        //                                SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getLastName() +
+        //                                "(" + SharedPreferencesRepository.getDataManagerInstance().getEmployee().get(i).getEmpId() + ")");
+        //                    }
+        //                }
+        //            }
+        //        });
 
         // UserList listing
         SpinnerUserListAdapter =
             ArrayAdapter(this, R.layout.multiline_spinner_item, (CustomerName)!!)
 
-//        SpinnerUserListAdapter = object :
-//            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (CustomerName)!!) {
-//            //            //By using this method we will define how
-//            //            // the text appears before clicking a spinner
-//            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                val v = super.getView(position, convertView, parent)
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//
-//            //
-//            //            //By using this method we will define
-//            //            //how the listview appears after clicking a spinner
-//            override fun getDropDownView(
-//                position: Int,
-//                convertView: View,
-//                parent: ViewGroup
-//            ): View {
-//                val v = super.getDropDownView(position, convertView, parent)
-//                v.setBackgroundColor(Color.parseColor("#05000000"))
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//        }
+        //        SpinnerUserListAdapter = object :
+        //            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (CustomerName)!!) {
+        //            //            //By using this method we will define how
+        //            //            // the text appears before clicking a spinner
+        //            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        //                val v = super.getView(position, convertView, parent)
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //
+        //            //
+        //            //            //By using this method we will define
+        //            //            //how the listview appears after clicking a spinner
+        //            override fun getDropDownView(
+        //                position: Int,
+        //                convertView: View,
+        //                parent: ViewGroup
+        //            ): View {
+        //                val v = super.getDropDownView(position, convertView, parent)
+        //                v.setBackgroundColor(Color.parseColor("#05000000"))
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //        }
         //
         SpinnerUserListAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
         //        // Set Adapter in the spinner
@@ -184,7 +323,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     position: Int,
                     id: Long
                 ) {
-//                // selected item in the list
+                    //                // selected item in the list
                     if (position != 0) {
                         try {
                             UserID = parentView.getItemAtPosition(position).toString()
@@ -206,7 +345,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
                 //
                 override fun onNothingSelected(parentView: AdapterView<*>?) {
-//                // your code here
+                    //                // your code here
                 }
             }
 
@@ -249,32 +388,32 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             (LeadGenerateOtherName)!!
         )
 
-//            object : ArrayAdapter<String?>(
-//            this,
-//            R.layout.multiline_spinner_item,
-//            (LeadGenerateOtherName)!!
-//        ) {
-//            //By using this method we will define how
-//            // the text appears before clicking a spinner
-//            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                val v = super.getView(position, convertView, parent)
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//
-//            //By using this method we will define
-//            //how the listview appears after clicking a spinner
-//            override fun getDropDownView(
-//                position: Int,
-//                convertView: View,
-//                parent: ViewGroup
-//            ): View {
-//                val v = super.getDropDownView(position, convertView, parent)
-//                v.setBackgroundColor(Color.parseColor("#05000000"))
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//        }
+        //            object : ArrayAdapter<String?>(
+        //            this,
+        //            R.layout.multiline_spinner_item,
+        //            (LeadGenerateOtherName)!!
+        //        ) {
+        //            //By using this method we will define how
+        //            // the text appears before clicking a spinner
+        //            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        //                val v = super.getView(position, convertView, parent)
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //
+        //            //By using this method we will define
+        //            //how the listview appears after clicking a spinner
+        //            override fun getDropDownView(
+        //                position: Int,
+        //                convertView: View,
+        //                parent: ViewGroup
+        //            ): View {
+        //                val v = super.getDropDownView(position, convertView, parent)
+        //                v.setBackgroundColor(Color.parseColor("#05000000"))
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //        }
         spinnerEmployeeAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
         // Set Adapter in the spinner
         binding!!.spinnerLeadConvertOther.adapter = spinnerEmployeeAdpter
@@ -363,29 +502,29 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         spinnerTeerminalAdpter =
 
             ArrayAdapter(this, R.layout.multiline_spinner_item, (TerminalName)!!)
-//            object :
-//            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (TerminalName)!!) {
-//            //By using this method we will define how
-//            // the text appears before clicking a spinner
-//            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                val v = super.getView(position, convertView, parent)
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//
-//            //By using this method we will define
-//            //how the listview appears after clicking a spinner
-//            override fun getDropDownView(
-//                position: Int,
-//                convertView: View,
-//                parent: ViewGroup
-//            ): View {
-//                val v = super.getDropDownView(position, convertView, parent)
-//                v.setBackgroundColor(Color.parseColor("#05000000"))
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//        }
+        //            object :
+        //            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (TerminalName)!!) {
+        //            //By using this method we will define how
+        //            // the text appears before clicking a spinner
+        //            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        //                val v = super.getView(position, convertView, parent)
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //
+        //            //By using this method we will define
+        //            //how the listview appears after clicking a spinner
+        //            override fun getDropDownView(
+        //                position: Int,
+        //                convertView: View,
+        //                parent: ViewGroup
+        //            ): View {
+        //                val v = super.getDropDownView(position, convertView, parent)
+        //                v.setBackgroundColor(Color.parseColor("#05000000"))
+        //                (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                return v
+        //            }
+        //        }
         spinnerTeerminalAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
         // Set Adapter in the spinner
         binding!!.spinnerTerminal.adapter = spinnerTeerminalAdpter
@@ -491,25 +630,25 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
         // layout Terminal Listing resource and list of items.
         SpinnerStackAdapter = ArrayAdapter(this, R.layout.multiline_spinner_item, (StackName)!!)
-//            object : ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (StackName)!!) {
-//                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                    val v = super.getView(position, convertView, parent)
-//                    (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                    return v
-//                }
-//
-//                override fun getDropDownView(
-//                    position: Int,
-//                    convertView: View,
-//                    parent: ViewGroup
-//                ): View {
-//                    val v = super.getDropDownView(position, convertView, parent)
-//                    v.setBackgroundColor(Color.parseColor("#05000000"))
-//                    (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                    return v
-//                }
-//            }
-//        SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
+        //            object : ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, (StackName)!!) {
+        //                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+        //                    val v = super.getView(position, convertView, parent)
+        //                    (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                    return v
+        //                }
+        //
+        //                override fun getDropDownView(
+        //                    position: Int,
+        //                    convertView: View,
+        //                    parent: ViewGroup
+        //                ): View {
+        //                    val v = super.getDropDownView(position, convertView, parent)
+        //                    v.setBackgroundColor(Color.parseColor("#05000000"))
+        //                    (v as TextView).setTextColor(Color.parseColor("#000000"))
+        //                    return v
+        //                }
+        //            }
+        //        SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
         binding!!.spinnerStack.adapter = SpinnerStackAdapter
         binding!!.spinnerStack.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -527,8 +666,15 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                             if (presentMeterStatusID.contains(Stackdata!!.get(i).stackNumber)) {
                                 stackID = Stackdata!!.get(i).id.toString()
                                 if (selectInOUt!!.contains("IN")) {
-                                    binding!!.etCustomerWeight.setText(""+Stackdata!!.get(i).requestWeight)
+                                    otpData = mapOf(
+                                        "driver_number" to Stackdata!!.get(i).driverNumber,
+                                        "otp" to Stackdata!!.get(i).otp,
+                                        "in_out" to "IN",
+                                        "stack_id" to Stackdata!!.get(i).stackId
+                                    )
+                                    binding!!.etCustomerWeight.setText("" + Stackdata!!.get(i).requestWeight)
                                     binding!!.etCustomerVehicle.setText("" + Stackdata!!.get(i).vehicle_no)
+                                    binding!!.etDriverMobileNumber.setText(Stackdata!!.get(i).driverNumber)
                                     binding!!.etCustomerVehicle.isClickable = false
                                     binding!!.etCustomerVehicle.isFocusable = false
                                     binding!!.etCustomerVehicle.isEnabled = false
@@ -560,66 +706,117 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             }
     }
 
-    fun onVerifyOtp(){
-        binding!!.tvVerifyOtp.setOnClickListener {
+    fun onSendOtp() {
 
+        var stackId = otpData.get("stack_id").toString()
+        var otp = otpData.get("otp").toString()
+        var driverNumber = otpData.get("driver_number").toString()
+        var inOut = otpData.get("in_out").toString()
+        caseIdViewModel.driverOtp(driverNumber,stackId,inOut)
+        caseIdViewModel.driverOtpResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {
+
+                }
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                    binding!!.tilOtp.visibility = View.VISIBLE
+                    binding!!.sendOtp.visibility = View.GONE
+                    binding!!.verifyOtp.visibility = View.VISIBLE
+                        showToast(it.data!!.message)
+                }
+            }
         }
     }
 
+    fun verifyOtp(){
+        var stackId = otpData.get("stack_id").toString()
+        var otp = otpData.get("otp").toString()
+        var driverNumber = otpData.get("driver_number").toString()
+        var inOut = otpData.get("in_out").toString()
+        caseIdViewModel.driverOtp(driverNumber,stackId,inOut,binding!!.etOtp.text.toString())
+        caseIdViewModel.driverOtpResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {
+
+                }
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                    binding!!.btnCreateeCase.visibility = View.VISIBLE
+                    showToast(it.data!!.message)
+                }
+            }
+        }
+    }
     private fun getstack() {
-        apiService.getStackList(
+        caseIdViewModel.getStackList(
             StackPostData(
                 commudityID,
                 TerminalID,
                 seleectCoustomer,
                 selectInOUt
             )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                StackName!!.clear()
-                stackID = null
-                binding!!.spinnerStack.prompt = ""
-                StackName!!.add("Stack Number")
-                Stackdata = body.data as ArrayList<StackListPojo.Datum>
-                for (i in Stackdata.indices) {
-                    StackName!!.add(Stackdata.get(i).stackNumber)
-                    //SpinnerStackAdapter.notifyDataSetChanged();
+        )
+
+        caseIdViewModel.stackReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    showToast(it.message)
                 }
-                SpinnerStackAdapter = ArrayAdapter(
-                    this@CaseIDGenerateClass,
-                    R.layout.multiline_spinner_item,
-                    (StackName)!!
-                )
-//                        object : ArrayAdapter<String?>(
-//                        this@CaseIDGenerateClass,
-//                        R.layout.multiline_spinner_item,
-//                        (StackName)!!
-//                    ) {
-//                        override fun getView(
-//                            position: Int,
-//                            convertView: View?,
-//                            parent: ViewGroup
-//                        ): View {
-//                            val v = super.getView(position, convertView, parent)
-//                            (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                            return v
-//                        }
-//
-//                        override fun getDropDownView(
-//                            position: Int,
-//                            convertView: View,
-//                            parent: ViewGroup
-//                        ): View {
-//                            val v = super.getDropDownView(position, convertView, parent)
-//                            v.setBackgroundColor(Color.parseColor("#05000000"))
-//                            (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                            return v
-//                        }
-//                    }
-                SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-                binding!!.spinnerStack.adapter = SpinnerStackAdapter
-            }.subscribe()
+
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+
+                    StackName!!.clear()
+                    stackID = null
+                    binding!!.spinnerStack.prompt = ""
+                    StackName!!.add("Stack Number")
+                    Stackdata = it.data!!.data as ArrayList<StackListPojo.Datum>
+                    for (i in Stackdata.indices) {
+                        StackName!!.add(Stackdata.get(i).stackNumber)
+                        //SpinnerStackAdapter.notifyDataSetChanged();
+                    }
+                    SpinnerStackAdapter = ArrayAdapter(
+                        this@CaseIDGenerateClass,
+                        R.layout.multiline_spinner_item,
+                        (StackName)!!
+                    )
+                    //                        object : ArrayAdapter<String?>(
+                    //                        this@CaseIDGenerateClass,
+                    //                        R.layout.multiline_spinner_item,
+                    //                        (StackName)!!
+                    //                    ) {
+                    //                        override fun getView(
+                    //                            position: Int,
+                    //                            convertView: View?,
+                    //                            parent: ViewGroup
+                    //                        ): View {
+                    //                            val v = super.getView(position, convertView, parent)
+                    //                            (v as TextView).setTextColor(Color.parseColor("#000000"))
+                    //                            return v
+                    //                        }
+                    //
+                    //                        override fun getDropDownView(
+                    //                            position: Int,
+                    //                            convertView: View,
+                    //                            parent: ViewGroup
+                    //                        ): View {
+                    //                            val v = super.getDropDownView(position, convertView, parent)
+                    //                            v.setBackgroundColor(Color.parseColor("#05000000"))
+                    //                            (v as TextView).setTextColor(Color.parseColor("#000000"))
+                    //                            return v
+                    //                        }
+                    //                    }
+                    SpinnerStackAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
+                    binding!!.spinnerStack.adapter = SpinnerStackAdapter
+                }
+            }
+        }
+
 
     }
 
@@ -845,8 +1042,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         Toast.LENGTH_LONG
                     ).show()
                 } /*else if (selectPurpose == null) {
-                        Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
-                    }*/
+                            Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_purposee), Toast.LENGTH_LONG).show();
+                        }*/
                 /*else if (selectConvertOther == null) {
                         Toast.makeText(CaseIDGenerateClass.this, getResources().getString(R.string.select_employee), Toast.LENGTH_LONG).show();
                     }*/ else {
@@ -870,22 +1067,22 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                                     selectPurpose = "For Storage"
                                 }
 
-//                                apiService.doCreateCaseID(new CreateCaseIDPostData(
-//                                        stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), stringFromView(binding.etCustomerBags),
-//                                        seleectCoustomer, commudityID, TerminalID, stringFromView(binding.etCustomerVehicle),
-//                                        selectPurpose, stringFromView(binding.etSpotToken), stackID, selectConvertOther)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-//                                    @Override
-//                                    protected void onSuccess(LoginResponse body) {
-//                                        hideDialog();
-//                                        Utility.showAlertDialog(CaseIDGenerateClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
-//                                            @Override
-//                                            public void callback() {
-//                                                startActivityAndClear(CaseListingActivity.class);
-//                                                finish();
-//                                            }
-//                                        });
-//                                    }
-//                                });
+                                //                                apiService.doCreateCaseID(new CreateCaseIDPostData(
+                                //                                        stringFromView(binding.etCustomerGatepass), selectInOUt, stringFromView(binding.etCustomerWeight), stringFromView(binding.etCustomerBags),
+                                //                                        seleectCoustomer, commudityID, TerminalID, stringFromView(binding.etCustomerVehicle),
+                                //                                        selectPurpose, stringFromView(binding.etSpotToken), stackID, selectConvertOther)).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
+                                //                                    @Override
+                                //                                    protected void onSuccess(LoginResponse body) {
+                                //                                        hideDialog();
+                                //                                        Utility.showAlertDialog(CaseIDGenerateClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
+                                //                                            @Override
+                                //                                            public void callback() {
+                                //                                                startActivityAndClear(CaseListingActivity.class);
+                                //                                                finish();
+                                //                                            }
+                                //                                        });
+                                //                                    }
+                                //                                });
 
                                 apiService.doCreateCaseID(
                                     CreateCaseIDPostData(
@@ -935,12 +1132,16 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerBags))) {
                 return Utility.showEditTextError(binding!!.tilCustomerBags, R.string.bags)
             } /*else if (TextUtils.isEmpty(stringFromView(binding.etCustomerGatepass))) {
-            return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
-        }*/ else if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerWeight))) {
+                return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
+            }*/ else if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerWeight))) {
                 return Utility.showEditTextError(binding!!.tilCustomerWeight, R.string.weight_kg)
             } else if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerVehicle))) {
                 return Utility.showEditTextError(binding!!.tilCustomerVehicle, R.string.vehicle_no)
-            } /*  else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
+            } else if (TextUtils.isEmpty(stringFromView(binding!!.etDriverMobileNumber))) {
+                return Utility.showEditTextError(binding!!.itlMobileNumber, R.string.vehicle_no)
+            }
+
+            /*  else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
             return Utility.showEditTextError(binding.tilCustomerFpo, R.string.fpo_sub_useername);
         }*/
             return true

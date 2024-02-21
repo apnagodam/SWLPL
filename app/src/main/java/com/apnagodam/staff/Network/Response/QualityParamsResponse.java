@@ -1,6 +1,8 @@
 package com.apnagodam.staff.Network.Response;
 
 import java.util.List;
+
+import com.apnagodam.staff.module.SecoundQuilityReportListResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -40,8 +42,22 @@ public class QualityParamsResponse {
         this.data = data;
     }
 
-    public class Datum {
+    public  static class Datum {
+        private Datum datum;
 
+        public Datum getDatum() {
+            return datum ;
+        }
+        public void setDatum(Datum datum) {
+            this.datum = datum;
+        }
+
+        public Datum(Integer id,String name,Integer min,Integer max){
+            this.id = id;
+            this.name = name;
+            this.max = max;
+            this.min = min;
+        }
         @SerializedName("id")
         @Expose
         private Integer id;
