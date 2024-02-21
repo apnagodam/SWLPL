@@ -59,6 +59,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var listOfKantaNames = arrayListOf<String>()
     var kantaId = 0
     var kantaName = "";
+    var isFirstUpload = true;
+
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
@@ -78,18 +80,27 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         binding!!.caseId.text = CaseID
         binding!!.llOldBags.visibility = View.VISIBLE
         binding!!.llBags.visibility = View.GONE
-        if (allCases.file3 == null ) {
+
+        if (allCases.file3 == null) {
+
+        } else {
+            isFirstUpload = false;
+
+        }
+
+
+        if(isFirstUpload==true){
             binding!!.llKanta.visibility = View.GONE
             binding!!.llOldBags.visibility = View.GONE
             binding!!.cardTruck2.visibility = View.VISIBLE
 
-
-        } else {
+        }
+        else{
             binding!!.llKanta.visibility = View.VISIBLE
             binding!!.llOldBags.visibility = View.VISIBLE
             binding!!.cardTruck2.visibility = View.GONE
-
         }
+
 
         clickListner()
 
@@ -154,21 +165,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 getString(R.string.alert),
                 "Are You Sure to Summit?"
             ) {
-                if (fileKantha == null  && allCases.file3 != null) {
-                    Toast.makeText(
-                        applicationContext,
-                        R.string.upload_kanta_parchi_file,
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (fileTruck == null && allCases.file3 != null) {
-                    Toast.makeText(
-                        applicationContext,
-                        R.string.upload_truck_image,
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    onNext()
-                }
+                onNext()
             }
         }
         binding!!.uploadKantha.setOnClickListener {
@@ -280,43 +277,45 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             oldKanthaImage = "" + Utility.transferImageToBase64(fileKantaOld)
         }
         //else {
+        if(isFirstUpload){
+            if(fileTruck2!=null){
+                kantaParchiViewModel.uploadFirstKantaParchi(
+                    UploadFirstkantaParchiPostData(
+                        CaseID,
+                        stringFromView(
+                            binding!!.notes
+                        ),
+                        KanthaImage,
+                        truckImageImage,
+                        truck2Image,
+                        kantaId.toString(),
+                        binding!!.etKantaParchiNum.text.toString(),
+                        oldKanthaImage,
+                        binding!!.etKantaOldParchiNum.text.toString(),
+                        binding!!.etOldWeightQt.text.toString(),
+                        binding!!.etOldNoOfBags.text.toString()
 
-        if (allCases.file3 == null) {
-            kantaParchiViewModel.uploadFirstKantaParchi(
-                UploadFirstkantaParchiPostData(
-                    CaseID,
-                    stringFromView(
-                        binding!!.notes
-                    ),
-                    KanthaImage,
-                    truckImageImage,
-                    truck2Image,
-                    kantaId.toString(),
-                    binding!!.etKantaParchiNum.text.toString(),
-                    oldKanthaImage,
-                    binding!!.etKantaOldParchiNum.text.toString(),
-                    binding!!.etOldWeightQt.text.toString(),
-                    binding!!.etOldNoOfBags.text.toString()
-
+                    )
                 )
-            )
-            kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
-                when (it) {
-                    is NetworkResult.Error -> {
-                        showToast(it.message)
-                    }
+                kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> {
+                            showToast(it.message)
+                        }
 
-                    is NetworkResult.Loading -> {}
-                    is NetworkResult.Success -> {
-                        Utility.showAlertDialog(
-                            this@UploadFirstkantaParchiClass,
-                            getString(R.string.alert),
-                            it.data!!.getMessage()
-                        ) { startActivityAndClear(FirstkanthaParchiListingActivity::class.java) }
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
+                            Utility.showAlertDialog(
+                                this@UploadFirstkantaParchiClass,
+                                getString(R.string.alert),
+                                it.data!!.getMessage()
+                            ) { startActivityAndClear(FirstkanthaParchiListingActivity::class.java) }
+                        }
                     }
                 }
             }
-        } else {
+        }
+        else {
             if (binding!!.etKantaParchi.text!!.isEmpty()) {
                 showToast("Please select kanta name")
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {

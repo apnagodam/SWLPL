@@ -60,6 +60,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     var kantaId = 0;
     var kantaName = ""
     var kantaParchiNumber = ""
+    var isFirstUpload = true;
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
@@ -77,15 +78,21 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         }
 
         if (allCases.file3 == null) {
-            binding!!.llKanta.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
-
 
         } else {
+            isFirstUpload = false;
+
+        }
+
+
+        if(isFirstUpload==true){
+            binding!!.llKanta.visibility = View.GONE
+            binding!!.cardTruck2.visibility = View.VISIBLE
+        }
+        else{
             binding!!.cardTruck2.visibility = View.GONE
             binding!!.llKanta.visibility = View.VISIBLE
             binding!!.llBags.visibility = View.VISIBLE
-
         }
 
 
@@ -126,16 +133,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 getString(R.string.alert),
                 "Are You Sure to Summit?"
             ) {
-                if (fileKantha == null && fileTruck==null) {
-                    Toast.makeText(
-                        applicationContext,
-                        R.string.upload_kanta_parchi_file,
-                        Toast.LENGTH_LONG
-                    ).show()
-
-                } else {
-                    onNext()
-                }
+                onNext()
             }
         }
         binding!!.uploadKantha.setOnClickListener {
@@ -213,49 +211,90 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             truck2Image = "" + Utility.transferImageToBase64(fileTruck2)
         }
 
-        if (binding!!.etWeight.text!!.isNotEmpty() && binding!!.etNoOfBags.text!!.isNotEmpty() && binding!!.etNoOfDispleasedBags.text!!.isNotEmpty()) {
-            kantaParchiViewModel.uploadSecondKantaParchi(
-                UploadSecoundkantaParchiPostData(
-                    CaseID,
-                    stringFromView(
-                        binding!!.notes
-                    ),
-                    KanthaImage, truckImageImage, truck2Image,
-                    binding!!.etNoOfBags.text.toString(),
-                    binding!!.etWeightQt.text.toString(),
-                    binding!!.etNoOfDispleasedBags.text.toString(),
-                    kantaId, kantaName, kantaParchiNumber,InTrackID,InBardhanaID
+
+        if(isFirstUpload){
+           if(fileTruck2!=null){
+               kantaParchiViewModel.uploadSecondKantaParchi(
+                   UploadSecoundkantaParchiPostData(
+                       CaseID,
+                       stringFromView(
+                           binding!!.notes
+                       ),
+                       KanthaImage, truckImageImage, truck2Image,
+                       binding!!.etNoOfBags.text.toString(),
+                       binding!!.etWeightQt.text.toString(),
+                       binding!!.etNoOfDispleasedBags.text.toString(),
+                       kantaId, kantaName, kantaParchiNumber,InTrackID,InBardhanaID
+                   )
+               )
+
+               kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
+                   when (it) {
+                       is NetworkResult.Error -> {
+
+                       }
+
+                       is NetworkResult.Loading -> {
+
+                       }
+
+                       is NetworkResult.Success -> {
+                           Utility.showAlertDialog(
+                               this@UploadSecoundkantaParchiClass,
+                               getString(R.string.alert),
+                               it.data!!.getMessage()
+                           ) { startActivityAndClear(SecoundkanthaParchiListingActivity::class.java) }
+                       }
+                   }
+               }
+           }
+        }
+        else{
+            if (binding!!.etWeight.text!!.isNotEmpty() && binding!!.etNoOfBags.text!!.isNotEmpty() && binding!!.etNoOfDispleasedBags.text!!.isNotEmpty()) {
+                kantaParchiViewModel.uploadSecondKantaParchi(
+                    UploadSecoundkantaParchiPostData(
+                        CaseID,
+                        stringFromView(
+                            binding!!.notes
+                        ),
+                        KanthaImage, truckImageImage, truck2Image,
+                        binding!!.etNoOfBags.text.toString(),
+                        binding!!.etWeightQt.text.toString(),
+                        binding!!.etNoOfDispleasedBags.text.toString(),
+                        kantaId, kantaName, kantaParchiNumber,InTrackID,InBardhanaID
+                    )
                 )
-            )
 
-            kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
-                when (it) {
-                    is NetworkResult.Error -> {
+                kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> {
 
-                    }
+                        }
 
-                    is NetworkResult.Loading -> {
+                        is NetworkResult.Loading -> {
 
-                    }
+                        }
 
-                    is NetworkResult.Success -> {
-                        Utility.showAlertDialog(
-                            this@UploadSecoundkantaParchiClass,
-                            getString(R.string.alert),
-                            it.data!!.getMessage()
-                        ) { startActivityAndClear(SecoundkanthaParchiListingActivity::class.java) }
+                        is NetworkResult.Success -> {
+                            Utility.showAlertDialog(
+                                this@UploadSecoundkantaParchiClass,
+                                getString(R.string.alert),
+                                it.data!!.getMessage()
+                            ) { startActivityAndClear(SecoundkanthaParchiListingActivity::class.java) }
+                        }
                     }
                 }
-            }
-        } else {
-            if (binding!!.etWeightQt.text!!.isEmpty())
-                binding!!.etWeightQt.setError("Field cant be empty")
+            } else {
+                if (binding!!.etWeightQt.text!!.isEmpty())
+                    binding!!.etWeightQt.setError("Field cant be empty")
 
-            if (binding!!.etNoOfBags.text!!.isEmpty())
-                binding!!.etNoOfBags.setError("Field cant be empty")
-            if (binding!!.etNoOfDispleasedBags.text!!.isEmpty())
-                binding!!.etNoOfDispleasedBags.setError("Field cant be empty")
+                if (binding!!.etNoOfBags.text!!.isEmpty())
+                    binding!!.etNoOfBags.setError("Field cant be empty")
+                if (binding!!.etNoOfDispleasedBags.text!!.isEmpty())
+                    binding!!.etNoOfDispleasedBags.setError("Field cant be empty")
+            }
         }
+
 //        if (allCases.file3 != null) {
 //
 //
