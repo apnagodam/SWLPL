@@ -22,50 +22,85 @@ import javax.inject.Inject
 class CaseIdRepo @Inject constructor(private val apiService: ApiService) : BaseApiResponse() {
 
     suspend fun getCaseId(
-            str: String?,
-            i: Int,
-            str2: String?,
-            str3: String?
-    ):Flow<NetworkResult<AllCaseIDResponse>>{
+        str: String?,
+        i: Int,
+        str2: String?,
+        str3: String?
+    ): Flow<NetworkResult<AllCaseIDResponse>> {
         return flow {
-            emit(safeApiCall{apiService.getAllCase(str,i,str2,str3)})
+            emit(safeApiCall { apiService.getAllCase(str, i, str2, str3) })
 
         }.flowOn(Dispatchers.IO)
     }
-   suspend fun getTerminalList(): Flow<NetworkResult<TerminalListPojo>> {
-        return flow{
+
+    suspend fun getTerminalList(): Flow<NetworkResult<TerminalListPojo>> {
+        return flow {
             emit(safeApiCall { apiService.terminalListLevel() })
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun driverOtp(phone:String,stackId:String,inOut:String,otp:String=""):Flow<NetworkResult<DriverOtpResponse>>{
+    suspend fun driverOtp(
+        phone: String,
+        stackId: String,
+        inOut: String,
+        otp: String = ""
+    ): Flow<NetworkResult<DriverOtpResponse>> {
         return flow {
             emit(safeApiCall { apiService.driverOtp(phone, stackId, inOut, otp) })
         }.flowOn(Dispatchers.IO)
     }
 
 
-    suspend fun getStackList(stackPostData: StackPostData):Flow<NetworkResult<StackListPojo>>{
-        return  flow {
+    suspend fun getStackList(stackPostData: StackPostData): Flow<NetworkResult<StackListPojo>> {
+        return flow {
             emit(safeApiCall { apiService.getStackList(stackPostData) })
         }
     }
 
-    suspend fun getCommodities(terminalId:String,inOut:String,userPhone:String):Flow<NetworkResult<CommodityResponseData>>{
+    suspend fun getCommodities(
+        terminalId: String,
+        inOut: String,
+        userPhone: String
+    ): Flow<NetworkResult<CommodityResponseData>> {
         return flow {
-            emit(safeApiCall { apiService.getCommodityList(terminalId,inOut,userPhone) })
+            emit(safeApiCall { apiService.getCommodityList(terminalId, inOut, userPhone) })
         }
     }
 
-    suspend fun doCreateCaseId( createCaseIDPostData: CreateCaseIDPostData):Flow<NetworkResult<LoginResponse>>{
+    suspend fun doCreateCaseId(
+        commodityId: String,
+        customerUid: String,
+        inOut: String,
+        stackId: String,
+        noOfBags: String,
+        weight: String,
+        vehicleNo: String,
+        quantity: String,
+        terminalId: String,
+    ): Flow<NetworkResult<LoginResponse>> {
         return flow {
-            emit(safeApiCall { apiService.doCreateCaseID(createCaseIDPostData) })
+            emit(safeApiCall {
+                apiService.doCreateCaseID(
+                    commodityId,
+                    customerUid,
+                    inOut,
+                    stackId,
+                    noOfBags,
+                    weight,
+                    vehicleNo,
+                    quantity,
+                    terminalId
+                )
+            })
         }
     }
 
-    suspend fun getUserList(terminalId:String,inOut:String): Flow<NetworkResult<AllUserListPojo>>{
+    suspend fun getUserList(
+        terminalId: String,
+        inOut: String
+    ): Flow<NetworkResult<AllUserListPojo>> {
         return flow {
-            emit(safeApiCall { apiService.getUserList(terminalId,inOut) })
+            emit(safeApiCall { apiService.getUserList(terminalId, inOut) })
         }
     }
 

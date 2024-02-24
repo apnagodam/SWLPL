@@ -126,7 +126,18 @@ interface ApiService {
     fun doClosedCase(@Body closedCasesPostData: ClosedCasesPostData?): Call<LoginResponse?>?
 
     @POST("emp_api/apna_emp_create_caseid")
-    suspend fun doCreateCaseID(@Body createCaseIDPostData: CreateCaseIDPostData): Response<LoginResponse>
+    suspend fun doCreateCaseID(@Query("commodity_id")commodityId:String,
+                               @Query("customer_uid")customerUid:String,
+                               @Query("in_out")inOut:String,
+                               @Query("stack_id")stackId:String,
+                               @Query("no_of_bags")noOfBags:String,
+                               @Query("weight")weight:String,
+                               @Query("vehicle_no")vehicleNo:String,
+                               @Query("quantity")quantity:String,
+                               @Query("terminal_id")terminalId:String,
+
+
+                               ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_create")
     fun doCreateConveyance(@Body createConveyancePostData: CreateConveyancePostData?): Observable<LoginResponse>
@@ -416,7 +427,7 @@ interface ApiService {
     suspend fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_releaseorder")
-    fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData?): Call<LoginResponse?>?
+    suspend fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_quality")
     suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?): Response<LoginResponse>

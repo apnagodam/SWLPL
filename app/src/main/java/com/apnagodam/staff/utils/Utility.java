@@ -334,6 +334,7 @@ public class Utility {
     public static void showDialog(Activity activity, String message) {
         if (mCustomProgressDialog == null && activity != null)
             mCustomProgressDialog = new CustomProgressDialog(activity);
+        mCustomProgressDialog.setCancelable(false);
 
         try {
             if (mCustomProgressDialog != null && !mCustomProgressDialog.isShowing()

@@ -58,7 +58,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        binding!!.ivClose.setOnClickListener { startActivityAndClear(StaffDashBoardActivity::class.java) }
+        binding!!.ivClose.setOnClickListener {onBackPressedDispatcher.onBackPressed() }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
                 pageOffset--
@@ -244,6 +244,5 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 }

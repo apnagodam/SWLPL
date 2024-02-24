@@ -59,7 +59,7 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivityAndClear(StaffDashBoardActivity::class.java)
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -145,8 +145,12 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
         kantaParchiViewModel.getKantaParchiListing("10", "" + pageOffset, "IN", search)
         kantaParchiViewModel.kantaParchiResponse.observe(this){
             when(it){
-                is NetworkResult.Error -> hideDialog()
-                is NetworkResult.Loading -> showDialog()
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+                is NetworkResult.Loading ->{
+
+                }
                 is NetworkResult.Success -> {
                     binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
@@ -163,6 +167,7 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
                         //   AllCases = body.getFirstKataParchiData();
                         //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
                     }
+                    hideDialog()
                 }
             }
         }
@@ -272,6 +277,6 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
+        onBackPressedDispatcher.onBackPressed()
     }
 }

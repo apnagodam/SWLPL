@@ -53,7 +53,7 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
             //  startActivityAndClear(StaffDashBoardActivity.class);
         }
         binding!!.tvPrevious.setOnClickListener {
@@ -118,7 +118,6 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish()
         //  startActivityAndClear(StaffDashBoardActivity.class);
     }
 

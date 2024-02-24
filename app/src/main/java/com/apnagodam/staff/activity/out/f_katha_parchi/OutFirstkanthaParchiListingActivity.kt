@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.f_katha_parchi
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -58,7 +59,8 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivityAndClear(StaffDashBoardActivity::class.java)
+                onBackPressedDispatcher.onBackPressed()
+
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -121,7 +123,6 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {
@@ -269,6 +270,8 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         val bundle = Bundle()
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(OutUploadFirrstkantaParchiClass::class.java, bundle)
+        val intent = Intent(this, OutUploadFirrstkantaParchiClass::class.java)
+        intent.putExtra("all_cases", AllCases[postion])
+        startActivity(intent)
     }
 }

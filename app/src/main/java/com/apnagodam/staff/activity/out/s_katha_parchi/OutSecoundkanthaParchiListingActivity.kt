@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.s_katha_parchi
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -56,7 +57,7 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
-        binding!!.ivClose.setOnClickListener { startActivityAndClear(StaffDashBoardActivity::class.java) }
+        binding!!.ivClose.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
                 pageOffset--
@@ -239,11 +240,13 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
         val bundle = Bundle()
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(OutUploadSecoundkantaParchiClass::class.java, bundle)
+        val intent = Intent(this, OutUploadSecoundkantaParchiClass::class.java)
+        intent.putExtra("all_cases", AllCases[postion])
+        startActivity(intent)
     }
+
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 }

@@ -1,97 +1,89 @@
-package com.apnagodam.staff.activity.out.releaseorder;
+package com.apnagodam.staff.activity.out.releaseorder
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.UploadReleaseOrderlsPostData
+import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.OrdersViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.databinding.ActivityUploadReleaseOrderBinding
+import com.apnagodam.staff.utils.Utility
+import com.fxn.pix.Options
+import com.fxn.pix.Pix
+import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Request.UploadReleaseOrderlsPostData;
-import com.apnagodam.staff.Network.Response.LoginResponse;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding;
-import com.apnagodam.staff.databinding.ActivityUploadReleaseOrderBinding;
-import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.utils.Utility;
-import com.fxn.pix.Options;
-import com.fxn.pix.Pix;
-import com.fxn.utility.PermUtil;
-
-import java.io.File;
-import java.util.ArrayList;
-
-public class OUTReleaseOrderClass extends BaseActivity<ActivityUploadReleaseOrderBinding> implements View.OnClickListener {
-    String UserName, CaseID = "";
-    public File fileBiltyImage;
-    boolean BiltyImageFile = false;
-    private String BiltyFile;
-    Options options;
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_upload_release_order;
+@AndroidEntryPoint
+class OUTReleaseOrderClass : BaseActivity<ActivityUploadReleaseOrderBinding?>(),
+    View.OnClickListener {
+    var UserName: String? = null
+    var CaseID: String? = ""
+    var fileBiltyImage: File? = null
+    var BiltyImageFile = false
+    private var BiltyFile: String? = null
+    var options: Options? = null
+    val ordersViewModel by viewModels<OrdersViewModel>()
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_upload_release_order
     }
 
-    @Override
-    protected void setUp() {
-        Bundle bundle = getIntent().getBundleExtra(BUNDLE);
+    override fun setUp() {
+        val bundle = intent.getBundleExtra(BUNDLE)
         if (bundle != null) {
-            UserName = bundle.getString("user_name");
-            CaseID = bundle.getString("case_id");
+            UserName = bundle.getString("user_name")
+            CaseID = bundle.getString("case_id")
         }
-        setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        clickListner();
-        binding.customerName.setText(UserName);
-        binding.caseId.setText(CaseID);
+        setSupportActionBar(binding!!.toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        clickListner()
+        binding!!.customerName.text = UserName
+        binding!!.caseId.text = CaseID
     }
 
-    private void clickListner() {
-        binding.ivClose.setOnClickListener(this);
-        binding.btnLogin.setOnClickListener(this);
-        binding.uploadTruck.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BiltyImageFile = true;
-                callImageSelector(REQUEST_CAMERA);
-            }
-        });
-
+    private fun clickListner() {
+        binding!!.ivClose.setOnClickListener(this)
+        binding!!.btnLogin.setOnClickListener(this)
+        binding!!.uploadTruck.setOnClickListener {
+            BiltyImageFile = true
+            callImageSelector(REQUEST_CAMERA)
+        }
     }
 
-    private void callImageSelector(int requestCamera) {
+    private fun callImageSelector(requestCamera: Int) {
         options = Options.init()
-                .setRequestCode(requestCamera)                                                 //Request code for activity results
-                .setCount(1)                                                   //Number of images to restict selection count
-                .setFrontfacing(false)                                         //Front Facing camera on start
-                .setExcludeVideos(false)                                       //Option to exclude videos
-                .setVideoDurationLimitinSeconds(30)                                   //Option to exclude videos
-                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
-                .setPath("/apnagodam/lp/images");                                       //Custom Path For media Storage
-        Pix.start(OUTReleaseOrderClass.this, options);
+            .setRequestCode(requestCamera) //Request code for activity results
+            .setCount(1) //Number of images to restict selection count
+            .setFrontfacing(false) //Front Facing camera on start
+            .setExcludeVideos(false) //Option to exclude videos
+            .setVideoDurationLimitinSeconds(30) //Option to exclude videos
+            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
+            .setPath("/apnagodam/lp/images") //Custom Path For media Storage
+        Pix.start(this@OUTReleaseOrderClass, options)
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data.hasExtra(Pix.IMAGE_RESULTS)) {
-                    ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                    assert returnValue != null;
-                    Log.e("getImageesValue", returnValue.get(0).toString());
+            if (resultCode == RESULT_OK) {
+                if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
+                    val returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
+                    Log.e("getImageesValue", returnValue[0].toString())
                     if (requestCode == REQUEST_CAMERA) {
                         if (BiltyImageFile) {
-                            BiltyImageFile = false;
-                            fileBiltyImage = new File(compressImage(returnValue.get(0).toString()));
-                            Uri uri = Uri.fromFile(fileBiltyImage);
-                            BiltyFile = String.valueOf(uri);
-                            binding.TruckImage.setImageURI(uri);
+                            BiltyImageFile = false
+                            fileBiltyImage = File(compressImage(returnValue[0].toString()))
+                            val uri = Uri.fromFile(fileBiltyImage)
+                            BiltyFile = uri.toString()
+                            binding!!.TruckImage.setImageURI(uri)
                         }
                     }
                 }
@@ -99,68 +91,85 @@ public class OUTReleaseOrderClass extends BaseActivity<ActivityUploadReleaseOrde
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
+
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Pix.start(this, options);
+                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Pix.start(this, options)
                 } else {
-                    callImageSelector(REQUEST_CAMERA);
-                    Toast.makeText(this, "Approve permissions to open Pix ImagePicker", Toast.LENGTH_LONG).show();
+                    callImageSelector(REQUEST_CAMERA)
+                    Toast.makeText(
+                        this,
+                        "Approve permissions to open Pix ImagePicker",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                return;
+                return
             }
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivityAndClear(OUTRelaseOrderListingActivity.class);
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivityAndClear(OUTRelaseOrderListingActivity::class.java)
     }
 
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_close:
-                startActivityAndClear(OUTRelaseOrderListingActivity.class);
-                break;
-            case R.id.btn_login:
-                if (binding.notes.getText().toString().trim().isEmpty()) {
-                    Toast.makeText(OUTReleaseOrderClass.this, "Enter Notes Here!!", Toast.LENGTH_LONG).show();
-                } else if (fileBiltyImage == null) {
-                    Toast.makeText(OUTReleaseOrderClass.this, "Upload to Release Order File", Toast.LENGTH_LONG).show();
-                } else {
-                    Utility.showDecisionDialog(OUTReleaseOrderClass.this, getString(R.string.alert), "Are You Sure to Summit?", new Utility.AlertCallback() {
-                        @Override
-                        public void callback() {
-                            callApi();
-                        }
-                    });
-                }
-
-                break;
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.iv_close ->onBackPressedDispatcher.onBackPressed()
+            R.id.btn_login -> if (binding!!.notes.text.toString().trim { it <= ' ' }.isEmpty()) {
+                Toast.makeText(this@OUTReleaseOrderClass, "Enter Notes Here!!", Toast.LENGTH_LONG)
+                    .show()
+            } else if (fileBiltyImage == null) {
+                Toast.makeText(
+                    this@OUTReleaseOrderClass,
+                    "Upload to Release Order File",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                Utility.showDecisionDialog(
+                    this@OUTReleaseOrderClass,
+                    getString(R.string.alert),
+                    "Are You Sure to Summit?"
+                ) { callApi() }
+            }
         }
     }
 
-    private void callApi() {
-        String BiltyImage = "";
+    private fun callApi() {
+        var BiltyImage = ""
         if (fileBiltyImage != null) {
-            BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage);
+            BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage)
         }
-        apiService.uploadRleaseOrder(new UploadReleaseOrderlsPostData(CaseID, stringFromView(binding.notes), BiltyImage,"")).enqueue(new NetworkCallback<LoginResponse>(getActivity()) {
-            @Override
-            protected void onSuccess(LoginResponse body) {
-                Utility.showAlertDialog(OUTReleaseOrderClass.this, getString(R.string.alert), body.getMessage(), new Utility.AlertCallback() {
-                    @Override
-                    public void callback() {
-                       // SharedPreferencesRepository.getDataManagerInstance().setisReleaseSave(true);
-                        startActivityAndClear(OUTRelaseOrderListingActivity.class);
+        ordersViewModel.uploadReleaseOrders(
+            UploadReleaseOrderlsPostData(
+                CaseID,
+                stringFromView(binding!!.notes),
+                BiltyImage,
+                ""
+            )
+        )
+        ordersViewModel.uploadReleaseOrdersResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (it.data.status == 1) {
+                            onBackPressedDispatcher.onBackPressed()
+                        } else {
+                            showToast(it.data.message)
+                        }
                     }
-                });
+                }
             }
-        });
+        }
+
     }
 }

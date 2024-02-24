@@ -13,6 +13,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
@@ -83,20 +85,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            lat = it.latitude
-            long = it.longitude
 
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
-
-            }
-        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -107,6 +96,22 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
+        }
+        else{
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                lat = it.latitude
+                long = it.longitude
+
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, long, 1)
+                if (addresses != null) {
+                    currentLocation =
+                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                            addresses.first().adminArea
+                        }"
+
+                }
+            }
         }
 
         binding!!.tvTitle.setText("Upload First Kanta Parchi")
@@ -196,9 +201,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            startActivityAndClear(
-                FirstkanthaParchiListingActivity::class.java
-            )
+            kantaParchiViewModel.getKantaParchiListing("10","1","IN","")
+
+            onBackPressedDispatcher.onBackPressed()
         }
         binding!!.tilKantaParchi.setOnClickListener {
             searchableSpinner.show()
@@ -323,6 +328,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         //else {
         if (isFirstUpload) {
             if (fileTruck2 != null) {
+                showDialog()
                 kantaParchiViewModel.uploadFirstKantaParchi(
                     UploadFirstkantaParchiPostData(
                         CaseID,
@@ -344,6 +350,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
+                            hideDialog()
                             showToast(it.message)
                         }
 
@@ -359,6 +366,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                                 startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
                                 showToast(it.data.message)
                             }
+                            hideDialog()
 
                         }
                     }
@@ -370,6 +378,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
                 binding!!.etKantaParchiNum.setError("This field can't be empty")
             } else {
+                showDialog()
                 kantaParchiViewModel.uploadFirstKantaParchi(
                     UploadFirstkantaParchiPostData(
                         CaseID,
@@ -390,6 +399,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
+                            hideDialog()
                             showToast(it.message)
                         }
 
@@ -405,7 +415,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                                 startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
                                 showToast(it.data.message)
                             }
-
+                            hideDialog()
                         }
                     }
                 }
@@ -521,50 +531,5 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
-    /* @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data.hasExtra(Pix.IMAGE_RESULTS)) {
-                    ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                    assert returnValue != null;
-                    Log.e("getImageesValue", returnValue.get(0).toString());
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (firstKanthaFile) {
-                            firstKanthaFile = false;
-                            truckImage = false;
-                            fileKantha = new File(compressImage(returnValue.get(0).toString()));
-                            Uri uri = Uri.fromFile(fileKantha);
-                            firstkantaParchiFile = String.valueOf(uri);
-                            binding.KanthaImage.setImageURI(uri);
-                        } else if (truckImage) {
-                            firstKanthaFile = false;
-                            truckImage = false;
-                            fileTruck = new File(compressImage(returnValue.get(0).toString()));
-                            Uri uri = Uri.fromFile(fileTruck);
-                            TruckImage = String.valueOf(uri);
-                            binding.TruckImage.setImageURI(uri);
-                        }
-                    }
-                }
-            }
-        }
-    }*/
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Pix.start(this, options);
-                } else {
-                    callImageSelector(REQUEST_CAMERA);
-                    Toast.makeText(this, "Approve permissions to open Pix ImagePicker", Toast.LENGTH_LONG).show();
-                }
-                return;
-            }
-        }
-    }*/
+
 }

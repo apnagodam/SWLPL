@@ -177,26 +177,26 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
     public void startActivityAndClear(Class clazz) {
         Intent intent = new Intent(BaseActivity.this, clazz);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
         // overridePendingTransition(android.R.anim.slide_in, android.R.anim.slide_out);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+//        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     public void startActivityAndClear(Class clazz, Bundle bundle) {
         Intent intent = new Intent(BaseActivity.this, clazz);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        finish();
         intent.putExtra(BUNDLE, bundle);
         startActivity(intent);
         // overridePendingTransition(android.R.anim.slide_in, android.R.anim.slide_out);
-        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+//        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     public void startActivity(Class clazz, String key, String value) {
         Intent intent = new Intent(BaseActivity.this, clazz);
         intent.putExtra(key, value);
         startActivity(intent);
-        overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
+//        overridePendingTransition(R.anim.slide_up, R.anim.slide_down);
     }
 
     public void setBackBtn(Toolbar toolbar) {

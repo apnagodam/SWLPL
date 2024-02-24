@@ -85,13 +85,6 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
 
-           /* headerViewHolder.rl.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(activity, StaffProfileActivity.class);
-                    activity.startActivity(intent);
-                }
-            });*/
         } else {
 
             NavigationViewHolder navigationViewHolder = (NavigationViewHolder) holder;
@@ -99,22 +92,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             SubMenuNavigationAdapter navigationVLCAdapter = new SubMenuNavigationAdapter(menuItems.get(position).getGetList(), userDetailsValues, (StaffDashBoardActivity) activity);
             navigationViewHolder.subMenuItemsRecycler.setAdapter(navigationVLCAdapter);
 
-           /* if (position == 1) {
-                navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
-                navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else if (position == 2) {
-                navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
-                navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else if (position == 3) {
-                navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
-                navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else if (position == 4) {
-                navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
-                navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else if (position == 5) {
-                navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
-                navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
-            } else {*/
+
                 navigationViewHolder.imageView.setImageResource(menuItems.get(position).getMenuImage());
                 navigationViewHolder.menuName.setText(menuItems.get(position).getMenuTitle());
 //            }

@@ -92,20 +92,6 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            lat = it.latitude
-            long = it.longitude
-
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
-
-            }
-        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -115,6 +101,24 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+
+        }
+        else
+        {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                lat = it.latitude
+                long = it.longitude
+
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, long, 1)
+                if (addresses != null) {
+                    currentLocation =
+                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                            addresses.first().adminArea
+                        }"
+
+                }
+            }
 
         }
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -141,10 +145,13 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         binding!!.caseId.text = CaseID
         binding!!.tilExtraClaim.visibility = View.VISIBLE
 
+        showDialog()
         qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
         qualitReportViewModel.commodityResponse.observe(this) {
             when (it) {
-                is NetworkResult.Error -> {}
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
@@ -169,6 +176,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
 
                     }
+                    hideDialog()
                 }
             }
         }
@@ -198,9 +206,9 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            startActivityAndClear(
-                SecoundQualityReportListingActivity::class.java
-            )
+            qualitReportViewModel.getSecondQualityListing("10","1","IN","")
+            onBackPressedDispatcher.onBackPressed()
+
         }
         binding!!.btnSubmit.setOnClickListener {
             Utility.showDecisionDialog(
@@ -256,17 +264,6 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         }
     }
 
-    private fun callImageSelector(requestCamera: Int) {
-        options = Options.init()
-            .setRequestCode(requestCamera) //Request code for activity results
-            .setCount(1) //Number of images to restict selection count
-            .setFrontfacing(false) //Front Facing camera on start
-            .setExcludeVideos(false) //Option to exclude videos
-            .setVideoDurationLimitinSeconds(30) //Duration for video recording
-            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
-            .setPath("/apnagodam/lp/images") //Custom Path For media Storage
-        Pix.start(this@UploadSecoundQualtityReportsClass, options)
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -340,39 +337,9 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         return Uri.parse(file.absolutePath)
     }
 
-    private fun drawTextToBitmap(bitmap: Bitmap, textSize: Int = 78, text: String): Bitmap {
 
-        val canvas = Canvas(bitmap)
 
-        // new antialised Paint - empty constructor does also work
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.color = Color.BLACK
-
-        // text size in pixels
-        val scale = resources.displayMetrics.density
-        paint.textSize = (textSize * scale).roundToInt().toFloat()
-
-        //custom fonts or a default font
-        val fontFace =
-            ResourcesCompat.getFont(this@UploadSecoundQualtityReportsClass, R.style.TextStyleNormal)
-        paint.typeface = Typeface.create(fontFace, Typeface.NORMAL)
-        val w: Float = bitmap.width.toFloat()
-        val h: Float = bitmap.height.toFloat()
-
-        // draw text to the Canvas center
-        val bounds = Rect()
-        //draw the text
-        paint.getTextBounds(text, 0, text.length, bounds)
-
-        //x and y defines the position of the text, starting in the top left corner
-        canvas.drawText(text, 0.0f, h, paint)
-        return bitmap
-    }
-
-    // update file
     fun onNext() {
-
-
         var ReportImage = ""
         var CommudityFileSelectImage = ""
         if (fileReport != null) {
@@ -410,6 +377,8 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
             }
         }
         if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty() && fileReport != null) {
+
+           showDialog()
             qualitReportViewModel.uploadSecondQualityReport(
                 UploadSecoundQualityPostData(
                     CaseID,
@@ -427,6 +396,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
             qualitReportViewModel.sQualityUploadResponse.observe(this@UploadSecoundQualtityReportsClass) {
                 when (it) {
                     is NetworkResult.Error -> {
+                        hideDialog()
                         showToast(it.message)
                     }
 
@@ -446,6 +416,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
                             }
                         }
+                        hideDialog()
 
                     }
                 }
@@ -455,31 +426,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     }
 
-//    val isValid: Boolean
-//        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
-//            Utility.showEditTextError(
-//                binding!!.tilMoistureLevel,
-//                R.string.moisture_level
-//            )
-//        } else true
 
-    /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
-  return Utility.showEditTextError(binding.tilTcw, R.string.tcw);
-} else if (TextUtils.isEmpty(stringFromView(binding.etBroken))) {
-  return Utility.showEditTextError(binding.tilBroken, R.string.broken);
-} else if (TextUtils.isEmpty(stringFromView(binding.etFmLevel))) {
-  return Utility.showEditTextError(binding.tilFmLevel, R.string.fm_level);
-} else if (TextUtils.isEmpty(stringFromView(binding.etThin))) {
-  return Utility.showEditTextError(binding.tilThin, R.string.thin);
-} else if (TextUtils.isEmpty(stringFromView(binding.etDehuck))) {
-  return Utility.showEditTextError(binding.tilDehuck, R.string.dehuck);
-} else if (TextUtils.isEmpty(stringFromView(binding.etDiscolor))) {
-  return Utility.showEditTextError(binding.tilDiscolor, R.string.discolor);
-} else if (TextUtils.isEmpty(stringFromView(binding.etInfested))) {
-  return Utility.showEditTextError(binding.tilInfested, R.string.infested);
-} else if (TextUtils.isEmpty(stringFromView(binding.etLive))) {
-  return Utility.showEditTextError(binding.tilLive, R.string.live_count);
-}*/
 
 
     override fun onRequestPermissionsResult(

@@ -284,9 +284,8 @@ class UploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener(View.OnClickListener {
-            startActivityAndClear(
-                    GatePassListingActivity::class.java
-            )
+            onBackPressedDispatcher.onBackPressed()
+
         })
         binding!!.sendOtp.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
@@ -654,7 +653,6 @@ class UploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(GatePassListingActivity::class.java)
     }
 
     val isValid: Boolean

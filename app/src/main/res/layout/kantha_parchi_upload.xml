@@ -137,6 +137,7 @@
                                     android:orientation="vertical">
 
                                     <TextView
+                                        android:id="@+id/tvTruckParchiImage"
                                         style="@style/TextStyleBold"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
@@ -498,112 +499,118 @@
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
 
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="@dimen/_5sdp"
-                                    android:orientation="vertical">
+                             <LinearLayout
+                                 android:id="@+id/llTraupline"
+                                 android:orientation="vertical"
+                                 android:layout_width="match_parent"
+                                 android:layout_height="wrap_content">
+                                 <LinearLayout
+                                     android:layout_width="match_parent"
+                                     android:layout_height="match_parent"
+                                     android:layout_marginTop="@dimen/_5sdp"
+                                     android:orientation="vertical">
 
-                                    <TextView
-                                        style="@style/TextStyleBold"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="@dimen/_10sdp"
-                                        android:layout_marginTop="@dimen/_5sdp"
-                                        android:text="@string/taupline_radio"
-                                        android:textColor="@color/colorBlackLight"
-                                        android:textSize="@dimen/_16ssp"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent" />
+                                     <TextView
+                                         style="@style/TextStyleBold"
+                                         android:layout_width="wrap_content"
+                                         android:layout_height="wrap_content"
+                                         android:layout_marginLeft="@dimen/_10sdp"
+                                         android:layout_marginTop="@dimen/_5sdp"
+                                         android:text="@string/taupline_radio"
+                                         android:textColor="@color/colorBlackLight"
+                                         android:textSize="@dimen/_16ssp"
+                                         app:layout_constraintEnd_toEndOf="parent"
+                                         app:layout_constraintStart_toStartOf="parent" />
 
-                                    <RadioGroup
-                                        android:id="@+id/genderRadio"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/_6sdp"
-                                        android:orientation="horizontal">
+                                     <RadioGroup
+                                         android:id="@+id/genderRadio"
+                                         android:layout_width="match_parent"
+                                         android:layout_height="wrap_content"
+                                         android:layout_marginTop="@dimen/_6sdp"
+                                         android:orientation="horizontal">
 
-                                        <RadioButton
-                                            android:id="@+id/radioSeller"
-                                            style="@style/TextStyleBold"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:buttonTint="@color/colorPrimary"
-                                            android:text="@string/yes"
-                                            android:textSize="@dimen/_18ssp" />
+                                         <RadioButton
+                                             android:id="@+id/radioSeller"
+                                             style="@style/TextStyleBold"
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="wrap_content"
+                                             android:buttonTint="@color/colorPrimary"
+                                             android:text="@string/yes"
+                                             android:textSize="@dimen/_18ssp" />
 
-                                        <RadioButton
-                                            android:id="@+id/radioBuyer"
-                                            style="@style/TextStyleBold"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginLeft="@dimen/_6sdp"
-                                            android:buttonTint="@color/colorPrimary"
-                                            android:checked="true"
-                                            android:text="@string/no"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="@dimen/_18ssp" />
-                                    </RadioGroup>
+                                         <RadioButton
+                                             android:id="@+id/radioBuyer"
+                                             style="@style/TextStyleBold"
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="wrap_content"
+                                             android:layout_marginLeft="@dimen/_6sdp"
+                                             android:buttonTint="@color/colorPrimary"
+                                             android:checked="true"
+                                             android:text="@string/no"
+                                             android:textColor="@android:color/black"
+                                             android:textSize="@dimen/_18ssp" />
+                                     </RadioGroup>
 
-                                    <View
-                                        android:layout_width="match_parent"
-                                        android:layout_height="1dp"
-                                        android:background="@color/lightGray"></View>
-                                </LinearLayout>
+                                     <View
+                                         android:layout_width="match_parent"
+                                         android:layout_height="1dp"
+                                         android:background="@color/lightGray"></View>
+                                 </LinearLayout>
 
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="@dimen/_5sdp"
-                                    android:orientation="vertical">
+                                 <LinearLayout
+                                     android:layout_width="match_parent"
+                                     android:layout_height="match_parent"
+                                     android:layout_marginTop="@dimen/_5sdp"
+                                     android:orientation="vertical">
 
-                                    <TextView
-                                        style="@style/TextStyleBold"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="@dimen/_10sdp"
-                                        android:layout_marginTop="@dimen/_5sdp"
-                                        android:text="@string/wet_radio"
-                                        android:textColor="@color/colorBlackLight"
-                                        android:textSize="@dimen/_16ssp"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent" />
+                                     <TextView
+                                         style="@style/TextStyleBold"
+                                         android:layout_width="wrap_content"
+                                         android:layout_height="wrap_content"
+                                         android:layout_marginLeft="@dimen/_10sdp"
+                                         android:layout_marginTop="@dimen/_5sdp"
+                                         android:text="@string/wet_radio"
+                                         android:textColor="@color/colorBlackLight"
+                                         android:textSize="@dimen/_16ssp"
+                                         app:layout_constraintEnd_toEndOf="parent"
+                                         app:layout_constraintStart_toStartOf="parent" />
 
-                                    <RadioGroup
-                                        android:id="@+id/gender"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginTop="@dimen/_6sdp"
-                                        android:orientation="horizontal">
+                                     <RadioGroup
+                                         android:id="@+id/gender"
+                                         android:layout_width="match_parent"
+                                         android:layout_height="wrap_content"
+                                         android:layout_marginTop="@dimen/_6sdp"
+                                         android:orientation="horizontal">
 
-                                        <RadioButton
-                                            android:id="@+id/radioyes"
-                                            style="@style/TextStyleBold"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:buttonTint="@color/colorPrimary"
+                                         <RadioButton
+                                             android:id="@+id/radioyes"
+                                             style="@style/TextStyleBold"
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="wrap_content"
+                                             android:buttonTint="@color/colorPrimary"
 
-                                            android:text="@string/yes"
-                                            android:textSize="@dimen/_18ssp" />
+                                             android:text="@string/yes"
+                                             android:textSize="@dimen/_18ssp" />
 
-                                        <RadioButton
-                                            android:id="@+id/radiono"
-                                            style="@style/TextStyleBold"
-                                            android:layout_width="wrap_content"
-                                            android:layout_height="wrap_content"
-                                            android:layout_marginLeft="@dimen/_6sdp"
-                                            android:buttonTint="@color/colorPrimary"
-                                            android:checked="true"
-                                            android:text="@string/no"
-                                            android:textColor="@android:color/black"
-                                            android:textSize="@dimen/_18ssp" />
-                                    </RadioGroup>
+                                         <RadioButton
+                                             android:id="@+id/radiono"
+                                             style="@style/TextStyleBold"
+                                             android:layout_width="wrap_content"
+                                             android:layout_height="wrap_content"
+                                             android:layout_marginLeft="@dimen/_6sdp"
+                                             android:buttonTint="@color/colorPrimary"
+                                             android:checked="true"
+                                             android:text="@string/no"
+                                             android:textColor="@android:color/black"
+                                             android:textSize="@dimen/_18ssp" />
+                                     </RadioGroup>
 
-                                    <View
-                                        android:layout_width="match_parent"
-                                        android:layout_height="1dp"
-                                        android:background="@color/lightGray"></View>
-                                </LinearLayout>
+                                     <View
+                                         android:layout_width="match_parent"
+                                         android:layout_height="1dp"
+                                         android:background="@color/lightGray"></View>
+                                 </LinearLayout>
+                             </LinearLayout>
                             </LinearLayout>
 
                             <LinearLayout

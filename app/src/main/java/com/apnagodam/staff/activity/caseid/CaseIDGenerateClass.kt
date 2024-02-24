@@ -324,7 +324,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                                 resources.getString(R.string.terminal_name),
                                 Toast.LENGTH_LONG
                             ).show()
-                               } else {
+                        } else {
                             selectInOUt = parent.getItemAtPosition(position).toString()
                             binding!!.rlUser.visibility = View.VISIBLE
                             userList
@@ -714,7 +714,6 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             }
 
 
-
         }
 
     private fun clickListner() {
@@ -725,14 +724,13 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(CaseListingActivity::class.java)
         //    startActivityAndClear(StaffDashBoardActivity.class);
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> startActivityAndClear(StaffDashBoardActivity::class.java)
-            R.id.tv_done -> startActivityAndClear(CaseListingActivity::class.java)
+            R.id.iv_close -> onBackPressedDispatcher.onBackPressed()
+            R.id.tv_done -> startActivity(CaseListingActivity::class.java)
             R.id.btn_createe_case -> if (isValid) {
 
                 if (TerminalID == null) {
@@ -782,32 +780,46 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                                     selectPurpose = "For Storage"
                                 }
 
+                                var  createCaseIDPostData = CreateCaseIDPostData(
+                                    TerminalID,
+                                    selectInOUt,
+                                    seleectCoustomer,
+                                    commudityID,
+                                    "",
+                                    stackID,
+                                    stringFromView(binding!!.etCustomerBags),
+                                    stringFromView(binding!!.etCustomerWeight),
+                                    stringFromView(
+                                        binding!!.etCustomerWeightQuantal
+                                    ),
+                                    stringFromView(binding!!.etCustomerVehicle),
+                                    stringFromView(binding!!.etSpotToken),
+                                )
 
+                                createCaseIDPostData
+                                showDialog()
                                 caseIdViewModel.doCreateCaseId(
-                                    CreateCaseIDPostData(
-                                        TerminalID,
-                                        selectInOUt,
-                                        seleectCoustomer,
-                                        commudityID,
-                                        "",
-                                        stackID,
-                                        stringFromView(binding!!.etCustomerBags),
-                                        stringFromView(binding!!.etCustomerWeight),
-                                        stringFromView(
-                                            binding!!.etCustomerWeightQuantal
-                                        ),
-                                        stringFromView(binding!!.etCustomerVehicle),
-                                        stringFromView(binding!!.etSpotToken),
-                                        "",
-                                        "",
-                                        ""
-                                    )
+                                    commudityID.toString(),
+                                    seleectCoustomer.toString(),
+                                    selectInOUt.toString(),
+                                    stackID.toString(),
+                                    binding!!.etCustomerBags.text.toString(),
+                                    binding!!.etCustomerWeight.text.toString(),
+                                    binding!!.etCustomerVehicle.text.toString(),
+                                    stringFromView(
+                                        binding!!.etCustomerWeightQuantal
+                                    ),
+                                    TerminalID.toString()
+
+
                                 )
 
                                 caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
                                 {
                                     when (it) {
-                                        is NetworkResult.Error -> {}
+                                        is NetworkResult.Error -> {
+                                            hideDialog()
+                                        }
                                         is NetworkResult.Loading -> {}
                                         is NetworkResult.Success -> {
                                             if (it.data != null) {
@@ -825,6 +837,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
 
                                             }
+                                            hideDialog()
                                         }
                                     }
                                 }

@@ -59,7 +59,8 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivityAndClear(StaffDashBoardActivity::class.java)
+                onBackPressedDispatcher.onBackPressed()
+
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -349,6 +350,5 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 }

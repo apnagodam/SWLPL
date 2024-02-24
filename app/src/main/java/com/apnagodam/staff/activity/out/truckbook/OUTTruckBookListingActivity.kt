@@ -58,7 +58,7 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivityAndClear(StaffDashBoardActivity::class.java)
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -121,7 +121,6 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {

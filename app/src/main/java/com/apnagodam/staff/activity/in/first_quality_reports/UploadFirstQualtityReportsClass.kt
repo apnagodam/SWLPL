@@ -84,20 +84,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            lat = it.latitude
-            long = it.longitude
 
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
-
-            }
-        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -108,6 +95,21 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
+        } else {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                lat = it.latitude
+                long = it.longitude
+
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, long, 1)
+                if (addresses != null) {
+                    currentLocation =
+                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                            addresses.first().adminArea
+                        }"
+
+                }
+            }
         }
 
         binding!!.tvTitle.setText("Upload First Quality Report")
@@ -118,11 +120,13 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             UserName = bundle.getString("user_name")
             CaseID = bundle.getString("case_id")
 
-
+            showDialog()
             qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
             qualitReportViewModel.commodityResponse.observe(this) {
                 when (it) {
-                    is NetworkResult.Error -> {}
+                    is NetworkResult.Error -> {
+                        hideDialog()
+                    }
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
                         if (it.data != null) {
@@ -146,34 +150,12 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
                         }
+                        hideDialog()
+
                     }
                 }
             }
 
-            /*    "Dead" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Admixture" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "Damage" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "Counts" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Fungus" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "weevil" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "Recovery" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Danthal" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "Fatkan" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "Black" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Tikki" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "SMB" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "Black Tip" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Red Green" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "Potia" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "KB" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "HL" -> binding!!.tilTcw.visibility = View.VISIBLE
-                "Dana" -> binding!!.tilDehuck.visibility = View.VISIBLE
-                "Oil" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Moisture" -> binding!!.tilMoistureLevel.visibility = View.VISIBLE
-                "Broken" -> binding!!.tilBroken.visibility = View.VISIBLE
-                "Thin" -> binding!!.tilThin.visibility = View.VISIBLE
-                "FM" -> binding!!.tilFmLevel.visibility = View.VISIBLE
-                "TCW" -> binding!!.tilTcw.visibility = View.VISIBLE*/
             var i = 0;
             paramList.forEach {
 
@@ -206,18 +188,11 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            startActivityAndClear(
-                FirstQualityReportListingActivity::class.java
-            )
+            onBackPressedDispatcher.onBackPressed()
+            qualitReportViewModel.getFirstQualityListing("10", "1", "IN", search = "")
         }
         binding!!.btnSubmit.setOnClickListener {
 
-//if(listOfQualityParams.isNotEmpty()){
-//    for (i in listOfQualityParams){
-//        showToast(i.datum.name)
-//
-//    }
-//}
             Utility.showDecisionDialog(
                 this@UploadFirstQualtityReportsClass,
                 getString(R.string.alert),
@@ -343,17 +318,6 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         }
     }
 
-    private fun callImageSelector(requestCamera: Int) {
-        options = Options.init()
-            .setRequestCode(requestCamera) //Request code for activity results
-            .setCount(1) //Number of images to restict selection count
-            .setFrontfacing(false) //Front Facing camera on start
-            .setExcludeVideos(false) //Option to exclude videos
-            .setVideoDurationLimitinSeconds(30) //Duration for video recording
-            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
-            .setPath("/apnagodam/lp/images") //Custom Path For media Storage
-        Pix.start(this@UploadFirstQualtityReportsClass, options)
-    }
 
     // update file
     fun onNext() {
@@ -365,79 +329,12 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         if (fileCommudity != null) {
             CommudityFileSelectImage = "" + Utility.transferImageToBase64(fileCommudity)
         }
-        //else {
-//        qualitReportViewModel.uploadFirstQualityReport(
-//            UploadFirstQualityPostData(
-//                CaseID,
-//                ReportImage,
-//                stringFromView(
-//                    binding!!.etMoistureLevel
-//                ),
-//                stringFromView(binding!!.etTcw),
-//                stringFromView(binding!!.etFmLevel),
-//                stringFromView(
-//                    binding!!.etThin
-//                ),
-//                stringFromView(binding!!.etDehuck),
-//                stringFromView(binding!!.etDiscolor),
-//                stringFromView(
-//                    binding!!.etBroken
-//                ),
-//                packagingTypeID,
-//                stringFromView(binding!!.etInfested),
-//                stringFromView(binding!!.etLive),
-//                stringFromView(binding!!.notes),
-//                CommudityFileSelectImage
-//            )
-//        )
-//        qualitReportViewModel.fQualityUploadResponse.observe(this){
-//            when(it){
-//                is NetworkResult.Error -> {}
-//                is NetworkResult.Loading -> {}
-//                is NetworkResult.Success -> {
-//                    Utility.showAlertDialog(
-//                        this@UploadFirstQualtityReportsClass,
-//                        getString(R.string.alert),
-//                        it.data!!.getMessage()
-//                    ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
-//                }
-//            }
-//        }
 
-
-        // }
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(FirstQualityReportListingActivity::class.java)
     }
-
-//    val isValid: Boolean
-//        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etMoistureLevel))) {
-//            Utility.showEditTextError(
-//                binding!!.tilMoistureLevel,
-//                R.string.moisture_level
-//            )
-//        } else true
-
-    /* else if (TextUtils.isEmpty(stringFromView(binding.etTcw))) {
-  return Utility.showEditTextError(binding.tilTcw, R.string.tcw);
-} else if (TextUtils.isEmpty(stringFromView(binding.etBroken))) {
-  return Utility.showEditTextError(binding.tilBroken, R.string.broken);
-} else if (TextUtils.isEmpty(stringFromView(binding.etFmLevel))) {
-  return Utility.showEditTextError(binding.tilFmLevel, R.string.fm_level);
-} else if (TextUtils.isEmpty(stringFromView(binding.etThin))) {
-  return Utility.showEditTextError(binding.tilThin, R.string.thin);
-} else if (TextUtils.isEmpty(stringFromView(binding.etDehuck))) {
-  return Utility.showEditTextError(binding.tilDehuck, R.string.dehuck);
-} else if (TextUtils.isEmpty(stringFromView(binding.etDiscolor))) {
-  return Utility.showEditTextError(binding.tilDiscolor, R.string.discolor);
-} else if (TextUtils.isEmpty(stringFromView(binding.etInfested))) {
-  return Utility.showEditTextError(binding.tilInfested, R.string.infested);
-} else if (TextUtils.isEmpty(stringFromView(binding.etLive))) {
-  return Utility.showEditTextError(binding.tilLive, R.string.live_count);
-}*/
 
 
     override fun dispatchTakePictureIntent() {
@@ -478,7 +375,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                     "current_location" to "$currentLocation",
                     "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
                 )
-                if(thumbnail!=null){
+                if (thumbnail != null) {
                     if (ReportsFileSelect) {
 
                         var stampedBitmap = ImageHelper().createTimeStampinBitmap(

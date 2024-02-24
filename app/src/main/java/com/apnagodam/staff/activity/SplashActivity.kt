@@ -20,6 +20,7 @@ import com.apnagodam.staff.Network.Response.VersionCodeResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.LoginActivity
+import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.CommudityResponse
@@ -63,11 +64,7 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 )
             }
         }
-        if (requestPermissions()) {
-            afterpermissionNext()
-        } else {
 
-        }
     }
 
     private fun afterpermissionNext() {
@@ -78,7 +75,30 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
             true -> startActivityAndClear(StaffDashBoardActivity::class.java)
             else -> {
                 if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
-                    startActivityAndClear(StaffDashBoardActivity::class.java)
+                    homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
+                    homeViewModel.response.observe(this) {
+                        when (it) {
+                            is NetworkResult.Error -> {}
+                            is NetworkResult.Loading -> {
+                                showToast("loading")
+                            }
+
+                            is NetworkResult.Success -> {
+                               if(it.data!=null){
+                                   if(it.data.status==1){
+                                       SharedPreferencesRepository.getDataManagerInstance()
+                                           .saveUserPermissionData(it.data.getUserPermissionsResult())
+
+                                       startActivityAndClear(StaffDashBoardActivity::class.java)
+                                   }
+                               }
+
+
+                            }
+
+                        }
+                    }
+
                 } else {
                     val intent = Intent(this@SplashActivity, LoginActivity::class.java)
                     intent.putExtra("setting", "")
@@ -119,10 +139,11 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                         ) return
                     } else {
                         //  requestPermissions();
-                        afterpermissionNext()
                     }
                     i++
                 }
+                afterpermissionNext()
+
                 // open dialog
             }
         }
@@ -204,7 +225,8 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
         dialogue.show()
     }
 
-    private fun getCommodityList() { homeViewModel.getCommodities("Emp")
+    private fun getCommodityList() {
+        homeViewModel.getCommodities("Emp")
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> TODO()
@@ -216,8 +238,10 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                         SharedPreferencesRepository.getDataManagerInstance().employee =
                             it.data!!.employee
                         SharedPreferencesRepository.getDataManagerInstance()
-                            .setContractor(it.data
-                                .labourList)
+                            .setContractor(
+                                it.data
+                                    .labourList
+                            )
                     }
                 }
             }

@@ -62,7 +62,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
-                            startActivityAndClear(StaffDashBoardActivity::class.java);
+            onBackPressedDispatcher.onBackPressed()
         }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
@@ -125,6 +125,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
+        showDialog()
     labourViewModel.getLabourList("10",  pageOffset.toString(), "IN", search)
         labourViewModel.labourResponse.observe(this){
             when(it){
@@ -152,6 +153,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
                         // AllCases = body.getCurrentPageCollection();
                         // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
                     }
+                    hideDialog()
                 }
             }
         }

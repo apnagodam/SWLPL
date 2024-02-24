@@ -65,7 +65,7 @@ public class OUTRelaseOrderListingActivity extends BaseActivity<ActivityListingB
         binding.ivClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityAndClear(StaffDashBoardActivity.class);
+                getOnBackPressedDispatcher().onBackPressed();
             }
         });
         binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +126,6 @@ public class OUTRelaseOrderListingActivity extends BaseActivity<ActivityListingB
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivityAndClear(StaffDashBoardActivity.class);
     }
 
     private void setAdapter() {

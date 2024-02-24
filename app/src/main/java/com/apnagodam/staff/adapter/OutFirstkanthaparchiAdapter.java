@@ -79,7 +79,7 @@ public class OutFirstkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getKPCaseId()!=null){
+            if (Leads.get(position).getFile3()!=null && Leads.get(position).getDharamKanta()!=null){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);

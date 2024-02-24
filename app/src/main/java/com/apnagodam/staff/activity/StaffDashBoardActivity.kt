@@ -2,10 +2,14 @@ package com.apnagodam.staff.activity
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Typeface
+import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
@@ -63,6 +67,7 @@ import com.apnagodam.staff.interfaces.OnProfileClickListener
 import com.apnagodam.staff.module.MenuModel
 import com.apnagodam.staff.module.UserDetails
 import com.apnagodam.staff.utils.Constants
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.LocationUtils
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.Utility
@@ -75,6 +80,7 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.karumi.dexter.Dexter
@@ -83,10 +89,17 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
+import java.util.UUID
 
 @AndroidEntryPoint
 class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.OnClickListener,
@@ -116,12 +129,18 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     var font: Typeface? = null
     val homeViewModel by viewModels<HomeViewModel>()
     val loginViewModel by viewModels<LoginViewModel>()
+    var lat = 0.0
+    var long = 0.0
+
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.staff_dashboard
     }
 
     override fun setUp() {
-
+        prepareMenuData()
+        populateExpandableList()
         getdashboardData()
 
 
@@ -131,6 +150,34 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         binding!!.profileId.setOnClickListener {
             val intent = Intent(this@StaffDashBoardActivity, StaffProfileActivity::class.java)
             startActivity(intent)
+        }
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
         }
         binding!!.mainContent.mainHeader.toogleIcon.setOnClickListener(this)
         toggle = ActionBarDrawerToggle(
@@ -829,7 +876,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }
 
     private fun getdashboardData() {
-        homeViewModel.getCommodities("Emp")
         homeViewModel.getDashboardData()
 
         homeViewModel.homeDataResponse.observe(this) {
@@ -857,7 +903,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
             }
         }
-
+        homeViewModel.getCommodities("Emp")
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -900,32 +946,12 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 binding!!.userNameText.text =
                     userDetails!!.getFname() + " " + userDetails!!.getLname() + "(" + userDetails!!.getEmp_id() + ")"
 
-                homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
-
-                homeViewModel.response.observe(this) {
-                    when (it) {
-                        is NetworkResult.Error -> hideDialog()
-                        is NetworkResult.Loading -> showDialog()
-                        is NetworkResult.Success -> {
-                            if (it.data!!.userPermissionsResult != null || it.data.userPermissionsResult
-                                    .isNotEmpty()
-                            ) {
-                                SharedPreferencesRepository.getDataManagerInstance()
-                                    .saveUserPermissionData(it.data.getUserPermissionsResult())
-                                //                    binding.menuList.setAdapter(new NavigationAdapter(getMenuList(), userDetails, StaffDashBoardActivity.this));
-                                val navigationVLCAdapter = NavigationAdapter(
-                                    menuList,
-                                    userDetails,
-                                    this@StaffDashBoardActivity
-                                )
-                                navigationVLCAdapter.setOnProfileClickInterface(this@StaffDashBoardActivity)
-                                //                    binding.menuList.setAdapter(navigationVLCAdapter);
-                            }
-                            prepareMenuData()
-                            populateExpandableList()
-                        }
-                    }
-                }
+                val navigationVLCAdapter = NavigationAdapter(
+                    menuList,
+                    userDetails,
+                    this
+                )
+                navigationVLCAdapter.setOnProfileClickInterface(this)
 
             }
 
@@ -936,9 +962,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     private fun callServer() {
+        showDialog()
         var EmployeeImage = ""
         if (fileSelfie != null) {
-            if (latitude != null && longitude != null) {
+            if (lat != 0.0 && long != 0.0) {
                 EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie)
                 homeViewModel.attendence(
                     AttendancePostData(
@@ -950,9 +977,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 )
                 homeViewModel.attendenceResponse.observe(this) {
                     when (it) {
-                        is NetworkResult.Error -> TODO()
-                        is NetworkResult.Loading -> TODO()
+                        is NetworkResult.Error -> {
+                            hideDialog()
+                            showToast(it.message)
+                        }
+                        is NetworkResult.Loading -> {
+
+                        }
                         is NetworkResult.Success -> {
+                            hideDialog()
                             if (it.data != null) {
                                 if (it.data.status == 1) {
                                     fileSelfie = null
@@ -1033,40 +1066,51 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         })
         UploadImage.setOnClickListener(View.OnClickListener {
-            onImageSelected()
+            dispatchTakePictureIntent()
             // callProfileImageSelector(REQUEST_CAMERA);
         })
         clockInOut.setOnClickListener(View.OnClickListener { v: View? -> callServer() })
         if (!OnOfffAttendance) {
             attendanceINOUTStatus = "1"
-            /*    binding.cardAttandance.setVisibility(View.VISIBLE);
-            binding.WelcomeMsg.setVisibility(View.GONE);*/locationget()
-            /*  binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.out);
-            OnOfffAttendance = true;*/
+
         } else {
-            /*  binding.cardAttandance.setVisibility(View.VISIBLE);
-            binding.WelcomeMsg.setVisibility(View.GONE);*/
+
             clockIn.setText(resources.getString(R.string.clock_out))
             clockInOut.setText(resources.getString(R.string.clock_out))
             locationget()
             attendanceINOUTStatus = "2"
-            /* binding.mainHeader.attendanceOnOff.setImageResource(R.drawable.in);
-            OnOfffAttendance = false;*/
+
         }
     }
 
-    private fun callProfileImageSelector(requestCamera: Int) {
-        options = Options.init()
-            .setRequestCode(requestCamera) //Request code for activity results
-            .setCount(1)
-            .setFrontfacing(true)
-            .setExcludeVideos(false)
-            .setVideoDurationLimitinSeconds(60)
-            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT) //Orientaion
-            .setPath("/apnagodam/images") //Custom Path For media Storage
-        Pix.start(this@StaffDashBoardActivity, options)
+
+    override fun dispatchTakePictureIntent() {
+        photoEasy.startActivityForResult(this)
+
+
     }
 
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
     private fun locationget() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -1203,76 +1247,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     override fun onDrawerClosed(drawerView: View) {}
     override fun onDrawerStateChanged(newState: Int) {}
 
-    /*   @Override
-    public void onItemClick(View view, int position) {
-        binding.drawerLayout.postDelayed(() -> {
-            toggleDrawer();
-            switch (position) {
-                case 0:
-                    break;
-                case 1:
-                    startActivityAndClear(StaffDashBoardActivity.class);
-                    break;
-                case 2:
-                    //    startActivity(LanguageActivity.class);
-                    String phone = SharedPreferencesRepository.getDataManagerInstance().getUser().getPhone();
-                    String sharedUrl = "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=" + phone;
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, sharedUrl);
-                    sendIntent.setType("text/plain");
-                    Intent.createChooser(sendIntent, "Share via");
-                    startActivity(sendIntent);
-                    Log.e("refer url :", "" + sharedUrl);
-                    break;
-                case 3:
-                    startActivity(LanguageActivity.class);
-                    break;
-             */
-    /*   case 4:
-                    startActivity(CaseIDGenerateClass.class);
-                    break;
-                case 5:
-                    startActivity(InPricingListingActivity.class);
-                    break;
-                case 6:
-                    startActivity(TruckBookListingActivity.class);
-                    break;
-                case 7:
-                    startActivity(LabourBookListingActivity.class);
-                    break;
-                case 8:
-                    startActivity(FirstkanthaParchiListingActivity.class);
-                    break;
-                case 9:
-                    startActivity(FirstQualityReportListingActivity.class);
-                    break;
-                case 10:
-                    startActivity(SecoundkanthaParchiListingActivity.class);
-                    break;
-                case 11:
-                    startActivity(SecoundQualityReportListingActivity.class);
-                    break;
-                case 12:
-                    startActivity(GatePassListingActivity.class);
-                    break;
-*/
-    /*
-                case 4:
-                    startActivity(SpotDealTrackListActivity.class);
-                    break;
-                case 5:
-                    //call logout api
-                    logout((getResources().getString(R.string.logout_alert)), "Logout");
-                    break;
-            }
-        }, 100);
-    }*/
+
     override fun onItemClick(view: View, position: Int) {
         binding!!.drawerLayout.postDelayed({
             toggleDrawer()
-            if (position == 0) {
-            }
+
             if (position == 1) {
                 onBackPressed()
             }
@@ -1329,7 +1308,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 )
                             ) {
                                 if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivityAndClear(LabourBookListingActivity::class.java)
+                                    startActivity(LabourBookListingActivity::class.java)
                                 }
                             }
                         }
@@ -1351,7 +1330,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             )
                         ) {
                             if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                startActivityAndClear(LabourBookListingActivity::class.java)
+                                startActivity(LabourBookListingActivity::class.java)
                             }
                         }
                     }
@@ -1417,7 +1396,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
             when (position) {
                 0 -> {}
-                1 -> startActivityAndClear(StaffDashBoardActivity::class.java)
+                1 -> {
+                }
                 2 -> startActivity(LanguageActivity::class.java)
                 3 -> startActivity(LeadGenerateClass::class.java)
                 4 -> startActivity(CaseIDGenerateClass::class.java)
@@ -1458,52 +1438,38 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }        //call logout api
 
             }
-        }, 100)
+        }, 10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (resultCode == Activity.RESULT_OK) {
-                if (requestCode == REQUEST_CAMERA_PICTURE) {
-                    val camFile: File
-                    if (camUri != null) {
-                        camFile = File(camUri!!.path)
-                        fileSelfie = File(compressImage(camUri!!.path.toString()))
-                        val uri = Uri.fromFile(fileSelfie)
-                        selfieImage!!.setImageURI(uri)
-                    }
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
+
+                if(thumbnail!=null){
+                    val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                    var stampMap = mapOf(
+                        "current_location" to "$currentLocation",
+                        "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                    )
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail!!).path)),
+                        stampMap
+                    )
+                    fileSelfie = File(compressImage(bitmapToFile(stampedBitmap).path.toString()))
+                    val uri = Uri.fromFile(fileSelfie)
+                    selfieImage!!.setImageURI(uri)
+
+
                 }
             }
-            if (requestCode == REQUEST_CODE) {
-                locationUtils!!.startLocationUpdates()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
+        })
+
     }
 
-    /*  @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data.hasExtra(Pix.IMAGE_RESULTS)) {
-                    ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                    assert returnValue != null;
-                    Log.e("getImageesValue", returnValue.get(0).toString());
-                    if (requestCode == REQUEST_CAMERA) {
-                        fileSelfie = new File(compressImage(returnValue.get(0).toString()));
-                        Uri uri = Uri.fromFile(fileSelfie);
-                        selfieImage.setImageURI(uri);
-                    }
-                }
-            }
-        }
-        if (requestCode == REQUEST_CODE) {
-            locationUtils.startLocationUpdates();
-        }
-    }*/
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,

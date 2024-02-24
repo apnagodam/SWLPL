@@ -62,7 +62,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
-             startActivityAndClear(StaffDashBoardActivity::class.java)
+            onBackPressedDispatcher.onBackPressed()
         }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
@@ -104,7 +104,6 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
 
     override fun onBackPressed() {
         super.onBackPressed()
-                startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {
@@ -118,6 +117,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     }
 
     private fun getAllCases(search: String) {
+        showDialog()
         qualitReportViewModel.getFirstQualityListing("10",pageOffset.toString(),"IN",search)
         qualitReportViewModel.fQualityResponse.observe(this){
             when(it){

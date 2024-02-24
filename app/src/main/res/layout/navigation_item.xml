@@ -10,10 +10,13 @@
             type="com.apnagodam.staff.module.MenuItem" />
     </data>
 
-    <RelativeLayout
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        app:cardElevation="3dp"
+        android:layout_margin="@dimen/_2sdp"
+        android:padding="@dimen/_5sdp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -22,6 +25,7 @@
             android:gravity="center"
             android:background="?android:selectableItemBackground"
             android:orientation="vertical"
+            android:layout_margin="@dimen/_5sdp"
             android:layout_height="40dp">
 
             <ImageView
@@ -31,16 +35,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="30dp"
                 android:src="@{menuItem.menuImage}"
-                android:tint="@color/colorPrimary" />
+                app:tint="@color/colorPrimary" />
 
-            <View
-                android:id="@+id/bottomLine"
-                android:layout_width="match_parent"
-                android:layout_height=".7dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:background="@color/lightGray" />
+
 
             <View
                 android:layout_width="1dp"
@@ -60,6 +57,7 @@
                 android:layout_marginLeft="@dimen/_20sdp"
                 android:layout_toRightOf="@id/menuImage"
                 android:gravity="center"
+                android:textStyle="bold"
                 android:text="@{menuItem.menuTitle}"
                 android:textColor="@color/dark_gray_shade" />
 
@@ -82,5 +80,5 @@
             android:visibility="gone"
             android:layout_below="@+id/relativeId"/>
 
-    </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

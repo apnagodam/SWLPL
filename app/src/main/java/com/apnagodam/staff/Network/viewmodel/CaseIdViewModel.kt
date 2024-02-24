@@ -82,8 +82,16 @@ class CaseIdViewModel @Inject constructor(
             commoditiesResponse.value = it
         }
     }
-     fun doCreateCaseId( createCaseIDPostData: CreateCaseIDPostData)= viewModelScope.launch {
-         repository.doCreateCaseId(createCaseIDPostData).collect(){
+     fun doCreateCaseId(    commodityId: String,
+                            customerUid: String,
+                            inOut: String,
+                            stackId: String,
+                            noOfBags: String,
+                            weight: String,
+                            vehicleNo: String,
+                            quantity: String,
+                            terminalId: String,)= viewModelScope.launch {
+         repository.doCreateCaseId(commodityId, customerUid, inOut, stackId, noOfBags, weight, vehicleNo, quantity, terminalId).collect(){
              createCaseIdResponse.value = it
          }
      }

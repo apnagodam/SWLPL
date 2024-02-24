@@ -103,9 +103,7 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
                     if (context instanceof SecoundkanthaParchiListingActivity) {
                         ((SecoundkanthaParchiListingActivity) context).   ViewData(position);
                     }
-                    if (context instanceof SecoundkanthaParchiListingActivity) {
-                        ((SecoundkanthaParchiListingActivity) context).checkVeehicleNo(position);
-                    }
+
                 }
             });
             binding.tvPhone.setOnClickListener(new View.OnClickListener() {

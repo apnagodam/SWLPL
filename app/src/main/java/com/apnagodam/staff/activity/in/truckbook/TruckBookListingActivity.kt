@@ -45,6 +45,8 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     override fun setUp() {
         AllCases = arrayListOf()
+        getAllCases("")
+
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.truck_book)
@@ -55,11 +57,10 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivityAndClear(StaffDashBoardActivity::class.java)
+                onBackPressed()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -122,7 +123,6 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {

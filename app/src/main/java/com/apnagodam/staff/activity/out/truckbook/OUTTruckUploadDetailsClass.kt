@@ -2,38 +2,31 @@ package com.apnagodam.staff.activity.out.truckbook
 
 import android.Manifest
 import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.location.Geocoder
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.TransporterDetailsPojo
 import com.apnagodam.staff.module.TransporterListPojo
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -46,9 +39,6 @@ import com.google.android.gms.location.LocationServices
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -560,12 +550,14 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(OUTTruckUploadDetailsClass::class.java)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> startActivityAndClear(OUTTruckUploadDetailsClass::class.java)
+            R.id.iv_close ->{
+                truckBookViewModel.getTruckBookList("10",1,"OUT","")
+                onBackPressedDispatcher.onBackPressed()
+            }
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
 
@@ -592,18 +584,18 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 stringFromView(binding!!.etVehicleNo),
                 stringFromView(binding!!.etDriverName),
                 stringFromView(binding!!.etDriverPhoneNo),
-                "stringFromView(binding!!.etMinWeight)",
-                " stringFromView(binding!!.etMaxWeight)",
-                "stringFromView(binding!!.etTurnaroundTime)",
-                "stringFromView(binding!!.etTotalWeight)",
-                "stringFromView(binding!!.etBags)",
+                "",
+                " ",
+                "",
+                "",
+                "",
                 stringFromView(binding!!.etTotalTransCost),
                 stringFromView(
                     binding!!.etAdvancePatyment
                 ),
-                "stringFromView(binding!!.etStartDateTime)",
-                "stringFromView(binding!!.etFinalSettalementAmount)",
-                " stringFromView(binding!!.etEndDateTime)",
+                "",
+                "",
+                " ",
                 stringFromView(
                     binding!!.notes
                 ),
@@ -618,12 +610,13 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         truckBookViewModel.uploadTruckResponse.observe(this)
         {
             when (it) {
-                is NetworkResult.Error -> TODO()
-                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
                         if (it.data.status == 1) {
-                            startActivityAndClear(OUTTruckUploadDetailsClass::class.java)
+                            truckBookViewModel.getTruckBookList("10",1,"OUT","")
+                            onBackPressedDispatcher.onBackPressed()
                         } else
                             showToast(it.data.message)
                     }
@@ -639,16 +632,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 TransporterID = "1"
                 return true;
             } else {
-                /*if (TextUtils.isEmpty(stringFromView(binding.etTransporterName))) {
-                return Utility.showEditTextError(binding.tilTransporterName, R.string.transporter_name);
-            } else*/
-                /* if (TextUtils.isEmpty(stringFromView(binding.etVehicleNo))) {
-                return Utility.showEditTextError(binding.tilVehicleNo, R.string.vehicle_no);
-            } else if (TextUtils.isEmpty(stringFromView(binding.etDriverName))) {
-                return Utility.showEditTextError(binding.tilDriverName, R.string.driver_name_validation);
-            } else if (TextUtils.isEmpty(stringFromView(binding.etDriverPhoneNo))) {
-                return Utility.showEditTextError(binding.tilDriverPhoneNo, R.string.driver_phone_no_enter);
-            } else*/
+
                 if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate))) {
                     return Utility.showEditTextError(
                         binding!!.tilTransportRate,
@@ -668,31 +652,6 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                         R.string.total_trans_cost_val
                     )
                 }
-                /*        else if (TextUtils.isEmpty(stringFromView(binding!!.etMinWeight))) {
-                            return Utility.showEditTextError(
-                                binding!!.tilMinWeight,
-                                R.string.min_weight_val
-                            )
-                        }
-                        else if (TextUtils.isEmpty(stringFromView(binding!!.etMaxWeight))) {
-                            return Utility.showEditTextError(
-                                binding!!.tilMaxWeight,
-                                R.string.max_weight_val
-                            )
-                        }
-                        else if (TextUtils.isEmpty(stringFromView(binding!!.etTurnaroundTime))) {
-                            return Utility.showEditTextError(
-                                binding!!.tilTurnaroundTime,
-                                R.string.turnaround_time_val
-                            )
-                        } else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalWeight))) {
-                            return Utility.showEditTextError(
-                                binding!!.tilTotalWeight,
-                                R.string.total_weight_val
-                            )
-                        } else if (TextUtils.isEmpty(stringFromView(binding!!.etBags))) {
-                            return Utility.showEditTextError(binding!!.tilBags, R.string.bags_val)
-                        } */
 
 
             }

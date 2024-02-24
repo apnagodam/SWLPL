@@ -173,11 +173,12 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     }
 
     private fun getCommodityList() {
+        showDialog()
         homeViewModel.getCommodities("Emp")
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-
+                hideDialog()
                 }
 
                 is NetworkResult.Loading -> {
@@ -198,6 +199,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                             setValueOnSpinner()
                         }
                     }
+                    hideDialog()
                 }
             }
         }
@@ -214,33 +216,15 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.etContractor.setOnClickListener {
             searchableSpinner.show()
         }
-//        binding!!.checkNotRequried.setOnCheckedChangeListener { buttonView, isChecked ->
-//            if (buttonView.isChecked) {
-//                // checked
-//                checked = true
-//                binding!!.etLocation.isEnabled = false
-//                binding!!.etLocation.isClickable = false
-//                binding!!.etLocation.isFocusable = false
-//                binding!!.etLocation.setText("")
-//            } else {
-//                // not checked
-//                checked = false
-//                binding!!.etLocation.isEnabled = true
-//                binding!!.etLocation.isClickable = true
-//                binding!!.etLocation.isFocusable = true
-//                binding!!.etLocation.isFocusableInTouchMode = true
-//            }
-//        }
-    }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        startActivityAndClear(LabourBookListingActivity::class.java)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> startActivityAndClear(LabourBookListingActivity::class.java)
+            R.id.iv_close -> {
+                labourViewModel.getLabourList("10","1","IN","")
+                onBackPressedDispatcher.onBackPressed()
+            }
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
@@ -251,6 +235,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     getString(R.string.alert),
                     "Are You Sure to Summit?"
                 ) {
+                    showDialog()
                     labourViewModel.uploadLabourDetails(
                         UploadLabourDetailsPostData(
                             CaseID,
@@ -268,11 +253,12 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
                         when (it) {
                             is NetworkResult.Error -> {
-
+                                hideDialog()
                             }
 
                             is NetworkResult.Loading -> {}
                             is NetworkResult.Success -> {
+                                hideDialog()
                                 Utility.showAlertDialog(
                                     this@LabourBookUploadClass,
                                     getString(R.string.alert),

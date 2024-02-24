@@ -81,7 +81,7 @@ public class OutSecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getS_k_p_case_id()!=null){
+            if (Leads.get(position).getS_k_p_case_id()!=null && Leads.get(position).getFile3()!=null && Leads.get(position).getFile()!=null && Leads.get(position).getFile2()!=null ){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);

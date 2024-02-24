@@ -60,7 +60,7 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
-        binding!!.ivClose.setOnClickListener { startActivityAndClear(StaffDashBoardActivity::class.java) }
+        binding!!.ivClose.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
                 pageOffset--
@@ -103,7 +103,6 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {

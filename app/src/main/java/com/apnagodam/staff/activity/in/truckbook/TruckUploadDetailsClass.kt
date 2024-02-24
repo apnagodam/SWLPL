@@ -284,6 +284,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     fun transporterList() {
+        showDialog()
         truckBookViewModel.transporterList()
         truckBookViewModel.transporterResponse.observe(this) {
             when (it) {
@@ -310,6 +311,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     )
 
                     binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
+                    hideDialog()
                 }
             }
         }

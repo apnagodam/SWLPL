@@ -303,14 +303,12 @@ class OutUploadGatePassClass() : BaseActivity<ActivityGatePassBinding?>(),
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(OutGatePassListingActivity::class.java)
     }
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener(View.OnClickListener {
-            startActivityAndClear(
-                OutGatePassListingActivity::class.java
-            )
+          gatePassViewModel.getGatePassList("10","1","OUT","")
+            onBackPressedDispatcher.onBackPressed()
         })
         binding!!.sendOtp.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
