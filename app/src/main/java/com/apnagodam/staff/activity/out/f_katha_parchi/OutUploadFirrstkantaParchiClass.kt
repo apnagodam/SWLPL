@@ -69,7 +69,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
 
 
-        binding!!.etKantaParchi.setOnClickListener {
+        binding!!.tilKantaParchi.setOnClickListener {
             searchableSpinner.show()
         }
     }
@@ -97,7 +97,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                                     position: Int,
                                     selectedString: String
                                 ) {
-                                    binding!!.etKantaParchi.setText(selectedString)
+                                    binding!!.tilKantaParchi.setText(selectedString)
                                     kantaId = it.data.dharemKantas[position].id
                                 }
                             }
