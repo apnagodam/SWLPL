@@ -2,6 +2,7 @@ package com.apnagodam.staff.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 
 import com.apnagodam.staff.ApnaGodamApp;
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse;
@@ -124,7 +125,12 @@ public class SharedPreferencesRepository implements Tags {
     }
 
     public void setSelectedLanguage(String language) {
-        loginPrefEditor.putString(SELECTED_LANGUAGE, language).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                loginPrefEditor.putString(SELECTED_LANGUAGE, language).commit();
+            }
+        });
     }
 
     public static String getLocale() {
@@ -153,7 +159,12 @@ public class SharedPreferencesRepository implements Tags {
   */
     public void saveUserPermissionData(List<AllUserPermissionsResultListResponse.UserPermissionsResult> user) {
         String data = new Gson().toJson(user);
-        sharedPrefEditor.putString(Permission, data).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                sharedPrefEditor.putString(Permission, data).commit();
+            }
+        });
     }
 
     public List<AllUserPermissionsResultListResponse.UserPermissionsResult> getUserPermission() {
@@ -161,13 +172,25 @@ public class SharedPreferencesRepository implements Tags {
         Gson gson = new Gson();
         Type userListType = new TypeToken<ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult>>() {
         }.getType();
-        ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult> userArray = gson.fromJson(userMonthlyLedger, userListType);
+        ArrayList<AllUserPermissionsResultListResponse.UserPermissionsResult> userArray=new ArrayList<>();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                userArray.addAll( gson.fromJson(userMonthlyLedger, userListType));
+
+            }
+        });
         return userArray;
     }
 
     public void setEmployee(List<CommudityResponse.Employee> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
-        sharedPrefEditor.putString(Employee, data).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                sharedPrefEditor.putString(Employee, data).commit();
+            }
+        });
     }
 
     public List<CommudityResponse.Employee> getEmployee() {
@@ -181,7 +204,12 @@ public class SharedPreferencesRepository implements Tags {
 
     public void setContractor(List<CommudityResponse.Labour> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
-        sharedPrefEditor.putString(Contractor, data).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                sharedPrefEditor.putString(Contractor, data).commit();
+            }
+        });
     }
 
     public List<CommudityResponse.Contractor> getContractorList() {
@@ -195,7 +223,12 @@ public class SharedPreferencesRepository implements Tags {
 
     public void setUser(List<CommudityResponse.User> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
-        sharedPrefEditor.putString(User, data).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                sharedPrefEditor.putString(User, data).commit();
+            }
+        });
     }
 
     public List<CommudityResponse.User> getuserlist() {
@@ -209,7 +242,12 @@ public class SharedPreferencesRepository implements Tags {
 
     public void setCommdity(List<CommudityResponse.Category> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
-        sharedPrefEditor.putString(Commudity, data).commit();
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                sharedPrefEditor.putString(Commudity, data).commit();
+            }
+        });
     }
 
     public List<CommudityResponse.Category> getCommudity() {

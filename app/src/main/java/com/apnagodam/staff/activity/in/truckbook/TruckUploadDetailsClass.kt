@@ -611,6 +611,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         if (fileBiltyImage != null) {
             BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage)
         }
+        showDialog()
         truckBookViewModel.uploadTruckDetails(UploadTruckDetailsPostData(
             CaseID,
             TransporterID,
@@ -642,8 +643,12 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         truckBookViewModel.uploadTruckResponse.observe(this)
         {
             when(it){
-                is NetworkResult.Error -> TODO()
-                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+                is NetworkResult.Loading -> {
+
+                }
                 is NetworkResult.Success -> {
                     if(it.data!=null){
                         if(it.data.status==1){
@@ -652,6 +657,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                         else
                             showToast(it.data.message)
                     }
+                    hideDialog()
                 }
             }
         }

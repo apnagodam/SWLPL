@@ -143,6 +143,7 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun getAllCases(search: String) {
+        showDialog()
         truckViewModel.getTruckBookList("10",pageOffset,"IN",search)
         truckViewModel.response.observe(this){
             when(it){
@@ -168,6 +169,7 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         truckBookAdapter!!.notifyDataSetChanged()
                         //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                     }
+                    hideDialog()
                 }
             }
 
