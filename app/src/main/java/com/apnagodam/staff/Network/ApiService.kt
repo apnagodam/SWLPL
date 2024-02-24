@@ -114,7 +114,7 @@ interface ApiService {
     fun apnaEmpStatewiseUserHeatmap(@Query("state_name") str: String?): Call<StateMapModel?>?
 
     @POST("emp_api/apna_emp_clock_in_out")
-    fun attendance(@Body attendancePostData: AttendancePostData?): Observable<AttendanceResponse>
+    suspend fun attendance(@Body attendancePostData: AttendancePostData): Response<AttendanceResponse>
 
     @GET("emp_api/apna_emp_get_InOutInventoryDetail")
     fun checkWeightBag(@Query("case_id") str: String?): Observable<CheckInventory>
@@ -126,7 +126,7 @@ interface ApiService {
     fun doClosedCase(@Body closedCasesPostData: ClosedCasesPostData?): Call<LoginResponse?>?
 
     @POST("emp_api/apna_emp_create_caseid")
-    fun doCreateCaseID(@Body createCaseIDPostData: CreateCaseIDPostData?): Observable<LoginResponse>
+    suspend fun doCreateCaseID(@Body createCaseIDPostData: CreateCaseIDPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_create")
     fun doCreateConveyance(@Body createConveyancePostData: CreateConveyancePostData?): Observable<LoginResponse>
@@ -309,17 +309,17 @@ interface ApiService {
     ): Response<AllTruckBookListResponse>
 
     @GET("emp_api/apna_emp_get_user_data")
-    fun getUserList(
-        @Query("terminal_id") terminal_id: String?,
-        @Query("in_out") in_out: String?
-    ): Observable<AllUserListPojo>
+    suspend fun getUserList(
+        @Query("terminal_id") terminal_id: String,
+        @Query("in_out") in_out: String
+    ): Response<AllUserListPojo>
 
     @GET("emp_api/apna_emp_get_commodity")
-    fun getCommodityList(
-        @Query("terminal_id") terminal_id: String?,
-        @Query("in_out") in_out: String?,
-        @Query("user_phone") user_phone: String?
-    ): Observable<CommodityResponseData>
+    suspend fun getCommodityList(
+        @Query("terminal_id") terminal_id: String,
+        @Query("in_out") in_out: String,
+        @Query("user_phone") user_phone: String
+    ): Response<CommodityResponseData>
 
     @POST("emp_api/fc_offline_user_details")
     fun getUserName(@Query("phone") str: String?): Call<ResponseUserData?>?
@@ -413,7 +413,7 @@ interface ApiService {
     fun uploadGatePassNew(@Body uploadGatePassPostDataNew: UploadGatePassPostDataNew?): Observable<LoginResponse>
 
     @POST("emp_api/apna_emp_update_labour")
-    suspend fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData?): Response<LoginResponse>
+    suspend fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_releaseorder")
     fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData?): Call<LoginResponse?>?
@@ -425,7 +425,7 @@ interface ApiService {
     suspend fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_truckbook")
-    fun uploadTruckDetails(@Body uploadTruckDetailsPostData: UploadTruckDetailsPostData?): Observable<LoginResponse>
+    suspend fun uploadTruckDetails(@Body uploadTruckDetailsPostData: UploadTruckDetailsPostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_vendor_voucher_approve")
     fun vendorApproveConveyanceDelate(@Body approvedVendorConveyancePOst: ApprovedVendorConveyancePOst?): Call<LoginResponse?>?

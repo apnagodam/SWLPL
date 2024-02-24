@@ -29,6 +29,14 @@ public class UploadSecoundkantaParchiPostData {
     @Expose
     private String weight;
 
+    @SerializedName("old_weight")
+    @Expose
+    private String oldWeight;
+
+    @SerializedName("avg_weight")
+    @Expose
+    private String avgWeight;
+
     @SerializedName("displedge_bags")
     @Expose
     private String displeasedBages;
@@ -96,23 +104,41 @@ public class UploadSecoundkantaParchiPostData {
     }
 
 
-
     public UploadSecoundkantaParchiPostData(String case_id, String notes, String kanta_parchi,
-                                            String truck_file,String truck_file2,String noOfBags,String weight,String displeasedBages,Integer kantaId, String kantaName,String kantaParchiNumber,
-                                            Integer truckFacility,Integer bagsFacility) {
+                                            String truck_file, String truck_file2, String noOfBags, String weight
+            , String avgWeight,String oldWeight, String displeasedBages, Integer kantaId, String kantaName, String kantaParchiNumber,
+                                            Integer truckFacility, Integer bagsFacility) {
         this.case_id = case_id;
         this.notes = notes;
         this.kanta_parchi = kanta_parchi;
         this.truck_file = truck_file;
         this.truck_file2 = truck_file2;
-        this.noOfBags=noOfBags;
-        this.weight=weight;
+        this.noOfBags = noOfBags;
+        this.weight = weight;
+        this.avgWeight = avgWeight;
+        this.oldWeight=oldWeight;
         this.displeasedBages = displeasedBages;
         this.kantaId = kantaId;
         this.kantaParchiNumber = kantaParchiNumber;
         this.kantaName = kantaName;
         this.truckFacility = truckFacility;
         this.bagsFacility = bagsFacility;
+    }
+
+    public String getAvgWeight() {
+        return avgWeight;
+    }
+
+    public void setAvgWeight(String avgWeight) {
+        this.avgWeight = avgWeight;
+    }
+
+    public String getOldWeight() {
+        return oldWeight;
+    }
+
+    public void setOldWeight(String oldWeight) {
+        this.oldWeight = oldWeight;
     }
 }
 

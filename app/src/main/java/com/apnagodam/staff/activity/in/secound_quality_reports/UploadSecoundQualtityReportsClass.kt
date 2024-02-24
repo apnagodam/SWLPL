@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.`in`.secound_quality_reports
 
+import android.Manifest
 import android.R.attr.src
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -12,13 +13,17 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.location.Geocoder
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
+import android.text.InputFilter
 import android.text.InputType
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
@@ -28,13 +33,18 @@ import com.apnagodam.staff.Network.Response.QualityParamsResponse
 import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
@@ -42,6 +52,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 import java.util.UUID
 import kotlin.math.roundToInt
 
@@ -68,20 +79,61 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     val qualitReportViewModel by viewModels<QualitReportViewModel>()
     var skpBags = 0;
     var skpWeight = 0;
+    var lat = 0.0
+    var long = 0.0
+
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
 
     override fun setUp() {
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
         val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
-            skpBags = bundle.getString("skp_bags").toString().toInt()
-            skpWeight = bundle.getString("skp_weight").toString().toInt()
+        binding!!.tvTitle.setText("Upload Second Quality Report")
+        if (validData(bundle)) {
+            UserName = bundle?.getString("user_name")
+            CaseID = bundle?.getString("case_id")
 
+            if (bundle?.getString("skp_bags") != null && bundle.getString("skp_weight") != null) {
+                skpBags = bundle?.getString("skp_bags").toString().toInt()
+                skpWeight = bundle?.getString("skp_weight").toString().toInt()
+                binding!!.etAvgWeight.setText((skpWeight * 100 / skpBags).toString())
+            } else {
+                skpBags = 0;
+                skpWeight = 0;
+                binding!!.etAvgWeight.setText("N/A")
 
-           binding!!.etAvgWeight.setText( (skpWeight*100/skpBags).toString())
+            }
+
         }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -101,7 +153,10 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                             var textInputField =
                                 TextInputLayout(this, null, R.attr.customTextInputStyle)
                             var editText = TextInputEditText(textInputField.context)
-                            editText.inputType = InputType.TYPE_CLASS_NUMBER
+                            editText.inputType =
+                                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                            editText.filters = arrayOf(InputFilter.LengthFilter(5))
+
                             textInputField.setHint(data.name)
                             textInputField.addView(editText)
 
@@ -135,6 +190,10 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                     // can leave this empty
                 }
             }
+    }
+
+    fun validData(bundle: Bundle?): Boolean {
+        return bundle != null
     }
 
     private fun clickListner() {
@@ -211,48 +270,50 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (requestCode == REQUEST_CAMERA) {
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
+
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
 
 
-                if (requestCode == REQUEST_CAMERA) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
+               if(thumbnail!=null){
+                   var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                       File(compressImage(bitmapToFile(thumbnail).path)),
+                       stampMap
+                   )
+                   if (ReportsFileSelect) {
+                       ReportsFileSelect = false
+                       CommudityFileSelect = false
 
-                    if (ReportsFileSelect) {
-                        ReportsFileSelect = false
-                        CommudityFileSelect = false
-
-                        fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
-                        val uri = Uri.fromFile(fileReport)
-                        reportFile = uri.toString()
-                        binding!!.ReportsImage.setImageURI(uri)
-                    } else if (CommudityFileSelect) {
-                        val imageBitmap = data?.extras?.get("data") as Bitmap
-                        ReportsFileSelect = false
-                        CommudityFileSelect = false
-                        fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
-                        val uri = Uri.fromFile(fileCommudity)
-                        commudityFile = uri.toString()
-                        binding!!.CommudityImage.setImageURI(uri)
-                    }
-                }
-
+                       fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
+                       val uri = Uri.fromFile(fileReport)
+                       reportFile = uri.toString()
+                       binding!!.ReportsImage.setImageURI(uri)
+                   } else if (CommudityFileSelect) {
+                       val imageBitmap = data?.extras?.get("data") as Bitmap
+                       ReportsFileSelect = false
+                       CommudityFileSelect = false
+                       fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
+                       val uri = Uri.fromFile(fileCommudity)
+                       commudityFile = uri.toString()
+                       binding!!.CommudityImage.setImageURI(uri)
+                   }
+               }
             }
-        } catch (e: Exception) {
-        }
+
+        })
+
 
     }
 
 
     override fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
-
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
-
+        photoEasy.startActivityForResult(this)
     }
 
     private fun bitmapToFile(bitmap: Bitmap): Uri {
@@ -348,7 +409,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 isFieldEmpty = false;
             }
         }
-        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty()) {
+        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty() && fileReport != null) {
             qualitReportViewModel.uploadSecondQualityReport(
                 UploadSecoundQualityPostData(
                     CaseID,
@@ -371,15 +432,21 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
-                        Utility.showAlertDialog(
-                            this@UploadSecoundQualtityReportsClass,
-                            getString(R.string.alert),
-                            it.data!!.getMessage()
-                        ) {
+                        if (it.data!!.status == 1) {
+                            showToast(it.data.message)
                             startActivityAndClear(
                                 SecoundQualityReportListingActivity::class.java
                             )
+                        } else {
+                            Utility.showAlertDialog(
+                                this@UploadSecoundQualtityReportsClass,
+                                getString(R.string.alert),
+                                it.data!!.getMessage()
+                            ) {
+
+                            }
                         }
+
                     }
                 }
             }

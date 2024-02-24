@@ -133,7 +133,7 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
 
                 is NetworkResult.Success -> {
                    if(it.data!=null){
-                       Toast.makeText(this@OtpActivity, it.data!!.message, Toast.LENGTH_LONG).show()
+                       Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
                    }
 
                 }

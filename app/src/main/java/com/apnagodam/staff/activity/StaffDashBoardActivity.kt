@@ -125,7 +125,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         getdashboardData()
 
 
-
         // setBackBtn(binding.mainHeader.toolbar);
         setSupportActionBar(binding!!.mainContent.mainHeader.toolbar)
         binding!!.drawerLayout.addDrawerListener(this)
@@ -161,22 +160,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         binding!!.mainContent.UploadImage.setOnClickListener { onImageSelected() }
         binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
-        //    getAttendanceStatus();
-//        locationUtils = new LocationUtils(getActivity(), 1000, 2000, (location, address) -> {
-//            //   showToast(location.getLatitude() + " : " + location.getLongitude());
-//            Log.d("location", "" + location.getLatitude() + "," + "" + location.getLongitude());
-//            latitude = "" + location.getLatitude();
-//            longitude = "" + location.getLongitude();
-//            LocationUtils.LocationAddress locationAddress = new LocationUtils.LocationAddress();
-//            String geolocation = String.valueOf(locationAddress.getAddressFromLocation(Double.parseDouble(latitude), Double.parseDouble(longitude), StaffDashBoardActivity.this));
-//            Log.e("geolocationLogin", " " + geolocation);
-//        }, REQUEST_CODE);
-        //set google api client for hint request
-//        mGoogleApiClient = GoogleApiClient.Builder(this)
-//            .addConnectionCallbacks(this)
-//            .enableAutoManage(this, this)
-//            .addApi(Auth.CREDENTIALS_API)
-//            .build()
+
     }
 
     private fun populateExpandableList() {
@@ -221,29 +205,38 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(FastCaseListActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         loginViewModel.doLogout()
-                        loginViewModel.logoutResponse.observe(this){
-                            when(it){
+                        loginViewModel.logoutResponse.observe(this) {
+                            when (it) {
                                 is NetworkResult.Error -> {
                                     showToast(it.message)
-
-                                }
-                                is NetworkResult.Loading -> {
-
-
-                                }
-                                is NetworkResult.Success ->{
                                     SharedPreferencesRepository.getDataManagerInstance().clear()
                                     SharedPreferencesRepository.setIsUserName(false)
                                     SharedPreferencesRepository.saveSessionToken("")
                                     val intent = Intent(this, LoginActivity::class.java)
                                     intent.putExtra("setting", "")
-                                    startActivity(LoginActivity::class.java)
-                                    this.finish()
+                                    startActivityAndClear(LoginActivity::class.java)
+
+                                }
+
+                                is NetworkResult.Loading -> {
+
+
+                                }
+
+                                is NetworkResult.Success -> {
+                                    if(it.data!=null){
+                                        SharedPreferencesRepository.getDataManagerInstance().clear()
+                                        SharedPreferencesRepository.setIsUserName(false)
+                                        SharedPreferencesRepository.saveSessionToken("")
+                                        val intent = Intent(this, LoginActivity::class.java)
+                                        intent.putExtra("setting", "")
+                                        startActivityAndClear(LoginActivity::class.java)
+                                    }
 
                                 }
                             }
                         }
-                                // logout(resources.getString(R.string.logout_alert), "Logout")
+                        // logout(resources.getString(R.string.logout_alert), "Logout")
                     }
                 }
             }
@@ -508,311 +501,310 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         })
     }
 
-     fun prepareMenuData(){
-         var menuModel = MenuModel(
-                 resources.getString(R.string.home),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.dashboard_icon
-         ) //Menu of Android Tutorial. No sub menus
-         val menuModel1 = MenuModel(
-                 resources.getString(R.string.referral_code),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.refer_earn
-         ) //Menu of Android Tutorial. No sub menus
-         val menuModel2 = MenuModel(
-                 resources.getString(R.string.select_language),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.langauge
-         ) //Menu of Android Tutorial. No sub menus
-         headerList.add(menuModel)
-         headerList.add(menuModel1)
-         headerList.add(menuModel2)
-         if (SharedPreferencesRepository.getDataManagerInstance().userPermission != null && SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()) {
-             for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
-                 if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                 "11",
-                                 ignoreCase = true
-                         )
-                 ) {
-                     if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                         val menuModel3 = MenuModel(
-                                 resources.getString(R.string.lead_generate),
-                                 true,
-                                 false,
-                                 "https://www.journaldev.com/19226/python-fractions",
-                                 R.drawable.lead_gernate_icon
-                         ) //Menu of Android Tutorial. No sub menus
-                         headerList.add(menuModel3)
-                     }
-                 }
-                 if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                 "12",
-                                 ignoreCase = true
-                         )
-                 ) {
-                     if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                         val menuModel4 = MenuModel(
-                                 resources.getString(R.string.create_case),
-                                 true,
-                                 false,
-                                 "https://www.journaldev.com/19226/python-fractions",
-                                 R.drawable.caseid
-                         ) //Menu of Android Tutorial. No sub menus
-                         headerList.add(menuModel4)
-                     }
-                 }
-             }
-         }
-         if (!menuModel.hasChildren) {
-             childList[menuModel] = null
-         }
-         var childModelsList: MutableList<MenuModel> = ArrayList()
-         var childModel: MenuModel
-         menuModel = MenuModel(
-                 "IN",
-                 true,
-                 true,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.in_icon
-         ) //Menu of Java Tutorials
-         headerList.add(menuModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.truck_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.truck
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.labour_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.labour
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.firstkanta_parchi),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.katha_photo
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.f_quality_repots),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.quaility
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.secoundkanta_parchi),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.katha_photo
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.s_quality_repots),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.quaility
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.gate_passs),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.gatepass
-         )
-         childModelsList.add(childModel)
-         if (menuModel.hasChildren) {
-             Log.d("API123", "here")
-             childList[menuModel] = childModelsList
-         }
-         childModelsList = ArrayList()
-         menuModel = MenuModel(
-                 "OUT",
-                 true,
-                 true,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.out_icon
-         ) //Menu of Python Tutorials
-         headerList.add(menuModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_relase_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.truck
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_deiverd_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.labour
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_truck_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.truck
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_labour_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.labour
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_f_quality_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.quaility
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_f_katha_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.katha_photo
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_s_quality_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.quaility
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_s_katha__book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.katha_photo
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.out_gatepass_book),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.gatepass
-         )
-         childModelsList.add(childModel)
-         if (menuModel.hasChildren) {
-             childList[menuModel] = childModelsList
-         }
-         menuModel = MenuModel(
-                 "Voucher",
-                 true,
-                 true,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.vocher_icon
-         ) //Menu of Java Tutorials
-         headerList.add(menuModel)
-         childModelsList = ArrayList()
-         childModel = MenuModel(
-                 resources.getString(R.string.my_convance),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.vocher_icon
-         )
-         childModelsList.add(childModel)
-         childModel = MenuModel(
-                 resources.getString(R.string.vendor),
-                 false,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.vocher_icon
-         )
-         childModelsList.add(childModel)
-         if (menuModel.hasChildren) {
-             childList[menuModel] = childModelsList
-         }
-         val menuModel6 = MenuModel(
-                 resources.getString(R.string.spot_sell),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.deal_track
-         ) //Menu of Android Tutorial. No sub menus
-         val menuModel7 = MenuModel(
-                 resources.getString(R.string.intantion_title),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.purchase
-         ) //Menu of Android Tutorial. No sub menus
-         val menuModel8 = MenuModel(
-                 "Customer Map",
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.heat_map
-         ) //Menu of Android Tutorial. No sub menus
-         val menuModel9 = MenuModel(
-                 resources.getString(R.string.heat_map),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.heat_map
-         ) //Menu of Android Tutorial. No sub menus
-         val menuMode21 = MenuModel(
-                 resources.getString(R.string.fastcase),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.heat_map
-         ) //Menu of Android Tutorial. No sub menus
-         val menuMode22 = MenuModel(
-                 resources.getString(R.string.fastcase_list),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.heat_map
-         ) //Menu of Android Tutorial. No sub menus
-         val menuMode20 = MenuModel(
-                 resources.getString(R.string.logout),
-                 true,
-                 false,
-                 "https://www.journaldev.com/19226/python-fractions",
-                 R.drawable.out_icon
-         ) //Menu of Android Tutorial. No sub menus
-         //  headerList.add(menuModel5);
-         headerList.add(menuModel6)
-         headerList.add(menuModel7)
-         headerList.add(menuModel8)
-         headerList.add(menuModel9)
-         headerList.add(menuMode21)
-         headerList.add(menuMode22)
-         headerList.add(menuMode20)
-     }
-
+    fun prepareMenuData() {
+        var menuModel = MenuModel(
+            resources.getString(R.string.home),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.dashboard_icon
+        ) //Menu of Android Tutorial. No sub menus
+        val menuModel1 = MenuModel(
+            resources.getString(R.string.referral_code),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.refer_earn
+        ) //Menu of Android Tutorial. No sub menus
+        val menuModel2 = MenuModel(
+            resources.getString(R.string.select_language),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.langauge
+        ) //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel)
+        headerList.add(menuModel1)
+        headerList.add(menuModel2)
+        if (SharedPreferencesRepository.getDataManagerInstance().userPermission != null && SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()) {
+            for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
+                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+                        "11",
+                        ignoreCase = true
+                    )
+                ) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+                        val menuModel3 = MenuModel(
+                            resources.getString(R.string.lead_generate),
+                            true,
+                            false,
+                            "https://www.journaldev.com/19226/python-fractions",
+                            R.drawable.lead_gernate_icon
+                        ) //Menu of Android Tutorial. No sub menus
+                        headerList.add(menuModel3)
+                    }
+                }
+                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+                        "12",
+                        ignoreCase = true
+                    )
+                ) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+                        val menuModel4 = MenuModel(
+                            resources.getString(R.string.create_case),
+                            true,
+                            false,
+                            "https://www.journaldev.com/19226/python-fractions",
+                            R.drawable.caseid
+                        ) //Menu of Android Tutorial. No sub menus
+                        headerList.add(menuModel4)
+                    }
+                }
+            }
+        }
+        if (!menuModel.hasChildren) {
+            childList[menuModel] = null
+        }
+        var childModelsList: MutableList<MenuModel> = ArrayList()
+        var childModel: MenuModel
+        menuModel = MenuModel(
+            "IN",
+            true,
+            true,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.in_icon
+        ) //Menu of Java Tutorials
+        headerList.add(menuModel)
+        childModel = MenuModel(
+            resources.getString(R.string.truck_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.truck
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.labour_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.labour
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.firstkanta_parchi),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.katha_photo
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.f_quality_repots),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.quaility
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.secoundkanta_parchi),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.katha_photo
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.s_quality_repots),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.quaility
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.gate_passs),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.gatepass
+        )
+        childModelsList.add(childModel)
+        if (menuModel.hasChildren) {
+            Log.d("API123", "here")
+            childList[menuModel] = childModelsList
+        }
+        childModelsList = ArrayList()
+        menuModel = MenuModel(
+            "OUT",
+            true,
+            true,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.out_icon
+        ) //Menu of Python Tutorials
+        headerList.add(menuModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_relase_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.truck
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_deiverd_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.labour
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_truck_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.truck
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_labour_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.labour
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_f_quality_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.quaility
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_f_katha_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.katha_photo
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_s_quality_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.quaility
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_s_katha__book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.katha_photo
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.out_gatepass_book),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.gatepass
+        )
+        childModelsList.add(childModel)
+        if (menuModel.hasChildren) {
+            childList[menuModel] = childModelsList
+        }
+        menuModel = MenuModel(
+            "Voucher",
+            true,
+            true,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.vocher_icon
+        ) //Menu of Java Tutorials
+        headerList.add(menuModel)
+        childModelsList = ArrayList()
+        childModel = MenuModel(
+            resources.getString(R.string.my_convance),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.vocher_icon
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            resources.getString(R.string.vendor),
+            false,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.vocher_icon
+        )
+        childModelsList.add(childModel)
+        if (menuModel.hasChildren) {
+            childList[menuModel] = childModelsList
+        }
+        val menuModel6 = MenuModel(
+            resources.getString(R.string.spot_sell),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.deal_track
+        ) //Menu of Android Tutorial. No sub menus
+        val menuModel7 = MenuModel(
+            resources.getString(R.string.intantion_title),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.purchase
+        ) //Menu of Android Tutorial. No sub menus
+        val menuModel8 = MenuModel(
+            "Customer Map",
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.heat_map
+        ) //Menu of Android Tutorial. No sub menus
+        val menuModel9 = MenuModel(
+            resources.getString(R.string.heat_map),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.heat_map
+        ) //Menu of Android Tutorial. No sub menus
+        val menuMode21 = MenuModel(
+            resources.getString(R.string.fastcase),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.heat_map
+        ) //Menu of Android Tutorial. No sub menus
+        val menuMode22 = MenuModel(
+            resources.getString(R.string.fastcase_list),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.heat_map
+        ) //Menu of Android Tutorial. No sub menus
+        val menuMode20 = MenuModel(
+            resources.getString(R.string.logout),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.out_icon
+        ) //Menu of Android Tutorial. No sub menus
+        //  headerList.add(menuModel5);
+        headerList.add(menuModel6)
+        headerList.add(menuModel7)
+        headerList.add(menuModel8)
+        headerList.add(menuModel9)
+        headerList.add(menuMode21)
+        headerList.add(menuMode22)
+        headerList.add(menuMode20)
+    }
 
 
 //    private val attendanceStatus: Unit
@@ -840,8 +832,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         homeViewModel.getCommodities("Emp")
         homeViewModel.getDashboardData()
 
-        homeViewModel.homeDataResponse.observe(this){
-            when(it){
+        homeViewModel.homeDataResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
@@ -871,11 +863,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 is NetworkResult.Error -> {
                     showToast(it.message)
                 }
+
                 is NetworkResult.Loading -> {
                     showDialog()
                 }
+
                 is NetworkResult.Success -> {
-                    if (BuildConfig.APPLICATION_ID != null) { SharedPreferencesRepository.getDataManagerInstance()
+                    if (BuildConfig.APPLICATION_ID != null) {
+                        SharedPreferencesRepository.getDataManagerInstance()
                             .setCommdity(it.data!!.categories)
                         SharedPreferencesRepository.getDataManagerInstance().employee =
                             it.data!!.employee
@@ -907,21 +902,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
                 homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
 
-                homeViewModel.response.observe(this){
-                    when(it){
+                homeViewModel.response.observe(this) {
+                    when (it) {
                         is NetworkResult.Error -> hideDialog()
                         is NetworkResult.Loading -> showDialog()
                         is NetworkResult.Success -> {
                             if (it.data!!.userPermissionsResult != null || it.data.userPermissionsResult
-                                            .isNotEmpty()
+                                    .isNotEmpty()
                             ) {
                                 SharedPreferencesRepository.getDataManagerInstance()
-                                        .saveUserPermissionData(it.data.getUserPermissionsResult())
+                                    .saveUserPermissionData(it.data.getUserPermissionsResult())
                                 //                    binding.menuList.setAdapter(new NavigationAdapter(getMenuList(), userDetails, StaffDashBoardActivity.this));
                                 val navigationVLCAdapter = NavigationAdapter(
-                                        menuList,
-                                        userDetails,
-                                        this@StaffDashBoardActivity
+                                    menuList,
+                                    userDetails,
+                                    this@StaffDashBoardActivity
                                 )
                                 navigationVLCAdapter.setOnProfileClickInterface(this@StaffDashBoardActivity)
                                 //                    binding.menuList.setAdapter(navigationVLCAdapter);
@@ -945,30 +940,54 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         if (fileSelfie != null) {
             if (latitude != null && longitude != null) {
                 EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie)
-
-                apiService.attendance(
+                homeViewModel.attendence(
                     AttendancePostData(
                         "" + latitude,
                         "" + longitude,
                         "" + attendanceINOUTStatus,
                         EmployeeImage
                     )
-                ).doOnNext { body ->
-                    Toast.makeText(
-                        this@StaffDashBoardActivity,
-                        body.getMessage(),
-                        Toast.LENGTH_LONG
-                    ).show()
-                    fileSelfie = null
-                    OnOfffAttendance =
-                        if (body.getClock_status().equals("1", ignoreCase = true)) {
-                            binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.out)
-                            true
-                        } else {
-                            binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.`in`)
-                            false
+                )
+                homeViewModel.attendenceResponse.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> TODO()
+                        is NetworkResult.Loading -> TODO()
+                        is NetworkResult.Success -> {
+                            if (it.data != null) {
+                                if (it.data.status == 1) {
+                                    fileSelfie = null
+                                    OnOfffAttendance =
+                                        if (it.data.getClock_status()
+                                                .equals("1", ignoreCase = true)
+                                        ) {
+                                            binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
+                                                R.drawable.out
+                                            )
+                                            true
+                                        } else {
+                                            binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
+                                                R.drawable.`in`
+                                            )
+                                            false
+                                        }
+                                    Toast.makeText(
+                                        this@StaffDashBoardActivity,
+                                        it.data.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                                else{
+                                    Toast.makeText(
+                                        this@StaffDashBoardActivity,
+                                        it.data.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
                         }
-                }.subscribe()
+                    }
+                }
+
 
             } else {
                 Toast.makeText(
@@ -1410,19 +1429,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 10 -> startActivity(SecoundkanthaParchiListingActivity::class.java)
                 11 -> startActivity(SecoundQualityReportListingActivity::class.java)
                 12 -> startActivity(GatePassListingActivity::class.java)
-                13 ->             {
+                13 -> {
                     loginViewModel.doLogout()
-                    loginViewModel.logoutResponse.observe(this){
-                        when(it){
+                    loginViewModel.logoutResponse.observe(this) {
+                        when (it) {
                             is NetworkResult.Error -> {
                                 showToast(it.message)
 
                             }
+
                             is NetworkResult.Loading -> {
 
 
                             }
-                            is NetworkResult.Success ->{
+
+                            is NetworkResult.Success -> {
                                 SharedPreferencesRepository.getDataManagerInstance().clear()
                                 SharedPreferencesRepository.setIsUserName(false)
                                 SharedPreferencesRepository.saveSessionToken("")

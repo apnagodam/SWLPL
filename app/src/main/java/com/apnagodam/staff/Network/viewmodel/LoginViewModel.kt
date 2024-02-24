@@ -22,8 +22,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
-class LoginViewModel @Inject constructor(private  val repository:LoginRepo,  application: Application):AndroidViewModel(application) {
+class LoginViewModel @Inject constructor(
+    private val repository: LoginRepo,
+    application: Application
+) : AndroidViewModel(application) {
 
     private val _response: MutableLiveData<NetworkResult<LoginResponse>> = MutableLiveData()
     val response: LiveData<NetworkResult<LoginResponse>> = _response
@@ -36,25 +40,27 @@ class LoginViewModel @Inject constructor(private  val repository:LoginRepo,  app
     val uploadDeliveryResponse = MutableLiveData<NetworkResult<LoginResponse>>()
 
     val logoutResponse = MutableLiveData<NetworkResult<LoginResponse>>()
-    fun doLogin(loginPostData: LoginPostData)=viewModelScope.launch {
+    fun doLogin(loginPostData: LoginPostData) = viewModelScope.launch {
         repository.doLogin(loginPostData).collect { values ->
             _response.value = values
         }
     }
 
-    fun dpVerifyOtp(loginPostData: OTPData)=viewModelScope.launch {
+    fun dpVerifyOtp(loginPostData: OTPData) = viewModelScope.launch {
         repository.verifyOtp(loginPostData).collect { values ->
             _Otpresponse.value = values
         }
     }
-    fun uploadDeliveredOrder(uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData)=viewModelScope.launch {
-        repository.uploadDeliveredOrder(uploadReleaseOrderlsPostData).collect(){
-            uploadDeliveryResponse.value = it
-        }
-    }
 
-    fun doLogout()=viewModelScope.launch {
-        repository.doLogout().collect(){
+    fun uploadDeliveredOrder(uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData) =
+        viewModelScope.launch {
+            repository.uploadDeliveredOrder(uploadReleaseOrderlsPostData).collect() {
+                uploadDeliveryResponse.value = it
+            }
+        }
+
+    fun doLogout() = viewModelScope.launch {
+        repository.doLogout().collect() {
             logoutResponse.value = it
         }
     }

@@ -3,6 +3,8 @@ package com.apnagodam.staff.Network.repository
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.AttendancePostData
+import com.apnagodam.staff.Network.Response.AttendanceResponse
 import com.apnagodam.staff.Network.Response.VersionCodeResponse
 import com.apnagodam.staff.module.AllUserPermissionsResultListResponse
 import com.apnagodam.staff.module.CommudityResponse
@@ -36,6 +38,12 @@ class HomeRepo @Inject constructor(val apiService: ApiService):BaseApiResponse()
         return flow {
             emit(safeApiCall { apiService.getversionCode(appType) })
         }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun attendence( attendancePostData: AttendancePostData):Flow<NetworkResult<AttendanceResponse>>{
+        return flow {
+            emit(safeApiCall { apiService.attendance(attendancePostData) })
+        }
     }
 
 }

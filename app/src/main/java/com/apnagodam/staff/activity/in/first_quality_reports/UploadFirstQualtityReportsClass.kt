@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.`in`.first_quality_reports
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -7,17 +8,18 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.text.InputFilter
 import android.text.InputType
-import android.text.TextUtils
 import android.view.View
 import android.widget.AdapterView
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
@@ -26,21 +28,24 @@ import com.apnagodam.staff.Network.Response.QualityParamsResponse.Datum
 import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdateQualityReportBinding
-import com.apnagodam.staff.module.CommodityResponseData
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -63,12 +68,49 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
     var isFieldEmpty = true;
     val qualitReportViewModel by viewModels<QualitReportViewModel>()
     var listOfParams = arrayListOf<Datum>()
+    var lat = 0.0
+    var long = 0.0
+
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.activity_update_quality_report
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun setUp() {
+
+
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
+
+        binding!!.tvTitle.setText("Upload First Quality Report")
 
         binding!!.tilAvgWeight.visibility = View.GONE
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -89,7 +131,9 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                                 var textInputField =
                                     TextInputLayout(this, null, R.attr.customTextInputStyle)
                                 var editText = TextInputEditText(textInputField.context)
-                                editText.inputType = InputType.TYPE_CLASS_NUMBER
+                                editText.inputType =
+                                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                                editText.filters = arrayOf(InputFilter.LengthFilter(5))
                                 textInputField.setHint(data.name)
                                 textInputField.addView(editText)
 
@@ -203,9 +247,8 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                         listOfQualityParams.clear()
 
 
-                       val map =  listOfParams.associateBy ({it.id},{it.name})
-                        for (i in listOfParams.indices)
-                        {
+                        val map = listOfParams.associateBy({ it.id }, { it.name })
+                        for (i in listOfParams.indices) {
                             var datum =
                                 CommodityData(
                                     listOfParams[i].id,
@@ -223,11 +266,12 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                                 isFieldEmpty = true;
                                 ed[editext].error = "This field cannot be empty!"
                             } else {
-                                listOfQualityParams[editext].value = ed[editext].editText!!.text.toString()
+                                listOfQualityParams[editext].value =
+                                    ed[editext].editText!!.text.toString()
                                 isFieldEmpty = false;
                             }
                         }
-                        if (!isFieldEmpty  && binding!!.etLive.text!!.isNotEmpty()) {
+                        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty()) {
                             qualitReportViewModel.uploadFirstQualityReport(
                                 UploadFirstQualityPostData(
                                     CaseID,
@@ -249,11 +293,17 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
                                     is NetworkResult.Loading -> {}
                                     is NetworkResult.Success -> {
-                                        Utility.showAlertDialog(
-                                            this@UploadFirstQualtityReportsClass,
-                                            getString(R.string.alert),
-                                            it.data!!.getMessage()
-                                        ) { startActivityAndClear(FirstQualityReportListingActivity::class.java) }
+                                        if (it.data!!.status == 1) {
+                                            showToast(it.data.message)
+                                            startActivityAndClear(FirstQualityReportListingActivity::class.java)
+                                        } else {
+                                            Utility.showAlertDialog(
+                                                this@UploadFirstQualtityReportsClass,
+                                                getString(R.string.alert),
+                                                it.data!!.getMessage()
+                                            ) { }
+                                        }
+
                                     }
                                 }
                             }
@@ -391,13 +441,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
     override fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
-
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
+        photoEasy.startActivityForResult(this)
 
     }
 
@@ -425,27 +469,48 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
+
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
+                if(thumbnail!=null){
+                    if (ReportsFileSelect) {
+
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
+                        val uri = Uri.fromFile(fileReport)
+                        reportFile = uri.toString()
+                        binding!!.ReportsImage.setImageURI(uri)
+                    } else if (CommudityFileSelect) {
+
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileCommudity = File(compressImage(bitmapToFile(stampedBitmap).path))
+                        val uri = Uri.fromFile(fileCommudity)
+                        commudityFile = uri.toString()
+                        binding!!.CommudityImage.setImageURI(uri)
+                    }
+                }
+            }
+
+        })
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                if (ReportsFileSelect) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
 
-                    ReportsFileSelect = false
-                    CommudityFileSelect = false
-                    fileReport = File(compressImage(bitmapToFile(imageBitmap).path))
-                    val uri = Uri.fromFile(fileReport)
-                    reportFile = uri.toString()
-                    binding!!.ReportsImage.setImageURI(uri)
-                } else if (CommudityFileSelect) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-
-                    ReportsFileSelect = false
-                    CommudityFileSelect = false
-                    fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
-                    val uri = Uri.fromFile(fileCommudity)
-                    commudityFile = uri.toString()
-                    binding!!.CommudityImage.setImageURI(uri)
-                }
             }
         }
     }

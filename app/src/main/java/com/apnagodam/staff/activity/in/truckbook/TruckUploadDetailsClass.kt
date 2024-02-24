@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.`in`.truckbook
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ActivityNotFoundException
@@ -8,49 +9,60 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
 import android.net.Uri
+import android.os.Environment
+import android.provider.ContactsContract.Contacts.Photo
 import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.View.OnFocusChangeListener
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import android.widget.TextView
+import android.widget.ImageView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.net.toUri
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding
-import com.apnagodam.staff.module.TransporterDetailsPojo
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.TransporterListPojo
-import com.apnagodam.staff.utils.Tags.BUNDLE
+import com.apnagodam.staff.utils.ImageHelper
+import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.apnagodam.staff.utils.Validationhelper
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.google.android.gms.location.LocationServices
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.UUID
+
 
 @AndroidEntryPoint
 class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
@@ -71,13 +83,48 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     lateinit var spinnerTransporterAdpter: ArrayAdapter<String>
     var TransporterID: String? = null
     var transTypeList = arrayListOf<String>()
-
+    var pictureImagePath = ""
+    var isClientTransport = true;
     val truckBookViewModel by viewModels<TruckBookViewModel>()
+    var lat = 0.0
+    var long = 0.0
+
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_details
     }
 
     override fun setUp() {
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
+
         transTypeList.add("Select")
         transTypeList.add("Client Transport")
         transTypeList.add("Company Transport")
@@ -128,12 +175,31 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     position: Int,
                     id: Long
                 ) {
-                    if (position <= 1) {
-                        Checked()
-                    } else {
-                        NotChecked()
-                    }
+                    when (position) {
+                        0 -> {
+                            binding!!.layoutTransport.visibility = View.GONE
+                            binding!!.btnLogin.isEnabled = false
+                        }
 
+                        1 -> {
+                            checked = true
+                            Checked()
+                            binding!!.layoutTransport.visibility = View.GONE
+                            binding!!.btnLogin.isEnabled = true
+
+
+                        }
+
+                        2 -> {
+                            checked = false
+                            NotChecked()
+                            binding!!.layoutTransport.visibility = View.VISIBLE
+                            binding!!.btnLogin.isEnabled = true
+
+
+                        }
+
+                    }
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -142,6 +208,15 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 }
 
             }
+        binding!!.TruckImage.setOnClickListener { view ->
+            PhotoFullPopupWindow(
+                this,
+                R.layout.popup_photo_full,
+                view,
+                BiltyFile,
+                null
+            )
+        }
         binding!!.spinnerTransporterName.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -162,11 +237,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                         }
                         getTransporterDetails(TransporterID!!)
                     }
-//                    if (presentMeterStatusID.contains("Client")) {
-//                        Checked()
-//                    } else {
-//                        NotChecked()
-//                    }
+
                 }
 
                 override fun onNothingSelected(parentView: AdapterView<*>?) {
@@ -174,141 +245,16 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 }
             }
 
-        /*    binding.etAdvancePatyment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (binding.etAdvancePatyment.getText().toString().trim() != null && !binding.etAdvancePatyment.getText().toString().trim().isEmpty() && !binding.etMaxWeight.getText().toString().trim().isEmpty() && !binding.etTransportRate.getText().toString().trim().isEmpty()) {
-                        Double etAdvancePatyment = (Double.parseDouble(binding.etAdvancePatyment.getText().toString().trim()));
-                        Double maxWeight = (Double.parseDouble(binding.etMaxWeight.getText().toString().trim()));
-                        Double TransportRate = (Double.parseDouble(binding.etTransportRate.getText().toString().trim()));
-                        Double Advancement = maxWeight * TransportRate;
-                        if (etAdvancePatyment > Advancement) {
-                            Utility.showAlertDialog(TruckUploadDetailsClass.this, getString(R.string.alert), "Advance Payment  Must be Less than or equal to " + Advancement + " RS", new Utility.AlertCallback() {
-                                @Override
-                                public void callback() {
-                                    binding.etAdvancePatyment.setText("");
-                                }
-                            });
-                        } else {
-                            binding.etAdvancePatyment.setText("" + Advancement);
-                        }
-                    }
-                } else {
-                }
-            }
-        });*/
-        /* binding!!.etMaxWeight.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
-             if (!hasFocus) {
-                 if (binding!!.etAdvancePatyment.text.toString()
-                         .trim { it <= ' ' } != null && !binding!!.etAdvancePatyment.text.toString()
-                         .trim { it <= ' ' }
-                         .isEmpty() && !binding!!.etMaxWeight.text.toString().trim { it <= ' ' }
-                         .isEmpty() && !binding!!.etTransportRate.text.toString().trim { it <= ' ' }
-                         .isEmpty()
-                 ) {
-                     val etAdvancePatyment =
-                         binding!!.etAdvancePatyment.text.toString().trim { it <= ' ' }
-                             .toDouble()
-                     val maxWeight = binding!!.etMaxWeight.text.toString().trim { it <= ' ' }
-                         .toDouble()
-                     val TransportRate = binding!!.etTransportRate.text.toString().trim { it <= ' ' }
-                         .toDouble()
-                     val Advancement = maxWeight * TransportRate
-                     if (etAdvancePatyment > Advancement) {
-                         Utility.showAlertDialog(
-                             this@TruckUploadDetailsClass,
-                             getString(R.string.alert),
-                             "Advance Payment  Must be Less than or equal to $Advancement RS"
-                         ) { binding!!.etAdvancePatyment.setText("") }
-                     } else {
-                         binding!!.etAdvancePatyment.setText("" + Advancement)
-                     }
-                 }
-             } else {
-             }
-         }*/
-        /* binding!!.etTransportRate.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
-             if (!hasFocus) {
-                 if (binding!!.etAdvancePatyment.text.toString()
-                         .trim { it <= ' ' } != null && !binding!!.etAdvancePatyment.text.toString()
-                         .trim { it <= ' ' }
-                         .isEmpty() && !binding!!.etTransportRate.text.toString().trim { it <= ' ' }
-                         .isEmpty()
-                 )
 
-                 //&& !binding!!.etMaxWeight.text.toString().trim { it <= ' ' }
-                 //                        .isEmpty()
-                 {
-                     val etAdvancePatyment =
-                         binding!!.etAdvancePatyment.text.toString().trim { it <= ' ' }
-                             .toDouble()
-                     val maxWeight = binding!!.etMaxWeight.text.toString().trim { it <= ' ' }
-                         .toDouble()
-                     val TransportRate = binding!!.etTransportRate.text.toString().trim { it <= ' ' }
-                         .toDouble()
-                     val Advancement = maxWeight * TransportRate
-                     if (etAdvancePatyment > Advancement) {
-                         Utility.showAlertDialog(
-                             this@TruckUploadDetailsClass,
-                             getString(R.string.alert),
-                             "Advance Payment  Must be Less than or equal to $Advancement RS"
-                         ) { binding!!.etAdvancePatyment.setText("") }
-                     } else {
-                         // binding.etAdvancePatyment.setText("" + Advancement);
-                     }
-                 }
-             } else {
-             }
-         }*/
-        /*  binding.etStartDateTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (binding.etStartDateTime.getText().toString().trim() != null && !binding.etStartDateTime.getText().toString().trim().isEmpty() && !binding.etTurnaroundTime.getText().toString().trim().isEmpty()) {
-                        Double maxWeight = (Double.parseDouble(binding.etStartDateTime.getText().toString().trim()));
-                        Double TransportRate = (Double.parseDouble(binding.etTurnaroundTime.getText().toString().trim()));
-                        Double Advancement = maxWeight * TransportRate;
-                        binding.etEndDateTime.setText("" + Advancement);
-                    }
-                    // Toast.makeText(MainActivity.this, "focus loosed", Toast.LENGTH_LONG).show();
-                } else {
-                    /// Toast.makeText(MainActivity.this, "focused", Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
-        // check advance payment
-        /* binding.etMaxWeight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (binding.etMaxWeight.getText().toString().trim() != null && !binding.etMaxWeight.getText().toString().trim().isEmpty() && !binding.etTransportRate.getText().toString().trim().isEmpty()) {
-                        Double maxWeight = (Double.parseDouble(binding.etMaxWeight.getText().toString().trim()));
-                        Double TransportRate = (Double.parseDouble(binding.etTransportRate.getText().toString().trim()));
-                        Double Advancement = maxWeight * TransportRate;
-                        binding.etAdvancePatyment.setText("" + Advancement);
-                    }
-                    // Toast.makeText(MainActivity.this, "focus loosed", Toast.LENGTH_LONG).show();
-                } else {
-                    /// Toast.makeText(MainActivity.this, "focused", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-        binding.etTransportRate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if (binding.etTransportRate.getText().toString().trim() != null && !binding.etTransportRate.getText().toString().trim().isEmpty() && !binding.etMaxWeight.getText().toString().trim().isEmpty()) {
-                        Double maxWeight = (Double.parseDouble(binding.etMaxWeight.getText().toString().trim()));
-                        Double TransportRate = (Double.parseDouble(binding.etTransportRate.getText().toString().trim()));
-                        Double Advancepayment = maxWeight * TransportRate;
-                        binding.etAdvancePatyment.setText("" + Advancepayment);
-                    }
-                } else {
-                    /// Toast.makeText(MainActivity.this, "focused", Toast.LENGTH_LONG).show();
-                }
-            }
-        });*/
+    }
+
+    var locationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            lat = location.latitude
+            long = location.longitude
+        }
+
+
     }
 
     private fun getTransporterDetails(transporterID: String) {
@@ -322,7 +268,11 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        binding!!.etVehicleNo.setText("" + it.data.data.vehicleNo)
+                        when (it.data.data.vehicleNo) {
+                            null -> binding!!.etVehicleNo.setText("N/A")
+                            else -> binding!!.etVehicleNo.setText(it.data.data.vehicleNo)
+                        }
+
                         binding!!.etDriverName.setText("" + it.data.data.transporterName)
                         binding!!.etDriverPhoneNo.setText("" + it.data.data.transporterPhoneNo)
                     }
@@ -355,41 +305,10 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     }
                     spinnerTransporterAdpter = ArrayAdapter(
                         this@TruckUploadDetailsClass,
-                        R.layout.multiline_spinner_dropdown_item, TransporterName!!
+                        R.layout.support_simple_spinner_dropdown_item, TransporterName!!
 
                     )
-//
-//            spinnerTransporterAdpter = object : ArrayAdapter<String?>(
-//                this@TruckUploadDetailsClass,
-//                R.layout.multiline_spinner_dropdown_item, TransporterName!!
-//            ) {
-//                //By using this method we will define how
-//                // the text appears before clicking a spinner
-//                override fun getView(
-//                    position: Int,
-//                    convertView: View?,
-//                    parent: ViewGroup
-//                ): View {
-//                    val v = super.getView(position, convertView, parent)
-//                    (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                    return v
-//                }
-//
-//                //By using this method we will define
-//                //how the listview appears after clicking a spinner
-//                override fun getDropDownView(
-//                    position: Int,
-//                    convertView: View,
-//                    parent: ViewGroup
-//                ): View {
-//                    val v = super.getDropDownView(position, convertView, parent)
-//                    v.setBackgroundColor(Color.parseColor("#05000000"))
-//                    (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                    return v
-//                }
-//            }
-//            spinnerTransporterAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-                    // Set Adapter in the spinner
+
                     binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
                 }
             }
@@ -420,50 +339,39 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         }
     }
 
-    private fun callImageSelector(requestCamera: Int) {
-        options = Options.init()
-        options.let {
-            it.count =
-                1                                                   //Number of images to restrict selection count
-            it.spanCount =
-                4                                               //Number for columns in grid
-            it.path =
-                "/apnagodam/lp/images"                                         //Custom Path For media Storage
-            it.isFrontfacing =
-                false                                       //Front Facing camera on start
-            it.videoDurationLimitinSeconds =
-                0                            //Duration for video recording
-            it.mode = Options.Mode.Picture
-            it.requestCode = requestCamera
-        }
-
-
-        Pix.start(this@TruckUploadDetailsClass, options)
-    }
-
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == RESULT_OK) {
-                val imageBitmap = data?.extras?.get("data") as Bitmap
-                fileBiltyImage = File(compressImage(bitmapToFile(imageBitmap).toString()))
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
+
+            if(thumbnail!=null){
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
+                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                    File(compressImage(bitmapToFile(thumbnail!!).path)),
+                    stampMap
+                )
+                fileBiltyImage = File(compressImage(bitmapToFile(stampedBitmap).path))
+
                 val uri = Uri.fromFile(fileBiltyImage)
                 BiltyFile = uri.toString()
                 binding!!.TruckImage.setImageURI(uri)
             }
-        }
+            }
+
+        })
     }
 
-    override fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        var path = this.filesDir.absolutePath
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
 
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
+
+    override fun dispatchTakePictureIntent() {
+        photoEasy.startActivityForResult(this)
+
 
     }
 
@@ -516,7 +424,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
     private fun Checked() {
         binding!!.layoutTransport.visibility = View.GONE
-        checked = true
         /*  binding.etTransporterName.setEnabled(false);
         binding.etTransporterName.setClickable(false);
         binding.etTransporterName.setFocusable(false);
@@ -612,7 +519,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
     private fun NotChecked() {
         binding!!.layoutTransport.visibility = View.VISIBLE
-        checked = false
         /*  binding.etTransporterName.setEnabled(true);
         binding.etTransporterName.setClickable(true);
         binding.etTransporterName.setFocusable(true);
@@ -686,57 +592,14 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             R.id.iv_close -> startActivityAndClear(TruckBookListingActivity::class.java)
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
-            /*    R.id.lp_end_date -> EnddatePicker()
-                R.id.et_end_date_time -> EnddatePicker()*/
+
             R.id.btn_login -> if (isValid) {
-                if (checked) {
-                    if (TransporterID == null) {
-                        Toast.makeText(
-                            this@TruckUploadDetailsClass,
-                            "Select Transport Name!!",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        Utility.showDecisionDialog(
-                            this@TruckUploadDetailsClass,
-                            getString(R.string.alert),
-                            "Are You Sure to Summit?"
-                        ) { callApi() }
-                    }
-                } else if (TransporterID == null) {
-                    Toast.makeText(
-                        this@TruckUploadDetailsClass,
-                        "Select Transport Name!!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                /*     else if (TextUtils.isEmpty(stringFromView(binding!!.etStartDateTime))) {
-                         Toast.makeText(
-                             this@TruckUploadDetailsClass,
-                             resources.getString(R.string.start_date_time_val),
-                             Toast.LENGTH_LONG
-                         ).show()
-                     }
-                     else if (TextUtils.isEmpty(stringFromView(binding!!.etEndDateTime))) {
-                         Toast.makeText(
-                             this@TruckUploadDetailsClass,
-                             resources.getString(R.string.end_date_time_val),
-                             Toast.LENGTH_LONG
-                         ).show()
-                     } */
-                else if (fileBiltyImage == null) {
-                    Toast.makeText(
-                        this@TruckUploadDetailsClass,
-                        "Upload to Bilty Image",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Utility.showDecisionDialog(
-                        this@TruckUploadDetailsClass,
-                        getString(R.string.alert),
-                        "Are You Sure to Summit?"
-                    ) { callApi() }
-                }
+                Utility.showDecisionDialog(
+                    this@TruckUploadDetailsClass,
+                    getString(R.string.alert),
+                    "Are You Sure to Summit?"
+                ) { callApi() }
+
             }
         }
     }
@@ -746,51 +609,58 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         if (fileBiltyImage != null) {
             BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage)
         }
-        apiService.uploadTruckDetails(
-            UploadTruckDetailsPostData(
-                CaseID,
-                TransporterID,
-                stringFromView(binding!!.etVehicleNo),
-                stringFromView(binding!!.etDriverName),
-                stringFromView(binding!!.etDriverPhoneNo),
-                "stringFromView(binding!!.etMinWeight)",
-                " stringFromView(binding!!.etMaxWeight)",
-                "stringFromView(binding!!.etTurnaroundTime)",
-                "stringFromView(binding!!.etTotalWeight)",
-                "stringFromView(binding!!.etBags)",
-                stringFromView(binding!!.etTotalTransCost),
-                stringFromView(
-                    binding!!.etAdvancePatyment
-                ),
-                "stringFromView(binding!!.etStartDateTime)",
-                "stringFromView(binding!!.etFinalSettalementAmount)",
-                " stringFromView(binding!!.etEndDateTime)",
-                stringFromView(
-                    binding!!.notes
-                ),
-                TransporterID,
-                BiltyImage,
-                spinnerRateType,
-                stringFromView(
-                    binding!!.etRealteCaseid,
-                ), binding!!.etLocation.text.toString()
-            )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body ->
-                Utility.showAlertDialog(
-                    this@TruckUploadDetailsClass,
-                    getString(R.string.alert),
-                    body.getMessage()
-                ) { startActivityAndClear(TruckBookListingActivity::class.java) }
+        truckBookViewModel.uploadTruckDetails(UploadTruckDetailsPostData(
+            CaseID,
+            TransporterID,
+            stringFromView(binding!!.etVehicleNo),
+            stringFromView(binding!!.etDriverName),
+            stringFromView(binding!!.etDriverPhoneNo),
+            "stringFromView(binding!!.etMinWeight)",
+            " stringFromView(binding!!.etMaxWeight)",
+            "stringFromView(binding!!.etTurnaroundTime)",
+            "stringFromView(binding!!.etTotalWeight)",
+            "stringFromView(binding!!.etBags)",
+            stringFromView(binding!!.etTotalTransCost),
+            stringFromView(
+                binding!!.etAdvancePatyment
+            ),
+            "stringFromView(binding!!.etStartDateTime)",
+            "stringFromView(binding!!.etFinalSettalementAmount)",
+            " stringFromView(binding!!.etEndDateTime)",
+            stringFromView(
+                binding!!.notes
+            ),
+            TransporterID,
+            BiltyImage,
+            spinnerRateType,
+            stringFromView(
+                binding!!.etRealteCaseid,
+            ), binding!!.etLocation.text.toString()
+        ))
+        truckBookViewModel.uploadTruckResponse.observe(this)
+        {
+            when(it){
+                is NetworkResult.Error -> TODO()
+                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Success -> {
+                    if(it.data!=null){
+                        if(it.data.status==1){
+                            startActivityAndClear(TruckBookListingActivity::class.java)
+                        }
+                        else
+                            showToast(it.data.message)
+                    }
+                }
             }
-            .subscribe()
+        }
 
     }
 
     val isValid: Boolean
         get() {
             if (checked) {
+                TransporterID = "1"
+                return true;
             } else {
                 /*if (TextUtils.isEmpty(stringFromView(binding.etTransporterName))) {
                 return Utility.showEditTextError(binding.tilTransporterName, R.string.transporter_name);
@@ -802,16 +672,23 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             } else if (TextUtils.isEmpty(stringFromView(binding.etDriverPhoneNo))) {
                 return Utility.showEditTextError(binding.tilDriverPhoneNo, R.string.driver_phone_no_enter);
             } else*/
-                if (spinnerRateType == null) {
-                    Toast.makeText(
-                        this@TruckUploadDetailsClass,
-                        "Select Rate Type",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate))) {
+                if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate))) {
                     return Utility.showEditTextError(
                         binding!!.tilTransportRate,
                         R.string.transport_rate_validation
+                    )
+                } else if (fileBiltyImage == null) {
+                    showToast("please select bilty image")
+                } else if (Validationhelper().fieldEmpty(binding!!.tilAdvancePatyment)) {
+                    binding!!.tilAdvancePatyment.error = "This Field is Required"
+                } else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount)) {
+                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
+                } else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
+                    binding!!.tilLocation.error = "This Field is required"
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
+                    return Utility.showEditTextError(
+                        binding!!.tilTotalTransCost,
+                        R.string.total_trans_cost_val
                     )
                 }
                 /*        else if (TextUtils.isEmpty(stringFromView(binding!!.etMinWeight))) {
@@ -839,17 +716,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                         } else if (TextUtils.isEmpty(stringFromView(binding!!.etBags))) {
                             return Utility.showEditTextError(binding!!.tilBags, R.string.bags_val)
                         } */
-                else if (TextUtils.isEmpty(stringFromView(binding!!.etLocation))) {
-                    return Utility.showEditTextError(
-                        binding!!.tilLocation,
-                        R.string.location
-                    )
-                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
-                    return Utility.showEditTextError(
-                        binding!!.tilTotalTransCost,
-                        R.string.total_trans_cost_val
-                    )
-                }
+
 
             }
             return true

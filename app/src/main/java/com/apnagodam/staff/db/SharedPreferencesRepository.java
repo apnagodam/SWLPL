@@ -79,6 +79,12 @@ public class SharedPreferencesRepository implements Tags {
         loginPrefEditor.putString(SESSION_TOKEN, sessionToken).commit();
     }
 
+    public static void logout(){
+        SharedPreferencesRepository.getDataManagerInstance().clear();
+        SharedPreferencesRepository.setIsUserName(false);
+        SharedPreferencesRepository.saveSessionToken("");
+
+    }
     public static String getSessionToken() {
         String value = loginSharedPreferences.getString(SESSION_TOKEN, null);
         if (value == null) {

@@ -18,7 +18,7 @@ import javax.inject.Inject
 class LabourViewModel @Inject constructor(val labourRepo: LabourRepo,application: Application):AndroidViewModel(application){
 
     var labourResponse = MutableLiveData<NetworkResult<AllLabourBookListResponse>>()
-    var labourDetailsUploadResponse = MutableLiveData<NetworkResult<LoginResponse>>()
+    var labourDetailsUploadResponse = MutableLiveData<NetworkResult<Map<String,Any>>>()
     fun getLabourList(limit:String,page:String,inOut:String,search:String) = viewModelScope.launch {
         labourRepo.getLabourList(limit,page,inOut,search).collect(){
             labourResponse.value = it

@@ -160,10 +160,7 @@ public class LocationUtils extends LocationCallback {
 
     public void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this.context, "android.permission.ACCESS_FINE_LOCATION") == 0 && ActivityCompat.checkSelfPermission(this.context, "android.permission.ACCESS_COARSE_LOCATION") == 0) {
-           
-           
             LocationServices.getFusedLocationProviderClient(this.context).requestLocationUpdates(this.mLocationRequest, this, (Looper) null);
-          
             Log.d("LocationRequestService", "Location update started ..............: ");
         }
     }

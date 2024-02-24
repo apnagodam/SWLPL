@@ -3,6 +3,8 @@ package com.apnagodam.staff.Network.repository
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
+import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.module.TransporterDetailsPojo
 import com.apnagodam.staff.module.TransporterListPojo
@@ -33,5 +35,12 @@ class TuckBookRepo @Inject constructor(var apiService: ApiService):BaseApiRespon
         return flow {
             emit(safeApiCall { apiService.getTransporterDetails(transport_id) })
         }.flowOn(Dispatchers.IO)
+    }
+    suspend fun  uploadTruckDetails(uploadTruckDetailsPostData: UploadTruckDetailsPostData):Flow<NetworkResult<LoginResponse>>{
+        return  flow {
+            emit(safeApiCall {
+                apiService.uploadTruckDetails(uploadTruckDetailsPostData)
+            })
+        }
     }
 }

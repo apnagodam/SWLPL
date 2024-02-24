@@ -16,6 +16,9 @@ public class DriverOtpResponse {
         @Expose
         private String otp;
 
+        @SerializedName("type")
+        private String type;
+
         public String getStatus() {
             return status;
         }
@@ -41,4 +44,11 @@ public class DriverOtpResponse {
         }
 
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

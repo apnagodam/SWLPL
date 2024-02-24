@@ -1,14 +1,18 @@
 package com.apnagodam.staff
 
 import android.app.Application
-import androidx.multidex.MultiDexApplication
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import dagger.hilt.android.HiltAndroidApp
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+
+
 @HiltAndroidApp
 class ApnaGodamApp : Application() { override fun onCreate() {
         super.onCreate()
+
         app = this
         ViewPump.init(ViewPump.builder()
                 .addInterceptor(CalligraphyInterceptor(

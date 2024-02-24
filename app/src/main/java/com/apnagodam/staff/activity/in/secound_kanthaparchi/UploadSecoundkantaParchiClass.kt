@@ -1,17 +1,21 @@
 package com.apnagodam.staff.activity.`in`.secound_kanthaparchi
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Geocoder
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
@@ -21,11 +25,17 @@ import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.apnagodam.staff.utils.Validationhelper
 import com.fxn.pix.Options
+import com.google.android.gms.location.LocationServices
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -33,6 +43,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -56,19 +67,55 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     var InTrackID = 0
     val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     var InBardhanaType: String? = "null"
-    var InBardhanaID =1
+    var InBardhanaID = 1
     var kantaId = 0;
     var kantaName = ""
     var kantaParchiNumber = ""
     var isFirstUpload = true;
+    var lat = 0.0
+    var long = 0.0
+
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
 
     override fun setUp() {
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
+
+        binding!!.tvTitle.setText("Upload Second Kanta Parchi")
         binding!!.etKantaParchiNum.isEnabled = false
         binding!!.llOldBags.visibility = View.GONE
         binding!!.llBags.visibility = View.VISIBLE
+
         allCases = intent.getSerializableExtra("all_cases") as SecoundkanthaParchiListResponse.Datum
         CaseID = allCases.caseId
         val bundle = intent.getBundleExtra(BUNDLE)
@@ -85,11 +132,10 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         }
 
 
-        if(isFirstUpload==true){
+        if (isFirstUpload == true) {
             binding!!.llKanta.visibility = View.GONE
             binding!!.cardTruck2.visibility = View.VISIBLE
-        }
-        else{
+        } else {
             binding!!.cardTruck2.visibility = View.GONE
             binding!!.llKanta.visibility = View.VISIBLE
             binding!!.llBags.visibility = View.VISIBLE
@@ -103,7 +149,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        binding!!.etKantaParchi.setText(it.data.data.kantaName.toString())
+                        binding!!.tilKantaParchi.setText(it.data.data.kantaName.toString())
                         binding!!.etKantaParchiNum.setText(it.data.data.kantaParchiNumber.toString())
 
                         kantaParchiNumber = it.data.data.kantaParchiNumber
@@ -212,56 +258,27 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         }
 
 
-        if(isFirstUpload){
-           if(fileTruck2!=null){
-               kantaParchiViewModel.uploadSecondKantaParchi(
-                   UploadSecoundkantaParchiPostData(
-                       CaseID,
-                       stringFromView(
-                           binding!!.notes
-                       ),
-                       KanthaImage, truckImageImage, truck2Image,
-                       binding!!.etNoOfBags.text.toString(),
-                       binding!!.etWeightQt.text.toString(),
-                       binding!!.etNoOfDispleasedBags.text.toString(),
-                       kantaId, kantaName, kantaParchiNumber,InTrackID,InBardhanaID
-                   )
-               )
-
-               kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
-                   when (it) {
-                       is NetworkResult.Error -> {
-
-                       }
-
-                       is NetworkResult.Loading -> {
-
-                       }
-
-                       is NetworkResult.Success -> {
-                           Utility.showAlertDialog(
-                               this@UploadSecoundkantaParchiClass,
-                               getString(R.string.alert),
-                               it.data!!.getMessage()
-                           ) { startActivityAndClear(SecoundkanthaParchiListingActivity::class.java) }
-                       }
-                   }
-               }
-           }
-        }
-        else{
-            if (binding!!.etWeight.text!!.isNotEmpty() && binding!!.etNoOfBags.text!!.isNotEmpty() && binding!!.etNoOfDispleasedBags.text!!.isNotEmpty()) {
+        if (isFirstUpload) {
+            if (fileTruck2 != null) {
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
                         stringFromView(
                             binding!!.notes
                         ),
-                        KanthaImage, truckImageImage, truck2Image,
+                        KanthaImage,
+                        truckImageImage,
+                        truck2Image,
                         binding!!.etNoOfBags.text.toString(),
-                        binding!!.etWeightQt.text.toString(),
+                        binding!!.etWeight.text.toString(),
+                        binding!!.etAvgWeight.text.toString(),
+                        binding!!.etOldWeightQt.text.toString(),
                         binding!!.etNoOfDispleasedBags.text.toString(),
-                        kantaId, kantaName, kantaParchiNumber,InTrackID,InBardhanaID
+                        kantaId,
+                        kantaName,
+                        kantaParchiNumber,
+                        InTrackID,
+                        InBardhanaID
                     )
                 )
 
@@ -276,23 +293,70 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         }
 
                         is NetworkResult.Success -> {
-                            Utility.showAlertDialog(
-                                this@UploadSecoundkantaParchiClass,
-                                getString(R.string.alert),
-                                it.data!!.getMessage()
-                            ) { startActivityAndClear(SecoundkanthaParchiListingActivity::class.java) }
+                            if (it.data!!.status == 1) {
+                                startActivityAndClear(SecoundkanthaParchiListingActivity::class.java)
+                                showToast(it.data!!.message)
+                            } else {
+                                Utility.showAlertDialog(
+                                    this@UploadSecoundkantaParchiClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) {
+
+                                }
+                            }
+
                         }
                     }
                 }
-            } else {
-                if (binding!!.etWeightQt.text!!.isEmpty())
-                    binding!!.etWeightQt.setError("Field cant be empty")
-
-                if (binding!!.etNoOfBags.text!!.isEmpty())
-                    binding!!.etNoOfBags.setError("Field cant be empty")
-                if (binding!!.etNoOfDispleasedBags.text!!.isEmpty())
-                    binding!!.etNoOfDispleasedBags.setError("Field cant be empty")
             }
+        } else {
+            if (validateFields()) {
+
+                kantaParchiViewModel.uploadSecondKantaParchi(
+                    UploadSecoundkantaParchiPostData(
+                        CaseID,
+                        stringFromView(
+                            binding!!.notes
+                        ),
+                        KanthaImage, truckImageImage, truck2Image,
+                        binding!!.etNoOfBags.text.toString(),
+                        binding!!.etWeight.text.toString(),
+                        binding!!.etAvgWeight.text.toString(),
+                        binding!!.etOldWeightQt.text.toString(),
+                        binding!!.etNoOfDispleasedBags.text.toString(),
+                        kantaId, kantaName, kantaParchiNumber, InTrackID, InBardhanaID
+                    )
+                )
+
+                kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> {
+
+                        }
+
+                        is NetworkResult.Loading -> {
+
+                        }
+
+                        is NetworkResult.Success -> {
+                            if (it.data!!.status == 1) {
+                                startActivityAndClear(SecoundkanthaParchiListingActivity::class.java)
+                                showToast(it.data!!.message)
+                            } else {
+                                Utility.showAlertDialog(
+                                    this@UploadSecoundkantaParchiClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
 //        if (allCases.file3 != null) {
@@ -347,13 +411,8 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     }
 
     override fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+        photoEasy.startActivityForResult(this)
 
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
 
     }
 
@@ -381,44 +440,63 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (resultCode == Activity.RESULT_OK) {
-                if (requestCode == REQUEST_CAMERA) {
-                    if (firstKanthaFile) {
-                        val imageBitmap = data?.extras?.get("data") as Bitmap
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
 
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
+                if (thumbnail != null) {
+                    if (firstKanthaFile) {
+
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(imageBitmap).toString()))
+                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
                         val uri = Uri.fromFile(fileKantha)
                         firstkantaParchiFile = uri.toString()
                         binding!!.KanthaImage.setImageURI(uri)
 
                     } else if (truckImage) {
-                        val imageBitmap = data?.extras?.get("data") as Bitmap
+
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
+
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck = File(compressImage(bitmapToFile(imageBitmap).toString()))
+                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
                         val uri = Uri.fromFile(fileTruck)
                         TruckImage = uri.toString()
                         binding!!.TruckImage.setImageURI(uri)
                     } else if (truckImage2) {
-                        val imageBitmap = data?.extras?.get("data") as Bitmap
+
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck2 = File(compressImage(bitmapToFile(imageBitmap).toString()))
+                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
                         val uri = Uri.fromFile(fileTruck2)
                         TruckImage2 = uri.toString()
                         binding!!.truckImage2.setImageURI(uri)
                     }
                 }
             }
-        } catch (e: Exception) {
-            showToast(e.message)
-        }
+
+        })
+
     }
 
     /*  @Override
@@ -468,6 +546,27 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         }
     }
 */
+    fun validateFields(): Boolean {
+        if (Validationhelper().fieldEmpty(binding!!.tilWeight)) {
+            binding!!.tilWeight.error = "This Field cannot be empty"
+            return false
+        }
+        if (Validationhelper().fieldEmpty(binding!!.tilNoOfBags)) {
+            binding!!.tilNoOfBags.error = "This Field cannot be empty"
+            return false
+        }
+        if (fileTruck == null) {
+            showToast("Please upload truck file")
+            return false
+        }
+        if (fileKantha == null) {
+            showToast("Please upload kanta file")
+            return false
+        }
+
+        return true
+    }
+
     override fun onCheckedChanged(radioGroup: RadioGroup, i: Int) {
         if (radioGroup.checkedRadioButtonId == R.id.radioSeller) {
             InTrackType = "Yes"

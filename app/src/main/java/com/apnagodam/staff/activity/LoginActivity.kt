@@ -57,20 +57,10 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     }
 
      override fun setUp() {
-        val intent: Intent = getIntent()
-        settingScreen = intent.getExtras()?.getString("setting")!!
-        if (settingScreen.equals("changeMobileNumber", ignoreCase = true)) {
-            binding?.tvBack?.setText(" ")
-        }
+         binding!!.btnLogin.setOnClickListener { v -> login }
 
 
-        if (settingScreen.equals("changeMobileNumber", ignoreCase = true)) {
-            binding!!.tvBack.setOnClickListener(View.OnClickListener { finish() })
-        } else {
-            binding!!.tvBack.setOnClickListener(View.OnClickListener { fofrlang() })
-        }
-        binding!!.btnLogin.setOnClickListener { v -> login }
-    }
+     }
 
     private fun fofrlang() {
         startActivityForResult(
@@ -112,6 +102,7 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                         showDialog()
                     }
                     is NetworkResult.Success ->{
+
                         hideDialog()
                         Toast.makeText(this@LoginActivity, it.data!!.getMessage(), Toast.LENGTH_LONG)
                                 .show()

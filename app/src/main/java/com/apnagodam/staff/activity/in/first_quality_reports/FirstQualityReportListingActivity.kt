@@ -18,6 +18,7 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.FirstQualityReportAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.FirstQuilityReportListResponse
@@ -61,8 +62,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
-            finish()
-            // startActivityAndClear(StaffDashBoardActivity.class);
+             startActivityAndClear(StaffDashBoardActivity::class.java)
         }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
@@ -104,8 +104,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
 
     override fun onBackPressed() {
         super.onBackPressed()
-        finish()
-        //        startActivityAndClear(StaffDashBoardActivity.class);
+                startActivityAndClear(StaffDashBoardActivity::class.java)
     }
 
     private fun setAdapter() {

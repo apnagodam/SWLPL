@@ -177,7 +177,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                                         Utility.showAlertDialog(
                                             this@OUTLabourBookUploadClass,
                                             getString(R.string.alert),
-                                            it.data.message
+                                            it.data.get("message").toString()
                                         ) { startActivityAndClear(OUTLabourBookListingActivity::class.java) }
                                     }
                                 }

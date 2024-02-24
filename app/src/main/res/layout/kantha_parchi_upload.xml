@@ -45,6 +45,7 @@
                             android:padding="8dp" />
 
                         <TextView
+                            android:id="@+id/tvTitle"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
@@ -306,8 +307,8 @@
                                 android:id="@+id/cardKantaOld"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:visibility="gone"
                                 android:layout_margin="@dimen/_5sdp"
+                                android:visibility="gone"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintWidth_default="wrap">
@@ -374,7 +375,7 @@
                                                 android:layout_marginTop="@dimen/_10sdp"
                                                 android:gravity="center"
                                                 android:maxLines="7"
-                                                android:text="Upload Old Kanta Parchi file"
+                                                android:text="Upload Old Kanta Parchi Image"
                                                 android:textColor="@color/dark_gray_shade" />
 
                                         </LinearLayout>
@@ -383,33 +384,33 @@
 
                             </androidx.cardview.widget.CardView>
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etKantaParchiNum"
+                            <com.google.android.material.textfield.TextInputLayout
                                 style="@style/TextInputStyle"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="@dimen/_10sdp"
-                                android:background="@drawable/white_back_black_border"
-                                android:editable="true"
-                                android:hint="@string/kanta_parchi_number"
-                                android:imeOptions="actionDone"
-                                android:lines="1"
-                                android:padding="@dimen/_10sdp"
-                                android:textSize="@dimen/_12ssp" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etKantaParchi"
-                                style="@style/TextStyleNormal"
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etKantaParchiNum"
+                                    style="@style/TextStyleNormal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginVertical="@dimen/_10sdp"
+                                    android:editable="true"
+                                    android:hint="@string/kanta_parchi_number"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
+                                    android:lines="1"
+                                    android:padding="@dimen/_10sdp"
+                                    android:textSize="@dimen/_12ssp" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <Button
+                                android:id="@+id/tilKantaParchi"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginVertical="@dimen/_10sdp"
-                                android:background="@drawable/white_back_black_border"
-                                android:editable="false"
-                                android:hint="@string/kanta_name"
-                                android:imeOptions="actionDone"
-                                android:lines="1"
-                                android:padding="@dimen/_10sdp"
-                                android:textSize="@dimen/_12ssp" />
+                                android:text="Select Dharam Kanta"
+                                android:layout_height="wrap_content"/>
+
 
                             <LinearLayout
                                 android:id="@+id/llBags"
@@ -418,9 +419,9 @@
                                 android:orientation="vertical">
 
                                 <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilWeight"
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
-
                                     android:layout_height="wrap_content">
 
                                     <com.google.android.material.textfield.TextInputEditText
@@ -429,14 +430,16 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
-                                        android:hint="Weight(Qtl)"
+                                        android:hint="Weight(Qtl)*"
                                         android:imeOptions="actionNext"
                                         android:inputType="number"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
+
                                 <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilNoOfBags"
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
 
@@ -448,8 +451,27 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
-                                        android:hint="Total No of Bags*"
+                                        android:hint="No of Bags*"
                                         android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:id="@+id/til_avg_weight"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/et_avg_weight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Avg Weight (Kg)"
+                                        android:imeOptions="actionDone"
                                         android:inputType="number"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
@@ -468,13 +490,14 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
-                                        android:hint="Total No of Displeased Bags*"
+                                        android:hint="No of Displeased Bags"
                                         android:imeOptions="actionDone"
                                         android:inputType="number"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -515,8 +538,8 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginLeft="@dimen/_6sdp"
-                                            android:checked="true"
                                             android:buttonTint="@color/colorPrimary"
+                                            android:checked="true"
                                             android:text="@string/no"
                                             android:textColor="@android:color/black"
                                             android:textSize="@dimen/_18ssp" />
@@ -570,8 +593,8 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginLeft="@dimen/_6sdp"
                                             android:buttonTint="@color/colorPrimary"
-                                            android:text="@string/no"
                                             android:checked="true"
+                                            android:text="@string/no"
                                             android:textColor="@android:color/black"
                                             android:textSize="@dimen/_18ssp" />
                                     </RadioGroup>
@@ -591,16 +614,16 @@
                                 android:visibility="gone">
 
                                 <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/etKantaOldParchiNum"
-                                        style="@style/TextInputStyle"
+                                        style="@style/TextStyleNormal"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
-                                        android:background="@drawable/white_back_black_border"
                                         android:editable="true"
                                         android:hint="Old Kanta Parchi Number"
                                         android:imeOptions="actionDone"
@@ -649,10 +672,11 @@
                                         android:padding="@dimen/_10sdp"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
+
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
-
+                                    android:visibility="gone"
                                     android:layout_height="wrap_content">
 
                                     <com.google.android.material.textfield.TextInputEditText
@@ -694,7 +718,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginLeft="@dimen/_10sdp"
                                     android:layout_marginTop="@dimen/_5sdp"
-                                    android:text="@string/truck_file"
+                                    android:text="@string/truck_file_start"
                                     android:textColor="@color/colorBlackLight"
                                     android:textSize="@dimen/_16ssp"
                                     app:layout_constraintEnd_toEndOf="parent"

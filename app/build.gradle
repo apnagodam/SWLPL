@@ -96,6 +96,7 @@ dependencies {
     def hiltLifeCycleVersion = '1.0.0-alpha03'
     def coilVersion = '1.2.2'
 
+    implementation 'com.github.thorny84:PhotoEasy:1.0.2'
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1"

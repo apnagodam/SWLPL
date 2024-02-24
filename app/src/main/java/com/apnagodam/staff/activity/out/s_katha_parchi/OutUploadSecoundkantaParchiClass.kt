@@ -139,7 +139,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
             UploadSecoundkantaParchiPostData(
                 CaseID, stringFromView(
                     binding!!.notes
-                ), KanthaImage, truckImageImage,"","","","",0,"","",0,0
+                ), KanthaImage, truckImageImage,"","","","","","",0,"","",0,0
             )
         )
 

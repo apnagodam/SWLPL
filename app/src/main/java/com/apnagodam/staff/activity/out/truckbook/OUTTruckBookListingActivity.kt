@@ -26,9 +26,10 @@ import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-
+@AndroidEntryPoint
 class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var truckBookAdapter: OUTTruckBookAdapter? = null
     private var pageOffset = 1

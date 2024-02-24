@@ -1,16 +1,20 @@
 package com.apnagodam.staff.activity.`in`.first_kantaparchi
 
+import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Geocoder
 import android.net.Uri
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
@@ -18,12 +22,17 @@ import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
+import com.google.android.gms.location.LocationServices
 import com.leo.searchablespinner.SearchableSpinner
 import com.leo.searchablespinner.interfaces.OnItemSelectListener
+import com.thorny.photoeasy.OnPictureReady
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,6 +41,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -60,14 +70,48 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var kantaId = 0
     var kantaName = "";
     var isFirstUpload = true;
+    var lat = 0.0
+    var long = 0.0
 
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
 
     override fun setUp() {
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            lat = it.latitude
+            long = it.longitude
+
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
+
+            }
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        }
+
+        binding!!.tvTitle.setText("Upload First Kanta Parchi")
         allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
-        UserName = allCases.userPriceFname
+        UserName = allCases.custFname
         CaseID = allCases.caseId
         dharamKantas = arrayListOf()
         searchableSpinner = SearchableSpinner(this)
@@ -82,6 +126,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         binding!!.llBags.visibility = View.GONE
 
         if (allCases.file3 == null) {
+            isFirstUpload = true
 
         } else {
             isFirstUpload = false;
@@ -89,13 +134,12 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         }
 
 
-        if(isFirstUpload==true){
+        if (isFirstUpload) {
             binding!!.llKanta.visibility = View.GONE
             binding!!.llOldBags.visibility = View.GONE
             binding!!.cardTruck2.visibility = View.VISIBLE
 
-        }
-        else{
+        } else {
             binding!!.llKanta.visibility = View.VISIBLE
             binding!!.llOldBags.visibility = View.VISIBLE
             binding!!.cardTruck2.visibility = View.GONE
@@ -130,7 +174,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                                     position: Int,
                                     selectedString: String
                                 ) {
-                                    binding!!.etKantaParchi.setText(selectedString)
+                                    binding!!.tilKantaParchi.setText(selectedString)
                                     kantaId = it.data.dharemKantas[position].id
                                 }
                             }
@@ -156,7 +200,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 FirstkanthaParchiListingActivity::class.java
             )
         }
-        binding!!.etKantaParchi.setOnClickListener {
+        binding!!.tilKantaParchi.setOnClickListener {
             searchableSpinner.show()
         }
         binding!!.btnLogin.setOnClickListener {
@@ -277,8 +321,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             oldKanthaImage = "" + Utility.transferImageToBase64(fileKantaOld)
         }
         //else {
-        if(isFirstUpload){
-            if(fileTruck2!=null){
+        if (isFirstUpload) {
+            if (fileTruck2 != null) {
                 kantaParchiViewModel.uploadFirstKantaParchi(
                     UploadFirstkantaParchiPostData(
                         CaseID,
@@ -305,18 +349,23 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            Utility.showAlertDialog(
-                                this@UploadFirstkantaParchiClass,
-                                getString(R.string.alert),
-                                it.data!!.getMessage()
-                            ) { startActivityAndClear(FirstkanthaParchiListingActivity::class.java) }
+                            if (it.data!!.status == 0) {
+                                Utility.showAlertDialog(
+                                    this@UploadFirstkantaParchiClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) { }
+                            } else {
+                                startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
+                                showToast(it.data.message)
+                            }
+
                         }
                     }
                 }
             }
-        }
-        else {
-            if (binding!!.etKantaParchi.text!!.isEmpty()) {
+        } else {
+            if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
                 showToast("Please select kanta name")
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
                 binding!!.etKantaParchiNum.setError("This field can't be empty")
@@ -346,11 +395,17 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            Utility.showAlertDialog(
-                                this@UploadFirstkantaParchiClass,
-                                getString(R.string.alert),
-                                it.data!!.getMessage()
-                            ) { startActivityAndClear(FirstkanthaParchiListingActivity::class.java) }
+                            if (it.data!!.status == 0) {
+                                Utility.showAlertDialog(
+                                    this@UploadFirstkantaParchiClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) { }
+                            } else {
+                                startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
+                                showToast(it.data.message)
+                            }
+
                         }
                     }
                 }
@@ -362,64 +417,86 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (requestCode == REQUEST_CAMERA) {
-                if (firstKanthaFile) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    firstKanthaFile = false
-                    truckImage = false
-                    truckImage2 = false
-                    fileKantha = File(compressImage(bitmapToFile(imageBitmap).toString()))
-                    val uri = Uri.fromFile(fileKantha)
-                    firstkantaParchiFile = uri.toString()
-                    binding!!.KanthaImage.setImageURI(uri)
 
-                } else if (firstOldKantaFile) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    firstOldKantaFile = false
-                    firstKanthaFile = false
-                    truckImage = false
-                    truckImage2 = false
-                    fileKantha = File(compressImage(bitmapToFile(imageBitmap).toString()))
-                    val uri = Uri.fromFile(fileKantha)
-                    firstOldKantaParchiFile = uri.toString()
-                    binding!!.KanthaImageOld.setImageURI(uri)
+        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+            override fun onFinish(thumbnail: Bitmap?) {
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
 
-                } else if (truckImage) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    firstKanthaFile = false
-                    truckImage = false
-                    truckImage2 = false
-                    fileTruck = File(compressImage(bitmapToFile(imageBitmap).toString()))
-                    val uri = Uri.fromFile(fileTruck)
-                    TruckImage = uri.toString()
-                    binding!!.TruckImage.setImageURI(uri)
-                } else if (truckImage2) {
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    firstKanthaFile = false
-                    firstOldKantaFile = false
-                    truckImage = false
-                    truckImage2 = false
-                    fileTruck2 = File(compressImage(bitmapToFile(imageBitmap).toString()))
-                    val uri = Uri.fromFile(fileTruck2)
-                    TruckImage2 = uri.toString()
-                    binding!!.truckImage2.setImageURI(uri)
-                }
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
+               if(thumbnail!=null){
+                   if (firstKanthaFile) {
+
+                       var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                           File(compressImage(bitmapToFile(thumbnail!!).path)),
+                           stampMap
+                       )
+
+                       firstKanthaFile = false
+                       truckImage = false
+                       truckImage2 = false
+                       fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                       val uri = Uri.fromFile(fileKantha)
+                       firstkantaParchiFile = uri.toString()
+                       binding!!.KanthaImage.setImageURI(uri)
+
+                   } else if (firstOldKantaFile) {
+
+                       var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                           File(compressImage(bitmapToFile(thumbnail!!).path)),
+                           stampMap
+                       )
+                       firstOldKantaFile = false
+                       firstKanthaFile = false
+                       truckImage = false
+                       truckImage2 = false
+                       fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                       val uri = Uri.fromFile(fileKantha)
+                       firstOldKantaParchiFile = uri.toString()
+                       binding!!.KanthaImageOld.setImageURI(uri)
+
+                   } else if (truckImage) {
+
+                       var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                           File(compressImage(bitmapToFile(thumbnail!!).path)),
+                           stampMap
+                       )
+                       firstKanthaFile = false
+                       truckImage = false
+                       truckImage2 = false
+                       fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                       val uri = Uri.fromFile(fileTruck)
+                       TruckImage = uri.toString()
+                       binding!!.TruckImage.setImageURI(uri)
+                   } else if (truckImage2) {
+
+                       var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                           File(compressImage(bitmapToFile(thumbnail!!).path)),
+                           stampMap
+                       )
+                       firstKanthaFile = false
+                       firstOldKantaFile = false
+                       truckImage = false
+                       truckImage2 = false
+                       fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                       val uri = Uri.fromFile(fileTruck2)
+                       TruckImage2 = uri.toString()
+                       binding!!.truckImage2.setImageURI(uri)
+                   }
+
+               }
+
             }
-        } catch (e: Exception) {
-        }
+
+        })
 
     }
 
 
     override fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
-
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }
+        photoEasy.startActivityForResult(this)
 
     }
 

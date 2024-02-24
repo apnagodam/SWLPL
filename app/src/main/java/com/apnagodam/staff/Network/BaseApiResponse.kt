@@ -1,5 +1,8 @@
 package com.apnagodam.staff.Network
 
+import android.content.Intent
+import com.apnagodam.staff.activity.LoginActivity
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import retrofit2.Response
 
 
@@ -13,6 +16,7 @@ abstract class BaseApiResponse {
                     return NetworkResult.Success(body)
                 }
             }
+
             return error("${response.code()} ${response.message()}")
         } catch (e: Exception) {
             return error(e.message ?: e.toString())

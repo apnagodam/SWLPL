@@ -120,6 +120,8 @@
     <string name="weight_kg">Enter Weight in KG *</string>
     <string name="vehicle_no">ENTER VEHICLE/TRUCK NO.</string>
     <string name="location">Enter Location *</string>
+    <string name="destination">Enter Source / Destination *</string>
+
     <string name="weight_quintal">Old Weight(Qtl)</string>
     <string name="gate_pass">Enter Gate Pass No. *</string>
     <string name="fpo_sub_useername">Enter FPO Sub User Name </string>
@@ -208,7 +210,7 @@
     <string name="wet_radio">2. Were some of the bags wet in Inward?</string>
     <string name="driver_name_validation">Enter Driver Name *</string>
     <string name="driver_phone_no_enter">Enter Driver Phone No *</string>
-    <string name="transport_rate_validation">Enter Transport Rate/KM *</string>
+    <string name="transport_rate_validation">Enter Transport Rate/Qtl *</string>
     <string name="min_weight_val">Enter Min Weight (Qtl.) *</string>
     <string name="max_weight_val">Enter Max Weight (Qtl.) *</string>
     <string name="turnaround_time_val">Enter Turnaround Time(In Hours) *</string>
@@ -242,10 +244,10 @@
     <string name="kanta_parchi">Kanta Parchi</string>
     <string name="kanta_parchi_number">Kanta Parchi Number</string>
     <string name="upload_kantha_parchi">Upload Kanta Parchi</string>
-    <string name="kanta_parchi_file">Kanta Parchi File *</string>
-    <string name="truck_image">Truck File *</string>
-    <string name="upload_kanta_parchi_file">Upload Kanta Parchi File</string>
-    <string name="upload_truck_image">Upload Truck File</string>
+    <string name="kanta_parchi_file">Kanta Parchi Image *</string>
+    <string name="truck_image">Truck Image *</string>
+    <string name="upload_kanta_parchi_file">Upload Kanta Parchi Image</string>
+    <string name="upload_truck_image">Upload Truck Image</string>
     // first Quality Reports
     <string name="f_quality_repots">First Quality Report</string>
     <string name="s_quality_repots">Second Quality Report</string>
@@ -278,15 +280,15 @@
         <item>Four-wheeler</item>
         <item>Other</item>
     </string-array>
-    <string name="reports_file">Reports File</string>
-    <string name="upload_reports_file">Upload Reports File</string>
-    <string name="commudity_file">Commodity File</string>
-    <string name="upload_commodity_file">Upload Commodity File</string>
+    <string name="reports_file">Reports Image</string>
+    <string name="upload_reports_file">Upload Reports Image</string>
+    <string name="commudity_file">Commodity Image</string>
+    <string name="upload_commodity_file">Upload Commodity Image</string>
     <string name="gate_pass_list">Gate Pass List</string>
-    <string name="gate_passs_file">Gate Pass File *</string>
+    <string name="gate_passs_file">Gate Pass Image *</string>
     <string name="bags_gatepass">No of Bags *</string>
     <string name="update_gate_pass">Update Gate Pass</string>
-    <string name="upload_gatepass_file">Upload Gate Pass File</string>
+    <string name="upload_gatepass_file">Upload Gate Pass Image</string>
     <string name="previous">Previous Page</string>
     <string name="next">Next Page</string>
     // spot sell contract form page
@@ -312,7 +314,9 @@
     <string name="enter_total">Enter Total</string>
     <string name="enter_location">Enter Location</string>
     <string name="start_meter_image">Start Meter Image</string>
-    <string name="truck_file">Truck File</string>
+    <string name="truck_file">Truck Image</string>
+    <string name="truck_file_start">Case Start Truck Image</string>
+
     <string name="first_kanta_parchi">First Kanta Parchi</string>
     <string name="end_meter_image">End Meter Image</string>
     <string name="approved_by">Approved By</string>
