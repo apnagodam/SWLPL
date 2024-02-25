@@ -207,7 +207,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             qualitReportViewModel.getSecondQualityListing("10","1","IN","")
-            onBackPressedDispatcher.onBackPressed()
+           finish()
 
         }
         binding!!.btnSubmit.setOnClickListener {
@@ -402,11 +402,10 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
-                        if (it.data!!.status == 1) {
+                        if (it.data!!.status == "1") {
                             showToast(it.data.message)
-                            startActivityAndClear(
-                                SecoundQualityReportListingActivity::class.java
-                            )
+                            qualitReportViewModel.getSecondQualityListing("10","1","IN","")
+                            finish()
                         } else {
                             Utility.showAlertDialog(
                                 this@UploadSecoundQualtityReportsClass,
@@ -455,6 +454,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(SecoundQualityReportListingActivity::class.java)
+        qualitReportViewModel.getSecondQualityListing("10","1","IN","")
+        finish()
     }
 }

@@ -178,85 +178,6 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 }
             }
 
-        // Employee listing
-        object : Thread() {
-            override fun run() {
-                try {
-                    runOnUiThread(Runnable {
-                        object : Thread() {
-                            override fun run() {
-                                for (i in SharedPreferencesRepository.getDataManagerInstance().employee.indices) {
-                                    if (SharedPreferencesRepository.getDataManagerInstance().employee[i].designationId.equals(
-                                            "6",
-                                            ignoreCase = true
-                                        ) ||
-                                        SharedPreferencesRepository.getDataManagerInstance().employee[i].designationId.equals(
-                                            "7",
-                                            ignoreCase = true
-                                        )
-                                    ) {
-                                        LeadGenerateOtherName!!.add(
-                                            (SharedPreferencesRepository.getDataManagerInstance().employee[i].firstName + " " +
-                                                    SharedPreferencesRepository.getDataManagerInstance().employee[i].lastName +
-                                                    "(" + SharedPreferencesRepository.getDataManagerInstance().employee[i].empId + ")")
-                                        )
-                                    }
-                                }
-                            }
-                        }.start()
-                    })
-                    sleep(30)
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
-                }
-            }
-        }.start()
-        spinnerEmployeeAdpter = ArrayAdapter(
-            this,
-            R.layout.multiline_spinner_item,
-            (LeadGenerateOtherName)!!
-        )
-
-
-        spinnerEmployeeAdpter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-        // Set Adapter in the spinner
-        binding!!.spinnerLeadConvertOther.adapter = spinnerEmployeeAdpter
-        binding!!.spinnerLeadConvertOther.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    // selected item in the list
-                    if (position != 0) {
-                        val EmpID: String = parentView.getItemAtPosition(position).toString()
-                        for (i in SharedPreferencesRepository.getDataManagerInstance().employee.indices) {
-                            if (EmpID.equals(
-                                    SharedPreferencesRepository.getDataManagerInstance().employee.get(
-                                        i
-                                    ).firstName + " " + SharedPreferencesRepository.getDataManagerInstance().employee.get(
-                                        i
-                                    ).lastName + "(" + SharedPreferencesRepository.getDataManagerInstance().employee.get(
-                                        i
-                                    ).empId + ")", ignoreCase = true
-                                )
-                            ) {
-                                selectConvertOther =
-                                    SharedPreferencesRepository.getDataManagerInstance().employee.get(
-                                        i
-                                    ).userId.toString()
-                            }
-                        }
-                    }
-                }
-
-                override fun onNothingSelected(parentView: AdapterView<*>?) {
-                    // your code here
-                }
-            }
-
 
         spinnerTeerminalAdpter =
 
@@ -431,6 +352,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     }
 
     fun verifyOtp() {
+        showDialog()
         var stackId = otpData.get("stack_id").toString()
         var otp = otpData.get("otp").toString()
         var driverNumber = otpData.get("driver_number").toString()
@@ -439,7 +361,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-
+            hideDialog()
                 }
 
                 is NetworkResult.Loading -> {
@@ -447,10 +369,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 }
 
                 is NetworkResult.Success -> {
+                    hideDialog()
                     if (it.data!!.type == "Match") {
                         binding!!.btnCreateeCase.visibility = View.VISIBLE
                         binding!!.verifyOtp.visibility = View.GONE
                         showToast(it.data!!.message)
+                        verifyAndCreateCaseId()
                     }
 
                 }
@@ -700,7 +624,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
                     is NetworkResult.Success -> {
                         if (it.data != null) {
-                            if (it.data.status == 1) {
+                            if (it.data.status == "1") {
                                 Userdata = it.data.users as ArrayList<AllUserListPojo.User>
                                 for (i in Userdata.indices) {
                                     CustomerName!!.add(Userdata.get(i).fname + "(" + Userdata.get(i).phone)
@@ -731,124 +655,109 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         when (view.id) {
             R.id.iv_close -> onBackPressedDispatcher.onBackPressed()
             R.id.tv_done -> startActivity(CaseListingActivity::class.java)
-            R.id.btn_createe_case -> if (isValid) {
-
-                if (TerminalID == null) {
-                    Toast.makeText(
-                        this@CaseIDGenerateClass,
-                        resources.getString(R.string.terminal_name),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (selectInOUt == null) {
-                    Toast.makeText(
-                        this@CaseIDGenerateClass,
-                        resources.getString(R.string.select_in_out),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (seleectCoustomer == null) {
-                    Toast.makeText(
-                        this@CaseIDGenerateClass,
-                        resources.getString(R.string.select_coustomer),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (commudityID == null) {
-                    Toast.makeText(
-                        this@CaseIDGenerateClass,
-                        resources.getString(R.string.commudity_name),
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else if (stackID == null) {
-                    Toast.makeText(
-                        this@CaseIDGenerateClass,
-                        "Select Stack Number",
-                        Toast.LENGTH_LONG
-                    ).show()
-                } else {
-                    Utility.showDecisionDialog(
-                        this@CaseIDGenerateClass,
-                        getString(R.string.alert),
-                        "Are You Sure to Submit?",
-                        object : Utility.AlertCallback {
-                            override fun callback() {
-                                showDialog()
-
-                                val userDetails =
-                                    SharedPreferencesRepository.getDataManagerInstance().user
-                                if (selectInOUt.equals("OUT", ignoreCase = true)) {
-                                    selectPurpose = "Self Withdrawal"
-                                } else {
-                                    selectPurpose = "For Storage"
-                                }
-
-                                var  createCaseIDPostData = CreateCaseIDPostData(
-                                    TerminalID,
-                                    selectInOUt,
-                                    seleectCoustomer,
-                                    commudityID,
-                                    "",
-                                    stackID,
-                                    stringFromView(binding!!.etCustomerBags),
-                                    stringFromView(binding!!.etCustomerWeight),
-                                    stringFromView(
-                                        binding!!.etCustomerWeightQuantal
-                                    ),
-                                    stringFromView(binding!!.etCustomerVehicle),
-                                    stringFromView(binding!!.etSpotToken),
-                                )
-
-                                createCaseIDPostData
-                                showDialog()
-                                caseIdViewModel.doCreateCaseId(
-                                    commudityID.toString(),
-                                    seleectCoustomer.toString(),
-                                    selectInOUt.toString(),
-                                    stackID.toString(),
-                                    binding!!.etCustomerBags.text.toString(),
-                                    binding!!.etCustomerWeight.text.toString(),
-                                    binding!!.etCustomerVehicle.text.toString(),
-                                    stringFromView(
-                                        binding!!.etCustomerWeightQuantal
-                                    ),
-                                    TerminalID.toString()
-
-
-                                )
-
-                                caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
-                                {
-                                    when (it) {
-                                        is NetworkResult.Error -> {
-                                            hideDialog()
-                                        }
-                                        is NetworkResult.Loading -> {}
-                                        is NetworkResult.Success -> {
-                                            if (it.data != null) {
-                                                if (it.data.status == 1) {
-                                                    startActivityAndClear(
-                                                        CaseListingActivity::class.java
-                                                    )
-                                                    showToast(it.data.message)
-                                                } else {
-                                                    startActivityAndClear(
-                                                        CaseListingActivity::class.java
-                                                    )
-                                                    showToast(it.data.message)
-                                                }
-
-
-                                            }
-                                            hideDialog()
-                                        }
-                                    }
-                                }
-
-                            }
-                        })
-                }
-            }
+            R.id.btn_createe_case ->verifyAndCreateCaseId()
         }
     }
 
+    fun verifyAndCreateCaseId(){
+        if (isValid) {
+
+            if (TerminalID == null) {
+                Toast.makeText(
+                    this@CaseIDGenerateClass,
+                    resources.getString(R.string.terminal_name),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else if (selectInOUt == null) {
+                Toast.makeText(
+                    this@CaseIDGenerateClass,
+                    resources.getString(R.string.select_in_out),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else if (seleectCoustomer == null) {
+                Toast.makeText(
+                    this@CaseIDGenerateClass,
+                    resources.getString(R.string.select_coustomer),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else if (commudityID == null) {
+                Toast.makeText(
+                    this@CaseIDGenerateClass,
+                    resources.getString(R.string.commudity_name),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else if (stackID == null) {
+                Toast.makeText(
+                    this@CaseIDGenerateClass,
+                    "Select Stack Number",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                var  createCaseIDPostData = CreateCaseIDPostData(
+                    TerminalID,
+                    selectInOUt,
+                    seleectCoustomer,
+                    commudityID,
+                    "",
+                    stackID,
+                    stringFromView(binding!!.etCustomerBags),
+                    stringFromView(binding!!.etCustomerWeight),
+                    stringFromView(
+                        binding!!.etCustomerWeightQuantal
+                    ),
+                    stringFromView(binding!!.etCustomerVehicle),
+                    stringFromView(binding!!.etSpotToken),
+                )
+
+                createCaseIDPostData
+                showDialog()
+                caseIdViewModel.doCreateCaseId(
+                    commudityID.toString(),
+                    seleectCoustomer.toString(),
+                    selectInOUt.toString(),
+                    stackID.toString(),
+                    binding!!.etCustomerBags.text.toString(),
+                    binding!!.etCustomerWeight.text.toString(),
+                    binding!!.etCustomerVehicle.text.toString(),
+                    stringFromView(
+                        binding!!.etCustomerWeightQuantal
+                    ),
+                    TerminalID.toString()
+
+
+                )
+
+                caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
+                {
+                    when (it) {
+                        is NetworkResult.Error -> {
+                            hideDialog()
+                        }
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
+                            if (it.data != null) {
+                                if (it.data.status == "1") {
+                                    startActivityAndClear(
+                                        CaseListingActivity::class.java
+                                    )
+                                    showToast(it.data.message)
+                                } else {
+                                    startActivityAndClear(
+                                        CaseListingActivity::class.java
+                                    )
+                                    showToast(it.data.message)
+                                }
+
+
+                            }
+                            hideDialog()
+                        }
+                    }
+                }
+
+            }
+        }
+    }
     val isValid: Boolean
         get() {
             if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerBags))) {

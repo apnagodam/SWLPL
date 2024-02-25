@@ -110,8 +110,10 @@ dependencies {
     implementation 'com.google.dagger:hilt-android:2.50'
     kapt 'com.google.dagger:hilt-compiler:2.50'
 
-    // For instrumentation tests
-
+    // For permission
+    implementation 'com.github.fondesa:kpermissions-rx3:3.5.0'
+    // If you want the extensions for the Kotlin coroutines.
+    implementation 'com.github.fondesa:kpermissions-coroutines:3.5.0'
     // For local unit tests
 
 

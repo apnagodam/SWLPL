@@ -158,7 +158,7 @@ public class StateMapActivity extends BaseActivity<ActivityStateMapsBinding> imp
             @Override
             protected void onSuccess(StateMapModel body) {
                 binding.txtShowCount.setVisibility(View.GONE);
-                if (body.getStatus() == 1) {
+                if (body.getStatus() == "1") {
                     if (!body.data.isEmpty()) {
                         LatLng latLng = new LatLng(body.data.get(0).latitude, body.data.get(0).longitude);
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(10).build();

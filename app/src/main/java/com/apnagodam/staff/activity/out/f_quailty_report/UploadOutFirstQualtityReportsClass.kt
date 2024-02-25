@@ -126,7 +126,8 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
                     is NetworkResult.Error -> {}
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
-                        if (it.data != null) {
+                        if (it.data != null  && it.data.status=="1" ){
+
                             listOfParams = it.data.data as ArrayList<QualityParamsResponse.Datum>
                             for (data in it.data.data) {
                                 var textInputField =
@@ -182,112 +183,108 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
     }
 
     override fun onBackPressed() {
+        finish()
         super.onBackPressed()
     }
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             qualitReportViewModel.getFirstQualityListing("10","1","OUT","")
-            onBackPressedDispatcher.onBackPressed()
+            finish()
 
         }
         binding!!.btnSubmit.setOnClickListener {
 
-            Utility.showDecisionDialog(
-                this@UploadOutFirstQualtityReportsClass,
-                getString(R.string.alert),
-                "Are You Sure to Summit?",
-                object : Utility.AlertCallback {
-                    override fun callback() {
-                        if (packagingTypeID == null) {
-                            Utility.showAlertDialog(
-                                this@UploadOutFirstQualtityReportsClass,
-                                getString(R.string.alert),
-                                resources.getString(R.string.packaging)
-                            ) {
+            if (packagingTypeID == null) {
+                Utility.showAlertDialog(
+                    this@UploadOutFirstQualtityReportsClass,
+                    getString(R.string.alert),
+                    resources.getString(R.string.packaging)
+                ) {
 
-                            }
-                        } else {
-                            onNext()
+                }
+            } else {
+                onNext()
+            }
+            var ReportImage = ""
+            var CommudityFileSelectImage = ""
+            if (fileReport != null) {
+                ReportImage = "" + Utility.transferImageToBase64(fileReport)
+            }
+            if (fileCommudity != null) {
+                CommudityFileSelectImage =
+                    "" + Utility.transferImageToBase64(fileCommudity)
+            }
+            listOfQualityParams.clear()
+
+
+            val map = listOfParams.associateBy({ it.id }, { it.name })
+            for (i in listOfParams.indices) {
+                var datum =
+                    UploadFirstQualityPostData.CommodityData(
+                        listOfParams[i].id,
+                        listOfParams[i].name,
+                        "",
+                        listOfParams[i].min,
+                        listOfParams[i].max
+                    )
+                listOfQualityParams.add(datum)
+
+            }
+
+            for (editext in ed.indices) {
+                if (ed[editext].editText!!.text.isEmpty()) {
+                    isFieldEmpty = true;
+                    ed[editext].error = "This field cannot be empty!"
+                } else {
+                    listOfQualityParams[editext].value =
+                        ed[editext].editText!!.text.toString()
+                    isFieldEmpty = false;
+                }
+            }
+            if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty()) {
+                showDialog()
+                qualitReportViewModel.uploadFirstQualityReport(
+                    UploadFirstQualityPostData(
+                        CaseID,
+                        ReportImage,
+                        listOfQualityParams,
+                        packagingTypeID,
+                        "1",
+                        stringFromView(binding!!.etLive),
+                        stringFromView(binding!!.notes),
+                        CommudityFileSelectImage
+                    )
+                )
+
+                qualitReportViewModel.fQualityUploadResponse.observe(this@UploadOutFirstQualtityReportsClass) {
+                    when (it) {
+                        is NetworkResult.Error -> {
+                            hideDialog()
+                            showToast(it.message)
                         }
-                        var ReportImage = ""
-                        var CommudityFileSelectImage = ""
-                        if (fileReport != null) {
-                            ReportImage = "" + Utility.transferImageToBase64(fileReport)
-                        }
-                        if (fileCommudity != null) {
-                            CommudityFileSelectImage =
-                                "" + Utility.transferImageToBase64(fileCommudity)
-                        }
-                        listOfQualityParams.clear()
 
-
-                        val map = listOfParams.associateBy({ it.id }, { it.name })
-                        for (i in listOfParams.indices) {
-                            var datum =
-                                UploadFirstQualityPostData.CommodityData(
-                                    listOfParams[i].id,
-                                    listOfParams[i].name,
-                                    "",
-                                    listOfParams[i].min,
-                                    listOfParams[i].max
-                                )
-                            listOfQualityParams.add(datum)
-
-                        }
-
-                        for (editext in ed.indices) {
-                            if (ed[editext].editText!!.text.isEmpty()) {
-                                isFieldEmpty = true;
-                                ed[editext].error = "This field cannot be empty!"
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
+                            hideDialog()
+                            if (it.data!!.status == "1") {
+                                showToast(it.data.message)
+                                qualitReportViewModel.getFirstQualityListing("10","1","OUT","")
+                                finish()
                             } else {
-                                listOfQualityParams[editext].value =
-                                    ed[editext].editText!!.text.toString()
-                                isFieldEmpty = false;
-                            }
-                        }
-                        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty()) {
-                            qualitReportViewModel.uploadFirstQualityReport(
-                                UploadFirstQualityPostData(
-                                    CaseID,
-                                    ReportImage,
-                                    listOfQualityParams,
-                                    packagingTypeID,
-                                    "1",
-                                    stringFromView(binding!!.etLive),
-                                    stringFromView(binding!!.notes),
-                                    CommudityFileSelectImage
-                                )
-                            )
+                                Utility.showAlertDialog(
+                                    this@UploadOutFirstQualtityReportsClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) {
 
-                            qualitReportViewModel.fQualityUploadResponse.observe(this@UploadOutFirstQualtityReportsClass) {
-                                when (it) {
-                                    is NetworkResult.Error -> {
-                                        showToast(it.message)
-                                    }
-
-                                    is NetworkResult.Loading -> {}
-                                    is NetworkResult.Success -> {
-                                        if (it.data!!.status == 1) {
-                                            showToast(it.data.message)
-                                            startActivityAndClear(
-                                                OutFirstQualityReportListingActivity::class.java
-                                            )
-                                        } else {
-                                            Utility.showAlertDialog(
-                                                this@UploadOutFirstQualtityReportsClass,
-                                                getString(R.string.alert),
-                                                it.data!!.getMessage()
-                                            ) { }
-                                        }
-
-                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
-                })
+                }
+            }
 
         }
         binding!!.uploadReport.setOnClickListener {

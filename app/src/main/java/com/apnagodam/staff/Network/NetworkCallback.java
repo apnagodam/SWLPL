@@ -31,7 +31,7 @@ public abstract class NetworkCallback<T extends BaseResponse> implements Callbac
             activity.hideDialog();
             if (response.body().getStatus().equals(ResponseCode.CODE_1000)) {
                 onSuccess(response.body());
-            } else if (response.body().getStatus() == 3) {
+            } else if (response.body().getStatus() == "3") {
               /*   SharedPreferencesRepository.getDataManagerInstance().clear();
                  SharedPreferencesRepository.getDataManagerInstance().setIsUserName(false);
                  SharedPreferencesRepository.getDataManagerInstance().saveSessionToken("");*/

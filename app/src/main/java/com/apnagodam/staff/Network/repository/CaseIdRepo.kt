@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flowOn
 import retrofit2.http.Query
 import javax.inject.Inject
 
-class CaseIdRepo @Inject constructor(private val apiService: ApiService) : BaseApiResponse() {
+class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseApiResponse()  {
 
     suspend fun getCaseId(
         str: String?,

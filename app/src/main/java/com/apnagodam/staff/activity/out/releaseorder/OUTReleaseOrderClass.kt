@@ -161,7 +161,7 @@ class OUTReleaseOrderClass : BaseActivity<ActivityUploadReleaseOrderBinding?>(),
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        if (it.data.status == 1) {
+                        if (it.data.status == "1") {
                             onBackPressedDispatcher.onBackPressed()
                         } else {
                             showToast(it.data.message)

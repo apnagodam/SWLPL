@@ -614,9 +614,9 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        if (it.data.status == 1) {
+                        if (it.data.status == "1") {
                             truckBookViewModel.getTruckBookList("10",1,"OUT","")
-                            onBackPressedDispatcher.onBackPressed()
+                            finish()
                         } else
                             showToast(it.data.message)
                     }

@@ -201,10 +201,11 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close ->{
-                labourViewModel.getLabourList("10","1","OUT","")
-                onBackPressedDispatcher.onBackPressed()
+            R.id.iv_close -> {
+                labourViewModel.getLabourList("10", "1", "OUT", "")
+                finish()
             }
+
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
@@ -228,7 +229,6 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                             "0000-00-00"
                         )
                     )
-                    startActivityAndClear(OUTLabourBookListingActivity::class.java)
                     labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
                         when (it) {
                             is NetworkResult.Error -> {
@@ -237,11 +237,9 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
                             is NetworkResult.Loading -> {}
                             is NetworkResult.Success -> {
-                                Utility.showAlertDialog(
-                                    this@OUTLabourBookUploadClass,
-                                    getString(R.string.alert),
-                                    it.data!!.get("message").toString()
-                                ) {
+                                if (it.data != null && it.data["status"] == "1") {
+                                    labourViewModel.getLabourList("10", "1", "OUT", "")
+                                    finish()
 
                                 }
                             }
@@ -279,7 +277,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
     fun popUpDatePicker() {
         val dateDialog = DatePickerDialog(
             this, date, calender
-                !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
+            !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
             calender!![Calendar.DAY_OF_MONTH]
         )
         dateDialog.datePicker.minDate = System.currentTimeMillis()

@@ -13,7 +13,7 @@ public class BaseResponse {
     protected String phone;
     @SerializedName("status")
     @Expose
-    protected Integer status;
+    protected String status;
     @SerializedName("active")
     @Expose
     protected Integer activeStatus;
@@ -34,11 +34,11 @@ public class BaseResponse {
         this.activeStatus = activeStatus;
     }
 
-    public Integer getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
