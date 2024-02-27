@@ -72,10 +72,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
         )
     }
 
-    override fun onBackPressed() {
-
-        finish()
-    }
 
     val login: Unit
         get() {

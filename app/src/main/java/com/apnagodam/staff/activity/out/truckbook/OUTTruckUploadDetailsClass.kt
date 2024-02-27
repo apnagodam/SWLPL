@@ -32,6 +32,9 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -336,7 +339,22 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
 
 
     }
@@ -442,21 +460,21 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         binding!!.etBags.isFocusable = false
         binding!!.etBags.setText("")
         binding!!.etBags.setBackgroundColor(resources.getColor(R.color.lightgray))*/
-        binding!!.etTotalTransCost.isEnabled = false
-        binding!!.etTotalTransCost.isClickable = false
-        binding!!.etTotalTransCost.isFocusable = false
-        binding!!.etTotalTransCost.setText("")
-        binding!!.etTotalTransCost.setBackgroundColor(resources.getColor(R.color.lightgray))
+//        binding!!.etTotalTransCost.isEnabled = false
+//        binding!!.etTotalTransCost.isClickable = false
+//        binding!!.etTotalTransCost.isFocusable = false
+//        binding!!.etTotalTransCost.setText("")
+//        binding!!.etTotalTransCost.setBackgroundColor(resources.getColor(R.color.lightgray))
         binding!!.etAdvancePatyment.isEnabled = false
         binding!!.etAdvancePatyment.isClickable = false
         binding!!.etAdvancePatyment.isFocusable = false
         binding!!.etAdvancePatyment.setText("")
         binding!!.etAdvancePatyment.setBackgroundColor(resources.getColor(R.color.lightgray))
-        binding!!.etFinalSettalementAmount.isEnabled = false
-        binding!!.etFinalSettalementAmount.isClickable = false
-        binding!!.etFinalSettalementAmount.isFocusable = false
-        binding!!.etFinalSettalementAmount.setText("")
-        binding!!.etFinalSettalementAmount.setBackgroundColor(resources.getColor(R.color.lightgray))
+//        binding!!.etFinalSettalementAmount.isEnabled = false
+//        binding!!.etFinalSettalementAmount.isClickable = false
+//        binding!!.etFinalSettalementAmount.isFocusable = false
+//        binding!!.etFinalSettalementAmount.setText("")
+//        binding!!.etFinalSettalementAmount.setBackgroundColor(resources.getColor(R.color.lightgray))
         /*
 
            binding!!.etStartDateTime.isEnabled = false
@@ -517,18 +535,18 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         binding!!.etBags.isClickable = true
         binding!!.etBags.isFocusable = true
         binding!!.etBags.isFocusableInTouchMode = true*/
-        binding!!.etTotalTransCost.isEnabled = true
-        binding!!.etTotalTransCost.isClickable = true
-        binding!!.etTotalTransCost.isFocusable = true
-        binding!!.etTotalTransCost.isFocusableInTouchMode = true
+//        binding!!.etTotalTransCost.isEnabled = true
+//        binding!!.etTotalTransCost.isClickable = true
+//        binding!!.etTotalTransCost.isFocusable = true
+//        binding!!.etTotalTransCost.isFocusableInTouchMode = true
         binding!!.etAdvancePatyment.isEnabled = true
         binding!!.etAdvancePatyment.isClickable = true
         binding!!.etAdvancePatyment.isFocusable = true
         binding!!.etAdvancePatyment.isFocusableInTouchMode = true
-        binding!!.etFinalSettalementAmount.isEnabled = true
-        binding!!.etFinalSettalementAmount.isClickable = true
-        binding!!.etFinalSettalementAmount.isFocusable = true
-        binding!!.etFinalSettalementAmount.isFocusableInTouchMode = true
+//        binding!!.etFinalSettalementAmount.isEnabled = true
+//        binding!!.etFinalSettalementAmount.isClickable = true
+//        binding!!.etFinalSettalementAmount.isFocusable = true
+//        binding!!.etFinalSettalementAmount.isFocusableInTouchMode = true
         /*
            binding!!.etStartDateTime.isEnabled = true
            binding!!.etStartDateTime.isClickable = true
@@ -555,8 +573,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     override fun onClick(view: View) {
         when (view.id) {
             R.id.iv_close ->{
-                truckBookViewModel.getTruckBookList("10",1,"OUT","")
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
@@ -589,7 +606,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 "",
                 "",
                 "",
-                stringFromView(binding!!.etTotalTransCost),
+               "",
                 stringFromView(
                     binding!!.etAdvancePatyment
                 ),
@@ -615,7 +632,6 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 is NetworkResult.Success -> {
                     if (it.data != null) {
                         if (it.data.status == "1") {
-                            truckBookViewModel.getTruckBookList("10",1,"OUT","")
                             finish()
                         } else
                             showToast(it.data.message)
@@ -642,16 +658,19 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                     showToast("please select bilty image")
                 } else if (Validationhelper().fieldEmpty(binding!!.tilAdvancePatyment)) {
                     binding!!.tilAdvancePatyment.error = "This Field is Required"
-                } else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount)) {
-                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
-                } else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
-                    binding!!.tilLocation.error = "This Field is required"
-                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
-                    return Utility.showEditTextError(
-                        binding!!.tilTotalTransCost,
-                        R.string.total_trans_cost_val
-                    )
                 }
+//                else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount)) {
+//                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
+//                }
+                else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
+                    binding!!.tilLocation.error = "This Field is required"
+                }
+//                else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
+//                    return Utility.showEditTextError(
+//                        binding!!.tilTotalTransCost,
+//                        R.string.total_trans_cost_val
+//                    )
+//                }
 
 
             }

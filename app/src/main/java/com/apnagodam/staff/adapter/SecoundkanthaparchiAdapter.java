@@ -26,6 +26,7 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
     private List<SecoundkanthaParchiListResponse.Datum> Leads;
     private Context context;
     private BaseActivity activity;
+
     public SecoundkanthaparchiAdapter(List<SecoundkanthaParchiListResponse.Datum> leads, SecoundkanthaParchiListingActivity secoundkanthaParchiListingActivity, BaseActivity activity) {
         this.Leads = leads;
         this.context = secoundkanthaParchiListingActivity;
@@ -81,16 +82,16 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getCaseId());
             binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getS_k_p_case_id()!=null && Leads.get(position).getFile3()!=null && Leads.get(position).getFile()!=null && Leads.get(position).getFile2()!=null ){
+            if (Leads.get(position).getS_k_p_case_id() != null && Leads.get(position).getFile3() != null && Leads.get(position).getFile() != null && Leads.get(position).getFile2() != null) {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
                 binding.tvPhoneDone.setVisibility(View.VISIBLE);
-            }else {
+            } else {
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvPhone.setText(context.getResources().getString(R.string.upload_kantha_parchi));
                 binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-                setAllData(binding.tvPhone,binding.tvPhoneDone,position);
+                setAllData(binding.tvPhone, binding.tvPhoneDone, position);
 
             }
             binding.tvId.setTextColor(Color.BLACK);
@@ -101,7 +102,7 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
                 @Override
                 public void onClick(View view) {
                     if (context instanceof SecoundkanthaParchiListingActivity) {
-                        ((SecoundkanthaParchiListingActivity) context).   ViewData(position);
+                        ((SecoundkanthaParchiListingActivity) context).ViewData(position);
                     }
 
                 }
@@ -116,45 +117,28 @@ public class SecoundkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             });
         }
     }
+
     private void setAllData(TextView tvPhone, TextView tvPhoneDone, int position) {
-        new Thread() {
-            public void run() {
-                try {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                          /*  new Thread() {
-                                public void run() {*/
-                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
-                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                                        if (Leads.get(position).getF_q_case_id()!=null){
-                                            tvPhone.setVisibility(View.VISIBLE);
-                                        }else {
-                                            tvPhone.setVisibility(View.GONE);
-                                            tvPhoneDone.setVisibility(View.VISIBLE);
-                                            tvPhoneDone.setText("Processing...");
-                                            tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
-                                        }
-                                    }else {
-                                        tvPhone.setVisibility(View.GONE);
-                                        tvPhoneDone.setVisibility(View.VISIBLE);
-                                        tvPhoneDone.setText("In Process");
-                                        tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
-                                    }
-                                }
-                            }
-
-                            /*    }
-                            }.start();*/
-                        }
-                    });
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }.start();
+       new Thread(()->{
+           for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+               if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                   if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                       if (Leads.get(position).getF_q_case_id() != null) {
+                           tvPhone.setVisibility(View.VISIBLE);
+                       } else {
+                           tvPhone.setVisibility(View.GONE);
+                           tvPhoneDone.setVisibility(View.VISIBLE);
+                           tvPhoneDone.setText("Processing...");
+                           tvPhoneDone.setTextColor(context.getResources().getColor(R.color.yellow));
+                       }
+                   } else {
+                       tvPhone.setVisibility(View.GONE);
+                       tvPhoneDone.setVisibility(View.VISIBLE);
+                       tvPhoneDone.setText("In Process");
+                       tvPhoneDone.setTextColor(context.getResources().getColor(R.color.lead_btn));
+                   }
+               }
+           }
+       });
     }
 }

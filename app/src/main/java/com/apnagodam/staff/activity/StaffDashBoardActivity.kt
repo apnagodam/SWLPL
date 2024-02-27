@@ -1,7 +1,6 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
@@ -12,6 +11,7 @@ import android.graphics.Typeface
 import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
@@ -28,6 +28,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import com.apnagodam.staff.Base.BaseActivity
@@ -74,10 +75,8 @@ import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.coroutines.flow
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
-import com.fondesa.kpermissions.isGranted
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -94,11 +93,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -107,6 +105,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
+
 
 @AndroidEntryPoint
 class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.OnClickListener,
@@ -146,11 +145,12 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     override fun setUp() {
-        permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.CALL_PHONE).build().send()
+        requestPermission()
+        getdashboardData()
+
         setUI()
         prepareMenuData()
         populateExpandableList()
-        getdashboardData()
 
 
         // setBackBtn(binding.mainHeader.toolbar);
@@ -166,24 +166,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             startActivity(intent)
         }
 
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            if (it != null) {
-                lat = it.latitude
-                long = it.longitude
-            }
-
-
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
-
-            }
-        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -193,6 +175,27 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            requestPermission()
+        } else {
+            val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                if (it != null) {
+                    lat = it.latitude
+                    long = it.longitude
+                }
+
+                currentLocation = "$lat $long"
+
+//                val geocoder = Geocoder(this, Locale.getDefault())
+//                val addresses = geocoder.getFromLocation(lat, long, 1)
+//                if (addresses != null && addresses.isNotEmpty()) {
+//                    currentLocation =
+//                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+//                            addresses.first().adminArea
+//                        }"
+//
+//                }
+            }
 
         }
         binding!!.mainContent.mainHeader.toogleIcon.setOnClickListener(this)
@@ -223,7 +226,36 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         binding!!.mainContent.UploadImage.setOnClickListener { onImageSelected() }
         binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
-        photoEasy = PhotoEasy.builder().setActivity(this).build()
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .enableRequestPermission(true)
+            .build()
+    }
+
+
+    private fun checkPermission(): Boolean {
+        return if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted
+            false
+        } else true
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.CAMERA),
+            PERMISSION_REQUEST_CODE
+        )
+    }
+
+
+    private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setPositiveButton("OK", okListener)
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
     }
 
     private fun populateExpandableList() {
@@ -1105,9 +1137,16 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     override fun dispatchTakePictureIntent() {
         permissionsBuilder(Manifest.permission.CAMERA).build().send() {
             when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Denied.Permanently -> {
+                    showToast("permission permanently denied")
+                }
+
+                is PermissionStatus.Denied.ShouldShowRationale -> {
+                    showToast("Permission denied ask again")
+                }
+
                 is PermissionStatus.Granted -> {
+                    showToast("Permission Granted")
                     photoEasy.startActivityForResult(this@StaffDashBoardActivity)
 
                 }
@@ -1512,19 +1551,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Pix.start(this, options)
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Approve permissions to open Pix ImagePicker",
-                        Toast.LENGTH_LONG
-                    ).show()
+            PERMISSION_REQUEST_CODE -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // main logic
+            } else {
+                Toast.makeText(applicationContext, "Permission Denied", Toast.LENGTH_SHORT).show()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        showMessageOKCancel("You need to allow access permissions",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    requestPermission()
+                                }
+                            })
+                    }
                 }
-                return
             }
         }
     }

@@ -161,6 +161,12 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
 
     }
 
+    override fun onResume() {
+        getAllCases("")
+        super.onResume()
+    }
+
+
     fun ViewData(position: Int) {
         val displayRectangle = Rect()
         val window = this.window

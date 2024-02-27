@@ -478,21 +478,21 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         binding!!.etBags.isFocusable = false
         binding!!.etBags.setText("")
         binding!!.etBags.setBackgroundColor(resources.getColor(R.color.lightgray))*/
-        binding!!.etTotalTransCost.isEnabled = false
-        binding!!.etTotalTransCost.isClickable = false
-        binding!!.etTotalTransCost.isFocusable = false
-        binding!!.etTotalTransCost.setText("")
-        binding!!.etTotalTransCost.setBackgroundColor(resources.getColor(R.color.lightgray))
+//        binding!!.etTotalTransCost.isEnabled = false
+//        binding!!.etTotalTransCost.isClickable = false
+//        binding!!.etTotalTransCost.isFocusable = false
+//        binding!!.etTotalTransCost.setText("")
+//        binding!!.etTotalTransCost.setBackgroundColor(resources.getColor(R.color.lightgray))
         binding!!.etAdvancePatyment.isEnabled = false
         binding!!.etAdvancePatyment.isClickable = false
         binding!!.etAdvancePatyment.isFocusable = false
         binding!!.etAdvancePatyment.setText("")
         binding!!.etAdvancePatyment.setBackgroundColor(resources.getColor(R.color.lightgray))
-        binding!!.etFinalSettalementAmount.isEnabled = false
-        binding!!.etFinalSettalementAmount.isClickable = false
-        binding!!.etFinalSettalementAmount.isFocusable = false
-        binding!!.etFinalSettalementAmount.setText("")
-        binding!!.etFinalSettalementAmount.setBackgroundColor(resources.getColor(R.color.lightgray))
+//        binding!!.etFinalSettalementAmount.isEnabled = false
+//        binding!!.etFinalSettalementAmount.isClickable = false
+//        binding!!.etFinalSettalementAmount.isFocusable = false
+//        binding!!.etFinalSettalementAmount.setText("")
+//        binding!!.etFinalSettalementAmount.setBackgroundColor(resources.getColor(R.color.lightgray))
         /*
 
            binding!!.etStartDateTime.isEnabled = false
@@ -553,18 +553,18 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         binding!!.etBags.isClickable = true
         binding!!.etBags.isFocusable = true
         binding!!.etBags.isFocusableInTouchMode = true*/
-        binding!!.etTotalTransCost.isEnabled = true
-        binding!!.etTotalTransCost.isClickable = true
-        binding!!.etTotalTransCost.isFocusable = true
-        binding!!.etTotalTransCost.isFocusableInTouchMode = true
+//        binding!!.etTotalTransCost.isEnabled = true
+//        binding!!.etTotalTransCost.isClickable = true
+//        binding!!.etTotalTransCost.isFocusable = true
+//        binding!!.etTotalTransCost.isFocusableInTouchMode = true
         binding!!.etAdvancePatyment.isEnabled = true
         binding!!.etAdvancePatyment.isClickable = true
         binding!!.etAdvancePatyment.isFocusable = true
         binding!!.etAdvancePatyment.isFocusableInTouchMode = true
-        binding!!.etFinalSettalementAmount.isEnabled = true
-        binding!!.etFinalSettalementAmount.isClickable = true
-        binding!!.etFinalSettalementAmount.isFocusable = true
-        binding!!.etFinalSettalementAmount.isFocusableInTouchMode = true
+//        binding!!.etFinalSettalementAmount.isEnabled = true
+//        binding!!.etFinalSettalementAmount.isClickable = true
+//        binding!!.etFinalSettalementAmount.isFocusable = true
+//        binding!!.etFinalSettalementAmount.isFocusableInTouchMode = true
         /*
            binding!!.etStartDateTime.isEnabled = true
            binding!!.etStartDateTime.isClickable = true
@@ -592,18 +592,13 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     override fun onClick(view: View) {
         when (view.id) {
             R.id.iv_close ->{
-                truckBookViewModel.getTruckBookList("10",1,"IN","")
                 finish()
             }
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
 
             R.id.btn_login -> if (isValid) {
-                Utility.showDecisionDialog(
-                    this@TruckUploadDetailsClass,
-                    getString(R.string.alert),
-                    "Are You Sure to Summit?"
-                ) { callApi() }
+                callApi()
 
             }
         }
@@ -626,7 +621,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             "stringFromView(binding!!.etTurnaroundTime)",
             "stringFromView(binding!!.etTotalWeight)",
             "stringFromView(binding!!.etBags)",
-            stringFromView(binding!!.etTotalTransCost),
+           "",
             stringFromView(
                 binding!!.etAdvancePatyment
             ),
@@ -655,7 +650,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 is NetworkResult.Success -> {
                     if(it.data!=null){
                         if(it.data.status.equals("1")){
-                            truckBookViewModel.getTruckBookList("10",1,"IN","")
                             finish()
                         }
                         else
@@ -693,16 +687,23 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     showToast("please select bilty image")
                 } else if (Validationhelper().fieldEmpty(binding!!.tilAdvancePatyment)) {
                     binding!!.tilAdvancePatyment.error = "This Field is Required"
-                } else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount)) {
-                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
-                } else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
-                    binding!!.tilLocation.error = "This Field is required"
-                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
-                    return Utility.showEditTextError(
-                        binding!!.tilTotalTransCost,
-                        R.string.total_trans_cost_val
-                    )
                 }
+//                else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount))
+//                {
+//                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
+//                }
+
+                else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
+                    binding!!.tilLocation.error = "This Field is required"
+                }
+
+
+//                else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
+//                    return Utility.showEditTextError(
+//                        binding!!.tilTotalTransCost,
+//                        R.string.total_trans_cost_val
+//                    )
+//                }
                 /*        else if (TextUtils.isEmpty(stringFromView(binding!!.etMinWeight))) {
                             return Utility.showEditTextError(
                                 binding!!.tilMinWeight,

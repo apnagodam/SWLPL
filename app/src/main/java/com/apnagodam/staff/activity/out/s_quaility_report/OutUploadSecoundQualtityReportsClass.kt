@@ -39,6 +39,9 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -199,7 +202,6 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            qualitReportViewModel.getSecondQualityListing(limit = "10","1","OUT","")
             finish()
 
         }
@@ -295,7 +297,24 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
     }
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
+
+
     }
 
     private fun bitmapToFile(bitmap: Bitmap): Uri {
@@ -388,7 +407,6 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
                         hideDialog()
                         if (it.data!!.status == "1") {
                             showToast(it.data.message)
-                            qualitReportViewModel.getSecondQualityListing("10","1","OUT","")
                             finish()
 
                         } else {

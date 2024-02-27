@@ -62,6 +62,7 @@ public class UploadFirstkantaParchiPostData {
         this.oldKpNumber = oldKpNumber;
         this.oldKantaWeight = oldKantaWeight;
         this.oldKantaBags = oldKantaBags;
+        this.oldFile = oldFile;
     }
 }
 

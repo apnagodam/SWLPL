@@ -16,6 +16,7 @@ import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
+import androidx.core.widget.doOnTextChanged
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
@@ -32,6 +33,9 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.google.android.gms.location.LocationServices
 import com.thorny.photoeasy.OnPictureReady
@@ -95,8 +99,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-        }
-        else{
+        } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 lat = it.latitude
                 long = it.longitude
@@ -118,6 +121,17 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         binding!!.etKantaParchiNum.isEnabled = false
         binding!!.llOldBags.visibility = View.GONE
         binding!!.llBags.visibility = View.VISIBLE
+        binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
+
+            var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
+                .toInt()
+            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()) {
+                binding!!.etAvgWeight.setText(
+                    bagCal.toString()
+                )
+
+            }
+        }
 
         allCases = intent.getSerializableExtra("all_cases") as SecoundkanthaParchiListResponse.Datum
         CaseID = allCases.caseId
@@ -172,17 +186,10 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            kantaParchiViewModel.getSKantaParchiListing("10","1","IN","")
-            onBackPressedDispatcher.onBackPressed()
+            finish()
         }
         binding!!.btnLogin.setOnClickListener {
-            Utility.showDecisionDialog(
-                this@UploadSecoundkantaParchiClass,
-                getString(R.string.alert),
-                "Are You Sure to Summit?"
-            ) {
-                onNext()
-            }
+            onNext()
         }
         binding!!.uploadKantha.setOnClickListener {
             firstKanthaFile = true
@@ -286,7 +293,6 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
                         is NetworkResult.Success -> {
                             if (it.data!!.status == "1") {
-                                kantaParchiViewModel.getSKantaParchiListing("10","1","IN","")
                                 finish()
                                 showToast(it.data!!.message)
                             } else {
@@ -326,7 +332,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
-                        hideDialog()
+                            hideDialog()
                         }
 
                         is NetworkResult.Loading -> {
@@ -335,8 +341,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
                         is NetworkResult.Success -> {
                             if (it.data!!.status == "1") {
-                                startActivityAndClear(SecoundkanthaParchiListingActivity::class.java)
-                                showToast(it.data!!.message)
+                                finish()
                             } else {
                                 Utility.showAlertDialog(
                                     this@UploadSecoundkantaParchiClass,
@@ -358,7 +363,22 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     }
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
 
 
     }
@@ -484,7 +504,5 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 }

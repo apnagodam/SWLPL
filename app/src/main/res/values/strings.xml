@@ -244,6 +244,7 @@
     <string name="kanta_parchi">Kanta Parchi</string>
     <string name="kanta_parchi_number">Kanta Parchi Number</string>
     <string name="upload_kantha_parchi">Upload Kanta Parchi</string>
+    <string name="upload_kantha_parchi_old">Upload Old Kanta Parchi</string>
     <string name="kanta_parchi_file">Kanta Parchi Image *</string>
     <string name="truck_image">Truck Image *</string>
     <string name="upload_kanta_parchi_file">Upload Kanta Parchi Image</string>

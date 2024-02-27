@@ -180,6 +180,11 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     fun ViewData(position: Int) {
         val displayRectangle = Rect()
         val window = this.window

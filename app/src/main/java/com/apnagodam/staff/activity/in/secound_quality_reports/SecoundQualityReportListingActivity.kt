@@ -121,6 +121,10 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
             DividerItemDecoration(

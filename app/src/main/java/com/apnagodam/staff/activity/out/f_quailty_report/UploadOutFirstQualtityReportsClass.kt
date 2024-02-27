@@ -33,6 +33,9 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -189,7 +192,6 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            qualitReportViewModel.getFirstQualityListing("10","1","OUT","")
             finish()
 
         }
@@ -269,7 +271,6 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
                             hideDialog()
                             if (it.data!!.status == "1") {
                                 showToast(it.data.message)
-                                qualitReportViewModel.getFirstQualityListing("10","1","OUT","")
                                 finish()
                             } else {
                                 Utility.showAlertDialog(
@@ -332,7 +333,23 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
+
 
     }
 

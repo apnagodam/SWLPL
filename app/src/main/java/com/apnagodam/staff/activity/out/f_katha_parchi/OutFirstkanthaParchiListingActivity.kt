@@ -121,6 +121,10 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     override fun onBackPressed() {
         super.onBackPressed()
     }

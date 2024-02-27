@@ -46,7 +46,11 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        getAllCases("")
+
+        if(AllCases.isNullOrEmpty()){
+            getAllCases("")
+
+        }
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.secoundkanta_parchi)
@@ -120,6 +124,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     }
 
     private fun getAllCases(search: String) {
+        showDialog()
         kantaParchiViewModel.getSKantaParchiListing("10",pageOffset.toString(),"IN",search)
         kantaParchiViewModel.sKantaParchiResponse.observe(this)
         {
@@ -151,6 +156,10 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     fun ViewData(position: Int) {
         val displayRectangle = Rect()
         val window = this.window

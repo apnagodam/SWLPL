@@ -242,18 +242,16 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                         "0000-00-00"
                     )
                 )
-
+                hideDialog()
+                finish()
                 labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
                     when (it) {
                         is NetworkResult.Error -> {
                             hideDialog()
                         }
-
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            hideDialog()
-                            labourViewModel.getLabourList("10","1","IN","")
-                            finish()
+
                         }
                     }
                 }

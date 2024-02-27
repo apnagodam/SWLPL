@@ -25,6 +25,9 @@ import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.google.android.gms.location.LocationServices
 import com.leo.searchablespinner.SearchableSpinner
@@ -77,6 +80,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
     override fun setUp() {
         binding!!.llTraupline.visibility = View.GONE
+        binding!!.llOldBags.visibility = View.GONE
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -132,19 +136,21 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
             isFirstUpload = false;
 
         }
+            binding!!.llOldBags.visibility = View.GONE
 
 
         if (isFirstUpload) {
             binding!!.llKanta.visibility = View.GONE
-            binding!!.llOldBags.visibility = View.GONE
+//                       binding!!.llOldBags.visibility = View.GONE
             binding!!.cardTruck2.visibility = View.VISIBLE
 
         } else {
             binding!!.llKanta.visibility = View.VISIBLE
-            binding!!.llOldBags.visibility = View.VISIBLE
+//            binding!!.llOldBags.visibility = View.VISIBLE
             binding!!.cardTruck2.visibility = View.GONE
         }
 
+        binding!!.cardOldKantaParchi.visibility = View.GONE
 
         clickListner()
 
@@ -201,20 +207,13 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            kantaParchiViewModel.getKantaParchiListing("10","1","OUT","")
            finish()
         }
         binding!!.tilKantaParchi.setOnClickListener {
             searchableSpinner.show()
         }
         binding!!.btnLogin.setOnClickListener {
-            Utility.showDecisionDialog(
-                this@OutUploadFirrstkantaParchiClass,
-                getString(R.string.alert),
-                "Are You Sure to Summit?"
-            ) {
-                onNext()
-            }
+            onNext()
         }
         binding!!.uploadKantha.setOnClickListener {
             firstOldKantaFile = false
@@ -358,7 +357,6 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                                     it.data!!.getMessage()
                                 ) { }
                             } else {
-                                kantaParchiViewModel.getKantaParchiListing("10","1","OUT","")
                                 finish()
                                 showToast(it.data.message)
                             }
@@ -405,7 +403,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                                     it.data!!.getMessage()
                                 ) { }
                             } else {
-                                startActivityAndClear(OutFirstkanthaParchiListingActivity::class.java)
+                                finish()
                                 showToast(it.data.message)
                             }
 
@@ -497,7 +495,23 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send{
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
+
 
     }
 

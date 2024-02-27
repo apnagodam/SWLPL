@@ -115,44 +115,26 @@ public class FirstkanthaparchiAdapter extends BaseRecyclerViewAdapter {
         }
     }
     private void setAllData(TextView tvPhone, TextView tvPhoneDone, int position) {
-        new Thread() {
-            public void run() {
-                try {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                          /*  new Thread() {
-                                public void run() {*/
-                            for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
-                                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                                        if (Leads.get(position).getLBCaseId()!=null){
-                                            tvPhone.setVisibility(View.VISIBLE);
-                                        }else {
-                                            tvPhone.setVisibility(View.GONE);
-                                            tvPhoneDone.setVisibility(View.VISIBLE);
-                                            tvPhoneDone.setText("Processing...");
-                                            tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
-                                        }
-                                    }else {
-                                        tvPhone.setVisibility(View.GONE);
-                                        tvPhoneDone.setVisibility(View.VISIBLE);
-                                        tvPhoneDone.setText("In Process");
-                                        tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
-                                    }
-                                }
-                            }
-
-                            /*    }
-                            }.start();*/
-                        }
-                    });
-                    Thread.sleep(30);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }.start();
+      new Thread(()->{
+          for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+              if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
+                  if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                      if (Leads.get(position).getLBCaseId()!=null){
+                          tvPhone.setVisibility(View.VISIBLE);
+                      }else {
+                          tvPhone.setVisibility(View.GONE);
+                          tvPhoneDone.setVisibility(View.VISIBLE);
+                          tvPhoneDone.setText("Processing...");
+                          tvPhoneDone .setTextColor(context.getResources().getColor(R.color.yellow));
+                      }
+                  }else {
+                      tvPhone.setVisibility(View.GONE);
+                      tvPhoneDone.setVisibility(View.VISIBLE);
+                      tvPhoneDone.setText("In Process");
+                      tvPhoneDone .setTextColor(context.getResources().getColor(R.color.lead_btn));
+                  }
+              }
+          }
+      });
     }
 }

@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apnagodam.staff.Base.BaseActivity
@@ -99,7 +100,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         binding!!.sendOtp.setOnClickListener {
             onSendOtp()
         }
+        binding!!.etOtp.doOnTextChanged { text, start, before, count ->
+            if(text!!.length==6){
+                verifyOtp()
 
+            }
+        }
         binding!!.verifyOtp.setOnClickListener {
             verifyOtp()
         }

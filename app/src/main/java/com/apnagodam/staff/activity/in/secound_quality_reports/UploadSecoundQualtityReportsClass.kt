@@ -37,6 +37,9 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -102,9 +105,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-        }
-        else
-        {
+        } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 lat = it.latitude
                 long = it.longitude
@@ -152,6 +153,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
+
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
@@ -206,33 +208,21 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
-            qualitReportViewModel.getSecondQualityListing("10","1","IN","")
-           finish()
+            finish()
 
         }
         binding!!.btnSubmit.setOnClickListener {
-            Utility.showDecisionDialog(
-                this@UploadSecoundQualtityReportsClass,
-                getString(R.string.alert),
-                "Are You Sure to Summit?",
-                object : Utility.AlertCallback {
-                    override fun callback() {
-                        if (packagingTypeID != null) {
-                            onNext()
+            if (packagingTypeID != null) {
+                onNext()
+            } else {
+                Utility.showAlertDialog(
+                    this@UploadSecoundQualtityReportsClass,
+                    getString(R.string.alert),
+                    resources.getString(R.string.packaging)
+                ) {
 
-
-                        } else {
-                            Utility.showAlertDialog(
-                                this@UploadSecoundQualtityReportsClass,
-                                getString(R.string.alert),
-                                resources.getString(R.string.packaging)
-                            ) {
-
-                            }
-                        }
-
-                    }
-                })
+                }
+            }
         }
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
@@ -278,29 +268,29 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                 )
 
 
-               if(thumbnail!=null){
-                   var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                       File(compressImage(bitmapToFile(thumbnail).path)),
-                       stampMap
-                   )
-                   if (ReportsFileSelect) {
-                       ReportsFileSelect = false
-                       CommudityFileSelect = false
+                if (thumbnail != null) {
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail).path)),
+                        stampMap
+                    )
+                    if (ReportsFileSelect) {
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
 
-                       fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
-                       val uri = Uri.fromFile(fileReport)
-                       reportFile = uri.toString()
-                       binding!!.ReportsImage.setImageURI(uri)
-                   } else if (CommudityFileSelect) {
-                       val imageBitmap = data?.extras?.get("data") as Bitmap
-                       ReportsFileSelect = false
-                       CommudityFileSelect = false
-                       fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
-                       val uri = Uri.fromFile(fileCommudity)
-                       commudityFile = uri.toString()
-                       binding!!.CommudityImage.setImageURI(uri)
-                   }
-               }
+                        fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
+                        val uri = Uri.fromFile(fileReport)
+                        reportFile = uri.toString()
+                        binding!!.ReportsImage.setImageURI(uri)
+                    } else if (CommudityFileSelect) {
+                        val imageBitmap = data?.extras?.get("data") as Bitmap
+                        ReportsFileSelect = false
+                        CommudityFileSelect = false
+                        fileCommudity = File(compressImage(bitmapToFile(imageBitmap).path))
+                        val uri = Uri.fromFile(fileCommudity)
+                        commudityFile = uri.toString()
+                        binding!!.CommudityImage.setImageURI(uri)
+                    }
+                }
             }
 
         })
@@ -310,7 +300,24 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
+
+
     }
 
     private fun bitmapToFile(bitmap: Bitmap): Uri {
@@ -336,7 +343,6 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
-
 
 
     fun onNext() {
@@ -378,7 +384,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         }
         if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty() && fileReport != null) {
 
-           showDialog()
+            showDialog()
             qualitReportViewModel.uploadSecondQualityReport(
                 UploadSecoundQualityPostData(
                     CaseID,
@@ -404,7 +410,6 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                     is NetworkResult.Success -> {
                         if (it.data!!.status == "1") {
                             showToast(it.data.message)
-                            qualitReportViewModel.getSecondQualityListing("10","1","IN","")
                             finish()
                         } else {
                             Utility.showAlertDialog(
@@ -426,13 +431,12 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     }
 
 
-
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
 
@@ -452,9 +456,5 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        qualitReportViewModel.getSecondQualityListing("10","1","IN","")
-        finish()
-    }
+
 }

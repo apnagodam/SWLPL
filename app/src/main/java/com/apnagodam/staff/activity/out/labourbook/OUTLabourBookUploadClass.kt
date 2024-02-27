@@ -201,15 +201,14 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> {
-                labourViewModel.getLabourList("10", "1", "OUT", "")
-                finish()
+            R.id.iv_close -> { finish()
             }
 
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
 
+                showDialog()
 
                 Utility.showDecisionDialog(
                     this@OUTLabourBookUploadClass,
@@ -229,19 +228,17 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                             "0000-00-00"
                         )
                     )
+                    hideDialog()
+                    finish()
                     labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
                         when (it) {
                             is NetworkResult.Error -> {
-
+                            hideDialog()
                             }
 
                             is NetworkResult.Loading -> {}
                             is NetworkResult.Success -> {
-                                if (it.data != null && it.data["status"] == "1") {
-                                    labourViewModel.getLabourList("10", "1", "OUT", "")
-                                    finish()
 
-                                }
                             }
                         }
                     }

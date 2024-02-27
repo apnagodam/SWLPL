@@ -53,7 +53,7 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            finish()
             //  startActivityAndClear(StaffDashBoardActivity.class);
         }
         binding!!.tvPrevious.setOnClickListener {
@@ -96,6 +96,10 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
             DividerItemDecoration(
@@ -116,10 +120,7 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         binding!!.rvDefaultersStatus.adapter = laabourBookAdapter
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        //  startActivityAndClear(StaffDashBoardActivity.class);
-    }
+
 
     private fun getAllCases(search: String) {
         labourViewModel.getLabourList("10",  pageOffset.toString(), "OUT", search)

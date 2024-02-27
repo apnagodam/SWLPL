@@ -43,7 +43,7 @@ class HomeRepo @Inject constructor(val apiService: ApiService):BaseApiResponse()
     suspend fun attendence( attendancePostData: AttendancePostData):Flow<NetworkResult<AttendanceResponse>>{
         return flow {
             emit(safeApiCall { apiService.attendance(attendancePostData) })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
 }

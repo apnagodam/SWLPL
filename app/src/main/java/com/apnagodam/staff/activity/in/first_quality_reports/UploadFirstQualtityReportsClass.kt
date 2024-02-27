@@ -32,6 +32,9 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -193,101 +196,93 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         }
         binding!!.btnSubmit.setOnClickListener {
 
-            Utility.showDecisionDialog(
-                this@UploadFirstQualtityReportsClass,
-                getString(R.string.alert),
-                "Are You Sure to Summit?",
-                object : Utility.AlertCallback {
-                    override fun callback() {
-                        if (packagingTypeID == null) {
-                            Utility.showAlertDialog(
-                                this@UploadFirstQualtityReportsClass,
-                                getString(R.string.alert),
-                                resources.getString(R.string.packaging)
-                            ) {
+            if (packagingTypeID == null) {
+                Utility.showAlertDialog(
+                    this@UploadFirstQualtityReportsClass,
+                    getString(R.string.alert),
+                    resources.getString(R.string.packaging)
+                ) {
 
-                            }
-                        } else {
-                            onNext()
+                }
+            } else {
+                onNext()
+            }
+            var ReportImage = ""
+            var CommudityFileSelectImage = ""
+            if (fileReport != null) {
+                ReportImage = "" + Utility.transferImageToBase64(fileReport)
+            }
+            if (fileCommudity != null) {
+                CommudityFileSelectImage =
+                    "" + Utility.transferImageToBase64(fileCommudity)
+            }
+            listOfQualityParams.clear()
+
+
+            val map = listOfParams.associateBy({ it.id }, { it.name })
+            for (i in listOfParams.indices) {
+                var datum =
+                    CommodityData(
+                        listOfParams[i].id,
+                        listOfParams[i].name,
+                        "",
+                        listOfParams[i].min,
+                        listOfParams[i].max
+                    )
+                listOfQualityParams.add(datum)
+
+            }
+
+            for (editext in ed.indices) {
+                if (ed[editext].editText!!.text.isEmpty()) {
+                    isFieldEmpty = true;
+                    ed[editext].error = "This field cannot be empty!"
+                } else {
+                    listOfQualityParams[editext].value =
+                        ed[editext].editText!!.text.toString()
+                    isFieldEmpty = false;
+                }
+            }
+            if (!isFieldEmpty ) {
+                qualitReportViewModel.uploadFirstQualityReport(
+                    UploadFirstQualityPostData(
+                        CaseID,
+                        ReportImage,
+                        listOfQualityParams,
+                        packagingTypeID,
+                        "1",
+                        stringFromView(binding!!.etLive),
+                        stringFromView(binding!!.notes),
+                        CommudityFileSelectImage
+                    )
+                )
+
+                qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {
+                    when (it) {
+                        is NetworkResult.Error -> {
+                            showToast(it.message)
                         }
-                        var ReportImage = ""
-                        var CommudityFileSelectImage = ""
-                        if (fileReport != null) {
-                            ReportImage = "" + Utility.transferImageToBase64(fileReport)
-                        }
-                        if (fileCommudity != null) {
-                            CommudityFileSelectImage =
-                                "" + Utility.transferImageToBase64(fileCommudity)
-                        }
-                        listOfQualityParams.clear()
 
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
+                            if (it.data!!.status == "1") {
+                                showToast(it.data.message)
+                                finish()
 
-                        val map = listOfParams.associateBy({ it.id }, { it.name })
-                        for (i in listOfParams.indices) {
-                            var datum =
-                                CommodityData(
-                                    listOfParams[i].id,
-                                    listOfParams[i].name,
-                                    "",
-                                    listOfParams[i].min,
-                                    listOfParams[i].max
-                                )
-                            listOfQualityParams.add(datum)
-
-                        }
-
-                        for (editext in ed.indices) {
-                            if (ed[editext].editText!!.text.isEmpty()) {
-                                isFieldEmpty = true;
-                                ed[editext].error = "This field cannot be empty!"
                             } else {
-                                listOfQualityParams[editext].value =
-                                    ed[editext].editText!!.text.toString()
-                                isFieldEmpty = false;
+                                Utility.showAlertDialog(
+                                    this@UploadFirstQualtityReportsClass,
+                                    getString(R.string.alert),
+                                    it.data!!.getMessage()
+                                ) { }
                             }
+
                         }
-                        if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty()) {
-                            qualitReportViewModel.uploadFirstQualityReport(
-                                UploadFirstQualityPostData(
-                                    CaseID,
-                                    ReportImage,
-                                    listOfQualityParams,
-                                    packagingTypeID,
-                                    "1",
-                                    stringFromView(binding!!.etLive),
-                                    stringFromView(binding!!.notes),
-                                    CommudityFileSelectImage
-                                )
-                            )
-
-                            qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {
-                                when (it) {
-                                    is NetworkResult.Error -> {
-                                        showToast(it.message)
-                                    }
-
-                                    is NetworkResult.Loading -> {}
-                                    is NetworkResult.Success -> {
-                                        if (it.data!!.status == "1") {
-                                            showToast(it.data.message)
-                                            qualitReportViewModel.getFirstQualityListing("10","1","IN","")
-                                            finish()
-
-                                        } else {
-                                            Utility.showAlertDialog(
-                                                this@UploadFirstQualtityReportsClass,
-                                                getString(R.string.alert),
-                                                it.data!!.getMessage()
-                                            ) { }
-                                        }
-
-                                    }
-                                }
-                            }
-                        }
-
                     }
-                })
+                }
+            }
+
+
 
         }
         binding!!.uploadReport.setOnClickListener {
@@ -340,10 +335,25 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this)
+
+                }
+            }
+
+        }
+
 
     }
-
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
@@ -419,6 +429,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS -> {
 

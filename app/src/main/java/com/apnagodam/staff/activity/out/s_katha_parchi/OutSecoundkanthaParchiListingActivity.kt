@@ -46,6 +46,7 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        binding!!.titleHeader.setText("Second Kanta Parchi List")
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.secoundkanta_parchi)
@@ -152,6 +153,10 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     fun ViewData(position: Int) {
         val displayRectangle = Rect()
         val window = this.window

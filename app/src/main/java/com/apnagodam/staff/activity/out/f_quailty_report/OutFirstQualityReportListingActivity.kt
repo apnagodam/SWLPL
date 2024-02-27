@@ -101,6 +101,10 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
     override fun onBackPressed() {
         super.onBackPressed()
     }

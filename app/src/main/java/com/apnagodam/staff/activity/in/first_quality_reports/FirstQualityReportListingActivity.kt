@@ -116,6 +116,11 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
         binding!!.rvDefaultersStatus.adapter = firstQualityReportAdapter
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+
+    }
     private fun getAllCases(search: String) {
         showDialog()
         qualitReportViewModel.getFirstQualityListing("10",pageOffset.toString(),"IN",search)
