@@ -115,11 +115,12 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 .detectLeakedSqlLiteObjects()
                 .detectLeakedClosableObjects()
                 .penaltyLog()
-                .penaltyDeath()
+              //  .penaltyDeath()
                 .build());
         ePowerApp = (ApnaGodamApp) getApplication();
         apiService = RetrofitAPIClient.getRetrofitClient();
         binding = DataBindingUtil.setContentView(this, getLayoutResId());
+
         setUp();
 
     }

@@ -285,8 +285,9 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         }
 
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 1) {
-                                startActivityAndClear(SecoundkanthaParchiListingActivity::class.java)
+                            if (it.data!!.status == "1") {
+                                kantaParchiViewModel.getSKantaParchiListing("10","1","IN","")
+                                finish()
                                 showToast(it.data!!.message)
                             } else {
                                 Utility.showAlertDialog(
@@ -333,7 +334,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         }
 
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 1) {
+                            if (it.data!!.status == "1") {
                                 startActivityAndClear(SecoundkanthaParchiListingActivity::class.java)
                                 showToast(it.data!!.message)
                             } else {

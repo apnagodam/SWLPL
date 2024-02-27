@@ -1,14 +1,12 @@
 package com.apnagodam.staff.Network
 
-import android.content.Intent
-import com.apnagodam.staff.activity.LoginActivity
-import com.apnagodam.staff.db.SharedPreferencesRepository
 import retrofit2.Response
 
 
 abstract class BaseApiResponse {
     suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): NetworkResult<T> {
         try {
+
             val response = apiCall()
             if (response.isSuccessful) {
                 val body = response.body()

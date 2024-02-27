@@ -34,6 +34,13 @@ import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -166,7 +173,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             kantaParchiViewModel.getSKantaParchiListing("10","1","OUT","")
-            onBackPressedDispatcher.onBackPressed()
+            finish()
 
         }
         binding!!.btnLogin.setOnClickListener {
@@ -245,6 +252,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
         if (isFirstUpload) {
             if (fileTruck2 != null) {
+                showDialog()
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
@@ -270,7 +278,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
-
+                            hideDialog()
                         }
 
                         is NetworkResult.Loading -> {
@@ -278,9 +286,12 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                         }
 
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 1) {
-                                startActivityAndClear(OutSecoundkanthaParchiListingActivity::class.java)
+                            hideDialog()
+                            if (it.data!!.status == "1") {
                                 showToast(it.data!!.message)
+
+                                kantaParchiViewModel.getSKantaParchiListing("10","1","OUT","")
+                                finish()
                             } else {
                                 Utility.showAlertDialog(
                                     this,
@@ -297,7 +308,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
             }
         } else {
             if (validateFields()) {
-
+                showDialog()
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
@@ -317,7 +328,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
-
+                            showToast(it.message)
+                        hideDialog()
                         }
 
                         is NetworkResult.Loading -> {
@@ -325,7 +337,9 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                         }
 
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 1) {
+                            hideDialog()
+                            if (it.data!!.status == "1") {
+                                kantaParchiViewModel.getSKantaParchiListing("10","1","OUT","")
                                 startActivityAndClear(OutSecoundkanthaParchiListingActivity::class.java)
                                 showToast(it.data!!.message)
                             } else {
@@ -355,26 +369,30 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
     }
 
-    private fun bitmapToFile(bitmap: Bitmap): Uri {
+    suspend private fun bitmapToFile(bitmap: Bitmap): Flow<Uri> {
+
+        return flow {
+            val wrapper = ContextWrapper(applicationContext)
+
+            // Initialize a new file instance to save bitmap object
+            var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+            file = File(file, "${UUID.randomUUID()}.jpg")
+
+            try {
+                // Compress the bitmap and save in jpg format
+                val stream: OutputStream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                stream.flush()
+                stream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+            // Return the saved bitmap uri
+            emit( Uri.parse(file.absolutePath))
+        }.flowOn(Dispatchers.IO)
         // Get the context wrapper
-        val wrapper = ContextWrapper(applicationContext)
 
-        // Initialize a new file instance to save bitmap object
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
-
-        try {
-            // Compress the bitmap and save in jpg format
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        // Return the saved bitmap uri
-        return Uri.parse(file.absolutePath)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -391,45 +409,62 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                 if (thumbnail != null) {
                     if (firstKanthaFile) {
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail!!).path)),
-                            stampMap
-                        )
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileKantha)
-                        firstkantaParchiFile = uri.toString()
-                        binding!!.KanthaImage.setImageURI(uri)
+                        GlobalScope.launch {
+                            bitmapToFile(thumbnail).collect(){
+                                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                    File(compressImage(it.path)),
+                                    stampMap
+                                )
+                                firstKanthaFile = false
+                                truckImage = false
+                                truckImage2 = false
+                                fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                                val uri = Uri.fromFile(fileKantha)
+                                firstkantaParchiFile = uri.toString()
+                                binding!!.KanthaImage.setImageURI(uri)
+                            }
+                        }
+
+
 
                     } else if (truckImage) {
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail!!).path)),
-                            stampMap
-                        )
 
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileTruck)
-                        TruckImage = uri.toString()
-                        binding!!.TruckImage.setImageURI(uri)
+                        GlobalScope.launch {
+                            bitmapToFile(thumbnail).collect(){
+                                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                    File(compressImage(it.path)),
+                                    stampMap
+                                )
+                                firstKanthaFile = false
+                                truckImage = false
+                                truckImage2 = false
+                                fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                                val uri = Uri.fromFile(fileTruck)
+                                TruckImage = uri.toString()
+                                binding!!.TruckImage.setImageURI(uri)
+                            }
+                        }
+
                     } else if (truckImage2) {
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail!!).path)),
-                            stampMap
-                        )
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileTruck2)
-                        TruckImage2 = uri.toString()
-                        binding!!.truckImage2.setImageURI(uri)
+
+                        GlobalScope.launch {
+                            bitmapToFile(thumbnail).collect(){
+                                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                    File(compressImage(it.path)),
+                                    stampMap
+                                )
+                                firstKanthaFile = false
+                                truckImage = false
+                                truckImage2 = false
+                                fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                                val uri = Uri.fromFile(fileTruck2)
+                                TruckImage2 = uri.toString()
+                                binding!!.truckImage2.setImageURI(uri)
+                            }
+                        }
+
                     }
                 }
             }
@@ -475,6 +510,5 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
     override fun onBackPressed() {
         super.onBackPressed()
-        (OutSecoundkanthaParchiListingActivity::class.java)
     }
 }

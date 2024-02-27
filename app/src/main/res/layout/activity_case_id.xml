@@ -604,6 +604,7 @@
                         android:focusable="true"
                         android:focusedByDefault="true"
                         android:imeOptions="actionDone"
+                        android:visibility="gone"
                         android:inputType="text"
                         android:maxLines="1"
                         android:singleLine="true" />

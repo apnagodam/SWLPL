@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity
 
 import android.annotation.TargetApi
+import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.CountDownTimer
@@ -17,6 +18,7 @@ import com.apnagodam.staff.Network.Request.LoginPostData
 import com.apnagodam.staff.Network.Request.OTPData
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
+import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
@@ -43,6 +45,8 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
     private var userInfo: OTPvarifedResponse? = null
 
     private val loginViewModel by viewModels<LoginViewModel>()
+    val homeViewModel by viewModels<HomeViewModel>()
+
     override fun getLayoutResId(): Int {
         return R.layout.activity_otp
     }
@@ -158,6 +162,8 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                        SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
                        SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
                        SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
+                       SharedPreferencesRepository.setIsUserName(true)
+                       afterpermissionNext()
                        Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
                        SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
                        if (setting.equals("changeMobileNumber", ignoreCase = true)) {
@@ -170,6 +176,49 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }
             }
         }
+
+    }
+
+    private fun afterpermissionNext() {
+
+        if(SharedPreferencesRepository.getDataManagerInstance().userPermission!=null&&SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()){
+            startActivityAndClear(StaffDashBoardActivity::class.java)
+        }
+
+        else{
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+            if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
+                homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
+                homeViewModel.response.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> {}
+                        is NetworkResult.Loading -> {
+                            showToast("loading")
+                        }
+
+                        is NetworkResult.Success -> {
+                            if (it.data != null) {
+
+                                SharedPreferencesRepository.getDataManagerInstance()
+                                    .saveUserPermissionData(it.data.userPermissionsResult)
+                                startActivityAndClear(StaffDashBoardActivity::class.java)
+
+                            }
+
+
+                        }
+
+                    }
+                }
+
+            } else {
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.putExtra("setting", "")
+                this.startActivity(intent)
+                finish()
+            }
+        }
+
 
     }
 

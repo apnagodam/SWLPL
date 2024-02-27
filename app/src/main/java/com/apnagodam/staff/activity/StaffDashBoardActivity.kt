@@ -73,6 +73,11 @@ import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.coroutines.flow
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
+import com.fondesa.kpermissions.isGranted
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -92,6 +97,8 @@ import com.karumi.dexter.listener.single.PermissionListener
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -139,24 +146,33 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     override fun setUp() {
+        permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.CALL_PHONE).build().send()
+        setUI()
         prepareMenuData()
         populateExpandableList()
         getdashboardData()
 
 
         // setBackBtn(binding.mainHeader.toolbar);
+
+    }
+
+
+    fun setUI() {
         setSupportActionBar(binding!!.mainContent.mainHeader.toolbar)
         binding!!.drawerLayout.addDrawerListener(this)
         binding!!.profileId.setOnClickListener {
             val intent = Intent(this@StaffDashBoardActivity, StaffProfileActivity::class.java)
             startActivity(intent)
         }
-        photoEasy = PhotoEasy.builder().setActivity(this)
-            .build()
+
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            lat = it.latitude
-            long = it.longitude
+            if (it != null) {
+                lat = it.latitude
+                long = it.longitude
+            }
+
 
             val geocoder = Geocoder(this, Locale.getDefault())
             val addresses = geocoder.getFromLocation(lat, long, 1)
@@ -207,7 +223,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         binding!!.mainContent.UploadImage.setOnClickListener { onImageSelected() }
         binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
-
+        photoEasy = PhotoEasy.builder().setActivity(this).build()
     }
 
     private fun populateExpandableList() {
@@ -271,7 +287,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 }
 
                                 is NetworkResult.Success -> {
-                                    if(it.data!=null){
+                                    if (it.data != null) {
                                         SharedPreferencesRepository.getDataManagerInstance().clear()
                                         SharedPreferencesRepository.setIsUserName(false)
                                         SharedPreferencesRepository.saveSessionToken("")
@@ -292,7 +308,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         binding!!.expandableListView.setOnChildClickListener(OnChildClickListener { parent, v, groupPosition, childPosition, id ->
             if (childList[headerList[groupPosition]] != null) {
                 val model = childList[headerList[groupPosition]]!![childPosition]
-                if (model.url.length > 0) {
+                if (model.url.isNotEmpty() && SharedPreferencesRepository.getDataManagerInstance().userPermission != null) {
                     for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
                         if (model.menuName == resources.getString(R.string.price)) {
                             Log.e("pricing", "pricing")
@@ -981,13 +997,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             hideDialog()
                             showToast(it.message)
                         }
+
                         is NetworkResult.Loading -> {
 
                         }
+
                         is NetworkResult.Success -> {
                             hideDialog()
                             if (it.data != null) {
-                                if (it.data.status == 1) {
+                                if (it.data.status == "1") {
                                     fileSelfie = null
                                     OnOfffAttendance =
                                         if (it.data.getClock_status()
@@ -1008,8 +1026,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                         it.data.message,
                                         Toast.LENGTH_LONG
                                     ).show()
-                                }
-                                else{
+                                } else {
                                     Toast.makeText(
                                         this@StaffDashBoardActivity,
                                         it.data.message,
@@ -1067,6 +1084,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         })
         UploadImage.setOnClickListener(View.OnClickListener {
             dispatchTakePictureIntent()
+
             // callProfileImageSelector(REQUEST_CAMERA);
         })
         clockInOut.setOnClickListener(View.OnClickListener { v: View? -> callServer() })
@@ -1085,7 +1103,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send() {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+
+                }
+            }
+
+        }
 
 
     }
@@ -1111,6 +1144,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
+
     private fun locationget() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -1398,6 +1432,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 0 -> {}
                 1 -> {
                 }
+
                 2 -> startActivity(LanguageActivity::class.java)
                 3 -> startActivity(LeadGenerateClass::class.java)
                 4 -> startActivity(CaseIDGenerateClass::class.java)
@@ -1446,7 +1481,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
             override fun onFinish(thumbnail: Bitmap?) {
 
-                if(thumbnail!=null){
+                if (thumbnail != null) {
                     val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
 
                     var stampMap = mapOf(

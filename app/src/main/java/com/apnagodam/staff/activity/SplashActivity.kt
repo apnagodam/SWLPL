@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.provider.Settings.Global
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
@@ -14,22 +15,22 @@ import androidx.core.content.ContextCompat
 import com.apnagodam.staff.ApnaGodamApp
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
-import com.apnagodam.staff.Network.NetworkCallbackWProgress
 import com.apnagodam.staff.Network.NetworkResult
-import com.apnagodam.staff.Network.Response.VersionCodeResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.LoginActivity
-import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.CommudityResponse
+import com.apnagodam.staff.module.AllUserPermissionsResultListResponse.UserPermissionsResult
 import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
@@ -37,88 +38,109 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     val homeViewModel by viewModels<HomeViewModel>()
     override fun getLayoutResId(): Int {
-        Utility.changeLanguage(
-            this,
-            SharedPreferencesRepository.getDataManagerInstance().selectedLanguage
-        )
+
         return R.layout.activity_splash
+    }
+
+    suspend fun changeLanguage(): Flow<Unit> {
+        return flow {
+            emit(
+                Utility.changeLanguage(
+                    this@SplashActivity,
+                    SharedPreferencesRepository.getDataManagerInstance().selectedLanguage
+                )
+            )
+        }
     }
 
     override fun setUp() {
         getappVersion()
-        nextMClass()
+        afterpermissionNext()
     }
 
     private fun nextMClass() {
-        when (requestPermissions()) {
-            true -> afterpermissionNext()
-            else -> {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ),
-                    REQUEST_CAMERA_CODE
-                )
+        GlobalScope.launch {
+            requestPermissions().collect() {
+                if(it == true){
+
+                }else{
+                    ActivityCompat.requestPermissions(
+                        this@SplashActivity,
+                        arrayOf(
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        ),
+                        REQUEST_CAMERA_CODE
+                    )
+                }
+
             }
         }
+
 
     }
 
     private fun afterpermissionNext() {
-        val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-        val name = SharedPreferencesRepository.isUSerName()
 
-        when (name) {
-            true -> startActivityAndClear(StaffDashBoardActivity::class.java)
-            else -> {
-                if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
-                    homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
-                    homeViewModel.response.observe(this) {
-                        when (it) {
-                            is NetworkResult.Error -> {}
-                            is NetworkResult.Loading -> {
-                                showToast("loading")
-                            }
+        if(SharedPreferencesRepository.getDataManagerInstance().userPermission!=null&&SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()){
+            startActivityAndClear(StaffDashBoardActivity::class.java)
+        }
 
-                            is NetworkResult.Success -> {
-                               if(it.data!=null){
-                                   if(it.data.status==1){
-                                       SharedPreferencesRepository.getDataManagerInstance()
-                                           .saveUserPermissionData(it.data.getUserPermissionsResult())
+        else{
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+            if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
+                homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
+                homeViewModel.response.observe(this) {
+                    when (it) {
+                        is NetworkResult.Error -> {}
+                        is NetworkResult.Loading -> {
+                            showToast("loading")
+                        }
 
-                                       startActivityAndClear(StaffDashBoardActivity::class.java)
-                                   }
-                               }
+                        is NetworkResult.Success -> {
+                            if (it.data != null) {
 
+                                SharedPreferencesRepository.getDataManagerInstance()
+                                    .saveUserPermissionData(it.data.userPermissionsResult)
+                                startActivityAndClear(StaffDashBoardActivity::class.java)
 
                             }
+
 
                         }
-                    }
 
-                } else {
-                    val intent = Intent(this@SplashActivity, LoginActivity::class.java)
-                    intent.putExtra("setting", "")
-                    this@SplashActivity.startActivity(intent)
-                    finish()
+                    }
                 }
+
+            } else {
+                val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+                intent.putExtra("setting", "")
+                this@SplashActivity.startActivity(intent)
+                finish()
             }
         }
 
+
     }
 
-    private fun requestPermissions(): Boolean {
-        val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        val writeExternalPermission = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        val readExternalPermission = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        return cameraPermission == PackageManager.PERMISSION_GRANTED && writeExternalPermission == PackageManager.PERMISSION_GRANTED && readExternalPermission == PackageManager.PERMISSION_GRANTED
+
+    suspend private fun requestPermissions(): Flow<Boolean> {
+
+        return flow<Boolean> {
+            val cameraPermission =
+                ContextCompat.checkSelfPermission(this@SplashActivity, Manifest.permission.CAMERA)
+            val writeExternalPermission = ContextCompat.checkSelfPermission(
+                this@SplashActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            val readExternalPermission = ContextCompat.checkSelfPermission(
+                this@SplashActivity, Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            emit(
+                cameraPermission == PackageManager.PERMISSION_GRANTED && writeExternalPermission == PackageManager.PERMISSION_GRANTED && readExternalPermission == PackageManager.PERMISSION_GRANTED
+            )
+        }
+            .flowOn(Dispatchers.IO)
     }
 
     override fun onRequestPermissionsResult(
@@ -131,7 +153,10 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 var i = 0
                 while (i < grantResults.size) {
                     if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                        requestPermissions()
+                        GlobalScope.launch {
+                            requestPermissions().collect()
+                        }
+
                         if (!ActivityCompat.shouldShowRequestPermissionRationale(
                                 this,
                                 permissions[i]
@@ -142,11 +167,13 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                     }
                     i++
                 }
-                afterpermissionNext()
 
                 // open dialog
             }
+
         }
+        afterpermissionNext()
+
     }
 
     /* private void nextMClass() {
@@ -184,53 +211,13 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     }
 
-    private fun showUpdateDialogue() {
-        val dialogue = Dialog(this)
-        dialogue.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialogue.setContentView(R.layout.dialogue_update_apk)
-        dialogue.window!!.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
-        dialogue.window!!.setBackgroundDrawableResource(android.R.color.transparent)
-        dialogue.setCancelable(false)
-        dialogue.setCanceledOnTouchOutside(false)
-        dialogue.setTitle(null)
-        ApnaGodamApp.showUpdate = false
-        val updateBtn = dialogue.findViewById<Button>(R.id.btn_update)
-        updateBtn.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.setData(Uri.parse(market_uri))
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NO_ANIMATION)
-            startActivity(intent)
-            /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                            ContextCompat.checkSelfPermission(
-                                    SplashActivity.this,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE
-                            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                            SplashActivity.this,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(SplashActivity.this,
-                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                5);
-                    } else {
-                        dialogue.dismiss();
-                        ApnaGodamApp.getInstance().showUpdate = false;
-                        downloadApk();
-                    }*/
-        }
-        dialogue.show()
-    }
 
     private fun getCommodityList() {
         homeViewModel.getCommodities("Emp")
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
-                is NetworkResult.Error -> TODO()
-                is NetworkResult.Loading -> TODO()
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (BuildConfig.APPLICATION_ID != null) {
                         SharedPreferencesRepository.getDataManagerInstance()

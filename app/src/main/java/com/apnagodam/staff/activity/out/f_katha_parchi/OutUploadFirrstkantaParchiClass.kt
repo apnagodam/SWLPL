@@ -202,7 +202,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             kantaParchiViewModel.getKantaParchiListing("10","1","OUT","")
-            onBackPressedDispatcher.onBackPressed()
+           finish()
         }
         binding!!.tilKantaParchi.setOnClickListener {
             searchableSpinner.show()
@@ -322,6 +322,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         //else {
         if (isFirstUpload) {
             if (fileTruck2 != null) {
+                showDialog()
                 kantaParchiViewModel.uploadFirstKantaParchi(
                     UploadFirstkantaParchiPostData(
                         CaseID,
@@ -343,19 +344,22 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
                     when (it) {
                         is NetworkResult.Error -> {
+                            hideDialog()
                             showToast(it.message)
                         }
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 0) {
+                            hideDialog()
+                            if (it.data!!.status == "0") {
                                 Utility.showAlertDialog(
                                     this@OutUploadFirrstkantaParchiClass,
                                     getString(R.string.alert),
                                     it.data!!.getMessage()
                                 ) { }
                             } else {
-                                startActivityAndClear(OutFirstkanthaParchiListingActivity::class.java)
+                                kantaParchiViewModel.getKantaParchiListing("10","1","OUT","")
+                                finish()
                                 showToast(it.data.message)
                             }
 
@@ -394,7 +398,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 0) {
+                            if (it.data!!.status == "0") {
                                 Utility.showAlertDialog(
                                     this@OutUploadFirrstkantaParchiClass,
                                     getString(R.string.alert),

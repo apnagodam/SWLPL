@@ -292,7 +292,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
+        kantaParchiViewModel.getKantaParchiListing("10","1","IN","")
+        finish()
     }
 
     /*private void callImageSelector(int requestCamera) {
@@ -356,15 +357,17 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 0) {
+                            if (it.data!!.status == "0") {
                                 Utility.showAlertDialog(
                                     this@UploadFirstkantaParchiClass,
                                     getString(R.string.alert),
                                     it.data!!.getMessage()
                                 ) { }
                             } else {
-                                startActivityAndClear(FirstkanthaParchiListingActivity::class.java)
                                 showToast(it.data.message)
+
+                                kantaParchiViewModel.getKantaParchiListing("10","1","IN","")
+                                finish()
                             }
                             hideDialog()
 
@@ -405,7 +408,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-                            if (it.data!!.status == 0) {
+                            if (it.data!!.status == "0") {
                                 Utility.showAlertDialog(
                                     this@UploadFirstkantaParchiClass,
                                     getString(R.string.alert),

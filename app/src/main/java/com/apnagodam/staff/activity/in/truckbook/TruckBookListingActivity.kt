@@ -44,41 +44,14 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private val truckViewModel  : TruckBookViewModel by viewModels<TruckBookViewModel>()
 
     override fun setUp() {
-        AllCases = arrayListOf()
-        getAllCases("")
-
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.truck_book)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
         binding!!.tvMoreView.text = resources.getString(R.string.more_view_truck)
         binding!!.tvPhone.text = resources.getString(R.string.truck_book)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
-        binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
-        binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View) {
-                onBackPressed()
-            }
-        })
-        binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View) {
-                if (pageOffset != 1) {
-                    pageOffset--
-                    getAllCases("")
-                }
-            }
-        })
-        binding!!.tvNext.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View) {
-                if (totalPage != pageOffset) {
-                    pageOffset++
-                    getAllCases("")
-                }
-            }
-        })
+        AllCases = arrayListOf()
+
         binding!!.filterIcon.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val builder = AlertDialog.Builder(this@TruckBookListingActivity)
@@ -119,6 +92,14 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                 //  setDateTimeField();
             }
         })
+        getAllCases("")
+
+        setAdapter()
+
+        /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
+
     }
 
     override fun onBackPressed() {
@@ -169,6 +150,28 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         truckBookAdapter!!.notifyDataSetChanged()
                         //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                     }
+                    binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
+                    binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(view: View) {
+                            onBackPressed()
+                        }
+                    })
+                    binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(view: View) {
+                            if (pageOffset != 1) {
+                                pageOffset--
+                                getAllCases("")
+                            }
+                        }
+                    })
+                    binding!!.tvNext.setOnClickListener(object : View.OnClickListener {
+                        override fun onClick(view: View) {
+                            if (totalPage != pageOffset) {
+                                pageOffset++
+                                getAllCases("")
+                            }
+                        }
+                    })
                     hideDialog()
                 }
             }

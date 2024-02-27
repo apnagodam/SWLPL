@@ -228,50 +228,36 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
-
-
-                Utility.showDecisionDialog(
-                    this@LabourBookUploadClass,
-                    getString(R.string.alert),
-                    "Are You Sure to Summit?"
-                ) {
-                    showDialog()
-                    labourViewModel.uploadLabourDetails(
-                        UploadLabourDetailsPostData(
-                            CaseID,
-                            contractorsID,
-                            stringFromView(binding!!.etContractorPhone),
-                            "N/A",
-                            stringFromView(binding!!.etLabourRate),
-                            "N/A",
-                            "N/A",
-                            stringFromView(binding!!.notes),
-                            "0000-00-00"
-                        )
+                showDialog()
+                labourViewModel.uploadLabourDetails(
+                    UploadLabourDetailsPostData(
+                        CaseID,
+                        contractorsID,
+                        stringFromView(binding!!.etContractorPhone),
+                        "N/A",
+                        stringFromView(binding!!.etLabourRate),
+                        "N/A",
+                        "N/A",
+                        stringFromView(binding!!.notes),
+                        "0000-00-00"
                     )
-                    startActivityAndClear(LabourBookListingActivity::class.java)
-                    labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
-                        when (it) {
-                            is NetworkResult.Error -> {
-                                hideDialog()
-                            }
+                )
 
-                            is NetworkResult.Loading -> {}
-                            is NetworkResult.Success -> {
-                                hideDialog()
-                                Utility.showAlertDialog(
-                                    this@LabourBookUploadClass,
-                                    getString(R.string.alert),
-                                    it.data!!.get("message").toString()
-                                ) {
+                labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
+                    when (it) {
+                        is NetworkResult.Error -> {
+                            hideDialog()
+                        }
 
-                                }
-                            }
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
+                            hideDialog()
+                            labourViewModel.getLabourList("10","1","IN","")
+                            finish()
                         }
                     }
-
-
                 }
+
 
 //                if (contractorsID == null) {
 //                    Toast.makeText(
@@ -293,6 +279,8 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 if (Validationhelper().fieldEmpty(binding!!.tilContractor)) {
                     binding!!.tilContractor.error =
                         "This Field cannot be empty"
+                    return false
+
                 }
             }
             return true

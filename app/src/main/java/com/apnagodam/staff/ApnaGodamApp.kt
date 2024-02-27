@@ -10,22 +10,28 @@ import io.github.inflationx.viewpump.ViewPump
 
 
 @HiltAndroidApp
-class ApnaGodamApp : Application() { override fun onCreate() {
+class ApnaGodamApp : Application() {
+    override fun onCreate() {
         super.onCreate()
-
         app = this
-        ViewPump.init(ViewPump.builder()
-                .addInterceptor(CalligraphyInterceptor(
+        ViewPump.init(
+            ViewPump.builder()
+                .addInterceptor(
+                    CalligraphyInterceptor(
                         CalligraphyConfig.Builder() //                        .setDefaultFontPath("fonts/Gotham.ttf")
-                                .setDefaultFontPath("fonts/RobotoLight.ttf")
-                                .setFontAttrId(R.attr.fontPath)
-                                .build()))
-                .build())
+                            .setDefaultFontPath("fonts/RobotoLight.ttf")
+                            .setFontAttrId(R.attr.fontPath)
+                            .build()
+                    )
+                )
+                .build()
+        )
     }
 
     companion object {
         @JvmField
         var app: ApnaGodamApp? = null
+
         @JvmField
         var showUpdate = true
     }

@@ -200,7 +200,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             qualitReportViewModel.getSecondQualityListing(limit = "10","1","OUT","")
-            onBackPressedDispatcher.onBackPressed()
+            finish()
 
         }
         binding!!.btnSubmit.setOnClickListener {
@@ -361,6 +361,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
             }
         }
         if (!isFieldEmpty && binding!!.etLive.text!!.isNotEmpty() && binding!!.etExtraClaim.text!!.isNotEmpty() && fileReport != null) {
+           showDialog()
             qualitReportViewModel.uploadSecondQualityReport(
                 UploadSecoundQualityPostData(
                     CaseID,
@@ -378,16 +379,18 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
             qualitReportViewModel.sQualityUploadResponse.observe(this) {
                 when (it) {
                     is NetworkResult.Error -> {
+                        hideDialog()
                         showToast(it.message)
                     }
 
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
-                        if (it.data!!.status == 1) {
+                        hideDialog()
+                        if (it.data!!.status == "1") {
                             showToast(it.data.message)
-                            startActivityAndClear(
-                                OutSecoundkanthaParchiListingActivity::class.java
-                            )
+                            qualitReportViewModel.getSecondQualityListing("10","1","OUT","")
+                            finish()
+
                         } else {
                             Utility.showAlertDialog(
                                 this, getString(R.string.alert), it.data!!.getMessage()

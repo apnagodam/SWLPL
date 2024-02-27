@@ -268,9 +268,11 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
                                     is NetworkResult.Loading -> {}
                                     is NetworkResult.Success -> {
-                                        if (it.data!!.status == 1) {
+                                        if (it.data!!.status == "1") {
                                             showToast(it.data.message)
-                                            startActivityAndClear(FirstQualityReportListingActivity::class.java)
+                                            qualitReportViewModel.getFirstQualityListing("10","1","IN","")
+                                            finish()
+
                                         } else {
                                             Utility.showAlertDialog(
                                                 this@UploadFirstQualtityReportsClass,

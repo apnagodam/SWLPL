@@ -585,13 +585,16 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     override fun onBackPressed() {
+       onBackPressedDispatcher.onBackPressed()
         super.onBackPressed()
-        startActivityAndClear(TruckBookListingActivity::class.java)
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> startActivityAndClear(TruckBookListingActivity::class.java)
+            R.id.iv_close ->{
+                truckBookViewModel.getTruckBookList("10",1,"IN","")
+                finish()
+            }
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
 
@@ -651,8 +654,9 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 }
                 is NetworkResult.Success -> {
                     if(it.data!=null){
-                        if(it.data.status==1){
-                            startActivityAndClear(TruckBookListingActivity::class.java)
+                        if(it.data.status.equals("1")){
+                            truckBookViewModel.getTruckBookList("10",1,"IN","")
+                            finish()
                         }
                         else
                             showToast(it.data.message)
