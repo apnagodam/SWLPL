@@ -254,7 +254,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                             intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
                                             context.startActivity(intent);
                                         } else {
-                                            Intent intent = new Intent(context, OutSecoundkanthaParchiListingActivity.class);
+                                            Intent intent = new Intent(context, OutUploadSecoundkantaParchiClass.class);
                                             intent.putExtra("user_name", Leads.get(position).getCustFname());
                                             intent.putExtra("case_id", Leads.get(position).getCaseId());
                                             intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());

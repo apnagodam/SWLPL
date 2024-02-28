@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.secound_quality_reports
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -345,13 +346,14 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        bundle.putString("skp_bags",AllCases[postion].skpBags)
-        bundle.putString("skp_weight",AllCases[postion].skpWeight)
-        startActivity(UploadSecoundQualtityReportsClass::class.java, bundle)
+
+        var intent = Intent(this,UploadSecoundQualtityReportsClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        intent.putExtra("skp_bags",AllCases[postion].skpBags)
+        intent.putExtra("skp_weight",AllCases[postion].skpWeight)
+        startActivity(intent)
     }
 
     override fun onBackPressed() {

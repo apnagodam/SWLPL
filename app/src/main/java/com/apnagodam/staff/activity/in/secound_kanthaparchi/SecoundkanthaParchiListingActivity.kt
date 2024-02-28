@@ -242,10 +242,10 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        val intent = Intent(this, UploadSecoundkantaParchiClass::class.java)
+        var intent = Intent(this,UploadSecoundkantaParchiClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
         intent.putExtra("all_cases", AllCases[postion])
         startActivity(intent)
     }

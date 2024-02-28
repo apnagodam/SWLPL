@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.truckbook
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -361,11 +362,13 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        startActivity(TruckUploadDetailsClass::class.java, bundle)
+        var intent = Intent(this,TruckUploadDetailsClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+
+
+        startActivity(intent)
         /* apiService.cheeckvehiclePricicng(AllCases.get(postion).getCaseId()).enqueue(new NetworkCallback<VehcilePricingCheeck>(getActivity()) {
             @Override
             protected void onSuccess(VehcilePricingCheeck body) {

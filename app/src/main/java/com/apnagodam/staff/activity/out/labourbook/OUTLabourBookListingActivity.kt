@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.labourbook
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -18,6 +19,7 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass
 import com.apnagodam.staff.adapter.OUTLaabourBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllLabourBookListResponse
@@ -269,9 +271,11 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(OUTLabourBookUploadClass::class.java, bundle)
+        var intent = Intent(this, OUTLabourBookUploadClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+
+        startActivity(intent)
     }
 }

@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.labourbook
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -18,16 +19,11 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.LaabourBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllLabourBookListResponse
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+
 @AndroidEntryPoint
 class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     lateinit var laabourBookAdapter: LaabourBookAdapter
@@ -277,6 +273,10 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         val bundle = Bundle()
         bundle.putString("user_name", AllCases!![postion]!!.custFname)
         bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        startActivity(LabourBookUploadClass::class.java, bundle)
+        var intent = Intent(this,LabourBookUploadClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        startActivity(intent)
     }
 }

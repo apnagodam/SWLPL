@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.truckbook
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -21,6 +22,7 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
+import com.apnagodam.staff.activity.`in`.secound_quality_reports.UploadSecoundQualtityReportsClass
 import com.apnagodam.staff.adapter.OUTTruckBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllTruckBookListResponse
@@ -388,11 +390,12 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        startActivity(OUTTruckUploadDetailsClass::class.java, bundle)
+        var intent = Intent(this, OUTTruckUploadDetailsClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+
+        startActivity(intent)
         /* apiService.cheeckvehiclePricicng(AllCases.get(postion).getCaseId()).enqueue(new NetworkCallback<VehcilePricingCheeck>(getActivity()) {
             @Override
             protected void onSuccess(VehcilePricingCheeck body) {

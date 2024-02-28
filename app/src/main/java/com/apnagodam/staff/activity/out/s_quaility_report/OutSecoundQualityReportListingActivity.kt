@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.out.s_quaility_report
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -22,6 +23,7 @@ import com.apnagodam.staff.Network.viewmodel.QualitReportViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.activity.`in`.secound_quality_reports.UploadSecoundQualtityReportsClass
+import com.apnagodam.staff.activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass
 import com.apnagodam.staff.adapter.OutSecoundQualityReportAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.SecoundQuilityReportListResponse
@@ -341,10 +343,11 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        startActivity(UploadSecoundQualtityReportsClass::class.java, bundle)
+        var intent = Intent(this, UploadSecoundQualtityReportsClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+
+        startActivity(intent)
     }
 }

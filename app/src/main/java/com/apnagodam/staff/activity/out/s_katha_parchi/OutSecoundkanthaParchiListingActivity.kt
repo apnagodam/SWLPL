@@ -19,6 +19,7 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
+import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookUploadClass
 import com.apnagodam.staff.adapter.OutSecoundkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
@@ -244,11 +245,11 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        val intent = Intent(this, OutUploadSecoundkantaParchiClass::class.java)
-        intent.putExtra("all_cases", AllCases[postion])
+        var intent = Intent(this, OutUploadSecoundkantaParchiClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+
         startActivity(intent)
     }
 

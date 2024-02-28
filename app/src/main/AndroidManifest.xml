@@ -36,6 +36,8 @@
 
         <activity
             android:name=".activity.FastCaseListActivity"
+            android:screenOrientation="portrait"
+
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -63,6 +65,7 @@
         </activity>
         <activity
             android:name=".activity.LoginActivity"
+
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OtpActivity"
@@ -144,37 +147,70 @@
         <activity
             android:name=".activity.in.gatepass.UploadGatePassClass"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.SpotDealTrackListActivity" />
-        <activity android:name=".activity.ContractFormBillPrintClass" />
-        <activity android:name=".activity.convancy_voachar.UploadConveyanceVoacharClass" />
+        <activity android:name=".activity.SpotDealTrackListActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.ContractFormBillPrintClass"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.convancy_voachar.UploadConveyanceVoacharClass"
+            android:screenOrientation="portrait"
+            />
         <activity android:name=".activity.convancy_voachar.MyConveyanceListClass" />
-        <activity android:name=".activity.convancy_voachar.ApprovalRequestConveyanceListClass" />
-        <activity android:name=".activity.vendorPanel.ApprovalRequestVendorVoacherListClass" />
-        <activity android:name=".activity.vendorPanel.MyVendorVoacherListClass" />
-        <activity android:name=".activity.vendorPanel.UploadVendorVoacherClass" />
-        <activity android:name=".activity.IntantionApprovalListClass" />
-        <activity android:name=".activity.StateMapActivity" />
-        <activity android:name=".activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity" />
-        <activity android:name=".activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass" />
-        <activity android:name=".activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass" />
-        <activity android:name=".activity.out.f_quailty_report.OutFirstQualityReportListingActivity" />
-        <activity android:name=".activity.out.gatepass.OutGatePassListingActivity" />
-        <activity android:name=".activity.out.gatepass.OutUploadGatePassClass" />
-        <activity android:name=".activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity" />
-        <activity android:name=".activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass" />
-        <activity android:name=".activity.out.s_quaility_report.OutSecoundQualityReportListingActivity" />
-        <activity android:name=".activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass" />
-        <activity android:name=".activity.GatePassPDFPrieviewClass" />
-        <activity android:name=".activity.out.truckbook.OUTTruckBookListingActivity" />
-        <activity android:name=".activity.out.truckbook.OUTTruckUploadDetailsClass" />
-        <activity android:name=".activity.out.labourbook.OUTLabourBookListingActivity" />
-        <activity android:name=".activity.out.labourbook.OUTLabourBookUploadClass" />
-        <activity android:name=".activity.casestatus.CaseStatusINListClass" />
-        <activity android:name=".activity.out.releaseorder.OUTRelaseOrderListingActivity" />
-        <activity android:name=".activity.out.releaseorder.OUTReleaseOrderClass" />
-        <activity android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass" />
-        <activity android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity" />
-        <activity android:name=".activity.MobileNumberMapActivity" />
+        <activity android:name=".activity.convancy_voachar.ApprovalRequestConveyanceListClass"  android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.vendorPanel.ApprovalRequestVendorVoacherListClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.vendorPanel.MyVendorVoacherListClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.vendorPanel.UploadVendorVoacherClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.IntantionApprovalListClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.StateMapActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.f_quailty_report.OutFirstQualityReportListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.gatepass.OutGatePassListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.gatepass.OutUploadGatePassClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.s_quaility_report.OutSecoundQualityReportListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.GatePassPDFPrieviewClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.truckbook.OUTTruckBookListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.truckbook.OUTTruckUploadDetailsClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.labourbook.OUTLabourBookListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.labourbook.OUTLabourBookUploadClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.casestatus.CaseStatusINListClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.releaseorder.OUTRelaseOrderListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.releaseorder.OUTReleaseOrderClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity" android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.MobileNumberMapActivity" android:screenOrientation="portrait"
+            />
 
         <receiver
             android:name=".reciever.SMSReceiver"
