@@ -41,13 +41,13 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
 
     override fun setUp() {
         setView()
-        setAdapter()
 
 
     }
 
 
     fun setView(){
+        getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         binding!!.titleHeader.text = resources.getString(R.string.labour_book)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -59,7 +59,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         AllCases = arrayListOf()
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LabourBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -115,14 +115,10 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         val horizontalLayoutManager =
             LinearLayoutManager(this@LabourBookListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        laabourBookAdapter = LaabourBookAdapter(AllCases, this@LabourBookListingActivity, activity)
         binding!!.rvDefaultersStatus.adapter = laabourBookAdapter
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-            onBackPressed()
-    }
+
 
     private fun getAllCases(search: String) {
         showDialog()
@@ -138,21 +134,29 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
                         binding!!.txtemptyMsg.visibility = View.VISIBLE
                         binding!!.rvDefaultersStatus.visibility = View.GONE
                         binding!!.pageNextPrivious.visibility = View.GONE
-                    } else if (it.data.labour.lastPage == 1) {
-                        binding!!.txtemptyMsg.visibility = View.GONE
-                        binding!!.rvDefaultersStatus.visibility = View.VISIBLE
-                        binding!!.pageNextPrivious.visibility = View.GONE
-                        totalPage = it.data.labour.lastPage
-                        AllCases!!.addAll(it.data.labour.data)
-                        laabourBookAdapter!!.notifyDataSetChanged()
-                    } else {
-                        AllCases!!.clear()
-                        totalPage = it.data.labour.lastPage
-                        AllCases!!.addAll(it.data.labour.data)
-                        laabourBookAdapter!!.notifyDataSetChanged()
-                        // AllCases = body.getCurrentPageCollection();
-                        // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
                     }
+                    else{
+                        laabourBookAdapter = LaabourBookAdapter(AllCases, this@LabourBookListingActivity, activity)
+                        if (it.data.labour.lastPage == 1) {
+                            binding!!.txtemptyMsg.visibility = View.GONE
+                            binding!!.rvDefaultersStatus.visibility = View.VISIBLE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                            totalPage = it.data.labour.lastPage
+                            AllCases!!.addAll(it.data.labour.data)
+                            laabourBookAdapter!!.notifyDataSetChanged()
+                        } else {
+                            AllCases!!.clear()
+                            totalPage = it.data.labour.lastPage
+                            AllCases!!.addAll(it.data.labour.data)
+                            laabourBookAdapter!!.notifyDataSetChanged()
+                            // AllCases = body.getCurrentPageCollection();
+                            // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
+                        }
+
+                    }
+
+                    setAdapter()
+
                     hideDialog()
                 }
             }

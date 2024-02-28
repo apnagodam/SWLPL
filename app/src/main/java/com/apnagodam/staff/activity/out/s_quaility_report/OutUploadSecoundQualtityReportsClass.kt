@@ -120,24 +120,10 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
             }
 
         }
-        val bundle = intent.getBundleExtra(BUNDLE)
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
         binding!!.tvTitle.setText("Upload Second Quality Report")
-        if (validData(bundle)) {
-            UserName = bundle?.getString("user_name")
-            CaseID = bundle?.getString("case_id")
 
-            if (bundle?.getString("skp_bags") != null && bundle.getString("skp_weight") != null) {
-                skpBags = bundle?.getString("skp_bags").toString().toInt()
-                skpWeight = bundle?.getString("skp_weight").toString().toInt()
-                binding!!.etAvgWeight.setText((skpWeight * 100 / skpBags).toString())
-            } else {
-                skpBags = 0;
-                skpWeight = 0;
-                binding!!.etAvgWeight.setText("N/A")
-
-            }
-
-        }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.customerName.text = UserName
@@ -196,36 +182,24 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         return bundle != null
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
             finish()
-
         }
         binding!!.btnSubmit.setOnClickListener {
-            Utility.showDecisionDialog(this,
-                getString(R.string.alert),
-                "Are You Sure to Summit?",
-                object : Utility.AlertCallback {
-                    override fun callback() {
-                        if (packagingTypeID != null) {
-                            onNext()
+            if (packagingTypeID != null) {
+                onNext()
 
-                        } else {
-                            Utility.showAlertDialog(
-                                this@OutUploadSecoundQualtityReportsClass,
-                                getString(R.string.alert),
-                                resources.getString(R.string.packaging)
-                            ) {
+            } else {
+                Utility.showAlertDialog(
+                    this@OutUploadSecoundQualtityReportsClass,
+                    getString(R.string.alert),
+                    resources.getString(R.string.packaging)
+                ) {
 
-                            }
-                        }
-
-                    }
-                })
+                }
+            }
         }
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true

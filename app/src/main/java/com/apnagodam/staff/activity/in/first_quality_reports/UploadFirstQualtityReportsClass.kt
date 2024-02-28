@@ -118,52 +118,49 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         binding!!.tvTitle.setText("Upload First Quality Report")
 
         binding!!.tilAvgWeight.visibility = View.GONE
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
 
-            showDialog()
-            qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
-            qualitReportViewModel.commodityResponse.observe(this) {
-                when (it) {
-                    is NetworkResult.Error -> {
-                        hideDialog()
-                    }
-                    is NetworkResult.Loading -> {}
-                    is NetworkResult.Success -> {
-                        if (it.data != null) {
-                            listOfParams = it.data.data as ArrayList<Datum>
-                            for (data in it.data.data) {
-                                var textInputField =
-                                    TextInputLayout(this, null, R.attr.customTextInputStyle)
-                                var editText = TextInputEditText(textInputField.context)
-                                editText.inputType =
-                                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                                editText.filters = arrayOf(InputFilter.LengthFilter(5))
-                                textInputField.setHint(data.name)
-                                textInputField.addView(editText)
+        showDialog()
+        qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
+        qualitReportViewModel.commodityResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        listOfParams = it.data.data as ArrayList<Datum>
+                        for (data in it.data.data) {
+                            var textInputField =
+                                TextInputLayout(this, null, R.attr.customTextInputStyle)
+                            var editText = TextInputEditText(textInputField.context)
+                            editText.inputType =
+                                InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                            editText.filters = arrayOf(InputFilter.LengthFilter(5))
+                            textInputField.setHint(data.name)
+                            textInputField.addView(editText)
 
-                                ed.add(textInputField)
-                                binding!!.llDynamic.addView(textInputField)
+                            ed.add(textInputField)
+                            binding!!.llDynamic.addView(textInputField)
 //                               var data = Datum()
 //                                listOfQualityParams.add(Datum())
 
-                            }
-
-
                         }
-                        hideDialog()
+
 
                     }
+                    hideDialog()
+
                 }
             }
+        }
 
-            var i = 0;
-            paramList.forEach {
+        var i = 0;
+        paramList.forEach {
 
 
-            }
         }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)

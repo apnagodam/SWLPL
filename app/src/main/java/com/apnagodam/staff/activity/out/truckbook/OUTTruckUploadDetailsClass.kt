@@ -113,11 +113,8 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         transTypeList.add("Company Transport")
         TransporterName.add("Select Transporter")
         calender = Calendar.getInstance()
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
-        }
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
         transportTypeAdapter =
             ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, transTypeList)
         transporterList()
@@ -339,22 +336,8 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
+        photoEasy.startActivityForResult(this)
 
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
-
-                }
-            }
-
-        }
 
 
     }
@@ -566,9 +549,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
            binding!!.lpCommiteDate.isFocusableInTouchMode = true*/
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 
     override fun onClick(view: View) {
         when (view.id) {

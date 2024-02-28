@@ -10,15 +10,12 @@ import android.location.Geocoder
 import android.net.Uri
 import android.view.View
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
@@ -36,15 +33,6 @@ import com.google.android.gms.location.LocationServices
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -124,24 +112,24 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         binding!!.llBags.visibility = View.VISIBLE
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
-            var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                .toInt()
-            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()) {
+
+            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()&&text!="0") {
+                var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
+                    .toInt()
                 binding!!.etAvgWeight.setText(
                     bagCal.toString()
                 )
 
+            }  else
+            {
+                binding!!.etAvgWeight.setText("0")
             }
         }
-        allCases = intent.getSerializableExtra("all_cases") as SecoundkanthaParchiListResponse.Datum
-        CaseID = allCases.caseId
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
 
-        }
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
 
-        if (allCases.file3 == null) {
+        if (intent.getStringExtra("file3")== null) {
 
         } else {
             isFirstUpload = false;
@@ -190,13 +178,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
         }
         binding!!.btnLogin.setOnClickListener {
-            Utility.showDecisionDialog(
-                this,
-                getString(R.string.alert),
-                "Are You Sure to Summit?"
-            ) {
-                onNext()
-            }
+            onNext()
+
         }
         binding!!.uploadKantha.setOnClickListener {
             firstKanthaFile = true
@@ -302,7 +285,6 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                             hideDialog()
                             if (it.data!!.status == "1") {
                                 showToast(it.data!!.message)
-
                                 finish()
                             } else {
                                 Utility.showAlertDialog(
@@ -352,7 +334,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                             hideDialog()
                             if (it.data!!.status == "1") {
                                 kantaParchiViewModel.getSKantaParchiListing("10", "1", "OUT", "")
-                                startActivityAndClear(OutSecoundkanthaParchiListingActivity::class.java)
+                                finish()
                                 showToast(it.data!!.message)
                             } else {
                                 Utility.showAlertDialog(
@@ -520,7 +502,5 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 }

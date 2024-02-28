@@ -98,7 +98,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         CustomerName.add(resources.getString(R.string.select_coustomer))
         LeadGenerateOtherName.add("If Lead Converted By Other")
         binding!!.sendOtp.setOnClickListener {
-            onSendOtp()
+            if(binding!!.etDriverMobileNumber.text!!.isNotEmpty()){
+                onSendOtp()
+
+            }else{
+                showToast("Driver not available ")
+            }
         }
         binding!!.etOtp.doOnTextChanged { text, start, before, count ->
             if(text!!.length==6){
@@ -165,11 +170,9 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                             val part: Array<String> = UserID!!.split("(?<=\\D)(?=\\d)".toRegex())
                                 .dropLastWhile { it.isEmpty() }
                                 .toTypedArray()
-                            //    System.out.println(part[0]);
-                            // seleectCoustomer= String.valueOf((""+Integer.parseInt(part[1])).split("\\)"));
+
                             seleectCoustomer = (part.get(1))
-                            //                binding.inoutRl.setVisibility(View.VISIBLE);
-                            //                    getstack();
+
                             commodityList()
                         } catch (e: Exception) {
                             e.printStackTrace()

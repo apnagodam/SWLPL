@@ -52,7 +52,6 @@ object NetworkModule {
                 val accessToken = SharedPreferencesRepository.getSessionToken()
                 newRequest.header("Content-Type", "application/json")
                 newRequest.header("language", SharedPreferencesRepository.getDataManagerInstance().selectedLanguage)
-                newRequest.header("Content-Encoding", "gzip")
                 newRequest.header("lat", SharedPreferencesRepository.getDataManagerInstance().getlat())
                 newRequest.header("long", SharedPreferencesRepository.getDataManagerInstance().getlong())
                 newRequest.header("Authorization", accessToken).method(originalRequest.method, originalRequest.body)

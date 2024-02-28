@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
@@ -81,7 +82,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var isFirstUpload = true;
     var lat = 0.0
     var long = 0.0
-
+     var file3:String? = null
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     override fun getLayoutResId(): Int {
@@ -89,6 +90,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     }
 
     override fun setUp() {
+        val bundle = intent.getBundleExtra(BUNDLE)
+
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -120,11 +123,16 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 }
             }
         }
-
         binding!!.tvTitle.setText("Upload First Kanta Parchi")
-        allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
-        UserName = allCases.custFname
-        CaseID = allCases.caseId
+        UserName = intent?.getStringExtra("user_name")
+        CaseID = intent?.getStringExtra("case_id")
+        file3= intent?.getStringExtra("file3")
+        if(validData(bundle)){
+
+        }
+
+
+//        allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
         dharamKantas = arrayListOf()
         searchableSpinner = SearchableSpinner(this)
 
@@ -137,7 +145,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         binding!!.llOldBags.visibility = View.VISIBLE
         binding!!.llBags.visibility = View.GONE
 
-        if (allCases.file3 == null) {
+        if (file3 == null) {
             isFirstUpload = true
 
         } else {
@@ -162,7 +170,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
 
     }
-
+    fun validData(bundle: Bundle?): Boolean {
+        return bundle != null
+    }
     private fun getKantaList(search: String) {
         kantaParchiViewModel.getKantaParchiListing("10", "0", "IN", search)
         kantaParchiViewModel.kantaParchiResponse.observe(this) {

@@ -114,9 +114,8 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         }
 
         binding!!.tvTitle.setText("Upload First Kanta Parchi")
-        allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
-        UserName = allCases.custFname
-        CaseID = allCases.caseId
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
         dharamKantas = arrayListOf()
         searchableSpinner = SearchableSpinner(this)
 
@@ -129,7 +128,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         binding!!.llOldBags.visibility = View.VISIBLE
         binding!!.llBags.visibility = View.GONE
 
-        if (allCases.file3 == null) {
+        if (intent.getStringExtra("file3") == null) {
             isFirstUpload = true
 
         } else {
@@ -201,9 +200,6 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
 
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {

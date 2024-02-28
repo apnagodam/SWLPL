@@ -48,7 +48,7 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
+        getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.s_quality_repots)
@@ -58,10 +58,10 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -127,6 +127,7 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
         super.onResume()
         getAllCases("")
     }
+
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
             DividerItemDecoration(
@@ -142,18 +143,14 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        outSecoundQualityReportAdapter = OutSecoundQualityReportAdapter(
-            AllCases,
-            this@OutSecoundQualityReportListingActivity,
-            activity
-        )
+
         binding!!.rvDefaultersStatus.adapter = outSecoundQualityReportAdapter
     }
 
     private fun getAllCases(search: String) {
         showDialog()
         qualityReportViewModel.getSecondQualityListing("10", "" + pageOffset, "OUT", search)
-        qualityReportViewModel.sQualityResponse.observe(this){
+        qualityReportViewModel.sQualityResponse.observe(this) {
             AllCases!!.clear()
             if (it.data!!.quilityReport == null) {
                 binding!!.txtemptyMsg.visibility = View.VISIBLE
@@ -163,7 +160,12 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
                 AllCases!!.clear()
                 totalPage = it.data!!.quilityReport.lastPage
                 AllCases!!.addAll(it.data!!.quilityReport.data)
-                outSecoundQualityReportAdapter!!.notifyDataSetChanged()
+                outSecoundQualityReportAdapter = OutSecoundQualityReportAdapter(
+                    AllCases,
+                    this@OutSecoundQualityReportListingActivity,
+                    activity
+                )
+                setAdapter()
                 //     AllCases = body.getData();
                 //     binding.rvDefaultersStatus.setAdapter(new SecoundQualityReportAdapter(body.getData(), SecoundQualityReportListingActivity.this));
             }

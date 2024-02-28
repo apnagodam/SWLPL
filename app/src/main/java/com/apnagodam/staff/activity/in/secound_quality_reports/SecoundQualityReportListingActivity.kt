@@ -44,9 +44,9 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
 
     val qualityReportViewModel by viewModels<QualitReportViewModel>()
     override fun setUp() {
+        getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.s_quality_repots)
@@ -56,7 +56,7 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 onBackPressedDispatcher.onBackPressed()
@@ -140,11 +140,7 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        secoundQualityReportAdapter = SecoundQualityReportAdapter(
-            AllCases,
-            this@SecoundQualityReportListingActivity,
-            activity
-        )
+
         binding!!.rvDefaultersStatus.adapter = secoundQualityReportAdapter
     }
 
@@ -166,7 +162,13 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
                         AllCases!!.clear()
                         totalPage = it.data!!.quilityReport.lastPage
                         AllCases!!.addAll(it.data!!.quilityReport.data)
-                        secoundQualityReportAdapter!!.notifyDataSetChanged()
+                        secoundQualityReportAdapter = SecoundQualityReportAdapter(
+                            AllCases,
+                            this@SecoundQualityReportListingActivity,
+                            activity
+                        )
+                        setAdapter()
+
                         //     AllCases = body.getData();
                         //     binding.rvDefaultersStatus.setAdapter(new SecoundQualityReportAdapter(body.getData(), SecoundQualityReportListingActivity.this));
                     }

@@ -124,22 +124,9 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         }
         val bundle = intent.getBundleExtra(BUNDLE)
         binding!!.tvTitle.setText("Upload Second Quality Report")
-        if (validData(bundle)) {
-            UserName = bundle?.getString("user_name")
-            CaseID = bundle?.getString("case_id")
+        UserName = intent?.getStringExtra("user_name")
+        CaseID = intent?.getStringExtra("case_id")
 
-            if (bundle?.getString("skp_bags") != null && bundle.getString("skp_weight") != null) {
-                skpBags = bundle?.getString("skp_bags").toString().toInt()
-                skpWeight = bundle?.getString("skp_weight").toString().toInt()
-                binding!!.etAvgWeight.setText((skpWeight * 100 / skpBags).toString())
-            } else {
-                skpBags = 0;
-                skpWeight = 0;
-                binding!!.etAvgWeight.setText("N/A")
-
-            }
-
-        }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.customerName.text = UserName

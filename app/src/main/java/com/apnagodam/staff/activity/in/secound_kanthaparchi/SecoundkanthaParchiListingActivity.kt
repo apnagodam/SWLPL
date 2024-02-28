@@ -47,11 +47,8 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
 
-        if(AllCases.isNullOrEmpty()){
-            getAllCases("")
+        getAllCases("")
 
-        }
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.secoundkanta_parchi)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -118,9 +115,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        secoundkanthaparchiAdapter =
-            SecoundkanthaparchiAdapter(AllCases, this@SecoundkanthaParchiListingActivity, activity)
-        binding!!.rvDefaultersStatus.adapter = secoundkanthaparchiAdapter
+             binding!!.rvDefaultersStatus.adapter = secoundkanthaparchiAdapter
     }
 
     private fun getAllCases(search: String) {
@@ -144,7 +139,11 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
                             AllCases!!.clear()
                             totalPage = it.data.secoundKataParchiDatum.lastPage
                             AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
-                            secoundkanthaparchiAdapter!!.notifyDataSetChanged()
+                            secoundkanthaparchiAdapter =
+                                SecoundkanthaparchiAdapter(AllCases, this@SecoundkanthaParchiListingActivity, activity)
+
+                            setAdapter()
+
                             //  AllCases = body.getData();
                             //  binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
                         }

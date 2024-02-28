@@ -130,11 +130,10 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         transTypeList.add("Company Transport")
         TransporterName.add("Select Transporter")
         calender = Calendar.getInstance()
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
-        }
+
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
+
         transportTypeAdapter =
             ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, transTypeList)
         transporterList()

@@ -43,18 +43,15 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
+        getLeadsListing("")
+
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(LeadListingActivity.this, LinearLayoutManager.VERTICAL));
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(LeadListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
 
         binding!!.TitleWaititngEdititng.setVisibility(
             View.VISIBLE
         )
         //        binding.layoutLoader.setVisibility(View.GONE);
-        getLeadsListing("")
         binding!!.ivClose.setOnClickListener(View.OnClickListener {
             startActivityAndClear(
                 StaffDashBoardActivity::class.java
@@ -135,20 +132,23 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
         val horizontalLayoutManager =
             LinearLayoutManager(this@LeadListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        leadsTopAdapter = LeadsTopAdapter(AllCases, response, this@LeadListingActivity, activity)
         binding!!.rvDefaultersStatus.adapter = leadsTopAdapter
     }
 
     private fun getLeadsListing(search: String) {
+        showDialog()
         leadsViewModel.getAllLeads("10", pageOffset, "IN", search)
-        leadsViewModel.allLeadsResponse.observe(this){
-            when(it){
+        leadsViewModel.allLeadsResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> {
+                    hideDialog()
                     showToast(it.message.toString())
                 }
+
                 is NetworkResult.Loading -> {
                     showDialog()
                 }
+
                 is NetworkResult.Success -> {
                     hideDialog()
                     binding!!.swipeRefresherStock.isRefreshing = false
@@ -161,7 +161,9 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
                     } else {
                         totalPage = it.data.leads.lastPage
                         AllCases!!.addAll(it.data.leads.data)
-                        leadsTopAdapter!!.notifyDataSetChanged()
+                        leadsTopAdapter =
+                            LeadsTopAdapter(AllCases, response, this@LeadListingActivity, activity)
+                        setAdapter()
                         //   binding.rvDefaultersStatus.setAdapter(new LeadsTopAdapter(body.getLeads(), LeadListingActivity.this));
                     }
                 }

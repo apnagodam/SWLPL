@@ -60,11 +60,8 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.tvTitle.setText("Upload Labour Book")
 
         calender = Calendar.getInstance()
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
-        }
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         clickListner()

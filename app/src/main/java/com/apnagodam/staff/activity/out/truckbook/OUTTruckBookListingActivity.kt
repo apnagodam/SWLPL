@@ -29,6 +29,7 @@ import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+
 @AndroidEntryPoint
 class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var truckBookAdapter: OUTTruckBookAdapter? = null
@@ -36,7 +37,7 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var totalPage = 0
     private var AllCases: MutableList<AllTruckBookListResponse.Datum?>? = null
     private var TruckImage: String? = null
-    val truckViewModel  : TruckBookViewModel by viewModels<TruckBookViewModel>()
+    val truckViewModel: TruckBookViewModel by viewModels<TruckBookViewModel>()
 
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
@@ -44,21 +45,19 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     override fun setUp() {
         AllCases = arrayListOf()
-        setAdapter()
+        getAllCases("")
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.truck_book)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
         binding!!.tvMoreView.text = resources.getString(R.string.more_view_truck)
         binding!!.tvPhone.text = resources.getString(R.string.truck_book)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
+
         getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -123,9 +122,7 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         super.onResume()
         getAllCases("")
     }
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
@@ -142,7 +139,6 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        truckBookAdapter = OUTTruckBookAdapter(AllCases, this@OUTTruckBookListingActivity, activity)
         binding!!.rvDefaultersStatus.adapter = truckBookAdapter
         //        pagination(horizontalLayoutManager);
     }
@@ -181,15 +177,16 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         }
     */
     private fun getAllCases(search: String) {
-        truckViewModel.getTruckBookList("10",pageOffset,"OUT",search)
-        truckViewModel.response.observe(this){
-            when(it){
+        truckViewModel.getTruckBookList("10", pageOffset, "OUT", search)
+        truckViewModel.response.observe(this) {
+            when (it) {
 
                 is NetworkResult.Error -> {
 
                 }
+
                 is NetworkResult.Loading -> {}
-                is NetworkResult.Success ->{
+                is NetworkResult.Success -> {
                     binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
                     if (it.data!!.truckBookCollection == null) {
@@ -201,7 +198,14 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         AllCases!!.clear()
                         totalPage = it.data.truckBookCollection.lastPage
                         AllCases!!.addAll(it.data.truckBookCollection.data)
-                        truckBookAdapter!!.notifyDataSetChanged()
+                        truckBookAdapter = OUTTruckBookAdapter(
+                            AllCases,
+                            this@OUTTruckBookListingActivity,
+                            activity
+                        )
+
+                        setAdapter()
+
                         //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                     }
                 }

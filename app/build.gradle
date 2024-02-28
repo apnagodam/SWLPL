@@ -203,6 +203,8 @@ dependencies {
 
     //searchable spinner
     implementation 'com.github.leoncydsilva:SearchableSpinner:1.0.1'
+    //permission helper
+    implementation 'com.github.pankaj89:PermissionHelper:2.3'
 
 
 }

@@ -60,11 +60,8 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
         binding!!.tvTitle.setText("Upload Labour Book")
 
         calender = Calendar.getInstance()
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
-            CaseID = bundle.getString("case_id")
-        }
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         clickListner()
@@ -195,9 +192,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 
     override fun onClick(view: View) {
         when (view.id) {
@@ -210,41 +205,34 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
                 showDialog()
 
-                Utility.showDecisionDialog(
-                    this@OUTLabourBookUploadClass,
-                    getString(R.string.alert),
-                    "Are You Sure to Summit?"
-                ) {
-                    labourViewModel.uploadLabourDetails(
-                        UploadLabourDetailsPostData(
-                            CaseID,
-                            contractorsID,
-                            stringFromView(binding!!.etContractorPhone),
-                            "N/A",
-                            stringFromView(binding!!.etLabourRate),
-                            "N/A",
-                            "N/A",
-                            stringFromView(binding!!.notes),
-                            "0000-00-00"
-                        )
+                labourViewModel.uploadLabourDetails(
+                    UploadLabourDetailsPostData(
+                        CaseID,
+                        contractorsID,
+                        stringFromView(binding!!.etContractorPhone),
+                        "N/A",
+                        stringFromView(binding!!.etLabourRate),
+                        "N/A",
+                        "N/A",
+                        stringFromView(binding!!.notes),
+                        "0000-00-00"
                     )
-                    hideDialog()
-                    finish()
-                    labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
-                        when (it) {
-                            is NetworkResult.Error -> {
+                )
+                hideDialog()
+                finish()
+                labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
+                    when (it) {
+                        is NetworkResult.Error -> {
                             hideDialog()
-                            }
+                        }
 
-                            is NetworkResult.Loading -> {}
-                            is NetworkResult.Success -> {
+                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Success -> {
 
-                            }
                         }
                     }
-
-
                 }
+
 
 //                if (contractorsID == null) {
 //                    Toast.makeText(

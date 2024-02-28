@@ -16,19 +16,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallbackWProgress
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.TruckBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 @AndroidEntryPoint
 class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
@@ -41,7 +37,8 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
-    private val truckViewModel  : TruckBookViewModel by viewModels<TruckBookViewModel>()
+
+    private val truckViewModel: TruckBookViewModel by viewModels<TruckBookViewModel>()
 
     override fun setUp() {
         setSupportActionBar(binding!!.toolbar)
@@ -94,7 +91,6 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         })
         getAllCases("")
 
-        setAdapter()
 
         /* binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(TruckBookListingActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -118,24 +114,25 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         val horizontalLayoutManager =
             LinearLayoutManager(this@TruckBookListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        truckBookAdapter = TruckBookAdapter(AllCases, this@TruckBookListingActivity, activity)
         binding!!.rvDefaultersStatus.adapter = truckBookAdapter
         //        pagination(horizontalLayoutManager);
     }
 
     private fun getAllCases(search: String) {
         showDialog()
-        truckViewModel.getTruckBookList("10",pageOffset,"IN",search)
-        truckViewModel.response.observe(this){
-            when(it){
+        truckViewModel.getTruckBookList("10", pageOffset, "IN", search)
+        truckViewModel.response.observe(this) {
+            when (it) {
 
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
+
                 is NetworkResult.Loading -> {
                     showDialog()
                 }
-                is NetworkResult.Success ->{
+
+                is NetworkResult.Success -> {
                     binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
                     if (it.data!!.truckBookCollection == null) {
@@ -147,10 +144,16 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         AllCases!!.clear()
                         totalPage = it.data.truckBookCollection.lastPage
                         AllCases!!.addAll(it.data.truckBookCollection.data)
-                        truckBookAdapter!!.notifyDataSetChanged()
+                        truckBookAdapter = TruckBookAdapter(AllCases!!, this@TruckBookListingActivity, activity)
                         //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                     }
-                    binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
+                    setAdapter()
+
+                    binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener {
+                        getAllCases(
+                            ""
+                        )
+                    })
                     binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
                         override fun onClick(view: View) {
                             onBackPressed()
@@ -185,6 +188,7 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         super.onResume()
         getAllCases("")
     }
+
     fun ViewData(position: Int) {
         val displayRectangle = Rect()
         val window = this.window

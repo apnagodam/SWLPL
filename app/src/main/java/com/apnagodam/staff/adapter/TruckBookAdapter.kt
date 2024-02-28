@@ -1,182 +1,157 @@
-package com.apnagodam.staff.adapter;
+package com.apnagodam.staff.adapter
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Color;
-import android.view.View;
-import android.widget.TextView;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Color
+import android.view.View
+import android.widget.TextView
+import androidx.databinding.ViewDataBinding
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Base.BaseRecyclerViewAdapter
+import com.apnagodam.staff.Base.BaseViewHolder
+import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.`in`.truckbook.TruckBookListingActivity
+import com.apnagodam.staff.databinding.PricingDataBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.module.AllLeadsResponse.Lead
+import com.apnagodam.staff.module.AllTruckBookListResponse
 
-import androidx.annotation.NonNull;
-import androidx.databinding.ViewDataBinding;
+class TruckBookAdapter(
+    private val Leads: MutableList<AllTruckBookListResponse.Datum?>,
+    truckBookListingActivity: TruckBookListingActivity,
+    activity: BaseActivity<*>
+) : BaseRecyclerViewAdapter() {
+    private val context: Context
+    private val activity: BaseActivity<*>
 
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
-import com.apnagodam.staff.Base.BaseViewHolder;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.pricing.InPricingListingActivity;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
-import com.apnagodam.staff.databinding.PricingDataBinding;
-import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.AllTruckBookListResponse;
-import com.apnagodam.staff.module.AllpricingResponse;
-
-import java.util.Collection;
-import java.util.List;
-
-public class TruckBookAdapter extends BaseRecyclerViewAdapter {
-
-    private List<AllTruckBookListResponse.Datum> Leads;
-    private Context context;
-    private BaseActivity activity;
-
-    public TruckBookAdapter(List<AllTruckBookListResponse.Datum> leads, TruckBookListingActivity
-            truckBookListingActivity, BaseActivity activity) {
-        this.Leads = leads;
-        this.context = truckBookListingActivity;
-        this.activity = activity;
+    init {
+        context = truckBookListingActivity
+        this.activity = activity
     }
 
-    @Override
-    public BaseViewHolder inflateLayout(ViewDataBinding view) {
-        return new DefaultersTopHolder(view);
+    override fun getItemCount(): Int {
+        return Leads.size
+    }
+    override fun inflateLayout(view: ViewDataBinding): BaseViewHolder<*> {
+        return DefaultersTopHolder(view)
     }
 
-    @Override
-    public int getLayoutId(int viewType) {
-        return R.layout.pricing_data;
+    override fun getLayoutId(viewType: Int): Int {
+        return R.layout.pricing_data
     }
 
-    @Override
-    public Collection<?> getCollection() {
-        return null;
+    override fun getCollection(): Collection<*>? {
+        return null
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        holder.onBind(position);
+
+
+    override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
+        holder.onBind(position)
     }
 
-    @Override
-    public int getItemCount() {
-        return Leads.size();
-    }
 
-    class DefaultersTopHolder extends BaseViewHolder<PricingDataBinding> {
 
-        DefaultersTopHolder(@NonNull ViewDataBinding itemBinding) {
-            super(itemBinding);
-        }
-
+    internal inner class DefaultersTopHolder(itemBinding: ViewDataBinding) :
+        BaseViewHolder<PricingDataBinding?>(itemBinding) {
         @SuppressLint("SetTextI18n")
-        @Override
-        public void onBind(int position) {
+        override fun onBind(position: Int) {
+          if(binding!=null){
+              binding.let {
+                  it!!.tvActionDone.setVisibility(View.GONE)
+                  it.tvAction.setVisibility(View.GONE)
 
-            binding.tvActionDone.setVisibility(View.GONE);
-            binding.tvAction.setVisibility(View.GONE);
+                  /* if (position==0){
 
-           /* if (position==0){
+                  }else {*/if (position % 2 == 0) {
+                  it.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"))
+              } else {
+                  it.getRoot().setBackgroundColor(Color.WHITE)
+              }
+                  it.tvId.setText("" + Leads[position]!!.caseId)
+                  it.tvName.setText(Leads[position]!!.custFname)
+                  if (Leads[position]!!.tbCaseId != null) {
+                      it.tvAction.setVisibility(View.GONE)
+                      it.tvActionDone.setVisibility(View.GONE)
+                      it.tvPhone.setVisibility(View.GONE)
+                      it.tvPhoneDone.setVisibility(View.VISIBLE)
+                  } else {
+                      it.tvAction.setVisibility(View.GONE)
+                      it.tvPhone.setText(context.resources.getString(R.string.upload_details))
+                      it.tvPhone.setBackgroundColor(context.resources.getColor(R.color.yellow))
+                      setAllData(it.tvPhone, it.tvPhoneDone, position)
 
-            }else {*/
+                      /*
+                      for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
+                          if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
+                              if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
+                                  if (Leads.get(position).getP_case_id() != null) {
+                                      binding.tvPhone.setVisibility(View.VISIBLE);
+                                  } else {
+                                      binding.tvPhone.setVisibility(View.GONE);
+                                      binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                                      binding.tvPhoneDone.setText("Processing...");
+                                      binding.tvPhoneDone.setTextColor(context.getResources().getColor(R.color.yellow));
+                                  }
+                              } else {
+                                  binding.tvPhone.setVisibility(View.GONE);
+                                  binding.tvPhoneDone.setVisibility(View.VISIBLE);
+                                  binding.tvPhoneDone.setText("In Process");
+                                  binding.tvPhoneDone.setTextColor(context.getResources().getColor(R.color.lead_btn));
+                              }
+                          }
+                      }
+      */
+                  }
+                  it.tvId.setTextColor(Color.BLACK)
+                  it.tvName.setTextColor(Color.BLACK)
+                  it.tvPhone.setTextColor(Color.BLACK)
+                  activity.hideDialog()
+                  it.view.setOnClickListener(View.OnClickListener {
+                      if (context is TruckBookListingActivity) {
+                          (context as TruckBookListingActivity).ViewData(position)
+                      }
+                  })
+                  it.tvPhone.setOnClickListener(View.OnClickListener {
+                      if (context is TruckBookListingActivity) {
+                          (context as TruckBookListingActivity).checkVeehicleNo(position)
+                      }
+                  })
+              }
+          }
+        }
+    }
 
-            if (position % 2 == 0) {
-                binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
-            } else {
-                binding.getRoot().setBackgroundColor(Color.WHITE);
-            }
-            binding.tvId.setText("" + Leads.get(position).getCaseId());
-            binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getTBCaseId() != null) {
-                binding.tvAction.setVisibility(View.GONE);
-                binding.tvActionDone.setVisibility(View.GONE);
-                binding.tvPhone.setVisibility(View.GONE);
-                binding.tvPhoneDone.setVisibility(View.VISIBLE);
-            } else {
-                binding.tvAction.setVisibility(View.GONE);
-                binding.tvPhone.setText(context.getResources().getString(R.string.upload_details));
-                binding.tvPhone.setBackgroundColor(context.getResources().getColor(R.color.yellow));
-
-                setAllData(binding.tvPhone, binding.tvPhoneDone, position);
-
-/*
-                for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                            if (Leads.get(position).getP_case_id() != null) {
-                                binding.tvPhone.setVisibility(View.VISIBLE);
+    private fun setAllData(tvPhone: TextView, tvPhoneDone: TextView, position: Int) {
+        try {
+            Thread {
+                for (i in SharedPreferencesRepository.getDataManagerInstance()
+                    .getUserPermission().indices) {
+                    if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission()
+                            .get(i).getPermissionId().equals("15", ignoreCase = true)
+                    ) {
+                        if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission()
+                                .get(i).getEdit() == 1
+                        ) {
+                            if (Leads[position]!!.p_case_id != null) {
+                                tvPhone.setVisibility(View.VISIBLE)
                             } else {
-                                binding.tvPhone.setVisibility(View.GONE);
-                                binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                                binding.tvPhoneDone.setText("Processing...");
-                                binding.tvPhoneDone.setTextColor(context.getResources().getColor(R.color.yellow));
+                                tvPhone.setVisibility(View.GONE)
+                                tvPhoneDone.setVisibility(View.VISIBLE)
+                                tvPhoneDone.setText("Processing...")
+                                tvPhoneDone.setTextColor(context.resources.getColor(R.color.yellow))
                             }
                         } else {
-                            binding.tvPhone.setVisibility(View.GONE);
-                            binding.tvPhoneDone.setVisibility(View.VISIBLE);
-                            binding.tvPhoneDone.setText("In Process");
-                            binding.tvPhoneDone.setTextColor(context.getResources().getColor(R.color.lead_btn));
+                            tvPhone.setVisibility(View.GONE)
+                            tvPhoneDone.setVisibility(View.VISIBLE)
+                            tvPhoneDone.setText("In Process")
+                            tvPhoneDone.setTextColor(context.resources.getColor(R.color.lead_btn))
                         }
                     }
                 }
-*/
-
             }
-
-            binding.tvId.setTextColor(Color.BLACK);
-            binding.tvName.setTextColor(Color.BLACK);
-            binding.tvPhone.setTextColor(Color.BLACK);
-            activity.hideDialog();
-
-            binding.view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (context instanceof TruckBookListingActivity) {
-                        ((TruckBookListingActivity) context).ViewData(position);
-                    }
-
-
-                }
-            });
-
-            binding.tvPhone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (context instanceof TruckBookListingActivity) {
-                        ((TruckBookListingActivity) context).checkVeehicleNo(position);
-                    }
-                }
-            });
-
-        }
-    }
-
-    private void setAllData(TextView tvPhone, TextView tvPhoneDone, int position) {
-        try {
-
-           new Thread(()->{
-               for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
-                   if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("15")) {
-                       if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                           if (Leads.get(position).getP_case_id() != null) {
-                               tvPhone.setVisibility(View.VISIBLE);
-                           } else {
-                               tvPhone.setVisibility(View.GONE);
-                               tvPhoneDone.setVisibility(View.VISIBLE);
-                               tvPhoneDone.setText("Processing...");
-                               tvPhoneDone.setTextColor(context.getResources().getColor(R.color.yellow));
-                           }
-                       } else {
-                           tvPhone.setVisibility(View.GONE);
-                           tvPhoneDone.setVisibility(View.VISIBLE);
-                           tvPhoneDone.setText("In Process");
-                           tvPhoneDone.setTextColor(context.getResources().getColor(R.color.lead_btn));
-                       }
-                   }
-               }
-           });
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

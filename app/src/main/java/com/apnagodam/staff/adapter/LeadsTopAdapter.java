@@ -106,12 +106,12 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
                     int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
                     hours = (hours < 0 ? -hours : hours);
                     if (hours <= 1) {
-                        binding.update.setVisibility(View.VISIBLE);
+//                        binding.update.setVisibility(View.VISIBLE);
                     } else {
-                        binding.update.setVisibility(View.GONE);
+//                        binding.update.setVisibility(View.GONE);
                     }
                 } else {
-                    binding.update.setVisibility(View.GONE);
+//                    binding.update.setVisibility(View.GONE);
                 }
 
             } catch (ParseException e) {
@@ -122,22 +122,22 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);
             activity.hideDialog();
-            binding.view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (context instanceof LeadListingActivity) {
-                        ((LeadListingActivity) context).ViewData(position);
-                    }
-                }
-            });
-            binding.update.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (context instanceof LeadListingActivity) {
-                        ((LeadListingActivity) context).editLead(position);
-                    }
-                }
-            });
+//            binding.view.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (context instanceof LeadListingActivity) {
+//                        ((LeadListingActivity) context).ViewData(position);
+//                    }
+//                }
+//            });
+//            binding.update.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if (context instanceof LeadListingActivity) {
+//                        ((LeadListingActivity) context).editLead(position);
+//                    }
+//                }
+//            });
         }
     }
 

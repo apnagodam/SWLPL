@@ -123,25 +123,26 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         binding!!.llBags.visibility = View.VISIBLE
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
-            var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                .toInt()
-            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()) {
+
+            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty() && text!="0") {
+                var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
+                    .toInt()
                 binding!!.etAvgWeight.setText(
                     bagCal.toString()
                 )
 
             }
+            else
+            {
+                binding!!.etAvgWeight.setText("0")
+            }
         }
 
-        allCases = intent.getSerializableExtra("all_cases") as SecoundkanthaParchiListResponse.Datum
-        CaseID = allCases.caseId
-        val bundle = intent.getBundleExtra(BUNDLE)
-        if (bundle != null) {
-            UserName = bundle.getString("user_name")
+        CaseID = intent.getStringExtra("case_id")
+        UserName = intent.getStringExtra("user_name")
 
-        }
 
-        if (allCases.file3 == null) {
+        if (intent.getStringExtra("file3")== null) {
 
         } else {
             isFirstUpload = false;

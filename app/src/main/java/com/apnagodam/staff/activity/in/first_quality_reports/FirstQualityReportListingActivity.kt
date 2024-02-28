@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity.`in`.first_quality_reports
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
@@ -47,10 +48,9 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     override fun setUp() {
 
 
-
+        getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.f_quality_repots)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -59,7 +59,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         binding!!.ivClose.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -112,7 +112,6 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        firstQualityReportAdapter = FirstQualityReportAdapter(AllCases, this@FirstQualityReportListingActivity, activity)
         binding!!.rvDefaultersStatus.adapter = firstQualityReportAdapter
     }
 
@@ -136,13 +135,16 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
                         binding!!.rvDefaultersStatus.visibility = View.GONE
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
-                        AllCases!!.clear()
                         totalPage = it.data.quilityReport.lastPage
                         AllCases!!.addAll(it.data.quilityReport.data)
-                        firstQualityReportAdapter!!.notifyDataSetChanged()
                         // AllCases = body.getData();
                         // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
+                        firstQualityReportAdapter = FirstQualityReportAdapter(AllCases, this@FirstQualityReportListingActivity, activity)
+                        setAdapter()
+
                     }
+
+
                     hideDialog()
                 }
             }
@@ -253,10 +255,11 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     }
 
     fun checkVeehicleNo(postion: Int) {
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
-        bundle.putString("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        startActivity(UploadFirstQualtityReportsClass::class.java, bundle)
+
+        var intent = Intent(this,UploadFirstQualtityReportsClass::class.java)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id", AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        startActivity(intent)
     }
 }

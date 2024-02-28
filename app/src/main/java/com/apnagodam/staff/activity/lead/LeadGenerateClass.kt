@@ -256,14 +256,11 @@ class LeadGenerateClass() : BaseActivity<ActivityGeenerteLeadsBinding?>(), View.
         binding!!.tvDone.setOnClickListener(this)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-       onBackPressed()
-    }
+
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> startActivityAndClear(StaffDashBoardActivity::class.java)
+            R.id.iv_close -> finish()
             R.id.tv_done -> callLeadListActivity()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.userCommitmentDate -> popUpDatePicker()

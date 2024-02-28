@@ -44,9 +44,9 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
     }
 
     override fun setUp() {
+        getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.firstkanta_parchi_title)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -55,11 +55,11 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                onBackPressedDispatcher.onBackPressed()
+                finish()
 
             }
         })
@@ -125,10 +125,6 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         super.onResume()
         getAllCases("")
     }
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
             DividerItemDecoration(
@@ -144,11 +140,7 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        outFirstkanthaparchiAdapter = OutFirstkanthaparchiAdapter(
-            AllCases,
-            this@OutFirstkanthaParchiListingActivity,
-            activity
-        )
+
         binding!!.rvDefaultersStatus.adapter = outFirstkanthaparchiAdapter
     }
 
@@ -169,7 +161,12 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
                         AllCases!!.clear()
                         totalPage = it.data.firstKataParchiData.lastPage
                         AllCases!!.addAll(it.data.firstKataParchiData.data)
-                        outFirstkanthaparchiAdapter!!.notifyDataSetChanged()
+                        outFirstkanthaparchiAdapter = OutFirstkanthaparchiAdapter(
+                            AllCases,
+                            this@OutFirstkanthaParchiListingActivity,
+                            activity
+                        )
+                        setAdapter()
                         //   AllCases = body.getFirstKataParchiData();
                         //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
                     }

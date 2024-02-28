@@ -46,17 +46,17 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private fun setView(){
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
+        getAllCases("")
+
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.case_list)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
         binding!!.tvMoreView.text = resources.getString(R.string.status_title)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        getAllCases("")
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
         })
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -128,13 +128,14 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
         val horizontalLayoutManager =
             LinearLayoutManager(this@CaseListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        casesTopAdapter = CasesTopAdapter(AllCases, this@CaseListingActivity, activity)
+
         binding!!.rvDefaultersStatus.adapter = casesTopAdapter
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        onBackPressed()
+
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
     }
 
     private fun getAllCases(search: String) {
@@ -155,7 +156,9 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         AllCases!!.clear()
                         totalPage = body.data.getaCase().lastPage
                         AllCases!!.addAll(body.data.getaCase().data)
-                        casesTopAdapter!!.notifyDataSetChanged()
+                        casesTopAdapter = CasesTopAdapter(AllCases,this)
+                        setAdapter()
+
                         //  AllCases=body.getCases();
                         // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
                     }

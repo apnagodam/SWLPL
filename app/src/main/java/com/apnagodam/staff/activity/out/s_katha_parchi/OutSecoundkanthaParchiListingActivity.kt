@@ -46,8 +46,8 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        getAllCases("")
         binding!!.titleHeader.setText("Second Kanta Parchi List")
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.secoundkanta_parchi)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -57,8 +57,8 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SecoundkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
-        binding!!.ivClose.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
+        binding!!.ivClose.setOnClickListener { finish() }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
                 pageOffset--
@@ -114,11 +114,7 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        outSecoundkanthaparchiAdapter = OutSecoundkanthaparchiAdapter(
-            AllCases,
-            this@OutSecoundkanthaParchiListingActivity,
-            activity
-        )
+
         binding!!.rvDefaultersStatus.adapter = outSecoundkanthaparchiAdapter
     }
 
@@ -141,7 +137,13 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
                             AllCases!!.clear()
                             totalPage = it.data.secoundKataParchiDatum.lastPage
                             AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
-                            outSecoundkanthaparchiAdapter!!.notifyDataSetChanged()
+                            outSecoundkanthaparchiAdapter = OutSecoundkanthaparchiAdapter(
+                                AllCases,
+                                this@OutSecoundkanthaParchiListingActivity,
+                                activity
+                            )
+                            setAdapter()
+
                             //  AllCases = body.getData();
                             //  binding.rvDefaultersStatus.setAdapter(new SecoundkanthaparchiAdapter(body.getData(), SecoundkanthaParchiListingActivity.this));
                         }
@@ -251,7 +253,5 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     }
 
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
+
 }

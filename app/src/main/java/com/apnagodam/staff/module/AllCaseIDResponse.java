@@ -283,6 +283,177 @@ public class AllCaseIDResponse extends BaseResponse {
         @Expose
         private String terminalName;
 
+
+        @SerializedName("truckbook")
+        @Expose
+        private String truckbook;
+
+
+        @SerializedName("labourbook")
+        @Expose
+        private String labourBook;
+
+        @SerializedName("first_kanta_parchi")
+        @Expose
+        private String firstKantaParchi;
+
+
+        @SerializedName("first_quality")
+        @Expose
+        private String firstQuality;
+
+        @SerializedName("f_q_tagging")
+        @Expose
+        private String firstQualityTagging;
+
+        @SerializedName("s_k_parchi")
+        @Expose
+        private String secondKantaParchi;
+
+        @SerializedName("s_quality_report")
+        @Expose
+        private String secondQualityReport;
+
+        @SerializedName("cctv_report")
+        @Expose
+        private String cctvReport;
+
+        @SerializedName("ivr_report")
+        @Expose
+        private String ivrReport;
+
+        @SerializedName("gatepass_report")
+        @Expose
+        private String gatepassReport;
+
+        @SerializedName("first_kanta_file3")
+        @Expose
+        private String firstKantaFile3;
+
+        @SerializedName("s_k_file3")
+        @Expose
+        private String secondKantaFile3;
+
+        @SerializedName("first_kanta_dhramkanta")
+        @Expose
+        private String firstKantaDharamkanta;
+
+        public String getFirstKantaFile3() {
+            return firstKantaFile3;
+        }
+
+        public void setFirstKantaFile3(String firstKantaFile3) {
+            this.firstKantaFile3 = firstKantaFile3;
+        }
+
+        public String getSecondKantaFile3() {
+            return secondKantaFile3;
+        }
+
+        public void setSecondKantaFile3(String secondKantaFile3) {
+            this.secondKantaFile3 = secondKantaFile3;
+        }
+
+        public String getFirstKantaDharamkanta() {
+            return firstKantaDharamkanta;
+        }
+
+        public void setFirstKantaDharamkanta(String firstKantaDharamkanta) {
+            this.firstKantaDharamkanta = firstKantaDharamkanta;
+        }
+
+        public String getSecondKantaDharamkanta() {
+            return secondKantaDharamkanta;
+        }
+
+        public void setSecondKantaDharamkanta(String secondKantaDharamkanta) {
+            this.secondKantaDharamkanta = secondKantaDharamkanta;
+        }
+
+        @SerializedName("s_k_dhramkanta")
+        @Expose
+        private String secondKantaDharamkanta;
+
+        public String getTruckbook() {
+            return truckbook;
+        }
+
+        public void setTruckbook(String truckbook) {
+            this.truckbook = truckbook;
+        }
+
+        public String getLabourBook() {
+            return labourBook;
+        }
+
+        public void setLabourBook(String labourBook) {
+            this.labourBook = labourBook;
+        }
+
+        public String getFirstKantaParchi() {
+            return firstKantaParchi;
+        }
+
+        public void setFirstKantaParchi(String firstKantaParchi) {
+            this.firstKantaParchi = firstKantaParchi;
+        }
+
+        public String getFirstQuality() {
+            return firstQuality;
+        }
+
+        public void setFirstQuality(String firstQuality) {
+            this.firstQuality = firstQuality;
+        }
+
+        public String getFirstQualityTagging() {
+            return firstQualityTagging;
+        }
+
+        public void setFirstQualityTagging(String firstQualityTagging) {
+            this.firstQualityTagging = firstQualityTagging;
+        }
+
+        public String getSecondKantaParchi() {
+            return secondKantaParchi;
+        }
+
+        public void setSecondKantaParchi(String secondKantaParchi) {
+            this.secondKantaParchi = secondKantaParchi;
+        }
+
+        public String getSecondQualityReport() {
+            return secondQualityReport;
+        }
+
+        public void setSecondQualityReport(String secondQualityReport) {
+            this.secondQualityReport = secondQualityReport;
+        }
+
+        public String getCctvReport() {
+            return cctvReport;
+        }
+
+        public void setCctvReport(String cctvReport) {
+            this.cctvReport = cctvReport;
+        }
+
+        public String getIvrReport() {
+            return ivrReport;
+        }
+
+        public void setIvrReport(String ivrReport) {
+            this.ivrReport = ivrReport;
+        }
+
+        public String getGatepassReport() {
+            return gatepassReport;
+        }
+
+        public void setGatepassReport(String gatepassReport) {
+            this.gatepassReport = gatepassReport;
+        }
+
         public String getId() {
             return id;
         }

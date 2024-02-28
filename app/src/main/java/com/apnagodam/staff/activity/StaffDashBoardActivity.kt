@@ -31,10 +31,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.AttendancePostData
+import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
@@ -50,21 +53,21 @@ import com.apnagodam.staff.activity.`in`.secound_kanthaparchi.SecoundkanthaParch
 import com.apnagodam.staff.activity.`in`.secound_quality_reports.SecoundQualityReportListingActivity
 import com.apnagodam.staff.activity.`in`.truckbook.TruckBookListingActivity
 import com.apnagodam.staff.activity.lead.LeadGenerateClass
-import com.apnagodam.staff.activity.out.deliveryorder.OUTDeliverdOrderListingActivity
 import com.apnagodam.staff.activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity
 import com.apnagodam.staff.activity.out.f_quailty_report.OutFirstQualityReportListingActivity
-import com.apnagodam.staff.activity.out.gatepass.OutGatePassListingActivity
 import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookListingActivity
 import com.apnagodam.staff.activity.out.releaseorder.OUTRelaseOrderListingActivity
 import com.apnagodam.staff.activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity
 import com.apnagodam.staff.activity.out.s_quaility_report.OutSecoundQualityReportListingActivity
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckBookListingActivity
 import com.apnagodam.staff.activity.vendorPanel.MyVendorVoacherListClass
+import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.adapter.ExpandableListAdapter
 import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.databinding.StaffDashboardBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.interfaces.OnProfileClickListener
+import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.MenuModel
 import com.apnagodam.staff.module.UserDetails
 import com.apnagodam.staff.utils.Constants
@@ -74,12 +77,7 @@ import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
-import com.fxn.pix.Pix
-import com.fxn.utility.PermUtil
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
@@ -93,6 +91,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
@@ -113,6 +112,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     AdapterView.OnItemSelectedListener, DrawerListener, ConnectionCallbacks,
     OnConnectionFailedListener {
     private var toggle: ActionBarDrawerToggle? = null
+    private var casesTopAdapter: CasesTopAdapter? = null
+
     private val toolbar: Toolbar? = null
     var doubleBackToExitPressedOnce = false
     var locationManager: LocationManager? = null
@@ -137,7 +138,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     val loginViewModel by viewModels<LoginViewModel>()
     var lat = 0.0
     var long = 0.0
-
+    private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null
+    val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
+    private var pageOffset = 1
+    private var totalPage = 0
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     override fun getLayoutResId(): Int {
@@ -145,6 +149,17 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     override fun setUp() {
+        var permissionHelper = PermissionHelper(
+            this,
+            arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            100
+        )
+        permissionHelper.requestAll {
+        }
         requestPermission()
         getdashboardData()
 
@@ -165,7 +180,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             val intent = Intent(this@StaffDashBoardActivity, StaffProfileActivity::class.java)
             startActivity(intent)
         }
-
+        AllCases = arrayListOf()
+        getAllCases("")
+        locationget()
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -243,12 +260,104 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
-            this, arrayOf(Manifest.permission.CAMERA),
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
             PERMISSION_REQUEST_CODE
         )
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermission()
+            return
+        }
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+            if (it != null) {
+                lat = it.latitude
+                long = it.longitude
+            }
+
+
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, long, 1)
+                if (addresses != null && addresses.isNotEmpty()) {
+                    currentLocation =
+                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                            addresses.first().adminArea
+                        }"
+
+                }
+        }
+
     }
 
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
+    private fun getAllCases(search: String) {
+        showDialog()
+        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
+        caseIdViewModel.response.observe(this){
+                body->
+            when(body){
+                is NetworkResult.Success->
+                {
 
+//                    binding!!.mainContent.swipeRefresherStock.isRefreshing = false
+                    AllCases!!.clear()
+                    if (body.data!!.getaCase() == null) {
+                        binding!!.mainContent.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+                        totalPage = body.data.getaCase().lastPage
+                        AllCases!!.addAll(body.data.getaCase().data)
+                        casesTopAdapter = CasesTopAdapter(AllCases,this)
+                        setAdapter()
+
+                        //  AllCases=body.getCases();
+                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    }
+                    hideDialog()
+
+                }
+
+                is NetworkResult.Error ->{
+                    hideDialog()
+
+                }
+                is NetworkResult.Loading -> {}
+            }
+
+
+        }
+
+
+    }
+    private fun setAdapter() {
+        binding!!.mainContent.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                LinearLayoutManager.VERTICAL
+            )
+        )
+        binding!!.mainContent.rvDefaultersStatus.setHasFixedSize(true)
+        binding!!.mainContent.rvDefaultersStatus.isNestedScrollingEnabled = false
+        val horizontalLayoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding!!.mainContent.rvDefaultersStatus.layoutManager = horizontalLayoutManager
+
+        binding!!.mainContent.rvDefaultersStatus.adapter = casesTopAdapter
+    }
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this)
             .setMessage(message)
@@ -436,19 +545,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 }
                             }
                             //  startActivity(SecoundQualityReportListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.gate_passs)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "19",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(GatePassListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //   startActivity(GatePassListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.my_convance)) {
+                        }
+//                        else if (model.menuName == resources.getString(R.string.gate_passs)) {
+//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                                    "19",
+//                                    ignoreCase = true
+//                                )
+//                            ) {
+//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                                    startActivity(GatePassListingActivity::class.java)
+//                                    return@OnChildClickListener true
+//                                }
+//                            }
+//                            //   startActivity(GatePassListingActivity.class);
+//                        }
+                        else if (model.menuName == resources.getString(R.string.my_convance)) {
                             if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
                                     "41",
                                     ignoreCase = true
@@ -497,19 +608,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                     return@OnChildClickListener true
                                 }
                             }
-                        } else if (model.menuName == resources.getString(R.string.out_deiverd_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "25",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OUTDeliverdOrderListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            // startActivity(TruckBookListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.out_truck_book)) {
+                        }
+//                        else if (model.menuName == resources.getString(R.string.out_deiverd_book)) {
+//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                                    "25",
+//                                    ignoreCase = true
+//                                )
+//                            ) {
+//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                                    startActivity(OUTDeliverdOrderListingActivity::class.java)
+//                                    return@OnChildClickListener true
+//                                }
+//                            }
+//                            // startActivity(TruckBookListingActivity.class);
+//                        }
+                        else if (model.menuName == resources.getString(R.string.out_truck_book)) {
                             if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
                                     "15",
                                     ignoreCase = true
@@ -577,18 +690,19 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                     return@OnChildClickListener true
                                 }
                             }
-                        } else if (model.menuName == resources.getString(R.string.out_gatepass_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "19",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OutGatePassListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
                         }
+//                        else if (model.menuName == resources.getString(R.string.out_gatepass_book)) {
+//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                                    "19",
+//                                    ignoreCase = true
+//                                )
+//                            ) {
+//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                                    startActivity(OutGatePassListingActivity::class.java)
+//                                    return@OnChildClickListener true
+//                                }
+//                            }
+//                        }
                     }
                 }
             }
@@ -602,21 +716,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             true,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.dashboard_icon
+            R.drawable.dashboard
         ) //Menu of Android Tutorial. No sub menus
         val menuModel1 = MenuModel(
             resources.getString(R.string.referral_code),
             true,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.refer_earn
+            R.drawable.earn
         ) //Menu of Android Tutorial. No sub menus
         val menuModel2 = MenuModel(
             resources.getString(R.string.select_language),
             true,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.langauge
+            R.drawable.translate
         ) //Menu of Android Tutorial. No sub menus
         headerList.add(menuModel)
         headerList.add(menuModel1)
@@ -634,7 +748,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             true,
                             false,
                             "https://www.journaldev.com/19226/python-fractions",
-                            R.drawable.lead_gernate_icon
+                            R.drawable.lead
                         ) //Menu of Android Tutorial. No sub menus
                         headerList.add(menuModel3)
                     }
@@ -650,7 +764,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             true,
                             false,
                             "https://www.journaldev.com/19226/python-fractions",
-                            R.drawable.caseid
+                            R.drawable.create_case_id
                         ) //Menu of Android Tutorial. No sub menus
                         headerList.add(menuModel4)
                     }
@@ -667,7 +781,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             true,
             true,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.in_icon
+            R.drawable.internal
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModel = MenuModel(
@@ -675,7 +789,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.truck
+            R.drawable.truck_option
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -683,7 +797,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.labour
+            R.drawable.labour_option
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -691,7 +805,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.katha_photo
+            R.drawable.kanta_parchi_one
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -699,7 +813,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.quaility
+            R.drawable.first_quality_report
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -707,7 +821,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.katha_photo
+            R.drawable.second_kanta_parchi
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -715,16 +829,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.quaility
+            R.drawable.second_quality_report
         )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            resources.getString(R.string.gate_passs),
-            false,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.gatepass
-        )
+
         childModelsList.add(childModel)
         if (menuModel.hasChildren) {
             Log.d("API123", "here")
@@ -736,31 +843,16 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             true,
             true,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.out_icon
+            R.drawable.external
         ) //Menu of Python Tutorials
         headerList.add(menuModel)
-        childModel = MenuModel(
-            resources.getString(R.string.out_relase_book),
-            false,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.truck
-        )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            resources.getString(R.string.out_deiverd_book),
-            false,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.labour
-        )
-        childModelsList.add(childModel)
+
         childModel = MenuModel(
             resources.getString(R.string.out_truck_book),
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.truck
+            R.drawable.truck_option
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -768,7 +860,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.labour
+            R.drawable.labour_option
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -776,7 +868,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.quaility
+            R.drawable.first_quality_report
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -784,7 +876,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.katha_photo
+            R.drawable.kanta_parchi_one
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -792,7 +884,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.quaility
+            R.drawable.second_quality_report
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -800,16 +892,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.katha_photo
+            R.drawable.second_kanta_parchi
         )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            resources.getString(R.string.out_gatepass_book),
-            false,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.gatepass
-        )
+
         childModelsList.add(childModel)
         if (menuModel.hasChildren) {
             childList[menuModel] = childModelsList
@@ -819,7 +904,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             true,
             true,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.vocher_icon
+            R.drawable.voucher
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModelsList = ArrayList()
@@ -828,7 +913,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.vocher_icon
+            R.drawable.voucher
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -836,7 +921,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             false,
             "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.vocher_icon
+            R.drawable.voucher
         )
         childModelsList.add(childModel)
         if (menuModel.hasChildren) {
@@ -924,6 +1009,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }
 
     private fun getdashboardData() {
+
         homeViewModel.getDashboardData()
 
         homeViewModel.homeDataResponse.observe(this) {
@@ -1115,7 +1201,18 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         })
         UploadImage.setOnClickListener(View.OnClickListener {
-            dispatchTakePictureIntent()
+            var permissionHelper = PermissionHelper(
+                this,
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                100
+            )
+            permissionHelper.requestAll {
+                dispatchTakePictureIntent()
+            }
 
             // callProfileImageSelector(REQUEST_CAMERA);
         })
@@ -1127,7 +1224,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
             clockIn.setText(resources.getString(R.string.clock_out))
             clockInOut.setText(resources.getString(R.string.clock_out))
-            locationget()
             attendanceINOUTStatus = "2"
 
         }
@@ -1135,29 +1231,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send() {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {
-                    showToast("permission permanently denied")
-                }
-
-                is PermissionStatus.Denied.ShouldShowRationale -> {
-                    showToast("Permission denied ask again")
-                }
-
-                is PermissionStatus.Granted -> {
-                    showToast("Permission Granted")
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
-                }
-            }
-
-        }
+        photoEasy.startActivityForResult(this@StaffDashBoardActivity)
 
 
     }

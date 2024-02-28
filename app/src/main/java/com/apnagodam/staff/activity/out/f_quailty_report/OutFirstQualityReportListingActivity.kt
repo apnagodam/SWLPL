@@ -49,7 +49,7 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
+        getAllCases("")
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.f_quality_repots)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -58,9 +58,9 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /*   binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstQualityReportListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.swipeRefresherStock.setOnRefreshListener { getAllCases("") }
-        binding!!.ivClose.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding!!.ivClose.setOnClickListener { finish() }
         binding!!.tvPrevious.setOnClickListener {
             if (pageOffset != 1) {
                 pageOffset--
@@ -105,9 +105,6 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
         super.onResume()
         getAllCases("")
     }
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
     private fun setAdapter() {
         binding!!.rvDefaultersStatus.addItemDecoration(
@@ -124,11 +121,7 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        outFirstQualityReportAdapter = OutFirstQualityReportAdapter(
-            AllCases,
-            this@OutFirstQualityReportListingActivity,
-            activity
-        )
+
         binding!!.rvDefaultersStatus.adapter = outFirstQualityReportAdapter
     }
 
@@ -149,7 +142,12 @@ class OutFirstQualityReportListingActivity : BaseActivity<ActivityListingBinding
                         AllCases!!.clear()
                         totalPage = it.data!!.quilityReport.lastPage
                         AllCases!!.addAll(it.data!!.quilityReport.data)
-                        outFirstQualityReportAdapter!!.notifyDataSetChanged()
+                        outFirstQualityReportAdapter = OutFirstQualityReportAdapter(
+                            AllCases,
+                            this@OutFirstQualityReportListingActivity,
+                            activity
+                        )
+                        setAdapter()
                         // AllCases = body.getData();
                         // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
                     }

@@ -16,19 +16,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 @AndroidEntryPoint
 class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>() {
@@ -44,9 +40,9 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     }
 
     override fun setUp() {
+        getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-        setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.firstkanta_parchi_title)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -55,7 +51,7 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         /*  binding.rvDefaultersStatus.addItemDecoration(new DividerItemDecoration(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL));
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(FirstkanthaParchiListingActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/getAllCases("")
+        binding.rvDefaultersStatus.setLayoutManager(horizontalLayoutManager);*/
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
@@ -135,22 +131,23 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
             false
         )
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-        firstkanthaparchiAdapter =
-            FirstkanthaparchiAdapter(AllCases, this@FirstkanthaParchiListingActivity, activity)
+
         binding!!.rvDefaultersStatus.adapter = firstkanthaparchiAdapter
     }
 
     private fun getAllCases(search: String) {
         showDialog()
         kantaParchiViewModel.getKantaParchiListing("10", "" + pageOffset, "IN", search)
-        kantaParchiViewModel.kantaParchiResponse.observe(this){
-            when(it){
+        kantaParchiViewModel.kantaParchiResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
-                is NetworkResult.Loading ->{
+
+                is NetworkResult.Loading -> {
 
                 }
+
                 is NetworkResult.Success -> {
                     binding!!.swipeRefresherStock.isRefreshing = false
                     AllCases!!.clear()
@@ -163,7 +160,13 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
 
                         totalPage = it.data!!.firstKataParchiData.lastPage
                         AllCases!!.addAll(it.data!!.firstKataParchiData.data)
-                        firstkanthaparchiAdapter!!.notifyDataSetChanged()
+                        firstkanthaparchiAdapter =
+                            FirstkanthaparchiAdapter(
+                                AllCases,
+                                this@FirstkanthaParchiListingActivity,
+                                activity
+                            )
+                        setAdapter()
                         //   AllCases = body.getFirstKataParchiData();
                         //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
                     }
@@ -273,10 +276,11 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
 
     fun checkVeehicleNo(postion: Int) {
 
-        val bundle = Bundle()
-        bundle.putString("user_name", AllCases!![postion]!!.custFname)
-        bundle.putString("case_id", AllCases!![postion]!!.caseId)
         val intent = Intent(this, UploadFirstkantaParchiClass::class.java)
+        intent.putExtra("user_name",  AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id",  AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no",  AllCases!![postion]!!.vehicleNo)
+        intent.putExtra("file3",  AllCases!![postion]!!.file3)
         intent.putExtra("all_cases", AllCases[postion])
         startActivity(intent)
     }
