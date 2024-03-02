@@ -73,11 +73,6 @@ public class UserDetails {
     private String four_wheeler_rate;
 
 
-
-
-
-
-
     @SerializedName("level_id")
     @Expose
     private String level_id;
@@ -216,6 +211,18 @@ public class UserDetails {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+
+    @SerializedName("terminal")
+    @Expose
+    private String terminal;
+
+    public String getTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(String terminal) {
+        this.terminal = terminal;
+    }
 
     public String getId() {
         return id;

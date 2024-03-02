@@ -366,7 +366,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
                     stringFromView(binding!!.notes),
                     CommudityFileSelectImage,
                     binding!!.etExtraClaim.text!!.toString()
-                )
+                ),"OUT"
             )
 
             qualitReportViewModel.sQualityUploadResponse.observe(this) {

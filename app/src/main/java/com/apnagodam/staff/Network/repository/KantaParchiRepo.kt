@@ -33,10 +33,10 @@ class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiR
             .flowOn(Dispatchers.IO)
     }
 
-    suspend fun uploadFirstKantaParchi(uploadFirstQualityPostData: UploadFirstkantaParchiPostData): Flow<NetworkResult<LoginResponse>> {
+    suspend fun uploadFirstKantaParchi(uploadFirstQualityPostData: UploadFirstkantaParchiPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
-                apiService.uploadFirstkantaParchi(uploadFirstQualityPostData)
+                apiService.uploadFirstkantaParchi(uploadFirstQualityPostData,inOut)
             })
         }
     }
@@ -54,10 +54,10 @@ class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiR
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun uploadSecondKantaParchi(uploadFirstQualityPostData: UploadSecoundkantaParchiPostData): Flow<NetworkResult<LoginResponse>> {
+    suspend fun uploadSecondKantaParchi(uploadFirstQualityPostData: UploadSecoundkantaParchiPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
-                apiService.uploadSecoundkantaParchi(uploadFirstQualityPostData)
+                apiService.uploadSecoundkantaParchi(uploadFirstQualityPostData,inOut)
             })
         }
     }

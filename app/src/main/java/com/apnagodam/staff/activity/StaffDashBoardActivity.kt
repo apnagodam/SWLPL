@@ -42,6 +42,7 @@ import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
+import com.apnagodam.staff.activity.caseid.CaseListingActivity
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
 import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.FirstkanthaParchiListingActivity
@@ -125,6 +126,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     var userDetails: UserDetails? = null
     var selfieImage: ImageView? = null
     var options: Options? = null
+    var inCasesList = arrayListOf<AllCaseIDResponse.Datum>()
+    var outCasesList = arrayListOf<AllCaseIDResponse.Datum>()
 
     // for location
     private val locationUtils: LocationUtils? = null
@@ -138,7 +141,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     val loginViewModel by viewModels<LoginViewModel>()
     var lat = 0.0
     var long = 0.0
-    private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null
+    private var AllCases = arrayListOf<AllCaseIDResponse.Datum>()
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
     private var pageOffset = 1
     private var totalPage = 0
@@ -163,6 +166,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         requestPermission()
         getdashboardData()
 
+
         setUI()
         prepareMenuData()
         populateExpandableList()
@@ -182,6 +186,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         AllCases = arrayListOf()
         getAllCases("")
+        binding!!.mainContent.tvCreateCase.setOnClickListener {
+            startActivity(CaseIDGenerateClass::class.java)
+
+        }
         locationget()
 
         if (ActivityCompat.checkSelfPermission(
@@ -286,15 +294,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
 
 
-                val geocoder = Geocoder(this, Locale.getDefault())
-                val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null && addresses.isNotEmpty()) {
-                    currentLocation =
-                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                            addresses.first().adminArea
-                        }"
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val addresses = geocoder.getFromLocation(lat, long, 1)
+            if (addresses != null && addresses.isNotEmpty()) {
+                currentLocation =
+                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                        addresses.first().adminArea
+                    }"
 
-                }
+            }
         }
 
     }
@@ -303,53 +311,131 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         super.onResume()
         getAllCases("")
     }
-    private fun getAllCases(search: String) {
-        showDialog()
-        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
-        caseIdViewModel.response.observe(this){
-                body->
-            when(body){
-                is NetworkResult.Success->
-                {
 
-//                    binding!!.mainContent.swipeRefresherStock.isRefreshing = false
+    private fun getStackRequests() {
+        caseIdViewModel.getStackRequest()
+        caseIdViewModel.stackRequestResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    showToast(it.message)
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    hideDialog()
+                    when (it.data) {
+                        null -> {}
+                        else -> {
+                            if (it.data.status == "1") {
+                                binding!!.mainContent!!.incase.setText(it.data.inwardRequestData.size.toString())
+                                binding!!.mainContent!!.outcase.setText(it.data.outwardRequestData.size.toString())
+
+                                when (it.data.inwardRequestData.size) {
+                                    0 -> {
+
+                                    }
+
+                                    else -> {
+                                        binding!!.mainContent!!.cardIncase.setOnClickListener {
+                                            val intent =
+                                                Intent(this, InwardListActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    }
+                                }
+
+                                when (it.data.outwardRequestData.size) {
+                                    0 -> {
+
+                                    }
+
+                                    else -> {
+                                        binding!!.mainContent!!.cardOutCase.setOnClickListener {
+                                            val intent =
+                                                Intent(this, OutwardsListActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getAllCases(search: String) {
+        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        showDialog()
+        caseIdViewModel.getCaseId("15", pageOffset, "1", search)
+        caseIdViewModel.response.observe(this) { body ->
+            when (body) {
+                is NetworkResult.Success -> {
+                    inCasesList.clear()
+                    outCasesList.clear()
                     AllCases!!.clear()
                     if (body.data!!.getaCase() == null) {
                         binding!!.mainContent.txtemptyMsg.visibility = View.VISIBLE
                         binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.mainContent!!.incase.setText("0")
+                        binding!!.mainContent!!.outcase.setText("0")
+
                     } else {
-                        AllCases!!.clear()
                         totalPage = body.data.getaCase().lastPage
-                        AllCases!!.addAll(body.data.getaCase().data)
-                        casesTopAdapter = CasesTopAdapter(AllCases,this)
+
                         setAdapter()
+
+                        for (i in body.data.getaCase().data.indices) {
+
+                            if ((body.data.getaCase().data[i].terminalId == userDetails.terminal || userDetails.terminal==null) && (body.data.getaCase().data[i].cctvReport == null ||
+                                body.data.getaCase().data[i].ivrReport == null ||
+                                body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null)
+                                  ) {
+                                AllCases.add(body.data.getaCase().data[i])
+
+                            } else {
+                                break
+                            };
+
+
+                        }
+
 
                         //  AllCases=body.getCases();
                         // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
                     }
-                    hideDialog()
+                    casesTopAdapter = CasesTopAdapter(AllCases, this)
+
 
                 }
 
-                is NetworkResult.Error ->{
-                    hideDialog()
+                is NetworkResult.Error -> {
 
                 }
-                is NetworkResult.Loading -> {}
+
+                is NetworkResult.Loading -> {
+                }
             }
 
 
         }
 
-
+        getStackRequests()
     }
+
     private fun setAdapter() {
-        binding!!.mainContent.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+//        binding!!.mainContent.rvDefaultersStatus.addItemDecoration(
+//            DividerItemDecoration(
+//                this,
+//                LinearLayoutManager.VERTICAL
+//            )
+//        )
         binding!!.mainContent.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.mainContent.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =
@@ -358,6 +444,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         binding!!.mainContent.rvDefaultersStatus.adapter = casesTopAdapter
     }
+
     private fun showMessageOKCancel(message: String, okListener: DialogInterface.OnClickListener) {
         AlertDialog.Builder(this)
             .setMessage(message)
@@ -375,7 +462,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 if (!headerList[groupPosition].hasChildren) {
                     Log.e("groupclick", "gdddddd")
                     if (headerList[groupPosition].menuName == resources.getString(R.string.home)) {
-                        startActivityAndClear(StaffDashBoardActivity::class.java)
+                        getAllCases("")
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.referral_code)) {
                         val phone = SharedPreferencesRepository.getDataManagerInstance().user.phone
                         val sharedUrl =
@@ -392,7 +479,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.lead_generate)) {
                         startActivity(LeadGenerateClass::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.create_case)) {
-                        startActivity(CaseIDGenerateClass::class.java)
+                        startActivity(CaseListingActivity::class.java)
                     } /*else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.vendor))) {
                             startActivity(MyVendorVoacherListClass.class);
                         }*/ else if (headerList[groupPosition].menuName == resources.getString(R.string.spot_sell)) {
@@ -1025,9 +1112,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.`in`)
                         OnOfffAttendance = false
                     }
-                    binding!!.mainContent.incase.text = "" + it.data.getIn_case()
-                    binding!!.mainContent.outcase.text = "" + it.data.getOut_case()
+
+
                     binding!!.mainContent.trotalAttend.text = "" + it.data.getAtten_month_data()
+
                     val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
                     val date = Date()
                     binding!!.mainContent.date.text = "" + formatter.format(date)
@@ -1628,17 +1716,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             PERMISSION_REQUEST_CODE -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // main logic
             } else {
-                Toast.makeText(applicationContext, "Permission Denied", Toast.LENGTH_SHORT).show()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED
                     ) {
-                        showMessageOKCancel("You need to allow access permissions",
-                            DialogInterface.OnClickListener { dialog, which ->
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    requestPermission()
-                                }
-                            })
+                        requestPermission()
                     }
                 }
             }

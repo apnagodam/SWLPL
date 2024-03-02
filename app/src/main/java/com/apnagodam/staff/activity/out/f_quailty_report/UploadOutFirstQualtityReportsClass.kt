@@ -250,7 +250,7 @@ class UploadOutFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityRep
                         stringFromView(binding!!.etLive),
                         stringFromView(binding!!.notes),
                         CommudityFileSelectImage
-                    )
+                    ),"OUT"
                 )
 
                 qualitReportViewModel.fQualityUploadResponse.observe(this@UploadOutFirstQualtityReportsClass) {

@@ -78,6 +78,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        binding!!.etNoOfDispleasedBags.setText("0")
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -129,12 +130,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         UserName = intent.getStringExtra("user_name")
         CaseID = intent.getStringExtra("case_id")
 
-        if (intent.getStringExtra("file3")== null) {
-
-        } else {
-            isFirstUpload = false;
-
-        }
+        isFirstUpload = intent.getStringExtra("file3")== null
 
 
         if (isFirstUpload == true) {
@@ -268,7 +264,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                         kantaParchiNumber,
                         InTrackID,
                         InBardhanaID
-                    )
+                    ),
+                    "OUT"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
@@ -316,7 +313,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                         binding!!.etOldWeightQt.text.toString(),
                         binding!!.etNoOfDispleasedBags.text.toString(),
                         kantaId, kantaName, kantaParchiNumber, InTrackID, InBardhanaID
-                    )
+                    ),
+                    "OUT"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
@@ -333,7 +331,6 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                         is NetworkResult.Success -> {
                             hideDialog()
                             if (it.data!!.status == "1") {
-                                kantaParchiViewModel.getSKantaParchiListing("10", "1", "OUT", "")
                                 finish()
                                 showToast(it.data!!.message)
                             } else {

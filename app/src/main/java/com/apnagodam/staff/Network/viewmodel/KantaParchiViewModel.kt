@@ -34,14 +34,14 @@ class KantaParchiViewModel @Inject constructor(val kantaParchiRepo: KantaParchiR
         }
     }
 
-    fun uploadFirstKantaParchi(uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData)=viewModelScope.launch {
-        kantaParchiRepo.uploadFirstKantaParchi(uploadFirstkantaParchiPostData).collect()
+    fun uploadFirstKantaParchi(uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData,inOut:String)=viewModelScope.launch {
+        kantaParchiRepo.uploadFirstKantaParchi(uploadFirstkantaParchiPostData,inOut).collect()
         {
             uploadFirstKantaParchiResponse.value = it
         }
     }
-    fun uploadSecondKantaParchi(uploadFirstkantaParchiPostData: UploadSecoundkantaParchiPostData)=viewModelScope.launch {
-        kantaParchiRepo.uploadSecondKantaParchi(uploadFirstkantaParchiPostData).collect()
+    fun uploadSecondKantaParchi(uploadFirstkantaParchiPostData: UploadSecoundkantaParchiPostData,inOut:String)=viewModelScope.launch {
+        kantaParchiRepo.uploadSecondKantaParchi(uploadFirstkantaParchiPostData,inOut).collect()
         {
             uploadSecondKantaParchiResponse.value = it
         }

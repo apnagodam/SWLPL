@@ -251,7 +251,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                         stringFromView(binding!!.etLive),
                         stringFromView(binding!!.notes),
                         CommudityFileSelectImage
-                    )
+                    ),"IN"
                 )
 
                 qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {

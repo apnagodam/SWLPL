@@ -22,6 +22,8 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
 import com.apnagodam.staff.Network.Request.StackPostData
+import com.apnagodam.staff.Network.Response.StackRequestResponse.InwardRequestDatum
+import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestDatum
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.GatePassViewModel
 import com.apnagodam.staff.Network.viewmodel.LeadsViewModel
@@ -70,19 +72,83 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     var otpData = mapOf<String, Any>()
     val leadsViewModel by viewModels<LeadsViewModel>()
     val caseIdViewModel by viewModels<CaseIdViewModel>()
+    var outwardsStack: OutwardRequestDatum? = null
+    var inwardsStack: InwardRequestDatum? = null
     override fun getLayoutResId(): Int {
 
         return R.layout.activity_case_id
     }
 
+    //
+//    TerminalID,
+//    selectInOUt,
+//    seleectCoustomer,
+//    commudityID,
+//    "",
+//    stackID,
+//    "",
     override fun setUp() {
+        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        if (intent.getSerializableExtra("outwards_stack") != null) {
+
+            outwardsStack =
+                intent.getSerializableExtra("outwards_stack") as OutwardRequestDatum?
+            otpData = mapOf(
+                "driver_number" to outwardsStack!!.driverNumber,
+                "otp" to "",
+                "in_out" to outwardsStack!!.inOutType,
+                "stack_id" to outwardsStack!!.stackNumber
+            )
+
+            TerminalID = outwardsStack!!.terminalId.toString()
+            selectInOUt = outwardsStack!!.inOutType
+            seleectCoustomer = outwardsStack!!.userNumber.toString()
+            commudityID = outwardsStack!!.commodityId.toString()
+            stackID = outwardsStack!!.stackId.toString()
+            binding!!.tilTerminal.editText!!.setText(outwardsStack!!.terminalName)
+            binding!!.tilCommodity.editText!!.setText(outwardsStack!!.commodity)
+            binding!!.tilUser.editText!!.setText(outwardsStack!!.userName)
+            binding!!.tilStackNo.editText!!.setText(outwardsStack!!.stackNumber)
+            binding!!.tilInOut.editText!!.setText(outwardsStack!!.inOutType)
+            binding!!.etCustomerWeight!!.setText(outwardsStack!!.wgtInKg.toString())
+            binding!!.etCustomerWeightQuantal!!.setText(outwardsStack!!.wgtInQtl)
+            binding!!.etCustomerVehicle!!.setText(outwardsStack!!.vehicleNumber)
+            binding!!.etDriverMobileNumber!!.setText(outwardsStack!!.driverNumber)
+
+
+//            binding!!.tilTerminal.editText!!.setText(outwardsStack!!.terminalName)
+
+        } else if (intent.getSerializableExtra("inwards_stack") != null) {
+            inwardsStack =
+                intent.getSerializableExtra("inwards_stack") as InwardRequestDatum?
+
+            otpData = mapOf(
+                "driver_number" to inwardsStack!!.driverNumber,
+                "otp" to "",
+                "in_out" to inwardsStack!!.inOutType,
+                "stack_id" to inwardsStack!!.stackNumber
+            )
+            TerminalID = inwardsStack!!.terminalId.toString()
+            selectInOUt = inwardsStack!!.inOutType
+            seleectCoustomer = inwardsStack!!.userNumber.toString()
+            commudityID = inwardsStack!!.commodityId.toString()
+            stackID = inwardsStack!!.stackId.toString()
+            binding!!.tilTerminal.editText!!.setText(inwardsStack!!.terminalName)
+            binding!!.tilCommodity.editText!!.setText(inwardsStack!!.commodity)
+            binding!!.tilUser.editText!!.setText(inwardsStack!!.userName)
+            binding!!.tilStackNo.editText!!.setText(inwardsStack!!.stackNumber)
+            binding!!.tilInOut.editText!!.setText(inwardsStack!!.inOutType)
+            binding!!.etCustomerWeight!!.setText(inwardsStack!!.wgtInKg.toString())
+            binding!!.etCustomerWeightQuantal!!.setText(inwardsStack!!.wgtInQtl)
+            binding!!.etCustomerVehicle!!.setText(inwardsStack!!.vehicleNumber)
+            binding!!.etDriverMobileNumber!!.setText(inwardsStack!!.driverNumber)
+        }
         binding!!.etCustomerGatepass.isEnabled = false
         binding!!.etCustomerGatepass.isFocusable = false
         binding!!.etCustomerGatepass.isClickable = false
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        /* binding.RLCommodity.setVisibility(View.GONE);
-        binding.RLStack.setVisibility(View.GONE);*/binding!!.RLStack.visibility = View.GONE
+        binding!!.RLStack.visibility = View.GONE
         terminalListLevel()
         clickListner()
         StackName = ArrayList()
@@ -98,15 +164,15 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         CustomerName.add(resources.getString(R.string.select_coustomer))
         LeadGenerateOtherName.add("If Lead Converted By Other")
         binding!!.sendOtp.setOnClickListener {
-            if(binding!!.etDriverMobileNumber.text!!.isNotEmpty()){
+            if (binding!!.etDriverMobileNumber.text!!.isNotEmpty()) {
                 onSendOtp()
 
-            }else{
+            } else {
                 showToast("Driver not available ")
             }
         }
         binding!!.etOtp.doOnTextChanged { text, start, before, count ->
-            if(text!!.length==6){
+            if (text!!.length == 6) {
                 verifyOtp()
 
             }
@@ -115,7 +181,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             verifyOtp()
         }
         try {
-            setValueOnSpinner()
+          //  setValueOnSpinner()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -293,7 +359,9 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                             "in_out" to "IN",
                             "stack_id" to stackData.stackId
                         )
-                        binding!!.etCustomerWeight.setText("" + stackData.requestWeight)
+                        binding!!.etCustomerWeight.setText(
+                            (stackData.requestWeight.toString().toInt() * 100).toString()
+                        )
                         binding!!.etCustomerVehicle.setText("" + stackData.vehicle_no)
                         binding!!.etDriverMobileNumber.setText(stackData.driverNumber)
                         binding!!.etCustomerVehicle.isClickable = false
@@ -355,6 +423,9 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         showToast(it.data!!.message)
                     }
 
+
+                    binding!!.reSendOtp.visibility = View.VISIBLE
+
                 }
             }
         }
@@ -370,7 +441,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-            hideDialog()
+                    hideDialog()
                 }
 
                 is NetworkResult.Loading -> {
@@ -384,6 +455,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         binding!!.verifyOtp.visibility = View.GONE
                         showToast(it.data!!.message)
                         verifyAndCreateCaseId()
+                    } else {
+                        showToast(it.data.message)
                     }
 
                 }
@@ -664,13 +737,12 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         when (view.id) {
             R.id.iv_close -> onBackPressedDispatcher.onBackPressed()
             R.id.tv_done -> startActivity(CaseListingActivity::class.java)
-            R.id.btn_createe_case ->verifyAndCreateCaseId()
+            R.id.btn_createe_case -> verifyAndCreateCaseId()
         }
     }
 
-    fun verifyAndCreateCaseId(){
+    fun verifyAndCreateCaseId() {
         if (isValid) {
-
             if (TerminalID == null) {
                 Toast.makeText(
                     this@CaseIDGenerateClass,
@@ -702,14 +774,15 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                var  createCaseIDPostData = CreateCaseIDPostData(
+                showDialog()
+                var createCaseIDPostData = CreateCaseIDPostData(
                     TerminalID,
                     selectInOUt,
                     seleectCoustomer,
                     commudityID,
                     "",
                     stackID,
-                    stringFromView(binding!!.etCustomerBags),
+                    "",
                     stringFromView(binding!!.etCustomerWeight),
                     stringFromView(
                         binding!!.etCustomerWeightQuantal
@@ -718,21 +791,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     stringFromView(binding!!.etSpotToken),
                 )
 
-                createCaseIDPostData
-                showDialog()
                 caseIdViewModel.doCreateCaseId(
-                    commudityID.toString(),
-                    seleectCoustomer.toString(),
-                    selectInOUt.toString(),
-                    stackID.toString(),
-                    binding!!.etCustomerBags.text.toString(),
-                    binding!!.etCustomerWeight.text.toString(),
-                    binding!!.etCustomerVehicle.text.toString(),
-                    stringFromView(
-                        binding!!.etCustomerWeightQuantal
-                    ),
-                    TerminalID.toString()
-
+                    createCaseIDPostData
 
                 )
 
@@ -742,17 +802,18 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         is NetworkResult.Error -> {
                             hideDialog()
                         }
+
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
                             if (it.data != null) {
                                 if (it.data.status == "1") {
                                     startActivityAndClear(
-                                        CaseListingActivity::class.java
+                                        StaffDashBoardActivity::class.java
                                     )
                                     showToast(it.data.message)
                                 } else {
                                     startActivityAndClear(
-                                        CaseListingActivity::class.java
+                                        StaffDashBoardActivity::class.java
                                     )
                                     showToast(it.data.message)
                                 }
@@ -767,13 +828,10 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             }
         }
     }
+
     val isValid: Boolean
         get() {
-            if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerBags))) {
-                return Utility.showEditTextError(binding!!.tilCustomerBags, R.string.bags)
-            } /*else if (TextUtils.isEmpty(stringFromView(binding.etCustomerGatepass))) {
-                return Utility.showEditTextError(binding.tilCustomerGatepass, R.string.gate_pass);
-            }*/ else if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerWeight))) {
+            if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerWeight))) {
                 return Utility.showEditTextError(binding!!.tilCustomerWeight, R.string.weight_kg)
             } else if (TextUtils.isEmpty(stringFromView(binding!!.etCustomerVehicle))) {
                 return Utility.showEditTextError(binding!!.tilCustomerVehicle, R.string.vehicle_no)
@@ -781,9 +839,6 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 return Utility.showEditTextError(binding!!.itlMobileNumber, R.string.vehicle_no)
             }
 
-            /*  else if (TextUtils.isEmpty(stringFromView(binding.etCustomerFpo))) {
-            return Utility.showEditTextError(binding.tilCustomerFpo, R.string.fpo_sub_useername);
-        }*/
             return true
         }
 

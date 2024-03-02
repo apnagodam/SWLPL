@@ -20,6 +20,7 @@ import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.`in`.labourbook.LabourType
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
@@ -41,7 +42,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
     private var calender: Calendar? = null
     lateinit var SpinnerControactorAdapter: ArrayAdapter<String>
     var contractorsID: String? = null
-
+    var contractorNameID: String? = null
     var isClientLabour = true;
 
     // drop down  of meter status
@@ -50,6 +51,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
     val labourViewModel by viewModels<LabourViewModel>()
     lateinit var searchableSpinner: SearchableSpinner
 
+    var labourType = LabourType.DEFAULT.type
     var checked = false
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_labour_details
@@ -101,6 +103,8 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                             ignoreCase = true
                         )
                     ) {
+                        contractorNameID =
+                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].id.toString()
                         binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
                         binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
                     }
@@ -109,11 +113,11 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
         }
 
         var itemList = arrayListOf<String>()
-        itemList.add("Select Type")
-        itemList.add("Client Labour")
-        itemList.add("Company Labour")
+        itemList.add(LabourType.DEFAULT.type)
+        itemList.add(LabourType.CLIENT.type)
+        itemList.add(LabourType.COMPANY.type)
         SpinnerControactorAdapter =
-            ArrayAdapter(this, R.layout.multiline_spinner_item, itemList!!)
+            ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, itemList!!)
 
 
 
@@ -128,15 +132,16 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                     position: Int,
                     id: Long
                 ) {
+                    labourType = itemList.get(position)
                     // selected item in the list
-                    if (position > 1) {
+                    if (labourType == LabourType.CLIENT.type) {
                         isClientLabour = true;
-                        binding!!.layoutLabour.visibility = View.VISIBLE
-
-                    } else {
-                        isClientLabour = false;
                         binding!!.layoutLabour.visibility = View.GONE
+                    } else if (labourType == LabourType.COMPANY.type) {
+                        isClientLabour = false;
+                        binding!!.layoutLabour.visibility = View.VISIBLE
                     }
+
 
                 }
 
@@ -193,10 +198,10 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
     }
 
 
-
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close -> { finish()
+            R.id.iv_close -> {
+                finish()
             }
 
             R.id.et_start_date_time -> popUpDatePicker()
@@ -204,10 +209,10 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
             R.id.btn_login -> if (isValid) {
 
                 showDialog()
-
                 labourViewModel.uploadLabourDetails(
                     UploadLabourDetailsPostData(
                         CaseID,
+                        contractorNameID,
                         contractorsID,
                         stringFromView(binding!!.etContractorPhone),
                         "N/A",
@@ -218,8 +223,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                         "0000-00-00"
                     )
                 )
-                hideDialog()
-                finish()
+
                 labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
                     when (it) {
                         is NetworkResult.Error -> {
@@ -228,6 +232,18 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
+
+                            when (it.data) {
+                                null -> {
+                                    hideDialog()
+                                }
+
+                                else -> {
+                                    showToast(it.data.message)
+                                    hideDialog()
+                                    finish()
+                                }
+                            }
 
                         }
                     }
@@ -249,12 +265,15 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
     val isValid: Boolean
         get() {
-
-            if (!isClientLabour) {
+            if (labourType == LabourType.COMPANY.type) {
                 if (Validationhelper().fieldEmpty(binding!!.tilContractor)) {
                     binding!!.tilContractor.error =
                         "This Field cannot be empty"
                 }
+            }
+            else if (labourType == LabourType.CLIENT.type){
+                contractorNameID = "1"
+
             }
             return true
         }

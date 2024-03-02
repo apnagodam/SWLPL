@@ -83,6 +83,7 @@ public class SharedPreferencesRepository implements Tags {
     public static void logout(){
         SharedPreferencesRepository.getDataManagerInstance().clear();
         SharedPreferencesRepository.setIsUserName(false);
+        SharedPreferencesRepository.clearLoginPref();
         SharedPreferencesRepository.saveSessionToken("");
 
     }

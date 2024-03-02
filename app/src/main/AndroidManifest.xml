@@ -33,12 +33,16 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
-
+        <activity
+            android:name=".activity.OutwardsListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.InwardListActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.FastCaseListActivity"
-            android:screenOrientation="portrait"
-
-            android:exported="false">
+            android:exported="false"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -54,9 +58,9 @@
         </activity>
         <activity
             android:name=".activity.SplashActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashAppTheme"
-            android:exported="true">
+            android:theme="@style/SplashAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,7 +69,6 @@
         </activity>
         <activity
             android:name=".activity.LoginActivity"
-
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.OtpActivity"
@@ -147,70 +150,97 @@
         <activity
             android:name=".activity.in.gatepass.UploadGatePassClass"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.SpotDealTrackListActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.ContractFormBillPrintClass"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.convancy_voachar.UploadConveyanceVoacharClass"
-            android:screenOrientation="portrait"
-            />
+        <activity
+            android:name=".activity.SpotDealTrackListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ContractFormBillPrintClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.convancy_voachar.UploadConveyanceVoacharClass"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.convancy_voachar.MyConveyanceListClass" />
-        <activity android:name=".activity.convancy_voachar.ApprovalRequestConveyanceListClass"  android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.vendorPanel.ApprovalRequestVendorVoacherListClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.vendorPanel.MyVendorVoacherListClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.vendorPanel.UploadVendorVoacherClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.IntantionApprovalListClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.StateMapActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.f_quailty_report.OutFirstQualityReportListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.gatepass.OutGatePassListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.gatepass.OutUploadGatePassClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.s_quaility_report.OutSecoundQualityReportListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.GatePassPDFPrieviewClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.truckbook.OUTTruckBookListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.truckbook.OUTTruckUploadDetailsClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.labourbook.OUTLabourBookListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.labourbook.OUTLabourBookUploadClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.casestatus.CaseStatusINListClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.releaseorder.OUTRelaseOrderListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.releaseorder.OUTReleaseOrderClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity" android:screenOrientation="portrait"
-            />
-        <activity android:name=".activity.MobileNumberMapActivity" android:screenOrientation="portrait"
-            />
+        <activity
+            android:name=".activity.convancy_voachar.ApprovalRequestConveyanceListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.ApprovalRequestVendorVoacherListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.MyVendorVoacherListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.UploadVendorVoacherClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.IntantionApprovalListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.StateMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_quailty_report.OutFirstQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.gatepass.OutGatePassListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.gatepass.OutUploadGatePassClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_quaility_report.OutSecoundQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.GatePassPDFPrieviewClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.truckbook.OUTTruckBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.truckbook.OUTTruckUploadDetailsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.labourbook.OUTLabourBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.labourbook.OUTLabourBookUploadClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.casestatus.CaseStatusINListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.releaseorder.OUTRelaseOrderListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.releaseorder.OUTReleaseOrderClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MobileNumberMapActivity"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".reciever.SMSReceiver"
@@ -235,8 +265,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/map_key" />
-
-
     </application>
 
 </manifest>

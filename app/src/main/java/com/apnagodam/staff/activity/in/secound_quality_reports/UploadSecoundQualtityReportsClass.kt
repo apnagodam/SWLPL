@@ -383,7 +383,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                     stringFromView(binding!!.notes),
                     CommudityFileSelectImage,
                     binding!!.etExtraClaim.text!!.toString()
-                )
+                ),"IN"
             )
 
             qualitReportViewModel.sQualityUploadResponse.observe(this@UploadSecoundQualtityReportsClass) {

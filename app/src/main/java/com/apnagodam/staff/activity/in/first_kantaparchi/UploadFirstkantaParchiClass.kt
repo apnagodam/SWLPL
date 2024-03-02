@@ -381,6 +381,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                         binding!!.etOldNoOfBags.text.toString()
 
                     )
+                    ,"IN"
                 )
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
                     when (it) {
@@ -429,7 +430,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                         binding!!.etKantaOldParchiNum.text.toString(),
                         binding!!.etOldWeightQt.text.toString(),
                         binding!!.etOldNoOfBags.text.toString(),
-                    )
+                    ),
+                    "IN"
                 )
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {
                     when (it) {

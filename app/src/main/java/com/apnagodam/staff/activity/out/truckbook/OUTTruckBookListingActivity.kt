@@ -396,15 +396,6 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
 
         startActivity(intent)
-        /* apiService.cheeckvehiclePricicng(AllCases.get(postion).getCaseId()).enqueue(new NetworkCallback<VehcilePricingCheeck>(getActivity()) {
-            @Override
-            protected void onSuccess(VehcilePricingCheeck body) {
-                if (body.getVichel_status().equalsIgnoreCase("1")) {
-                    Toast.makeText(getApplicationContext(), body.getMessage(), Toast.LENGTH_LONG).show();
-                } else {
 
-                }
-            }
-        });*/
     }
 }

@@ -82,7 +82,7 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }
 
     private fun afterpermissionNext() {
-
+        SharedPreferencesRepository.getDataManagerInstance().userPermission
         if(SharedPreferencesRepository.getDataManagerInstance().userPermission!=null&&SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()){
             startActivityAndClear(StaffDashBoardActivity::class.java)
         }
@@ -97,7 +97,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                         is NetworkResult.Loading -> {
                             showToast("loading")
                         }
-
                         is NetworkResult.Success -> {
                             if (it.data != null) {
 

@@ -44,6 +44,7 @@ import com.apnagodam.staff.Network.Response.ResponseSendOtp
 import com.apnagodam.staff.Network.Response.ResponseStackData
 import com.apnagodam.staff.Network.Response.ResponseUserData
 import com.apnagodam.staff.Network.Response.ResponseWarehouse
+import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.Response.VerifyOtpFastcase
 import com.apnagodam.staff.Network.Response.VersionCodeResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
@@ -126,16 +127,7 @@ interface ApiService {
     fun doClosedCase(@Body closedCasesPostData: ClosedCasesPostData?): Call<LoginResponse?>?
 
     @POST("emp_api/apna_emp_create_caseid")
-    suspend fun doCreateCaseID(@Query("commodity_id")commodityId:String,
-                               @Query("customer_uid")customerUid:String,
-                               @Query("in_out")inOut:String,
-                               @Query("stack_id")stackId:String,
-                               @Query("no_of_bags")noOfBags:String,
-                               @Query("weight")weight:String,
-                               @Query("vehicle_no")vehicleNo:String,
-                               @Query("quantity")quantity:String,
-                               @Query("terminal_id")terminalId:String,
-
+    suspend fun doCreateCaseID(@Body createCaseIDPostData: CreateCaseIDPostData
 
                                ): Response<LoginResponse>
 
@@ -412,10 +404,10 @@ interface ApiService {
     suspend fun uploadDeliveredOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_f_quality")
-    suspend fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?): Response<LoginResponse>
+    suspend fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_kanta_parchi")
-    suspend fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData): Response<LoginResponse>
+    suspend fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData,@Query("in_out") inOut:String): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_gatepass")
     fun uploadGatePass(@Body uploadGatePassPostData: UploadGatePassPostData?): Call<LoginResponse?>?
@@ -430,10 +422,10 @@ interface ApiService {
     suspend fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_quality")
-    suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?): Response<LoginResponse>
+    suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_kanta_parchi")
-    suspend fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?): Response<LoginResponse>
+    suspend fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_truckbook")
     suspend fun uploadTruckDetails(@Body uploadTruckDetailsPostData: UploadTruckDetailsPostData?): Response<LoginResponse>
@@ -459,4 +451,7 @@ interface ApiService {
 
     @POST("emp_api/apna_emp_getkantaparchi")
     suspend fun  getDharamKanta(@Query("case_id") case_id:String):Response<DharamKanta>
+
+    @POST("emp_api/apna_emp_stack_request")
+    suspend fun getStackRequest():Response<StackRequestResponse>
 }

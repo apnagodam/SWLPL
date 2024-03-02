@@ -49,8 +49,9 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     val homeViewModel by viewModels<HomeViewModel>()
     val labourViewModel by viewModels<LabourViewModel>()
     lateinit var searchableSpinner: SearchableSpinner
-
+    var contractorNameId: String? = null
     var checked = false
+    var labourType = LabourType.DEFAULT
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_labour_details
     }
@@ -58,7 +59,6 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     override fun setUp() {
         searchableSpinner = SearchableSpinner(this)
         binding!!.tvTitle.setText("Upload Labour Book")
-
         calender = Calendar.getInstance()
         UserName = intent.getStringExtra("user_name")
         CaseID = intent.getStringExtra("case_id")
@@ -101,6 +101,8 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                             ignoreCase = true
                         )
                     ) {
+                        contractorNameId =
+                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].id.toString()
                         binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
                         binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
                     }
@@ -109,9 +111,9 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         }
 
         var itemList = arrayListOf<String>()
-        itemList.add("Select Type")
-        itemList.add("Client Labour")
-        itemList.add("Company Labour")
+        itemList.add(LabourType.DEFAULT.type)
+        itemList.add(LabourType.CLIENT.type)
+        itemList.add(LabourType.COMPANY.type)
         SpinnerControactorAdapter =
             ArrayAdapter(this, R.layout.multiline_spinner_item, itemList!!)
 
@@ -150,14 +152,12 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     position: Int,
                     id: Long
                 ) {
+                    labourType.type = itemList[position]
                     // selected item in the list
-                    if (position > 1) {
-                        isClientLabour = true;
-                        binding!!.layoutLabour.visibility = View.VISIBLE
-
-                    } else {
-                        isClientLabour = false;
+                    if (position == 0 || position == 1) {
                         binding!!.layoutLabour.visibility = View.GONE
+                    } else {
+                        binding!!.layoutLabour.visibility = View.VISIBLE
                     }
 
                 }
@@ -175,7 +175,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-                hideDialog()
+                    hideDialog()
                 }
 
                 is NetworkResult.Loading -> {
@@ -219,9 +219,9 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     override fun onClick(view: View) {
         when (view.id) {
             R.id.iv_close -> {
-                labourViewModel.getLabourList("10","1","IN","")
-                onBackPressedDispatcher.onBackPressed()
+                finish()
             }
+
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
@@ -229,6 +229,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 labourViewModel.uploadLabourDetails(
                     UploadLabourDetailsPostData(
                         CaseID,
+                        contractorNameId,
                         contractorsID,
                         stringFromView(binding!!.etContractorPhone),
                         "N/A",
@@ -244,10 +245,20 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
                     when (it) {
                         is NetworkResult.Error -> {
+                            showToast(it.message)
                             hideDialog()
                         }
+
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
+                            if (it.data != null) {
+                                if (it.data.status == "1") {
+                                    showToast(it.data!!.message.toString())
+                                } else {
+                                    showToast(it.message)
+                                }
+
+                            }
 
                         }
                     }
@@ -270,13 +281,15 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     val isValid: Boolean
         get() {
 
-            if (!isClientLabour) {
+            if (labourType.type != LabourType.CLIENT.type) {
                 if (Validationhelper().fieldEmpty(binding!!.tilContractor)) {
                     binding!!.tilContractor.error =
                         "This Field cannot be empty"
                     return false
 
                 }
+            } else {
+                contractorNameId = "1"
             }
             return true
         }
@@ -305,3 +318,8 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {}
     override fun onNothingSelected(adapterView: AdapterView<*>?) {}
 }
+
+enum class LabourType(var type: String) {
+    DEFAULT("Select Labour"), CLIENT("Client Labour"), COMPANY("Company Labour")
+}
+

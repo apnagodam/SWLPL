@@ -74,263 +74,361 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <Spinner
-                    android:id="@+id/spinner_userNameold"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@drawable/white_back_black_border"
-                    android:entries="@array/array_pupose"
-                    android:gravity="right"
-                    android:padding="@dimen/_10sdp"
-                    android:spinnerMode="dropdown"
-                    android:visibility="gone" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
-
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content">
                     <Spinner
-                        android:id="@+id/spinnerTerminal"
+                        android:id="@+id/spinner_userNameold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/transparent"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:background="@drawable/white_back_black_border"
                         android:entries="@array/array_pupose"
                         android:gravity="right"
                         android:padding="@dimen/_10sdp"
                         android:spinnerMode="dropdown"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:visibility="visible" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/inoutRl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
-
-                    <Spinner
-                        android:id="@+id/spinnerInOut"
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_in_out"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
+                        <Spinner
+                            android:id="@+id/spinnerTerminal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_pupose"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                <RelativeLayout
-                    android:id="@+id/rlUser"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
 
-                    <com.apnagodam.staff.utils.SearchableSpinner
-                        android:id="@+id/spinnerUserName"
+                    <RelativeLayout
+                        android:id="@+id/inoutRl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_pupose"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
+                        <Spinner
+                            android:id="@+id/spinnerInOut"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_in_out"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                <RelativeLayout
-                    android:id="@+id/RLCommodity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
 
-                    <Spinner
-                        android:id="@+id/spinnerCommudity"
+                    <RelativeLayout
+                        android:id="@+id/rlUser"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_pupose"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
+                        <com.apnagodam.staff.utils.SearchableSpinner
+                            android:id="@+id/spinnerUserName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_pupose"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
 
-                <RelativeLayout
-                    android:id="@+id/RLStack"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
 
-                    <Spinner
-                        android:id="@+id/spinner_stack"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_in_out"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginEnd="@dimen/_3sdp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight=".28"
-                    android:background="@drawable/white_back_black_border"
-                    android:orientation="horizontal"
-                    android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
-
-                    <Spinner
-                        android:id="@+id/spinner_purpose"
+                    <RelativeLayout
+                        android:id="@+id/RLCommodity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_5sdp"
-                        android:background="@color/transparent"
-                        android:entries="@array/array_pupose"
-                        android:gravity="right"
-                        android:padding="@dimen/_10sdp"
-                        android:spinnerMode="dropdown"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
+                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
+                        <Spinner
+                            android:id="@+id/spinnerCommudity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_pupose"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/RLStack"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_arrow_drop_down" />
-                </RelativeLayout>
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
 
+                        <Spinner
+                            android:id="@+id/spinner_stack"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_in_out"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginEnd="@dimen/_3sdp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight=".28"
+                        android:background="@drawable/white_back_black_border"
+                        android:orientation="horizontal"
+                        android:paddingEnd="@dimen/_5sdp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinnerInOut">
+
+                        <Spinner
+                            android:id="@+id/spinner_purpose"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:background="@color/transparent"
+                            android:entries="@array/array_pupose"
+                            android:gravity="right"
+                            android:padding="@dimen/_10sdp"
+                            android:spinnerMode="dropdown"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_arrow_drop_down" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+<!--                <com.google.android.material.textfield.TextInputLayout-->
+<!--                    android:id="@+id/tilCustomerBags"-->
+<!--                    style="@style/TextInputStyle"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:hint="@string/bags"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">-->
+
+<!--                    <com.google.android.material.textfield.TextInputEditText-->
+<!--                        android:id="@+id/etCustomerBags"-->
+<!--                        style="@style/TextStyleNormal"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:focusable="true"-->
+<!--                        android:focusedByDefault="true"-->
+<!--                        android:imeOptions="actionNext"-->
+<!--                        android:inputType="numberDecimal"-->
+<!--                        android:maxLines="1"-->
+<!--                        android:singleLine="true" />-->
+<!--                </com.google.android.material.textfield.TextInputLayout>-->
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilCustomerBags"
-                    style="@style/TextInputStyle"
+                    android:id="@+id/tilTerminal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/bags"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/til_customer_vehicle">
-
+                    android:focusable="false"
+                    android:hint="Terminal Name"
+                    style="@style/TextInputStyle"
+                    android:layout_height="wrap_content">
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etCustomerBags"
-                        style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal"
-                        android:maxLines="1"
-                        android:singleLine="true" />
+                        style="@style/TextStyleNormal"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilInOut"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:hint="In/Out"
+                    style="@style/TextInputStyle"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        style="@style/TextStyleNormal"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:layout_height="wrap_content"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilUser"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:hint="User"
+                    style="@style/TextInputStyle"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        style="@style/TextStyleNormal"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCommodity"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:hint="Commodity Type"
+                    style="@style/TextInputStyle"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        style="@style/TextStyleNormal"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilStackNo"
+                    android:layout_width="match_parent"
+                    android:focusable="false"
+                    android:hint="Stack No"
+                    style="@style/TextInputStyle"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        style="@style/TextStyleNormal"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/til_customer_weight"
                     style="@style/TextInputStyle"
@@ -343,8 +441,12 @@
                         style="@style/TextStyleNormal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="true"
-                        android:focusedByDefault="true"
+                        android:alpha="80"
+                        android:background="#eee"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:focusedByDefault="false"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal"
                         android:maxLines="1"
@@ -489,6 +591,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:focusable="true"
+                            android:maxLength="6"
                             android:focusedByDefault="true"
                             android:imeOptions="actionNext"
                             android:inputType="number"
@@ -535,7 +638,7 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:layout_weight="1"
-                        android:background="@drawable/btn_red_background"
+                        android:background="@drawable/btn_green_background"
                         android:gravity="center"
                         android:text="Resend OTP"
                         android:textColor="@color/white"

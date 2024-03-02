@@ -36,11 +36,11 @@ class QualityReportRepo @Inject constructor(val apiService: ApiService) : BaseAp
     }
 
 
-    suspend fun uploadFirstQualityReport(uploadFirstQualityPostData: UploadFirstQualityPostData): Flow<NetworkResult<LoginResponse>> {
+    suspend fun uploadFirstQualityReport(uploadFirstQualityPostData: UploadFirstQualityPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
                 apiService.uploadFirstQualityReports(
-                    uploadFirstQualityPostData
+                    uploadFirstQualityPostData,inOut
                 )
             })
         }.flowOn(Dispatchers.IO)
@@ -68,11 +68,11 @@ class QualityReportRepo @Inject constructor(val apiService: ApiService) : BaseAp
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun uploadSecondQualityReport(uploadSecoundQualityPostData: UploadSecoundQualityPostData): Flow<NetworkResult<LoginResponse>> {
+    suspend fun uploadSecondQualityReport(uploadSecoundQualityPostData: UploadSecoundQualityPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
                 apiService.uploadSecoundQualityReports(
-                    uploadSecoundQualityPostData
+                    uploadSecoundQualityPostData,inOut
                 )
             })
         }.flowOn(Dispatchers.IO)

@@ -14,6 +14,7 @@ import com.apnagodam.staff.Network.Request.StackPostData
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.repository.CaseIdRepo
 import com.apnagodam.staff.activity.LoginActivity
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -50,6 +51,8 @@ class CaseIdViewModel @Inject constructor(
 
     val createCaseIdResponse =MutableLiveData<NetworkResult<LoginResponse>>()
     val usersListResponse = MutableLiveData<NetworkResult<AllUserListPojo>>()
+
+    val stackRequestResponse = MutableLiveData<NetworkResult<StackRequestResponse>>()
     fun getCaseId(str: String?, i: Int, str2: String?, str3: String?) = viewModelScope.launch {
         repository.getCaseId(str, i, str2, str3).collect { values ->
 
@@ -82,16 +85,8 @@ class CaseIdViewModel @Inject constructor(
             commoditiesResponse.value = it
         }
     }
-     fun doCreateCaseId(    commodityId: String,
-                            customerUid: String,
-                            inOut: String,
-                            stackId: String,
-                            noOfBags: String,
-                            weight: String,
-                            vehicleNo: String,
-                            quantity: String,
-                            terminalId: String,)= viewModelScope.launch {
-         repository.doCreateCaseId(commodityId, customerUid, inOut, stackId, noOfBags, weight, vehicleNo, quantity, terminalId).collect(){
+     fun doCreateCaseId(  createCaseIDPostData: CreateCaseIDPostData)= viewModelScope.launch {
+         repository.doCreateCaseId(createCaseIDPostData).collect(){
              createCaseIdResponse.value = it
          }
      }
@@ -99,6 +94,12 @@ class CaseIdViewModel @Inject constructor(
     fun getUsersList(terminalId: String,inOut: String) = viewModelScope.launch {
         repository.getUserList(terminalId, inOut).collect(){
             usersListResponse.value = it
+        }
+    }
+
+    fun getStackRequest() = viewModelScope.launch {
+        repository.getStackRequestList().collect(){
+            stackRequestResponse.value = it
         }
     }
 

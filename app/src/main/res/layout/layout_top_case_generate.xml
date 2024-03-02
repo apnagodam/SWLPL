@@ -5,11 +5,10 @@
         android:id="@+id/cell_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="4">
+        >
 
         <TextView
             android:id="@+id/tv_id"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -22,23 +21,38 @@
 
         <include layout="@layout/layout_divider_horizontal" />
 
-        <TextView
-            android:id="@+id/tv_name"
-            style="@style/TextStyleBold"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_weight="1"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:padding="@dimen/_4sdp"
-            android:text="@string/coustomer_name1"
-            android:textColor="@color/colorWhite"
-            android:textSize="@dimen/_10ssp" />
-
+            android:gravity="center"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_name"
+                style="@style/TextStyleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/coustomer_name1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_10ssp" />
+            <TextView
+                android:id="@+id/tv_phone"
+                style="@style/TextStyleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="8949422632"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_10ssp" />
+        </LinearLayout>
         <include layout="@layout/layout_divider_horizontal" />
 
         <TextView
-            android:id="@+id/tv_phone"
+            android:id="@+id/tvVehicle"
             style="@style/TextStyleBold"
             android:layout_width="0dp"
             android:layout_height="match_parent"

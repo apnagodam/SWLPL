@@ -88,7 +88,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     val truckBookViewModel by viewModels<TruckBookViewModel>()
     var lat = 0.0
     var long = 0.0
-
+    var transportType = TransportType.DEFAULT.type
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     override fun getLayoutResId(): Int {
@@ -125,9 +125,9 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
         }
 
-        transTypeList.add("Select")
-        transTypeList.add("Client Transport")
-        transTypeList.add("Company Transport")
+        transTypeList.add(TransportType.DEFAULT.type)
+        transTypeList.add(TransportType.CLIENT.type)
+        transTypeList.add(TransportType.COMPANY.type)
         TransporterName.add("Select Transporter")
         calender = Calendar.getInstance()
 
@@ -174,31 +174,29 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     position: Int,
                     id: Long
                 ) {
-                    when (position) {
-                        0 -> {
-                            binding!!.layoutTransport.visibility = View.GONE
-                            binding!!.btnLogin.isEnabled = false
-                        }
-
-                        1 -> {
-                            checked = true
-                            Checked()
-                            binding!!.layoutTransport.visibility = View.GONE
-                            binding!!.btnLogin.isEnabled = true
-
-
-                        }
-
-                        2 -> {
-                            checked = false
-                            NotChecked()
-                            binding!!.layoutTransport.visibility = View.VISIBLE
-                            binding!!.btnLogin.isEnabled = true
-
-
-                        }
-
+                    transportType = transTypeList.get(position)
+                    if(position==0){
+                        binding!!.layoutTransport.visibility = View.GONE
+                        binding!!.btnLogin.isEnabled = false
                     }
+                    else{
+                        when(transportType){
+                            TransportType.CLIENT.type->{
+                                checked = true
+                                Checked()
+                                binding!!.layoutTransport.visibility = View.GONE
+                                binding!!.btnLogin.isEnabled = true
+                            }
+
+                            TransportType.COMPANY.type->{
+                                checked = false
+                                NotChecked()
+                                binding!!.layoutTransport.visibility = View.VISIBLE
+                                binding!!.btnLogin.isEnabled = true
+                            }
+                        }
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -346,28 +344,27 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
             override fun onFinish(thumbnail: Bitmap?) {
 
-            if(thumbnail!=null){
-                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                if (thumbnail != null) {
+                    val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
 
-                var stampMap = mapOf(
-                    "current_location" to "$currentLocation",
-                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
-                )
-                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                    File(compressImage(bitmapToFile(thumbnail!!).path)),
-                    stampMap
-                )
-                fileBiltyImage = File(compressImage(bitmapToFile(stampedBitmap).path))
+                    var stampMap = mapOf(
+                        "current_location" to "$currentLocation",
+                        "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                    )
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail!!).path)),
+                        stampMap
+                    )
+                    fileBiltyImage = File(compressImage(bitmapToFile(stampedBitmap).path))
 
-                val uri = Uri.fromFile(fileBiltyImage)
-                BiltyFile = uri.toString()
-                binding!!.TruckImage.setImageURI(uri)
-            }
+                    val uri = Uri.fromFile(fileBiltyImage)
+                    BiltyFile = uri.toString()
+                    binding!!.TruckImage.setImageURI(uri)
+                }
             }
 
         })
     }
-
 
 
     override fun dispatchTakePictureIntent() {
@@ -584,15 +581,16 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     }
 
     override fun onBackPressed() {
-       onBackPressedDispatcher.onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
         super.onBackPressed()
     }
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close ->{
+            R.id.iv_close -> {
                 finish()
             }
+
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
 
@@ -609,49 +607,52 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             BiltyImage = "" + Utility.transferImageToBase64(fileBiltyImage)
         }
         showDialog()
-        truckBookViewModel.uploadTruckDetails(UploadTruckDetailsPostData(
-            CaseID,
-            TransporterID,
-            stringFromView(binding!!.etVehicleNo),
-            stringFromView(binding!!.etDriverName),
-            stringFromView(binding!!.etDriverPhoneNo),
-            "stringFromView(binding!!.etMinWeight)",
-            " stringFromView(binding!!.etMaxWeight)",
-            "stringFromView(binding!!.etTurnaroundTime)",
-            "stringFromView(binding!!.etTotalWeight)",
-            "stringFromView(binding!!.etBags)",
-           "",
-            stringFromView(
-                binding!!.etAdvancePatyment
-            ),
-            "stringFromView(binding!!.etStartDateTime)",
-            "stringFromView(binding!!.etFinalSettalementAmount)",
-            " stringFromView(binding!!.etEndDateTime)",
-            stringFromView(
-                binding!!.notes
-            ),
-            TransporterID,
-            BiltyImage,
-            spinnerRateType,
-            stringFromView(
-                binding!!.etRealteCaseid,
-            ), binding!!.etLocation.text.toString()
-        ))
+        truckBookViewModel.uploadTruckDetails(
+            UploadTruckDetailsPostData(
+                CaseID,
+                TransporterID,
+                stringFromView(binding!!.etVehicleNo),
+                stringFromView(binding!!.etDriverName),
+                stringFromView(binding!!.etDriverPhoneNo),
+                "stringFromView(binding!!.etMinWeight)",
+                " stringFromView(binding!!.etMaxWeight)",
+                "stringFromView(binding!!.etTurnaroundTime)",
+                "stringFromView(binding!!.etTotalWeight)",
+                "stringFromView(binding!!.etBags)",
+                "",
+                stringFromView(
+                    binding!!.etAdvancePatyment
+                ),
+                "stringFromView(binding!!.etStartDateTime)",
+                "stringFromView(binding!!.etFinalSettalementAmount)",
+                " stringFromView(binding!!.etEndDateTime)",
+                stringFromView(
+                    binding!!.notes
+                ),
+                TransporterID,
+                BiltyImage,
+                spinnerRateType,
+                stringFromView(
+                    binding!!.etRealteCaseid,
+                ), binding!!.etLocation.text.toString()
+            )
+        )
         truckBookViewModel.uploadTruckResponse.observe(this)
         {
-            when(it){
+            when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
+
                 is NetworkResult.Loading -> {
 
                 }
+
                 is NetworkResult.Success -> {
-                    if(it.data!=null){
-                        if(it.data.status.equals("1")){
+                    if (it.data != null) {
+                        if (it.data.status.equals("1")) {
                             finish()
-                        }
-                        else
+                        } else
                             showToast(it.data.message)
                     }
                     hideDialog()
@@ -809,4 +810,8 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {}
     override fun onNothingSelected(adapterView: AdapterView<*>?) {}
+}
+
+enum class TransportType(var type: String) {
+    DEFAULT("Select Transport Type"), CLIENT("Client Transport"), COMPANY("Company Transport")
 }

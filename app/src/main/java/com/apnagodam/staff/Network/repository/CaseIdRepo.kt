@@ -7,6 +7,7 @@ import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
 import com.apnagodam.staff.Network.Request.StackPostData
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.AllUserListPojo
 import com.apnagodam.staff.module.CommodityResponseData
@@ -68,28 +69,12 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
     }
 
     suspend fun doCreateCaseId(
-        commodityId: String,
-        customerUid: String,
-        inOut: String,
-        stackId: String,
-        noOfBags: String,
-        weight: String,
-        vehicleNo: String,
-        quantity: String,
-        terminalId: String,
+      createCaseIDPostData: CreateCaseIDPostData
     ): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
                 apiService.doCreateCaseID(
-                    commodityId,
-                    customerUid,
-                    inOut,
-                    stackId,
-                    noOfBags,
-                    weight,
-                    vehicleNo,
-                    quantity,
-                    terminalId
+                 createCaseIDPostData
                 )
             })
         }
@@ -104,4 +89,7 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
         }
     }
 
+    suspend fun getStackRequestList():Flow<NetworkResult<StackRequestResponse>>{
+        return flow { emit(safeApiCall { apiService.getStackRequest() }) }
+    }
 }

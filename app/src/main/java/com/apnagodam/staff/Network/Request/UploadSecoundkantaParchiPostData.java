@@ -33,7 +33,7 @@ public class UploadSecoundkantaParchiPostData {
     @Expose
     private String oldWeight;
 
-    @SerializedName("avg_weight")
+    @SerializedName("average_weight")
     @Expose
     private String avgWeight;
 

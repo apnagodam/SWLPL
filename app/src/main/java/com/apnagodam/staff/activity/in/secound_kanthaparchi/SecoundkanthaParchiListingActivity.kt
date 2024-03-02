@@ -3,7 +3,6 @@ package com.apnagodam.staff.activity.`in`.secound_kanthaparchi
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
-import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -18,18 +17,13 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.SecoundkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+
 @AndroidEntryPoint
 class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>() {
     private var firstkantaParchiFile: String? = null
@@ -243,11 +237,13 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
 
     fun checkVeehicleNo(postion: Int) {
         var intent = Intent(this,UploadSecoundkantaParchiClass::class.java)
-        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
-        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
-        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
-        intent.putExtra("all_cases", AllCases[postion])
+        intent.putExtra("user_name",  AllCases!![postion]!!.getCustFname())
+        intent.putExtra("case_id", AllCases!![postion]!!.getCaseId())
+        intent.putExtra("vehicle_no",  AllCases!![postion]!!.getVehicleNo())
+        intent.putExtra("file3", AllCases!![postion]!!.file3)
+
         startActivity(intent)
+
     }
 
     override fun onBackPressed() {

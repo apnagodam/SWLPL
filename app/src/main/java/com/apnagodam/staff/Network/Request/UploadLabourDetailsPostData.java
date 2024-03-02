@@ -8,9 +8,9 @@ public class UploadLabourDetailsPostData {
     @Expose
     private String case_id;
 
-  /*  @SerializedName("contractor_id")
+    @SerializedName("contractor_id")
     @Expose
-    private String contractor_id;*/
+    private String contractor_id;
 
     @SerializedName("labour_contractor")
     @Expose
@@ -42,10 +42,11 @@ public class UploadLabourDetailsPostData {
     private String notes;
 
 
-    public UploadLabourDetailsPostData(String case_id,   String labour_contractor, String contractor_no,
+    public UploadLabourDetailsPostData(String case_id, String contractor_id,  String labour_contractor, String contractor_no,
                                        String location, String labour_rate_per_bags, String total_labour, String total_bags, String notes
             , String booking_date) {
         this.case_id = case_id;
+        this.contractor_id= contractor_id;
         this.labour_contractor = labour_contractor;
         this.contractor_no = contractor_no;
         this.location = location;

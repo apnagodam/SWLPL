@@ -4,6 +4,7 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class AllCaseIDResponse extends BaseResponse {
@@ -156,7 +157,7 @@ public class AllCaseIDResponse extends BaseResponse {
     }
 
 
-    public class Datum {
+    public class Datum implements Serializable {
         @SerializedName("id")
         @Expose
         private String id;

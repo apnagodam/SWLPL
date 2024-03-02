@@ -116,6 +116,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             }
 
         }
+        binding!!.etNoOfDispleasedBags.setText("0")
 
         binding!!.tvTitle.setText("Upload Second Kanta Parchi")
         binding!!.etKantaParchiNum.isEnabled = false
@@ -279,7 +280,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         kantaParchiNumber,
                         InTrackID,
                         InBardhanaID
-                    )
+                    ),"IN"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
@@ -327,7 +328,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         binding!!.etOldWeightQt.text.toString(),
                         binding!!.etNoOfDispleasedBags.text.toString(),
                         kantaId, kantaName, kantaParchiNumber, InTrackID, InBardhanaID
-                    )
+                    ),"IN"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {

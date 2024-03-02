@@ -25,6 +25,7 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
 import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.`in`.truckbook.TransportType
 import com.apnagodam.staff.databinding.ActivityUploadDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.TransporterListPojo
@@ -73,6 +74,8 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     var long = 0.0
     lateinit var transportTypeAdapter: ArrayAdapter<String>
 
+    var transportType = TransportType.DEFAULT.type
+
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     override fun getLayoutResId(): Int {
@@ -108,9 +111,9 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
         ) {
 
         }
-        transTypeList.add("Select")
-        transTypeList.add("Client Transport")
-        transTypeList.add("Company Transport")
+        transTypeList.add(TransportType.DEFAULT.type)
+        transTypeList.add(TransportType.CLIENT.type)
+        transTypeList.add(TransportType.COMPANY.type)
         TransporterName.add("Select Transporter")
         calender = Calendar.getInstance()
         UserName = intent.getStringExtra("user_name")
@@ -133,7 +136,8 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                     position: Int,
                     id: Long
                 ) {
-                    if (position != 0) {
+                    transportType = transTypeList.get(position)
+                    if (transportType != TransportType.DEFAULT.type) {
                         spinnerRateType = parent.getItemAtPosition(position).toString()
                         binding!!.tilTransportRate.visibility = View.VISIBLE
                     } else {
@@ -161,24 +165,23 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                             binding!!.btnLogin.isEnabled = false
                         }
 
-                        1 -> {
-                            checked = true
-                            Checked()
-                            binding!!.layoutTransport.visibility = View.GONE
-                            binding!!.btnLogin.isEnabled = true
+                       else->{
+                           if(position == 2){
+                               checked = false
+                               NotChecked()
+                               binding!!.layoutTransport.visibility = View.VISIBLE
+                               binding!!.btnLogin.isEnabled = true
+
+                           }
+                           else if (position == 1){
+                               checked = true
+                               Checked()
+                               binding!!.layoutTransport.visibility = View.GONE
+                               binding!!.btnLogin.isEnabled = true
+                           }
 
 
-                        }
-
-                        2 -> {
-                            checked = false
-                            NotChecked()
-                            binding!!.layoutTransport.visibility = View.VISIBLE
-                            binding!!.btnLogin.isEnabled = true
-
-
-                        }
-
+                       }
                     }
                 }
 
@@ -560,11 +563,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
             R.id.lp_commite_date -> popUpDatePicker()
 
             R.id.btn_login -> if (isValid) {
-                Utility.showDecisionDialog(
-                    this@OUTTruckUploadDetailsClass,
-                    getString(R.string.alert),
-                    "Are You Sure to Summit?"
-                ) { callApi() }
+                callApi()
 
             }
         }

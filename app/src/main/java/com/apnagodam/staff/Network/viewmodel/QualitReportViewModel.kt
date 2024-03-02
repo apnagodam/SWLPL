@@ -50,17 +50,17 @@ class QualitReportViewModel @Inject constructor(
         }
 
 
-    fun uploadFirstQualityReport(uploadFirstQualityPostData: UploadFirstQualityPostData) =
+    fun uploadFirstQualityReport(uploadFirstQualityPostData: UploadFirstQualityPostData,inOut:String) =
         viewModelScope.launch {
-            qualityReportRepo.uploadFirstQualityReport(uploadFirstQualityPostData)
+            qualityReportRepo.uploadFirstQualityReport(uploadFirstQualityPostData,inOut)
                 .collect() {
                     fQualityUploadResponse.value = it
                 }
         }
 
-    fun uploadSecondQualityReport(uploadSecoundQualityPostData: UploadSecoundQualityPostData) =
+    fun uploadSecondQualityReport(uploadSecoundQualityPostData: UploadSecoundQualityPostData,inOut:String) =
         viewModelScope.launch {
-            qualityReportRepo.uploadSecondQualityReport(uploadSecoundQualityPostData)
+            qualityReportRepo.uploadSecondQualityReport(uploadSecoundQualityPostData,inOut)
                 .collect() {
                     sQualityUploadResponse.value = it
                 }
