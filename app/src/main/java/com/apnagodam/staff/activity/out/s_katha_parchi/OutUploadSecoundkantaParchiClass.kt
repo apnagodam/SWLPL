@@ -114,7 +114,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
 
-            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()&&text!="0") {
+            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty()&&!binding!!.etNoOfBags.text!!.equals("0")) {
                 var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
                     .toInt()
                 binding!!.etAvgWeight.setText(
@@ -123,7 +123,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
             }  else
             {
-                binding!!.etAvgWeight.setText("0")
+                binding!!.etAvgWeight.error = "Value is not correct!"
             }
         }
 
