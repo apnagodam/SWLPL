@@ -21,6 +21,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.OUTDeliverdOrderAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.ReleaseOrderPojo
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -39,6 +40,7 @@ class OUTDeliverdOrderListingActivity : BaseActivity<ActivityListingBinding?>() 
     val ordersViewModel by viewModels<OrdersViewModel>()
     override fun setUp() {
         AllCases = arrayListOf()
+        binding!!.rvDefaultersStatus.addItemDecoration(DividerItemDecoration(this@OUTDeliverdOrderListingActivity, LinearLayoutManager.HORIZONTAL))
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.out_deiverd_book)
@@ -93,7 +95,6 @@ class OUTDeliverdOrderListingActivity : BaseActivity<ActivityListingBinding?>() 
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(DividerItemDecoration(this@OUTDeliverdOrderListingActivity, LinearLayoutManager.HORIZONTAL))
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(this@OUTDeliverdOrderListingActivity, LinearLayoutManager.VERTICAL, false)
@@ -120,7 +121,20 @@ class OUTDeliverdOrderListingActivity : BaseActivity<ActivityListingBinding?>() 
                     } else {
                         AllCases!!.clear()
                         totalPage = it.data!!.data.lastPage
-                        AllCases!!.addAll(it.data!!.data.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.data.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.data.data[i])
+                            } else if (it.data!!.data.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.data.data[i])
+
+                            } else break
+
+
+                        }
+                     //   AllCases!!.addAll(it.data!!.data.data)
                         truckBookAdapter!!.notifyDataSetChanged()
                     }
                 }

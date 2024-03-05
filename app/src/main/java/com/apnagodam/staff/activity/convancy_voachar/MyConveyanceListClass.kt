@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,8 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.SelfRejectConveyancePOst
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.ConveyanceViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.ConvancyListAdpter
@@ -30,10 +33,12 @@ import com.apnagodam.staff.module.AllLevelEmpListPojo
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
+@AndroidEntryPoint
 class MyConveyanceListClass() : BaseActivity<ConvencyListBinding?>() {
     private var convancyListAdpter: ConvancyListAdpter? = null
     private var pageOffset = 1
@@ -49,6 +54,7 @@ class MyConveyanceListClass() : BaseActivity<ConvencyListBinding?>() {
     private var fabOpenAnimation: Animation? = null
     private var fabCloseAnimation: Animation? = null
     private var isFabMenuOpen = false
+    val conveyanceViewModel by viewModels<ConveyanceViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.convency_list
     }
@@ -59,10 +65,14 @@ class MyConveyanceListClass() : BaseActivity<ConvencyListBinding?>() {
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.ivClose.setOnClickListener(View.OnClickListener {
-            startActivityAndClear(
-                StaffDashBoardActivity::class.java
-            )
+           finish()
         })
+        binding!!.fieldStockList.addItemDecoration(
+            DividerItemDecoration(
+                this@MyConveyanceListClass,
+                LinearLayoutManager.HORIZONTAL
+            )
+        )
         setDataAdapter()
         getConvencyList("")
         binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
@@ -169,73 +179,95 @@ class MyConveyanceListClass() : BaseActivity<ConvencyListBinding?>() {
         }
 
     private fun getapproveCount() {
-        apiService.getlevelwiselist()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body->  for (i in body.data.indices) {
-                if (body.request_count > 0) {
-                    binding!!.shareLabelTextView.isClickable = true
-                    binding!!.shareLabelTextView.isEnabled = true
-                    binding!!.shareFab.isClickable = true
-                    binding!!.shareFab.isEnabled = true
-                    binding!!.shareLabelTextView.text =
-                        "Approval Request " + "(" + body.request_count + ")"
-                } else {
-                    binding!!.shareLabelTextView.isClickable = false
-                    binding!!.shareFab.isClickable = false
-                    binding!!.shareLabelTextView.isEnabled = false
-                    binding!!.shareFab.isEnabled = false
+        showDialog()
+        conveyanceViewModel.getlevelwiselist()
+        conveyanceViewModel.conveyanceListResponse.observe(this){
+            when(it){
+                is NetworkResult.Error ->{
+                    hideDialog()
+                    showToast(it.message)
                 }
-            }}.subscribe()
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success ->{
+                    hideDialog()
+                   if(it.data!=null){
+                       it.data.let {body->
+                           if (body.request_count > 0) {
+                               binding!!.shareLabelTextView.isClickable = true
+                               binding!!.shareLabelTextView.isEnabled = true
+                               binding!!.shareFab.isClickable = true
+                               binding!!.shareFab.isEnabled = true
+                               binding!!.shareLabelTextView.text =
+                                   "Approval Request " + "(" + body.request_count + ")"
+                           } else {
+                               binding!!.shareLabelTextView.isClickable = false
+                               binding!!.shareFab.isClickable = false
+                               binding!!.shareLabelTextView.isEnabled = false
+                               binding!!.shareFab.isEnabled = false
+                           }
+                       }
+                   }
+                }
+            }
+        }
+
 
     }
 
     private fun getConvencyList(SerachKey: String) {
         showDialog()
-        apiService.getConvancyList("15", pageOffset, SerachKey)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                getapproveCount()
-                tempraryList!!.clear()
-                getOrdersList!!.clear()
-                binding!!.swipeRefresherStock.isRefreshing = false
-                if (body.data.dataa.size == 0) {
-                    binding!!.txtemptyMsg.visibility = View.VISIBLE
-                    binding!!.fieldStockList.visibility = View.GONE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                } else if (body.data.lastPage == 1) {
-                    binding!!.txtemptyMsg.visibility = View.GONE
-                    binding!!.fieldStockList.visibility = View.VISIBLE
-                    binding!!.pageNextPrivious.visibility = View.GONE
-                    getOrdersList!!.clear()
-                    tempraryList!!.clear()
-                    totalPage = body.data.lastPage
-                    getOrdersList!!.addAll(body.data.dataa)
-                    tempraryList!!.addAll((getOrdersList)!!)
-                    convancyListAdpter!!.notifyDataSetChanged()
-                } else {
-                    binding!!.txtemptyMsg.visibility = View.GONE
-                    binding!!.fieldStockList.visibility = View.VISIBLE
-                    binding!!.pageNextPrivious.visibility = View.VISIBLE
-                    getOrdersList!!.clear()
-                    tempraryList!!.clear()
-                    totalPage = body.data.lastPage
-                    getOrdersList!!.addAll(body.data.dataa)
-                    tempraryList!!.addAll((getOrdersList)!!)
-                    convancyListAdpter!!.notifyDataSetChanged()
+        conveyanceViewModel.getConveyanceList("15", pageOffset, SerachKey)
+        conveyanceViewModel.conveyanceResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    showToast(it.message)
                 }
-            }.subscribe()
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                    getapproveCount()
+                    tempraryList!!.clear()
+                    getOrdersList!!.clear()
+                    binding!!.swipeRefresherStock.isRefreshing = false
+                    if(it.data!=null){
+                        if (it.data.data.dataa.size == 0) {
+                            binding!!.txtemptyMsg.visibility = View.VISIBLE
+                            binding!!.fieldStockList.visibility = View.GONE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                        } else if (it.data.data.lastPage == 1) {
+                            binding!!.txtemptyMsg.visibility = View.GONE
+                            binding!!.fieldStockList.visibility = View.VISIBLE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                            getOrdersList!!.clear()
+                            tempraryList!!.clear()
+                            totalPage = it.data.data.lastPage
+                            getOrdersList!!.addAll(it.data.data.dataa)
+                            tempraryList!!.addAll((getOrdersList)!!)
+                            convancyListAdpter!!.notifyDataSetChanged()
+                        } else {
+                            binding!!.txtemptyMsg.visibility = View.GONE
+                            binding!!.fieldStockList.visibility = View.VISIBLE
+                            binding!!.pageNextPrivious.visibility = View.VISIBLE
+                            getOrdersList!!.clear()
+                            tempraryList!!.clear()
+                            totalPage = it.data.data.lastPage
+                            getOrdersList!!.addAll(it.data.data.dataa)
+                            tempraryList!!.addAll((getOrdersList)!!)
+                            convancyListAdpter!!.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
     private fun setDataAdapter() {
-        binding!!.fieldStockList.addItemDecoration(
-            DividerItemDecoration(
-                this@MyConveyanceListClass,
-                LinearLayoutManager.HORIZONTAL
-            )
-        )
+
         binding!!.fieldStockList.setHasFixedSize(true)
         binding!!.fieldStockList.isNestedScrollingEnabled = false
         val horizontalLayoutManager =

@@ -21,6 +21,7 @@ import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.FirstkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -40,6 +41,12 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     }
 
     override fun setUp() {
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@FirstkanthaParchiListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
@@ -117,12 +124,7 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@FirstkanthaParchiListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -159,7 +161,19 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
                         AllCases!!.clear()
 
                         totalPage = it.data!!.firstKataParchiData.lastPage
-                        AllCases!!.addAll(it.data!!.firstKataParchiData.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.firstKataParchiData.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+
+                            } else break
+
+
+                        }
                         firstkanthaparchiAdapter =
                             FirstkanthaparchiAdapter(
                                 AllCases,
@@ -277,10 +291,10 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     fun checkVeehicleNo(postion: Int) {
 
         val intent = Intent(this, UploadFirstkantaParchiClass::class.java)
-        intent.putExtra("user_name",  AllCases!![postion]!!.custFname)
-        intent.putExtra("case_id",  AllCases!![postion]!!.caseId)
-        intent.putExtra("vehicle_no",  AllCases!![postion]!!.vehicleNo)
-        intent.putExtra("file3",  AllCases!![postion]!!.file3)
+        intent.putExtra("user_name", AllCases!![postion]!!.custFname)
+        intent.putExtra("case_id", AllCases!![postion]!!.caseId)
+        intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        intent.putExtra("file3", AllCases!![postion]!!.file3)
         intent.putExtra("all_cases", AllCases[postion])
         startActivity(intent)
     }

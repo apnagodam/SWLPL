@@ -22,6 +22,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass
 import com.apnagodam.staff.adapter.OUTLaabourBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllLabourBookListResponse
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observer
@@ -43,6 +44,12 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@OUTLabourBookListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         getAllCases("")
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.labour_book)
@@ -103,12 +110,7 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
         getAllCases("")
     }
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@OUTLabourBookListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -145,12 +147,35 @@ class OUTLabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
                                 binding!!.rvDefaultersStatus.visibility = View.VISIBLE
                                 binding!!.pageNextPrivious.visibility = View.GONE
                                 totalPage = it.data.labour.lastPage
-                                AllCases!!.addAll(it.data.labour.data)
+                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                                for (i in it.data.labour.data.indices) {
+
+                                    if (userDetails.terminal == null) {
+                                        AllCases!!.add(it.data.labour.data[i])
+                                    } else if (it.data.labour.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                        AllCases!!.add(it.data.labour.data[i])
+
+                                    } else break
+
+
+                                }
                             } else {
                                 AllCases!!.clear()
                                 totalPage = it.data.labour.lastPage
-                                AllCases!!.addAll(it.data.labour.data)
-                                // AllCases = body.getCurrentPageCollection();
+                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                                for (i in it.data.labour.data.indices) {
+
+                                    if (userDetails.terminal == null) {
+                                        AllCases!!.add(it.data.labour.data[i])
+                                    } else if (it.data.labour.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                        AllCases!!.add(it.data.labour.data[i])
+
+                                    } else break
+
+
+                                }                                // AllCases = body.getCurrentPageCollection();
                                 // binding.rvDefaultersStatus.setAdapter(new LaabourBookAdapter(body.getCurrentPageCollection(), LabourBookListingActivity.this));
                             }
                             laabourBookAdapter =

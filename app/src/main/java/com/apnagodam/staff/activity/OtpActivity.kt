@@ -158,19 +158,24 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
                    if(it.data!=null){
-                       userInfo = it.data
-                       SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
-                       SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
-                       SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
-                       SharedPreferencesRepository.setIsUserName(true)
-                       afterpermissionNext()
-                       Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
-                       SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
-                       if (setting.equals("changeMobileNumber", ignoreCase = true)) {
-                           startActivityAndClear(SettingActivity::class.java)
-                       } else {
-                           // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
-                           startActivityAndClear(StaffDashBoardActivity::class.java)
+                       if(it.data.status=="1"){
+                           userInfo = it.data
+                           SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
+                           SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
+                           SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
+                           SharedPreferencesRepository.setIsUserName(true)
+                           afterpermissionNext()
+                           Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
+                           SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
+                           if (setting.equals("changeMobileNumber", ignoreCase = true)) {
+                               startActivityAndClear(SettingActivity::class.java)
+                           } else {
+                               // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                               startActivityAndClear(StaffDashBoardActivity::class.java)
+                           }
+                       }
+                       else{
+                           showToast(it.data.message)
                        }
                    }
                 }
@@ -198,10 +203,16 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
 
                         is NetworkResult.Success -> {
                             if (it.data != null) {
+                                if (it.data.status=="1"){
+                                    SharedPreferencesRepository.getDataManagerInstance()
+                                        .saveUserPermissionData(it.data.userPermissionsResult)
+                                    startActivityAndClear(StaffDashBoardActivity::class.java)
+                                }
+                                else{
+                                    showToast(it.data.message)
+                                }
 
-                                SharedPreferencesRepository.getDataManagerInstance()
-                                    .saveUserPermissionData(it.data.userPermissionsResult)
-                                startActivityAndClear(StaffDashBoardActivity::class.java)
+
 
                             }
 

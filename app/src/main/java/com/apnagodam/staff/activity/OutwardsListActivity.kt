@@ -17,6 +17,7 @@ import com.apnagodam.staff.adapter.StackRequestAdapter
 import com.apnagodam.staff.adapter.StackRequestAdapterOutwards
 import com.apnagodam.staff.databinding.ActivityInwardList2Binding
 import com.apnagodam.staff.databinding.ActivityOutwardsListBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +50,7 @@ class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
     }
 
     private fun getAllCases(search: String) {
+        showDialog()
         caseIdViewModel.getStackRequest()
         caseIdViewModel.stackRequestResponse.observe(this) {
             when (it) {
@@ -62,12 +64,21 @@ class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
                 }
 
                 is NetworkResult.Success -> {
+                    hideDialog()
                     when (it.data) {
                         null -> {}
                         else -> {
                             if (it.data.status == "1") {
-
-                                allCasesList = it.data.outwardRequestData
+                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                                allCasesList.clear()
+                                it.data.outwardRequestData.forEach {outwards->
+                                    if(userDetails.terminal==null){
+                                        allCasesList.add(outwards)
+                                    }
+                                    else if(outwards.terminalId.toString() == userDetails!!.terminal){
+                                        allCasesList.add(outwards)
+                                    }
+                                }
                                 setAdapter()
 
                             }

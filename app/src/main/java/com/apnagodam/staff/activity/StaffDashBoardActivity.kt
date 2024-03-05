@@ -37,6 +37,8 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.AttendancePostData
+import com.apnagodam.staff.Network.Response.StackRequestResponse
+import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestDatum
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
@@ -147,6 +149,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     private var totalPage = 0
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
+    var inwardsList = arrayListOf<StackRequestResponse.InwardRequestDatum>()
+    var outwardsList = arrayListOf<OutwardRequestDatum>()
+
     override fun getLayoutResId(): Int {
         return R.layout.staff_dashboard
     }
@@ -161,17 +166,23 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             ),
             100
         )
-        permissionHelper.requestAll {
+
+        if (!permissionHelper.hasPermission()) {
+            permissionHelper.requestAll {
+            }
+
         }
-        requestPermission()
-        getdashboardData()
+
 
 
         setUI()
-        prepareMenuData()
-        populateExpandableList()
 
 
+
+        binding!!.swipeRefresherHome.setOnRefreshListener {
+            getdashboardData()
+            getAllCases("")
+        }
         // setBackBtn(binding.mainHeader.toolbar);
 
     }
@@ -179,12 +190,16 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     fun setUI() {
         setSupportActionBar(binding!!.mainContent.mainHeader.toolbar)
+        prepareMenuData()
+        populateExpandableList()
         binding!!.drawerLayout.addDrawerListener(this)
         binding!!.profileId.setOnClickListener {
             val intent = Intent(this@StaffDashBoardActivity, StaffProfileActivity::class.java)
             startActivity(intent)
         }
         AllCases = arrayListOf()
+       // requestPermission()
+        getdashboardData()
         getAllCases("")
         binding!!.mainContent.tvCreateCase.setOnClickListener {
             startActivity(CaseIDGenerateClass::class.java)
@@ -200,7 +215,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermission()
+            //requestPermission()
         } else {
             val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
@@ -284,7 +299,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermission()
+            //requestPermission()
             return
         }
         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
@@ -314,7 +329,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     private fun getStackRequests() {
         caseIdViewModel.getStackRequest()
-        caseIdViewModel.stackRequestResponse.observe(this) {
+        caseIdViewModel.stackRequestResponse.observe(this) { it ->
             when (it) {
                 is NetworkResult.Error -> {
                     showToast(it.message)
@@ -331,9 +346,27 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         null -> {}
                         else -> {
                             if (it.data.status == "1") {
-                                binding!!.mainContent!!.incase.setText(it.data.inwardRequestData.size.toString())
-                                binding!!.mainContent!!.outcase.setText(it.data.outwardRequestData.size.toString())
+                                inwardsList.clear()
+                                outwardsList.clear()
+                                for (i in it.data.inwardRequestData.indices) {
+                                    if (userDetails!!.terminal == null) {
+                                        inwardsList.add(it.data.inwardRequestData[i])
+                                    } else if (it.data.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
+                                        inwardsList.add(it.data.inwardRequestData[i])
+                                    }
+                                }
 
+                                for (j in it.data.outwardRequestData.indices) {
+                                    if (userDetails!!.terminal == null) {
+                                        outwardsList.add(it.data.outwardRequestData[j])
+                                    } else if (it.data.outwardRequestData[j].terminalId.toString() == userDetails!!.terminal) {
+                                        outwardsList.add(it.data.outwardRequestData[j])
+                                    }
+                                }
+
+
+                                binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
+                                binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
                                 when (it.data.inwardRequestData.size) {
                                     0 -> {
 
@@ -388,16 +421,20 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
                     } else {
                         totalPage = body.data.getaCase().lastPage
-
                         setAdapter()
-
                         for (i in body.data.getaCase().data.indices) {
 
-                            if ((body.data.getaCase().data[i].terminalId == userDetails.terminal || userDetails.terminal==null) && (body.data.getaCase().data[i].cctvReport == null ||
-                                body.data.getaCase().data[i].ivrReport == null ||
-                                body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null)
-                                  ) {
-                                AllCases.add(body.data.getaCase().data[i])
+                            if ((body.data.getaCase().data[i].cctvReport == null ||
+                                        body.data.getaCase().data[i].ivrReport == null ||
+                                        body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
+                            ) {
+                                if (userDetails.terminal == null) {
+                                    AllCases.add(body.data.getaCase().data[i])
+                                } else if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                    AllCases.add(body.data.getaCase().data[i])
+
+                                }
+
 
                             } else {
                                 break
@@ -416,6 +453,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
 
                 is NetworkResult.Error -> {
+                    binding!!.mainContent.txtemptyMsg.visibility = View.GONE
+                    binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
+                    binding!!.mainContent!!.incase.setText("0")
+                    binding!!.mainContent!!.outcase.setText("0")
 
                 }
 
@@ -537,102 +578,38 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             if (childList[headerList[groupPosition]] != null) {
                 val model = childList[headerList[groupPosition]]!![childPosition]
                 if (model.url.isNotEmpty() && SharedPreferencesRepository.getDataManagerInstance().userPermission != null) {
-                    for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
-                        if (model.menuName == resources.getString(R.string.price)) {
-                            Log.e("pricing", "pricing")
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "14",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(InPricingListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //  startActivity(InPricingListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.truck_book)) {
-                            Log.d(
-                                "Tpiddddddddd",
-                                SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId
-                            )
-                            Log.d(
-                                "Tviewwwwwwww",
-                                "" + SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view
-                            )
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "15",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(TruckBookListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            // startActivity(TruckBookListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.labour_book)) {
+                    if (model.menuName == resources.getString(R.string.price)) {
+                        Log.e("pricing", "pricing")
+                        startActivity(InPricingListingActivity::class.java)
+                        return@OnChildClickListener true
+                        //  startActivity(InPricingListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.truck_book)) {
 
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "16",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(LabourBookListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //   startActivity(LabourBookListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.firstkanta_parchi)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "20",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(FirstkanthaParchiListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            // startActivity(FirstkanthaParchiListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.f_quality_repots)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "28",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(FirstQualityReportListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            // startActivity(FirstQualityReportListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.secoundkanta_parchi)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "20",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(SecoundkanthaParchiListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //  startActivity(SecoundkanthaParchiListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.s_quality_repots)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "28",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(SecoundQualityReportListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //  startActivity(SecoundQualityReportListingActivity.class);
-                        }
+                        startActivity(TruckBookListingActivity::class.java)
+                        return@OnChildClickListener true
+                        // startActivity(TruckBookListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.labour_book)) {
+
+                        startActivity(LabourBookListingActivity::class.java)
+                        return@OnChildClickListener true
+                        //   startActivity(LabourBookListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.firstkanta_parchi)) {
+                        startActivity(FirstkanthaParchiListingActivity::class.java)
+                        return@OnChildClickListener true
+                        // startActivity(FirstkanthaParchiListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.f_quality_repots)) {
+                        startActivity(FirstQualityReportListingActivity::class.java)
+                        return@OnChildClickListener true
+                        // startActivity(FirstQualityReportListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.secoundkanta_parchi)) {
+                        startActivity(SecoundkanthaParchiListingActivity::class.java)
+                        return@OnChildClickListener true
+                        //  startActivity(SecoundkanthaParchiListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.s_quality_repots)) {
+                        startActivity(SecoundQualityReportListingActivity::class.java)
+                        return@OnChildClickListener true
+                        //  startActivity(SecoundQualityReportListingActivity.class);
+                    }
 //                        else if (model.menuName == resources.getString(R.string.gate_passs)) {
 //                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
 //                                    "19",
@@ -646,56 +623,24 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //                            }
 //                            //   startActivity(GatePassListingActivity.class);
 //                        }
-                        else if (model.menuName == resources.getString(R.string.my_convance)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "41",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(MyConveyanceListClass::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //startActivity(MyConveyanceListClass.class);
-                        } else if (model.menuName == resources.getString(R.string.vendor)) {
-                            startActivity(MyVendorVoacherListClass::class.java)
-                        } else if (model.menuName == resources.getString(R.string.case_status_in)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "44",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(CaseStatusINListClass::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //startActivity(MyConveyanceListClass.class);
-                        } else if (model.menuName == resources.getString(R.string.case_status_out)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "44",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(CaseStatusINListClass::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //startActivity(MyConveyanceListClass.class);
-                        } else if (model.menuName == resources.getString(R.string.out_relase_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "24",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OUTRelaseOrderListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                        }
+                    else if (model.menuName == resources.getString(R.string.my_convance)) {
+                        startActivity(MyConveyanceListClass::class.java)
+                        return@OnChildClickListener true
+                        //startActivity(MyConveyanceListClass.class);
+                    } else if (model.menuName == resources.getString(R.string.vendor)) {
+                        startActivity(MyVendorVoacherListClass::class.java)
+                    } else if (model.menuName == resources.getString(R.string.case_status_in)) {
+                        startActivity(CaseStatusINListClass::class.java)
+                        return@OnChildClickListener true
+                        //startActivity(MyConveyanceListClass.class);
+                    } else if (model.menuName == resources.getString(R.string.case_status_out)) {
+                        startActivity(CaseStatusINListClass::class.java)
+                        return@OnChildClickListener true
+                        //startActivity(MyConveyanceListClass.class);
+                    } else if (model.menuName == resources.getString(R.string.out_relase_book)) {
+                        startActivity(OUTRelaseOrderListingActivity::class.java)
+                        return@OnChildClickListener true
+                    }
 //                        else if (model.menuName == resources.getString(R.string.out_deiverd_book)) {
 //                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
 //                                    "25",
@@ -709,88 +654,42 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //                            }
 //                            // startActivity(TruckBookListingActivity.class);
 //                        }
-                        else if (model.menuName == resources.getString(R.string.out_truck_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "15",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OUTTruckBookListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            // startActivity(TruckBookListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.out_labour_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "16",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OUTLabourBookListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                            //   startActivity(LabourBookListingActivity.class);
-                        } else if (model.menuName == resources.getString(R.string.out_f_katha_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "20",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OutFirstkanthaParchiListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                        } else if (model.menuName == resources.getString(R.string.out_f_quality_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "28",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OutFirstQualityReportListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                        } else if (model.menuName == resources.getString(R.string.out_s_katha__book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "20",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OutSecoundkanthaParchiListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                        } else if (model.menuName == resources.getString(R.string.out_s_quality_book)) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "28",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(OutSecoundQualityReportListingActivity::class.java)
-                                    return@OnChildClickListener true
-                                }
-                            }
-                        }
-//                        else if (model.menuName == resources.getString(R.string.out_gatepass_book)) {
-//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-//                                    "19",
-//                                    ignoreCase = true
-//                                )
-//                            ) {
-//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-//                                    startActivity(OutGatePassListingActivity::class.java)
-//                                    return@OnChildClickListener true
-//                                }
-//                            }
-//                        }
+                    else if (model.menuName == resources.getString(R.string.out_truck_book)) {
+                        startActivity(OUTTruckBookListingActivity::class.java)
+                        return@OnChildClickListener true
+                        // startActivity(TruckBookListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.out_labour_book)) {
+                        startActivity(OUTLabourBookListingActivity::class.java)
+                        return@OnChildClickListener true
+                        //   startActivity(LabourBookListingActivity.class);
+                    } else if (model.menuName == resources.getString(R.string.out_f_katha_book)) {
+                        startActivity(OutFirstkanthaParchiListingActivity::class.java)
+                        return@OnChildClickListener true
+                    } else if (model.menuName == resources.getString(R.string.out_f_quality_book)) {
+                        startActivity(OutFirstQualityReportListingActivity::class.java)
+                        return@OnChildClickListener true
+                    } else if (model.menuName == resources.getString(R.string.out_s_katha__book)) {
+                        startActivity(OutSecoundkanthaParchiListingActivity::class.java)
+                        return@OnChildClickListener true
+                    } else if (model.menuName == resources.getString(R.string.out_s_quality_book)) {
+                        startActivity(OutSecoundQualityReportListingActivity::class.java)
+                        return@OnChildClickListener true
                     }
+//                    for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
+//
+////                        else if (model.menuName == resources.getString(R.string.out_gatepass_book)) {
+////                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+////                                    "19",
+////                                    ignoreCase = true
+////                                )
+////                            ) {
+////                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+////                                    startActivity(OutGatePassListingActivity::class.java)
+////                                    return@OnChildClickListener true
+////                                }
+////                            }
+////                        }
+//                    }
                 }
             }
             false
@@ -1101,9 +1000,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         homeViewModel.homeDataResponse.observe(this) {
             when (it) {
-                is NetworkResult.Error -> hideDialog()
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    binding!!.swipeRefresherHome.isRefreshing = false;
+                }
+
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
+                    binding!!.swipeRefresherHome.isRefreshing = false;
                     attendanceINOUTStatus = "" + it.data!!.getClock_status()
                     if (attendanceINOUTStatus.equals("1", ignoreCase = true)) {
                         OnOfffAttendance = true
@@ -1129,6 +1033,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
+                    binding!!.swipeRefresherHome.isRefreshing = false;
+
                     showToast(it.message)
                 }
 
@@ -1137,6 +1043,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
 
                 is NetworkResult.Success -> {
+                    binding!!.swipeRefresherHome.isRefreshing = false;
+
                     if (BuildConfig.APPLICATION_ID != null) {
                         SharedPreferencesRepository.getDataManagerInstance()
                             .setCommdity(it.data!!.categories)
@@ -1202,6 +1110,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         is NetworkResult.Error -> {
                             hideDialog()
                             showToast(it.message)
+                            binding!!.swipeRefresherHome.isRefreshing = false;
+
                         }
 
                         is NetworkResult.Loading -> {
@@ -1209,6 +1119,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         }
 
                         is NetworkResult.Success -> {
+                            binding!!.swipeRefresherHome.isRefreshing = false;
+
                             hideDialog()
                             if (it.data != null) {
                                 if (it.data.status == "1") {
@@ -1320,7 +1232,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     override fun dispatchTakePictureIntent() {
         photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
 
     }
 

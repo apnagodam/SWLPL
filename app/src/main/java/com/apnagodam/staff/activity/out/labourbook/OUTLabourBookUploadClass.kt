@@ -223,6 +223,8 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                         "0000-00-00"
                     )
                 )
+                hideDialog()
+                finish()
 
                 labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
                     when (it) {
@@ -232,16 +234,13 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
-
+                            hideDialog()
                             when (it.data) {
                                 null -> {
-                                    hideDialog()
                                 }
 
                                 else -> {
                                     showToast(it.data.message)
-                                    hideDialog()
-                                    finish()
                                 }
                             }
 

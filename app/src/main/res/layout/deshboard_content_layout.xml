@@ -363,6 +363,7 @@
                             android:textSize="@dimen/_10ssp" />
                     </LinearLayout>
 
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_defaulters_status"
                         android:layout_width="match_parent"
@@ -377,7 +378,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/_180sdp"
                         android:gravity="center"
-                        android:text="@string/blank_msg"
+                        android:text="No Running Cases!"
                         android:textColor="@color/black_back"
                         android:textSize="@dimen/_16ssp"
                         android:visibility="gone"

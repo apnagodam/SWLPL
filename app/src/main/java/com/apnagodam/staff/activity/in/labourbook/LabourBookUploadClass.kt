@@ -249,16 +249,13 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                             hideDialog()
                         }
 
-                        is NetworkResult.Loading -> {}
+                        is NetworkResult.Loading -> {
+                            showToast(it.message)
+                        }
                         is NetworkResult.Success -> {
-                            if (it.data != null) {
-                                if (it.data.status == "1") {
-                                    showToast(it.data!!.message.toString())
-                                } else {
-                                    showToast(it.message)
-                                }
+                            showToast(it.data!!.message.toString())
 
-                            }
+
 
                         }
                     }

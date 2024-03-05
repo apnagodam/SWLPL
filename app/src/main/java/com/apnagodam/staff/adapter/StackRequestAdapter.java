@@ -95,7 +95,7 @@ public class StackRequestAdapter extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getStackId());
             binding.tvName.setText(Leads.get(position).getUserName());
-            binding.tvPhone.setText(Leads.get(position).getDriverNumber());
+            binding.tvPhone.setText(Leads.get(position).getUserNumber());
             binding.tvCommodity.setText(Leads.get(position).getCommodity());
             binding.tvVehicle.setText(Leads.get(position).getVehicleNumber());
             binding.tvStatus.setText(Leads.get(position).getStackNumber());

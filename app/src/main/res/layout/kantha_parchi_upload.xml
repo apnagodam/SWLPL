@@ -406,9 +406,15 @@
                                     android:textSize="@dimen/_12ssp" />
                             </com.google.android.material.textfield.TextInputLayout>
 
-                            <Button
+                            <TextView
                                 android:id="@+id/tilKantaParchi"
                                 android:layout_width="match_parent"
+                                android:padding="@dimen/_10sdp"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:textSize="@dimen/_14ssp"
+                                android:textColor="@color/colorPrimary"
+                                android:background="@drawable/btn_borders"
                                 android:text="Select Dharam Kanta"
                                 android:layout_height="wrap_content"/>
 

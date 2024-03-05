@@ -2,15 +2,22 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresherHome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/page_next_privious">
         <include
             android:id="@+id/mainContent"
             layout="@layout/deshboard_content_layout" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!--
                 <androidx.recyclerview.widget.RecyclerView

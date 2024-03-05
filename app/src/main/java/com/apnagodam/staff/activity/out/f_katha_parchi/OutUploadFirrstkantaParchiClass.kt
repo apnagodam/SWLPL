@@ -128,13 +128,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
         binding!!.llOldBags.visibility = View.VISIBLE
         binding!!.llBags.visibility = View.GONE
 
-        if (intent.getStringExtra("file3") == null) {
-            isFirstUpload = true
-
-        } else {
-            isFirstUpload = false;
-
-        }
+        isFirstUpload = intent.getStringExtra("file3") == null
             binding!!.llOldBags.visibility = View.GONE
 
 

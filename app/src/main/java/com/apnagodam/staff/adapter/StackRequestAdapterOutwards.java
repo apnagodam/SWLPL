@@ -86,7 +86,7 @@ public class StackRequestAdapterOutwards extends BaseRecyclerViewAdapter {
             }
             binding.tvId.setText("" + Leads.get(position).getStackId());
             binding.tvName.setText(Leads.get(position).getUserName());
-            binding.tvPhone.setText(Leads.get(position).getDriverNumber());
+            binding.tvPhone.setText(Leads.get(position).getUserNumber());
             binding.tvCommodity.setText(Leads.get(position).getCommodity());
             binding.tvVehicle.setText(Leads.get(position).getVehicleNumber());
             binding.tvStatus.setText(Leads.get(position).getStackNumber());
@@ -99,6 +99,8 @@ public class StackRequestAdapterOutwards extends BaseRecyclerViewAdapter {
             binding.cellContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
                     Intent intent = new Intent(context, CaseIDGenerateClass.class);
                     intent.putExtra("outwards_stack", Leads.get(position));
                     context.startActivity(intent);

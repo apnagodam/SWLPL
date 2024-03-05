@@ -20,6 +20,7 @@ import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,6 +47,7 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private fun setView(){
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+
         getAllCases("")
 
         setSupportActionBar(binding!!.toolbar)
@@ -117,12 +119,7 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
         })
     }
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@CaseListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =
@@ -140,6 +137,8 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
     private fun getAllCases(search: String) {
         showDialog()
+        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
         caseIdViewModel.getCaseId("15",pageOffset,"1",search)
         caseIdViewModel.response.observe(this){
             body->
@@ -155,7 +154,16 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
                     } else {
                         AllCases!!.clear()
                         totalPage = body.data.getaCase().lastPage
-                        AllCases!!.addAll(body.data.getaCase().data)
+                        body.data.getaCase().data.forEach {
+                            if (userDetails.terminal==null){
+                                AllCases!!.add(it)
+                            }
+                            else if (it.terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it)
+
+                            }
+                        }
+//                        AllCases!!.addAll(body.data.getaCase().data)
                         casesTopAdapter = CasesTopAdapter(AllCases,this)
                         setAdapter()
 

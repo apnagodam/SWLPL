@@ -40,6 +40,8 @@ import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
 import com.google.android.gms.location.LocationServices
+import com.leo.searchablespinner.SearchableSpinner
+import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,11 +80,15 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
 
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
+    lateinit var searchableSpinner: SearchableSpinner
+
     override fun getLayoutResId(): Int {
         return R.layout.activity_upload_details
     }
 
     override fun setUp() {
+        searchableSpinner = SearchableSpinner(this)
+
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -200,33 +206,6 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 null
             )
         }
-        binding!!.spinnerTransporterName.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parentView: AdapterView<*>,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
-                ) {
-                    // selected item in the list
-
-                    if (data != null && position != 0) {
-                        val presentMeterStatusID = parentView.getItemAtPosition(position).toString()
-                        for (i in data!!.indices) {
-                            if (presentMeterStatusID.contains(data!![i].transporterName + "(" + data!![i].transporterUniqueId + ")")) {
-                                TransporterID = data!![i].id.toString()
-                                break
-                            }
-                        }
-                        getTransporterDetails(TransporterID!!)
-                    }
-
-                }
-
-                override fun onNothingSelected(parentView: AdapterView<*>?) {
-                    // your code here
-                }
-            }
 
 
     }
@@ -283,8 +262,36 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                         R.layout.support_simple_spinner_dropdown_item, TransporterName!!
 
                     )
+                    searchableSpinner.windowTitle = "Select Transport Contractor"
 
-                    binding!!.spinnerTransporterName.adapter = spinnerTransporterAdpter
+
+                    searchableSpinner.setSpinnerListItems(TransporterName as ArrayList<String>)
+
+                    searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+                        override fun setOnItemSelectListener(
+                            position: Int,
+                            selectedString: String
+                        ) {
+                            binding!!.etTransporterName.setText(selectedString)
+                            if (data != null ) {
+                                val presentMeterStatusID = selectedString
+                                for (i in data!!.indices) {
+                                    if (presentMeterStatusID.contains(data!![i].transporterName + "(" + data!![i].transporterUniqueId + ")")) {
+                                        TransporterID = data!![i].id.toString()
+                                        break
+                                    }
+                                }
+                                getTransporterDetails(TransporterID!!)
+                            }
+                            binding!!.spinnerTransporterName.setText(selectedString)
+                        }
+
+
+                    }
+                    binding!!.spinnerTransporterName.setOnClickListener {
+                        searchableSpinner.show()
+                    }
+
                 }
             }
         }

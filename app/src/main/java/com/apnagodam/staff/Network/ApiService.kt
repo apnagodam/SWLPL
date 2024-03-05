@@ -206,11 +206,11 @@ interface ApiService {
     ): Call<CaseStatusINPojo?>?
 
     @GET("emp_api/apna_emp_get_conveyance")
-    fun getConvancyList(
+    suspend fun getConvancyList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("search") str2: String?
-    ): Observable<AllConvancyList>
+    ): Response<AllConvancyList>
 
     @GET("emp_api/apna_emp_dashboard")
     suspend fun dashboardData(): Response<DashBoardData>
@@ -279,11 +279,11 @@ interface ApiService {
     ): Response<SecoundQuilityReportListResponse>
 
     @GET("emp_api/apna_emp_get_spot_deals")
-    fun getSpotSellDealTrackList(
+   suspend fun getSpotSellDealTrackList(
         @Query("limit") str: String?,
-        @Query("page") i: Int,
+        @Query("page") i: String,
         @Query("search") str2: String?
-    ): Call<SpotSellDealTrackPojo?>?
+    ): Response<SpotSellDealTrackPojo>
 
     @POST("emp_api/fc_offline_stack_details")
     fun getStack(
@@ -335,11 +335,11 @@ interface ApiService {
     ): Call<AllVendorConvancyList?>?
 
     @GET("emp_api/apna_emp_vendor_voucher_list")
-    fun getVendorConvancyList(
+    suspend fun getVendorConvancyList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("search") str2: String?
-    ): Call<AllVendorConvancyList?>?
+    ): Response <AllVendorConvancyList>
 
     @get:GET("emp_api/fc_offline_warehouse_details")
     val warehouseData: Call<ResponseWarehouse?>?
@@ -367,17 +367,17 @@ interface ApiService {
     ): Response<FirstQuilityReportListResponse>
 
     @GET("emp_api/apna_emp_get_intentionToSell_request")
-    fun getintentionList(
+    suspend fun getintentionList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("search") str2: String?
-    ): Call<AllIntantionList?>?
+    ): Response<AllIntantionList>
 
     @GET("emp_api/apna_emp_get_levelwiselist")
-    fun getlevelwiselist(): Observable<AllLevelEmpListPojo>
+    suspend fun getlevelwiselist(): Response<AllLevelEmpListPojo>
 
     @GET("emp_api/apna_amp_vendor_list")
-    fun getvendorUserList(): Observable<VendorNamePojo>
+    suspend fun getvendorUserList(): Response<VendorNamePojo>
 
     @GET("api/app_version")
     suspend fun getversionCode(@Query("app_type") str: String?): Response<VersionCodeResponse>

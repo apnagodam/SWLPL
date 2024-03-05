@@ -25,6 +25,7 @@ import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.activity.`in`.secound_quality_reports.UploadSecoundQualtityReportsClass
 import com.apnagodam.staff.adapter.OUTTruckBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -48,6 +49,12 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     override fun setUp() {
         AllCases = arrayListOf()
         getAllCases("")
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@OUTTruckBookListingActivity,
+                LinearLayoutManager.HORIZONTAL
+            )
+        )
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.truck_book)
         binding!!.tvId.text = resources.getString(R.string.case_idd)
@@ -127,12 +134,7 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
 
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@OUTTruckBookListingActivity,
-                LinearLayoutManager.HORIZONTAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -197,9 +199,21 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
                         // AllCases=body.getTruckBookCollection().getData();
-                        AllCases!!.clear()
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
                         totalPage = it.data.truckBookCollection.lastPage
-                        AllCases!!.addAll(it.data.truckBookCollection.data)
+                        for (i in it.data.truckBookCollection.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data.truckBookCollection.data[i])
+                            } else if (it.data.truckBookCollection.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data.truckBookCollection.data[i])
+
+                            } else break
+
+
+                        }
+                        //AllCases!!.addAll(it.data.truckBookCollection.data)
                         truckBookAdapter = OUTTruckBookAdapter(
                             AllCases,
                             this@OUTTruckBookListingActivity,
@@ -392,7 +406,7 @@ class OUTTruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     fun checkVeehicleNo(postion: Int) {
         var intent = Intent(this, OUTTruckUploadDetailsClass::class.java)
         intent.putExtra("user_name", AllCases!![postion]!!.custFname)
-        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("case_id", AllCases!![postion]!!.caseId)
         intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
 
         startActivity(intent)

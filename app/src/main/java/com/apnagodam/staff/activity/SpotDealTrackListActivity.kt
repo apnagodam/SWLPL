@@ -1,241 +1,276 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Rect;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Rect
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.viewmodel.SpotDealViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.StaffDashBoardActivity
+import com.apnagodam.staff.adapter.SpotSellDealTrackListAdpter
+import com.apnagodam.staff.databinding.MyCommudityListBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.module.SpotSellDealTrackPojo
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+@AndroidEntryPoint
+class SpotDealTrackListActivity() : BaseActivity<MyCommudityListBinding?>() {
+    private var myCommudityListAdpter: SpotSellDealTrackListAdpter? = null
+    private var pageOffset = 1
+    private var totalPage = 0
+    private var getOrdersList = arrayListOf<SpotSellDealTrackPojo.Datum>()
+    private var tempraryList = arrayListOf<SpotSellDealTrackPojo.Datum>()
+    private var inventory_id = ""
+    private val ids = ""
+    var addInventoryResponse: List<SpotSellDealTrackPojo.Datum>? = null
 
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.adapter.SpotSellDealTrackListAdpter;
-import com.apnagodam.staff.databinding.MyCommudityListBinding;
-import com.apnagodam.staff.db.SharedPreferencesRepository;
-import com.apnagodam.staff.module.SpotSellDealTrackPojo;
-import com.apnagodam.staff.utils.Utility;
-
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-public class SpotDealTrackListActivity extends BaseActivity<MyCommudityListBinding> {
-    private SpotSellDealTrackListAdpter myCommudityListAdpter;
-    private int pageOffset = 1;
-    private int totalPage = 0;
-    private List<SpotSellDealTrackPojo.Datum> getOrdersList;
-    private List<SpotSellDealTrackPojo.Datum> tempraryList;
-    private String inventory_id = "";
-    private String ids = "";
-    List<SpotSellDealTrackPojo.Datum> addInventoryResponse;
-
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.my_commudity_list;
+    val spotDealViewModel by viewModels<SpotDealViewModel>()
+    override fun getLayoutResId(): Int {
+        return R.layout.my_commudity_list
     }
 
-    @Override
-    protected void setUp() {
-        binding.titleHeader.setText(getResources().getString(R.string.spot_sell));
-        binding.tvPhone.setText(getResources().getString(R.string.view));
-        binding.tvName.setText(getResources().getString(R.string.net_Weight));
-        binding.tvId.setText(getResources().getString(R.string.commodity));
-        binding.pageNextPrivious.setVisibility(View.VISIBLE);
-        getOrdersList = new ArrayList();
-        tempraryList = new ArrayList();
-        setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        binding.ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityAndClear(StaffDashBoardActivity.class);
-            }
-        });
-        setDataAdapter();
-        getBidsList("");
-        binding.tvPrevious.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    override fun setUp() {
+        binding!!.titleHeader.text = resources.getString(R.string.spot_sell)
+        binding!!.tvPhone.text = resources.getString(R.string.view)
+        binding!!.tvName.text = resources.getString(R.string.net_Weight)
+        binding!!.tvId.text = resources.getString(R.string.commodity)
+        binding!!.pageNextPrivious.visibility = View.VISIBLE
+        getOrdersList = arrayListOf()
+        tempraryList = arrayListOf()
+        setSupportActionBar(binding!!.toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        binding!!.ivClose.setOnClickListener(View.OnClickListener {
+            finish()
+        })
+        setDataAdapter()
+        getBidsList("")
+        binding!!.tvPrevious.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
                 if (pageOffset != 1) {
-                    pageOffset--;
-                    getBidsList("");
+                    pageOffset--
+                    getBidsList("")
                 }
             }
-        });
-        binding.tvNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        })
+        binding!!.tvNext.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
                 if (totalPage != pageOffset) {
-                    pageOffset++;
-                    getBidsList("");
+                    pageOffset++
+                    getBidsList("")
                 }
             }
-        });
-
-        binding.swipeRefresherStock.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getBidsList("");
+        })
+        binding!!.swipeRefresherStock.setOnRefreshListener(object : OnRefreshListener {
+            override fun onRefresh() {
+                getBidsList("")
             }
-        });
-        binding.filterIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(SpotDealTrackListActivity.this);
-                LayoutInflater inflater = ((Activity) SpotDealTrackListActivity.this).getLayoutInflater();
-                View dialogView = inflater.inflate(R.layout.fiter_diloag, null);
-                EditText notes = (EditText) dialogView.findViewById(R.id.notes);
-                Button submit = (Button) dialogView.findViewById(R.id.btn_submit);
-                ImageView cancel_btn = (ImageView) dialogView.findViewById(R.id.cancel_btn);
-                builder.setView(dialogView);
-                builder.setCancelable(false);
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-                cancel_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
+        })
+        binding!!.filterIcon.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                val builder = AlertDialog.Builder(this@SpotDealTrackListActivity)
+                val inflater = (this@SpotDealTrackListActivity as Activity).layoutInflater
+                val dialogView = inflater.inflate(R.layout.fiter_diloag, null)
+                val notes = dialogView.findViewById<View>(R.id.notes) as EditText
+                val submit = dialogView.findViewById<View>(R.id.btn_submit) as Button
+                val cancel_btn = dialogView.findViewById<View>(R.id.cancel_btn) as ImageView
+                builder.setView(dialogView)
+                builder.setCancelable(false)
+                val alertDialog = builder.create()
+                alertDialog.show()
+                cancel_btn.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View) {
+                        alertDialog.dismiss()
                     }
-                });
-                submit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (notes.getText().toString().trim() != null && !notes.getText().toString().trim().isEmpty()) {
-                            alertDialog.dismiss();
-                            pageOffset = 1;
-                            getBidsList(notes.getText().toString().trim());
+                })
+                submit.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View) {
+                        if (notes.text.toString()
+                                .trim { it <= ' ' } != null && !notes.text.toString()
+                                .trim { it <= ' ' }
+                                .isEmpty()
+                        ) {
+                            alertDialog.dismiss()
+                            pageOffset = 1
+                            getBidsList(notes.text.toString().trim { it <= ' ' })
                             //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
                         } else {
-                            Toast.makeText(getApplicationContext(), "Please Fill Text", Toast.LENGTH_LONG).show();
+                            Toast.makeText(
+                                applicationContext,
+                                "Please Fill Text",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
-                });
+                })
                 //  setDateTimeField();
             }
-        });
+        })
     }
 
-    private void getBidsList(String SerachKey) {
-        showDialog();
-        apiService.getSpotSellDealTrackList("15", pageOffset, SerachKey).enqueue(new NetworkCallback<SpotSellDealTrackPojo>(getActivity()) {
-            @Override
-            protected void onSuccess(SpotSellDealTrackPojo body) {
-                tempraryList.clear();
-                getOrdersList.clear();
-                addInventoryResponse = body.getDeals().getData();
-                binding.swipeRefresherStock.setRefreshing(false);
-                if (body.getDeals().getData().size() == 0) {
-                    binding.txtemptyMsg.setVisibility(View.VISIBLE);
-                    binding.fieldStockList.setVisibility(View.GONE);
-                    binding.pageNextPrivious.setVisibility(View.GONE);
-                } else if (body.getDeals().getLastPage() == 1) {
-                    binding.txtemptyMsg.setVisibility(View.GONE);
-                    binding.fieldStockList.setVisibility(View.VISIBLE);
-                    binding.pageNextPrivious.setVisibility(View.GONE);
-                    getOrdersList.clear();
-                    tempraryList.clear();
-                    totalPage = body.getDeals().getLastPage();
-                    getOrdersList.addAll(body.getDeals().getData());
-                    tempraryList.addAll(getOrdersList);
-                    myCommudityListAdpter.notifyDataSetChanged();
-                } else {
-                    binding.txtemptyMsg.setVisibility(View.GONE);
-                    binding.fieldStockList.setVisibility(View.VISIBLE);
-                    binding.pageNextPrivious.setVisibility(View.VISIBLE);
-                    getOrdersList.clear();
-                    tempraryList.clear();
-                    totalPage = body.getDeals().getLastPage();
-                    getOrdersList.addAll(body.getDeals().getData());
-                    tempraryList.addAll(getOrdersList);
-                    myCommudityListAdpter.notifyDataSetChanged();
+    override fun onResume() {
+        super.onResume()
+        getBidsList("")
+
+    }
+
+    private fun getBidsList(SerachKey: String) {
+        showDialog()
+        spotDealViewModel.getSpotDeals("15",pageOffset.toString(),SerachKey)
+
+        spotDealViewModel.spotDealSellsResponse.observe(this@SpotDealTrackListActivity){
+            body->
+            when(body){
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    showToast(body.message)
                 }
+                is NetworkResult.Loading ->{
 
+                }
+                is NetworkResult.Success -> {
+                    tempraryList!!.clear()
+                    getOrdersList!!.clear()
+                    if(body.data!=null){
+                        addInventoryResponse = body.data.deals.data
+                        binding!!.swipeRefresherStock.isRefreshing = false
+                        if (body.data.deals.data.size == 0) {
+                            binding!!.txtemptyMsg.visibility = View.VISIBLE
+                            binding!!.fieldStockList.visibility = View.GONE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                        } else if (body.data.deals.lastPage == 1) {
+                            binding!!.txtemptyMsg.visibility = View.GONE
+                            binding!!.fieldStockList.visibility = View.VISIBLE
+                            binding!!.pageNextPrivious.visibility = View.GONE
+                            getOrdersList!!.clear()
+                            tempraryList!!.clear()
+                            totalPage = body.data.deals.lastPage
+                            getOrdersList!!.addAll(body.data.deals.data)
+                            tempraryList!!.addAll((getOrdersList)!!)
+                            myCommudityListAdpter!!.notifyDataSetChanged()
+                        } else {
+                            binding!!.txtemptyMsg.visibility = View.GONE
+                            binding!!.fieldStockList.visibility = View.VISIBLE
+                            binding!!.pageNextPrivious.visibility = View.VISIBLE
+                            getOrdersList!!.clear()
+                            tempraryList!!.clear()
+                            totalPage = body.data.deals.lastPage
+                            getOrdersList!!.addAll(body.data.deals.data)
+                            tempraryList!!.addAll((getOrdersList)!!)
+                            myCommudityListAdpter!!.notifyDataSetChanged()
+                        }
+                    }
+                    hideDialog()
+                }
             }
-        });
-    }
-
-    private void setDataAdapter() {
-        binding.fieldStockList.addItemDecoration(new DividerItemDecoration(SpotDealTrackListActivity.this, LinearLayoutManager.HORIZONTAL));
-        binding.fieldStockList.setHasFixedSize(true);
-        binding.fieldStockList.setNestedScrollingEnabled(false);
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(SpotDealTrackListActivity.this, LinearLayoutManager.VERTICAL, false);
-        binding.fieldStockList.setLayoutManager(horizontalLayoutManager);
-        myCommudityListAdpter = new SpotSellDealTrackListAdpter(ids, getOrdersList, SpotDealTrackListActivity.this, getActivity());
-        binding.fieldStockList.setAdapter(myCommudityListAdpter);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(StaffDashBoardActivity.class);
-    }
-
-
-    public void ViewData(int position) {
-        Rect displayRectangle = new Rect();
-        Window window = this.getWindow();
-        window.getDecorView().getWindowVisibleDisplayFrame(displayRectangle);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(SpotDealTrackListActivity.this, R.style.CustomAlertDialog);
-        LayoutInflater inflater = SpotDealTrackListActivity.this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.lead_view_new, null);
-        dialogView.setMinimumWidth((int) (displayRectangle.width() * 1f));
-        dialogView.setMinimumHeight((int) (displayRectangle.height() * 1f));
-        builder.setView(dialogView);
-        final AlertDialog alertDialog = builder.create();
-        ImageView cancel_btn = dialogView.findViewById(R.id.cancel_btn);
-        TextView gate_pass_no = dialogView.findViewById(R.id.gate_pass_no);
-        TextView terminal_name = dialogView.findViewById(R.id.terminal_name);
-        TextView location_name = dialogView.findViewById(R.id.location_name);
-        TextView commodity_name = dialogView.findViewById(R.id.commodity_name);
-        TextView wieght = dialogView.findViewById(R.id.wieght);
-        TextView quality_name = dialogView.findViewById(R.id.quality_name);
-        TextView creadte_date_name = dialogView.findViewById(R.id.creadte_date_name);
-        TextView a1 = dialogView.findViewById(R.id.a1);
-        TextView a2 = dialogView.findViewById(R.id.a2);
-        TextView a6 = dialogView.findViewById(R.id.a6);
-        a2.setText(getResources().getString(R.string.buyer_seller));
-        a1.setText(getResources().getString(R.string.type));
-        a6.setText(getResources().getString(R.string.total_weight_qtl));
-        inventory_id = "" + getOrdersList.get(position).getId();
-        if (SharedPreferencesRepository.getDataManagerInstance().getUser().getUserId().equalsIgnoreCase(getOrdersList.get(position).getSellerId())) {
-            gate_pass_no.setText("Seller");
-            terminal_name.setText("" + ((getOrdersList.get(position).getFname()) != null ? getOrdersList.get(position).getFname() : "N/A"));
-        } else {
-            gate_pass_no.setText("Buyer");
-            terminal_name.setText("" + ((getOrdersList.get(position).getSellerName()) != null ? getOrdersList.get(position).getSellerName() : "N/A"));
         }
 
-        location_name.setText("" + ((getOrdersList.get(position).getLocation()) != null ? getOrdersList.get(position).getLocation() : "N/A"));
-        commodity_name.setText("" + ((getOrdersList.get(position).getCategory()) != null ? getOrdersList.get(position).getCategory() : "N/A"));
-        wieght.setText("" + ((getOrdersList.get(position).getQuantity()) != null ? getOrdersList.get(position).getQuantity() : "N/A"));
-        quality_name.setText("" + ((getOrdersList.get(position).getPrice()) != null ? getOrdersList.get(position).getPrice() : "N/A"));
-        creadte_date_name.setText("" + ((getOrdersList.get(position).getUpdatedAt()) != null ? (getOrdersList.get(position).getUpdatedAt()) : "N/A"));
-        cancel_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
-        alertDialog.show();
     }
 
-    public void wantToSell(int position) {
-        inventory_id = "" + getOrdersList.get(position).getId();
-        Intent intent = new Intent(SpotDealTrackListActivity.this, ContractFormBillPrintClass.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("serialzable", (Serializable) addInventoryResponse.get(position));
-        startActivity(intent);
+    private fun setDataAdapter() {
+        binding!!.fieldStockList.addItemDecoration(
+            DividerItemDecoration(
+                this@SpotDealTrackListActivity,
+                LinearLayoutManager.HORIZONTAL
+            )
+        )
+        binding!!.fieldStockList.setHasFixedSize(true)
+        binding!!.fieldStockList.isNestedScrollingEnabled = false
+        val horizontalLayoutManager =
+            LinearLayoutManager(this@SpotDealTrackListActivity, LinearLayoutManager.VERTICAL, false)
+        binding!!.fieldStockList.layoutManager = horizontalLayoutManager
+        myCommudityListAdpter = SpotSellDealTrackListAdpter(
+            ids,
+            getOrdersList,
+            this@SpotDealTrackListActivity,
+            activity
+        )
+        binding!!.fieldStockList.adapter = myCommudityListAdpter
+    }
+
+
+
+    fun ViewData(position: Int) {
+        val displayRectangle = Rect()
+        val window = this.window
+        window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
+        val builder = AlertDialog.Builder(this@SpotDealTrackListActivity, R.style.CustomAlertDialog)
+        val inflater = this@SpotDealTrackListActivity.layoutInflater
+        val dialogView = inflater.inflate(R.layout.lead_view_new, null)
+        dialogView.minimumWidth = (displayRectangle.width() * 1f).toInt()
+        dialogView.minimumHeight = (displayRectangle.height() * 1f).toInt()
+        builder.setView(dialogView)
+        val alertDialog = builder.create()
+        val cancel_btn = dialogView.findViewById<ImageView>(R.id.cancel_btn)
+        val gate_pass_no = dialogView.findViewById<TextView>(R.id.gate_pass_no)
+        val terminal_name = dialogView.findViewById<TextView>(R.id.terminal_name)
+        val location_name = dialogView.findViewById<TextView>(R.id.location_name)
+        val commodity_name = dialogView.findViewById<TextView>(R.id.commodity_name)
+        val wieght = dialogView.findViewById<TextView>(R.id.wieght)
+        val quality_name = dialogView.findViewById<TextView>(R.id.quality_name)
+        val creadte_date_name = dialogView.findViewById<TextView>(R.id.creadte_date_name)
+        val a1 = dialogView.findViewById<TextView>(R.id.a1)
+        val a2 = dialogView.findViewById<TextView>(R.id.a2)
+        val a6 = dialogView.findViewById<TextView>(R.id.a6)
+        a2.text = resources.getString(R.string.buyer_seller)
+        a1.text = resources.getString(R.string.type)
+        a6.text = resources.getString(R.string.total_weight_qtl)
+        inventory_id = "" + getOrdersList!![position]!!.id
+        if (SharedPreferencesRepository.getDataManagerInstance().user.userId.equals(
+                getOrdersList!![position]!!.sellerId, ignoreCase = true
+            )
+        ) {
+            gate_pass_no.text = "Seller"
+            terminal_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                    .fname) != null
+            ) getOrdersList!!.get(position)!!.fname else "N/A")
+        } else {
+            gate_pass_no.text = "Buyer"
+            terminal_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                    .sellerName) != null
+            ) getOrdersList!!.get(position)!!.sellerName else "N/A")
+        }
+        location_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                .location) != null
+        ) getOrdersList!!.get(position)!!.location else "N/A")
+        commodity_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                .category) != null
+        ) getOrdersList!!.get(position)!!.category else "N/A")
+        wieght.text = "" + (if ((getOrdersList!!.get(position)!!
+                .quantity) != null
+        ) getOrdersList!!.get(position)!!.quantity else "N/A")
+        quality_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                .price) != null
+        ) getOrdersList!!.get(position)!!.price else "N/A")
+        creadte_date_name.text = "" + (if ((getOrdersList!!.get(position)!!
+                .updatedAt) != null
+        ) (getOrdersList!!.get(position)!!.updatedAt) else "N/A")
+        cancel_btn.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                alertDialog.dismiss()
+            }
+        })
+        alertDialog.show()
+    }
+
+    fun wantToSell(position: Int) {
+        inventory_id = "" + getOrdersList!![position]!!.id
+        val intent = Intent(this@SpotDealTrackListActivity, ContractFormBillPrintClass::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra("serialzable", addInventoryResponse!![position] as Serializable)
+        startActivity(intent)
     }
 }

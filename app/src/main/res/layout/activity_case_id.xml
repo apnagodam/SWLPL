@@ -445,6 +445,7 @@
                         android:background="#eee"
                         android:clickable="false"
                         android:enabled="false"
+                        android:visibility="gone"
                         android:focusable="false"
                         android:focusedByDefault="false"
                         android:imeOptions="actionNext"

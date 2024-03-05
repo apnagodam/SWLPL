@@ -23,6 +23,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.OutFirstkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -45,6 +46,12 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
 
     override fun setUp() {
         getAllCases("")
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@OutFirstkanthaParchiListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
         setSupportActionBar(binding!!.toolbar)
@@ -126,12 +133,7 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         getAllCases("")
     }
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@OutFirstkanthaParchiListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -160,7 +162,19 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
                     } else {
                         AllCases!!.clear()
                         totalPage = it.data.firstKataParchiData.lastPage
-                        AllCases!!.addAll(it.data.firstKataParchiData.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.firstKataParchiData.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+
+                            } else break
+
+
+                        }
                         outFirstkanthaparchiAdapter = OutFirstkanthaparchiAdapter(
                             AllCases,
                             this@OutFirstkanthaParchiListingActivity,

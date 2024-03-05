@@ -22,6 +22,7 @@ import com.apnagodam.staff.Network.viewmodel.TruckBookViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.TruckBookAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllTruckBookListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -49,7 +50,12 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
         binding!!.tvPhone.text = resources.getString(R.string.truck_book)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         AllCases = arrayListOf()
-
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@TruckBookListingActivity,
+                LinearLayoutManager.HORIZONTAL
+            )
+        )
         binding!!.filterIcon.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val builder = AlertDialog.Builder(this@TruckBookListingActivity)
@@ -104,12 +110,7 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@TruckBookListingActivity,
-                LinearLayoutManager.HORIZONTAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =
@@ -144,7 +145,19 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         // AllCases=body.getTruckBookCollection().getData();
                         AllCases!!.clear()
                         totalPage = it.data.truckBookCollection.lastPage
-                        AllCases!!.addAll(it.data.truckBookCollection.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data.truckBookCollection.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data.truckBookCollection.data[i])
+                            } else if (it.data.truckBookCollection.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data.truckBookCollection.data[i])
+
+                            } else break
+
+
+                        }
                         truckBookAdapter = TruckBookAdapter(AllCases!!, this@TruckBookListingActivity, activity)
                         //                    binding.rvDefaultersStatus.setAdapter(new TruckBookAdapter(body.getTruckBookCollection(), TruckBookListingActivity.this));
                     }
@@ -314,7 +327,7 @@ class TruckBookListingActivity() : BaseActivity<ActivityListingBinding?>() {
                 .driverName) != null
         ) AllCases!!.get(position)!!.driverName else "N/A")
         phone_no.text = "" + (if ((AllCases!!.get(position)!!
-                .vehicle) != null
+                .vehicleNo) != null
         ) AllCases!!.get(position)!!.vehicle else "N/A")
         commodity_name.text = "" + (if ((AllCases!!.get(position)!!
                 .driverPhone) != null

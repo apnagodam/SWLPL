@@ -98,12 +98,20 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                         showDialog()
                     }
                     is NetworkResult.Success ->{
+                        if (it.data!=null){
+                            if(it.data.status=="1"){
+                                Toast.makeText(this@LoginActivity, it.data!!.getMessage(), Toast.LENGTH_LONG)
+                                    .show()
+                                // SMS Listener for listing auto read message lsitner
+                                startSMSListener(it.data.getPhone())
+                            }
+                            else{
+                                showToast(it.data.message)
+                            }
+                        }
 
                         hideDialog()
-                        Toast.makeText(this@LoginActivity, it.data!!.getMessage(), Toast.LENGTH_LONG)
-                                .show()
-                        // SMS Listener for listing auto read message lsitner
-                        startSMSListener(it.data.getPhone())
+
                     }
                 }
             }

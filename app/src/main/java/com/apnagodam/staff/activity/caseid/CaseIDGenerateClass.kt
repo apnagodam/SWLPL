@@ -404,7 +404,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         var otp = otpData.get("otp").toString()
         var driverNumber = otpData.get("driver_number").toString()
         var inOut = otpData.get("in_out").toString()
-        caseIdViewModel.driverOtp(driverNumber, stackId, inOut)
+        caseIdViewModel.driverOtp(driverNumber, "", "")
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -437,7 +437,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         var otp = otpData.get("otp").toString()
         var driverNumber = otpData.get("driver_number").toString()
         var inOut = otpData.get("in_out").toString()
-        caseIdViewModel.driverOtp(driverNumber, stackId, inOut, binding!!.etOtp.text.toString())
+        caseIdViewModel.driverOtp(driverNumber, "", "", binding!!.etOtp.text.toString())
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -453,10 +453,10 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     if (it.data!!.type == "Match") {
                         binding!!.btnCreateeCase.visibility = View.VISIBLE
                         binding!!.verifyOtp.visibility = View.GONE
-                        showToast(it.data!!.message)
                         verifyAndCreateCaseId()
+
                     } else {
-                        showToast(it.data.message)
+
                     }
 
                 }
@@ -791,9 +791,9 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     stringFromView(binding!!.etSpotToken),
                 )
 
+                println(createCaseIDPostData)
                 caseIdViewModel.doCreateCaseId(
                     createCaseIDPostData
-
                 )
 
                 caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
@@ -807,14 +807,10 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         is NetworkResult.Success -> {
                             if (it.data != null) {
                                 if (it.data.status == "1") {
-                                    startActivityAndClear(
-                                        StaffDashBoardActivity::class.java
-                                    )
+                                   startActivityAndClear(StaffDashBoardActivity::class.java)
                                     showToast(it.data.message)
                                 } else {
-                                    startActivityAndClear(
-                                        StaffDashBoardActivity::class.java
-                                    )
+                                    startActivityAndClear(StaffDashBoardActivity::class.java)
                                     showToast(it.data.message)
                                 }
 

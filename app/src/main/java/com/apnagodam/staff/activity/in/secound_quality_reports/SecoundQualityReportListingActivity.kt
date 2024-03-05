@@ -24,6 +24,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.SecoundQualityReportAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.SecoundQuilityReportListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -46,6 +47,12 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
     val qualityReportViewModel by viewModels<QualitReportViewModel>()
     override fun setUp() {
         getAllCases("")
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@SecoundQualityReportListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
         binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
@@ -127,12 +134,7 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         getAllCases("")
     }
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@SecoundQualityReportListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -162,7 +164,19 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
                     } else {
                         AllCases!!.clear()
                         totalPage = it.data!!.quilityReport.lastPage
-                        AllCases!!.addAll(it.data!!.quilityReport.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.quilityReport.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.quilityReport.data[i])
+                            } else if (it.data!!.quilityReport.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.quilityReport.data[i])
+
+                            } else break
+
+
+                        }
                         secoundQualityReportAdapter = SecoundQualityReportAdapter(
                             AllCases,
                             this@SecoundQualityReportListingActivity,

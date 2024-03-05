@@ -19,6 +19,7 @@ import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.SecoundkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -40,7 +41,12 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
-
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@SecoundkanthaParchiListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         getAllCases("")
 
         setSupportActionBar(binding!!.toolbar)
@@ -95,12 +101,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@SecoundkanthaParchiListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -132,7 +133,20 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
                         } else {
                             AllCases!!.clear()
                             totalPage = it.data.secoundKataParchiDatum.lastPage
-                            AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
+//                            AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
+                            var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                            for (i in it.data.secoundKataParchiDatum.data.indices) {
+
+                                if (userDetails.terminal == null) {
+                                    AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
+                                } else if (it.data.secoundKataParchiDatum.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                    AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
+
+                                } else break
+
+
+                            }
                             secoundkanthaparchiAdapter =
                                 SecoundkanthaparchiAdapter(AllCases, this@SecoundkanthaParchiListingActivity, activity)
 

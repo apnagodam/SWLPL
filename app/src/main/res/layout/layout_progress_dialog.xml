@@ -7,14 +7,21 @@
         android:background="@android:color/transparent"
         android:gravity="center">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animation_view"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_centerInParent="true"
-            app:lottie_rawRes="@raw/loader"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="@dimen/_100sdp"
+            app:cardElevation="@dimen/_5sdp"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_height="@dimen/_100sdp">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animation_view"
+                android:layout_width="@dimen/_50sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_centerInParent="true"
+                app:lottie_autoPlay="true"
+                android:layout_gravity="center"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loader" />
+        </androidx.cardview.widget.CardView>
 
         <ProgressBar
             android:layout_width="50dp"

@@ -22,6 +22,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.FirstQualityReportAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.FirstQuilityReportListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -46,9 +47,11 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     }
 
     override fun setUp() {
+        binding!!.rvDefaultersStatus.addItemDecoration(DividerItemDecoration(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL))
 
 
         getAllCases("")
+
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
         setSupportActionBar(binding!!.toolbar)
@@ -107,7 +110,6 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(DividerItemDecoration(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL))
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(this@FirstQualityReportListingActivity, LinearLayoutManager.VERTICAL, false)
@@ -136,7 +138,19 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
                         totalPage = it.data.quilityReport.lastPage
-                        AllCases!!.addAll(it.data.quilityReport.data)
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.quilityReport.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.quilityReport.data[i])
+                            } else if (it.data!!.quilityReport.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.quilityReport.data[i])
+
+                            } else break
+
+
+                        }
                         // AllCases = body.getData();
                         // binding.rvDefaultersStatus.setAdapter(new FirstQualityReportAdapter(body.getData(), FirstQualityReportListingActivity.this));
                         firstQualityReportAdapter = FirstQualityReportAdapter(AllCases, this@FirstQualityReportListingActivity, activity)

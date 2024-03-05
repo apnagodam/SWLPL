@@ -23,6 +23,7 @@ import com.apnagodam.staff.activity.GatePassPDFPrieviewClass
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.OutGatepassAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.GatePassListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -47,6 +48,12 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@OutGatePassListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         setAdapter()
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.gate_pass_list)
@@ -126,12 +133,7 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@OutGatePassListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -161,7 +163,19 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         } else {
                             AllCases!!.clear()
                             totalPage = it.data.gatePassData.lastPage
-                            AllCases!!.addAll(it.data.gatePassData.data)
+                            var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                            for (i in it.data.gatePassData.data.indices) {
+
+                                if (userDetails.terminal == null) {
+                                    AllCases!!.add(it.data.gatePassData.data[i])
+                                } else if (it.data.gatePassData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                    AllCases!!.add(it.data.gatePassData.data[i])
+
+                                } else break
+
+
+                            }
                             outGatepassAdapter!!.notifyDataSetChanged()
                             // AllCases = body.getData();
                             //  binding.rvDefaultersStatus.setAdapter(new GatepassAdapter(body.getData(), GatePassListingActivity.this));

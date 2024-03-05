@@ -17,10 +17,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateVendorConveyancePostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.ConveyanceViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.VendorConveyanceBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -34,6 +37,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -41,6 +45,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     var packagingTypeID: String? = null
     var vendorTypeID: String? = null
@@ -81,6 +86,8 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     lateinit var SpinnerVendorAdapter: ArrayAdapter<String>
     var SelectedVendorIDIs: String? = null
     var options: Options? = null
+
+    val conveyanceViewModel  by  viewModels<ConveyanceViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.vendor_conveyance
     }
@@ -111,18 +118,32 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
         setSupportActionBar(binding!!.toolbar)
         binding!!.etLocation.visibility = View.GONE
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        apiService.getvendorUserList()
-
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                for (i in body.data.indices) {
-                    vnedorName.add(body.data[i].vendorFirstName + " " + body.data[i].vendorLastName + "(" + body.data[i].phone + ")")
-                    vendorID.add(body.data[i].phone)
+        showDialog()
+        conveyanceViewModel.getVendorUserList()
+        conveyanceViewModel.vendorUserListResponse.observe(this){
+            when(it){
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    showToast(it.message)
                 }
-                // get Warehouse person  list
-                locationWherHouseName()
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                    if(it.data!=null){
+                        it.data.let {
+                            body-> for (i in body.data.indices) {
+                            vnedorName.add(body.data[i].vendorFirstName + " " + body.data[i].vendorLastName + "(" + body.data[i].phone + ")")
+                            vendorID.add(body.data[i].phone)
+                        }
+                            // get Warehouse person  list
+                            locationWherHouseName()
+                        }
+                    }
+                }
             }
+        }
+
 
         clickListner()
         /*   binding.tilStartReading.setVisibility(View.GONE);
@@ -626,20 +647,34 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     }
 
     private fun locationWherHouseName() {
-        apiService.getlevelwiselist()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext { body->
-                for (i in body.data.indices) {
-                    if (body.request_count > 0) {
-                        binding!!.tvDone.isClickable = true
-                        binding!!.tvDone.isEnabled = true
-                        binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
+        conveyanceViewModel.getlevelwiselist()
+        conveyanceViewModel.conveyanceListResponse.observe(this){
+            when(it){
+                is NetworkResult.Error ->{
+                    hideDialog()
+                    showToast(it.message)
+                }
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success ->{
+                    if(it.data!=null){
+                        it.data.let {body->
+                            for (i in body.data.indices) {
+                                if (body.request_count > 0) {
+                                    binding!!.tvDone.isClickable = true
+                                    binding!!.tvDone.isEnabled = true
+                                    binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
+                                }
+                                /*  approveID.add(body.getData().get(i).getUserId());
+                                approveName.add(body.getData().get(i).getFirstName() + " " + body.getData().get(i).getLastName() + "(" + body.getData().get(i).getEmpId() + ")");*/
+                            }
+                        }
                     }
-                    /*  approveID.add(body.getData().get(i).getUserId());
-                    approveName.add(body.getData().get(i).getFirstName() + " " + body.getData().get(i).getLastName() + "(" + body.getData().get(i).getEmpId() + ")");*/
                 }
             }
+        }
+
 
     }
 
@@ -729,11 +764,9 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     }
 
     private fun clickListner() {
-        binding!!.ivClose.setOnClickListener { startActivityAndClear(MyVendorVoacherListClass::class.java) }
+        binding!!.ivClose.setOnClickListener { finish() }
         binding!!.tvDone.setOnClickListener {
-            startActivityAndClear(
-                ApprovalRequestVendorVoacherListClass::class.java
-            )
+           finish()
         }
         binding!!.btnSubmit.setOnClickListener {
             Utility.showDecisionDialog(

@@ -14,6 +14,7 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.adapter.StackRequestAdapter
 import com.apnagodam.staff.databinding.ActivityInwardList2Binding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.interfaces.OnProfileClickListener
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.utils.RecyclerItemClickListener
@@ -66,8 +67,16 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
                         null -> {}
                         else -> {
                             if (it.data.status == "1") {
-
-                                allCasesList = it.data.inwardRequestData
+                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                                allCasesList.clear()
+                                it.data.inwardRequestData.forEach {inwards->
+                                    if(userDetails.terminal==null){
+                                        allCasesList.add(inwards)
+                                    }
+                                    else if(inwards.terminalId.toString() == userDetails!!.terminal){
+                                        allCasesList.add(inwards)
+                                    }
+                                }
                                 setAdapter()
 
                             }

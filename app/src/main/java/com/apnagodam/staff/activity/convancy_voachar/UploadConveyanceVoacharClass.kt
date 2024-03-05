@@ -17,10 +17,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateConveyancePostData
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.viewmodel.ConveyanceViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityEmpConveyanceBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -30,6 +33,7 @@ import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -37,6 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>() {
     var packagingTypeID: String? = null
 
@@ -65,6 +70,8 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
     var TerminalID: ArrayList<String> = arrayListOf()
     lateinit var SpinnerTerminalAdapter: ArrayAdapter<String>
     var SelectedTerminalIDIs: String? = null
+
+    val conveyanceViewModel by viewModels<ConveyanceViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_emp_conveyance
     }
@@ -85,26 +92,41 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         // get approve person  list
-        apiService.getlevelwiselist()
-
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                for (i in body.data.indices) {
-                    if (body.request_count > 0) {
-                        binding!!.tvDone.isClickable = true
-                        binding!!.tvDone.isEnabled = true
-                        binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
-                    }
-                    approveID.add(body.data[i].userId)
-                    approveName.add(body.data[i].firstName + " " + body.data[i].lastName + "(" + body.data[i].empId + ")")
+        showDialog()
+        conveyanceViewModel.getlevelwiselist()
+        conveyanceViewModel.conveyanceListResponse.observe(this){
+            when(it){
+                is NetworkResult.Error ->{
+                    hideDialog()
+                    showToast(it.message)
                 }
-                for (i in body.warehouse_name.indices) {
-                    TerminalID.add(body.warehouse_name[i].id)
-                    TerminalName.add(body.warehouse_name[i].name + "(" + body.warehouse_name[i].warehouse_code + ")")
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success ->{
+                    hideDialog()
+                    if(it.data!=null){
+                        it.data.let {body->
+                            for (i in body.data.indices) {
+                                if (body.request_count > 0) {
+                                    binding!!.tvDone.isClickable = true
+                                    binding!!.tvDone.isEnabled = true
+                                    binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
+                                }
+                                approveID.add(body.data[i].userId)
+                                approveName.add(body.data[i].firstName + " " + body.data[i].lastName + "(" + body.data[i].empId + ")")
+                            }
+                            for (i in body.warehouse_name.indices) {
+                                TerminalID.add(body.warehouse_name[i].id)
+                                TerminalName.add(body.warehouse_name[i].name + "(" + body.warehouse_name[i].warehouse_code + ")")
+                            }
+                        }
+                    }
                 }
             }
-            .subscribe()
+        }
+
+
 
         clickListner()
         binding!!.tilStartReading.visibility = View.GONE

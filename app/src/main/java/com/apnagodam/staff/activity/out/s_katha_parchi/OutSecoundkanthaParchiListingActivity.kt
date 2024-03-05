@@ -22,6 +22,7 @@ import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookUploadClass
 import com.apnagodam.staff.adapter.OutSecoundkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -47,6 +48,12 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     override fun setUp() {
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
+        binding!!.rvDefaultersStatus.addItemDecoration(
+            DividerItemDecoration(
+                this@OutSecoundkanthaParchiListingActivity,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         getAllCases("")
         binding!!.titleHeader.setText("Second Kanta Parchi List")
         setSupportActionBar(binding!!.toolbar)
@@ -101,12 +108,7 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@OutSecoundkanthaParchiListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(
@@ -137,7 +139,20 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
                         } else {
                             AllCases!!.clear()
                             totalPage = it.data.secoundKataParchiDatum.lastPage
-                            AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
+                            var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                            for (i in it.data.secoundKataParchiDatum.data.indices) {
+
+                                if (userDetails.terminal == null) {
+                                    AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
+                                } else if (it.data.secoundKataParchiDatum.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                    AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
+
+                                } else break
+
+
+                            }
+//                            AllCases!!.addAll(it.data.secoundKataParchiDatum.data)
                             outSecoundkanthaparchiAdapter = OutSecoundkanthaparchiAdapter(
                                 AllCases,
                                 this@OutSecoundkanthaParchiListingActivity,

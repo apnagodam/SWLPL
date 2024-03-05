@@ -90,7 +90,7 @@
                                 <LinearLayout
                                     android:id="@+id/UploadImage"
                                     android:layout_width="0dp"
-                                    android:layout_height="@dimen/_120sdp"
+                                    android:layout_height="match_parent"
                                     android:layout_centerVertical="true"
                                     android:layout_marginLeft="@dimen/_20sdp"
                                     android:layout_marginTop="@dimen/_5sdp"

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -15,22 +14,15 @@ import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseListingActivity;
-import com.apnagodam.staff.activity.in.first_kantaparchi.FirstkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
-import com.apnagodam.staff.activity.in.first_quality_reports.FirstQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.first_quality_reports.UploadFirstQualtityReportsClass;
-import com.apnagodam.staff.activity.in.labourbook.LabourBookListingActivity;
 import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
-import com.apnagodam.staff.activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass;
-import com.apnagodam.staff.activity.in.secound_quality_reports.SecoundQualityReportListingActivity;
 import com.apnagodam.staff.activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
 import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
 import com.apnagodam.staff.activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass;
 import com.apnagodam.staff.activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass;
 import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookUploadClass;
-import com.apnagodam.staff.activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity;
 import com.apnagodam.staff.activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass;
 import com.apnagodam.staff.activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass;
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass;
@@ -203,25 +195,31 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
 
                                             }
                                         });
-                                    }
-                                    else {
-
-                                        if (Leads.get(position).getIvrReport() == null) {
-                                            binding.tvStatus.setText("IVR Pending");
+                                    } else {
+                                        if (Leads.get(position).getCctvReport() == null) {
+                                            binding.tvStatus.setText("CCTV Pending");
                                         } else {
-                                            if (Leads.get(position).getCctvReport() == null) {
-                                                binding.tvStatus.setText("CCTV Pending");
+                                            if (Leads.get(position).getIvrReport() == null) {
+                                                binding.tvStatus.setText("IVR Pending");
                                             } else {
                                                 if (Leads.get(position).getGatepassReport() == null) {
                                                     binding.tvStatus.setText("Gate Pass Pending");
                                                 } else {
-                                                    binding.tvStatus.setText("Done");
+                                                    binding.tvStatus.setText("View");
+                                                    binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            if (context instanceof CaseListingActivity) {
+                                                                ((CaseListingActivity) context).ViewData(position);
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             }
                                         }
 
-                                    }
 
+                                    }
                                 }
                             }
                         }
@@ -327,19 +325,25 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
 
                                             }
                                         });
-                                    }
-                                    else {
-                                        if (Leads.get(position).getCctvReport() == null) {
+                                    } else {
+                                        if (Leads.get(position).getCctvReport() == null || Leads.get(position).getCctvReport().isEmpty()) {
                                             binding.tvStatus.setText("CCTV Pending");
                                         } else {
-
                                             if (Leads.get(position).getIvrReport() == null) {
                                                 binding.tvStatus.setText("IVR Pending");
                                             } else {
                                                 if (Leads.get(position).getGatepassReport() == null) {
                                                     binding.tvStatus.setText("Gate Pass Pending");
                                                 } else {
-                                                    binding.tvStatus.setText("Done");
+                                                    binding.tvStatus.setText("View");
+                                                    binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            if (context instanceof CaseListingActivity) {
+                                                                ((CaseListingActivity) context).ViewData(position);
+                                                            }
+                                                        }
+                                                    });
                                                 }
                                             }
                                         }
@@ -355,14 +359,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
 
 
 //            activity.hideDialog();
-//            binding.viewCase.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (context instanceof CaseListingActivity) {
-//                        ((CaseListingActivity) context).ViewData(position);
-//                    }
-//                }
-//            });
+
 
         }
         //}
