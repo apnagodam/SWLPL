@@ -362,6 +362,7 @@ class OutSecoundQualityReportListingActivity() : BaseActivity<ActivityListingBin
         intent.putExtra("user_name", AllCases!![postion]!!.custFname)
         intent.putExtra("case_id",AllCases!![postion]!!.caseId)
         intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
+        intent.putExtra("skp_avg_weight",AllCases[postion].avgWeight)
 
         startActivity(intent)
     }

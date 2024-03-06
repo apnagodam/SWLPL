@@ -47,6 +47,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.lang.Exception
 import java.util.Locale
 import java.util.UUID
 
@@ -125,12 +126,16 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
 
-            if (binding!!.etWeight.text!!.isNotEmpty() && !text.isNullOrEmpty() && text!="0") {
-                var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                    .toInt()
-                binding!!.etAvgWeight.setText(
-                    bagCal.toString()
-                )
+            if (binding!!.etWeight.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etNoOfBags.text!!.isNotEmpty()) {
+             try {
+                 var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
+                     .toInt()
+                 binding!!.etAvgWeight.setText(
+                     bagCal.toString()
+                 )
+             } catch (e:Exception){
+
+             }
 
             }
             else

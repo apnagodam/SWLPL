@@ -421,15 +421,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 if ((
 
                                             body.data.getaCase().data[i].cctvReport == null ||
-                                            body.data.getaCase().data[i].ivrReport == null ||
-                                            body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
+                                                    body.data.getaCase().data[i].ivrReport == null ||
+                                                    body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
                                 ) {
                                     if (userDetails.terminal != null) {
                                         if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                             AllCases.add(body.data.getaCase().data[i])
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         AllCases.add(body.data.getaCase().data[i])
                                     }
 

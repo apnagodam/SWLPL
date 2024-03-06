@@ -339,6 +339,19 @@ public class AllCaseIDResponse extends BaseResponse {
         @Expose
         private String firstKantaDharamkanta;
 
+
+        public String getAvgWeight() {
+            return avgWeight;
+        }
+
+        public void setAvgWeight(String avgWeight) {
+            this.avgWeight = avgWeight;
+        }
+
+        @SerializedName("s_k_p_avg_weight")
+        @Expose
+        private String  avgWeight;
+
         public String getFirstKantaFile3() {
             return firstKantaFile3;
         }

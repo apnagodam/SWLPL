@@ -367,6 +367,7 @@ class SecoundQualityReportListingActivity() : BaseActivity<ActivityListingBindin
         intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
         intent.putExtra("skp_bags",AllCases[postion].skpBags)
         intent.putExtra("skp_weight",AllCases[postion].skpWeight)
+        intent.putExtra("skp_avg_weight",AllCases[postion].avgWeight)
         startActivity(intent)
     }
 

@@ -85,7 +85,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
     var skpWeight = 0;
     var lat = 0.0
     var long = 0.0
-
+    var avgWeight = ""
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     override fun getLayoutResId(): Int {
@@ -123,6 +123,13 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         UserName = intent.getStringExtra("user_name")
         CaseID = intent.getStringExtra("case_id")
         binding!!.tvTitle.setText("Upload Second Quality Report")
+        if(intent.getStringExtra("skp_avg_weight")==null){
+            avgWeight = "0"
+        }
+        else{
+            avgWeight = intent?.getStringExtra("skp_avg_weight").toString();
+
+        }
 
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
@@ -130,6 +137,7 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
         binding!!.caseId.text = CaseID
         binding!!.tilExtraClaim.visibility = View.VISIBLE
 
+        binding!!.etAvgWeight.setText(avgWeight)
         qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
         qualitReportViewModel.commodityResponse.observe(this) {
             when (it) {

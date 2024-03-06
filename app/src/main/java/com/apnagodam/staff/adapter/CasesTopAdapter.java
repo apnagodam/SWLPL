@@ -164,63 +164,72 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                     }
                                 });
 
-                            } else {
-                                if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
-                                    binding.tvStatus.setText("Add Second Kanta Parchi");
+                            }
+                            else {
+                                if (Leads.get(position).getFirstQualityTagging() == null) {
+                                    binding.tvStatus.setText("IVR Quality Tagging Pending");
+                                }
+                                else {
+                                    if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
+                                        binding.tvStatus.setText("Add Second Kanta Parchi");
 
-                                    binding.tvStatus.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Intent intent = new Intent(context, UploadSecoundkantaParchiClass.class);
-                                            intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                            intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                            intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                            intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
-                                            context.startActivity(intent);
-
-                                        }
-                                    });
-                                } else {
-                                    if (Leads.get(position).getSecondQualityReport() == null) {
-                                        binding.tvStatus.setText("Add Second Quality Report");
                                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
-                                                Intent intent = new Intent(context, UploadSecoundQualtityReportsClass.class);
+                                                Intent intent = new Intent(context, UploadSecoundkantaParchiClass.class);
                                                 intent.putExtra("user_name", Leads.get(position).getCustFname());
                                                 intent.putExtra("case_id", Leads.get(position).getCaseId());
                                                 intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                                intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                                intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
                                                 context.startActivity(intent);
 
                                             }
                                         });
                                     } else {
-                                        if (Leads.get(position).getCctvReport() == null) {
-                                            binding.tvStatus.setText("CCTV Pending");
+                                        if (Leads.get(position).getSecondQualityReport() == null) {
+                                            binding.tvStatus.setText("Add Second Quality Report");
+                                            binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intent = new Intent(context, UploadSecoundQualtityReportsClass.class);
+                                                    intent.putExtra("user_name", Leads.get(position).getCustFname());
+                                                    intent.putExtra("case_id", Leads.get(position).getCaseId());
+                                                    intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
+                                                    intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                                    intent.putExtra("skp_avg_weight",Leads.get(position).getAvgWeight());
+
+                                                    context.startActivity(intent);
+
+                                                }
+                                            });
                                         } else {
-                                            if (Leads.get(position).getIvrReport() == null) {
-                                                binding.tvStatus.setText("IVR Pending");
+                                            if (Leads.get(position).getCctvReport() == null) {
+                                                binding.tvStatus.setText("CCTV Pending");
                                             } else {
-                                                if (Leads.get(position).getGatepassReport() == null) {
-                                                    binding.tvStatus.setText("Gate Pass Pending");
+                                                if (Leads.get(position).getIvrReport() == null) {
+                                                    binding.tvStatus.setText("IVR Pending");
                                                 } else {
-                                                    binding.tvStatus.setText("View");
-                                                    binding.tvStatus.setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            if (context instanceof CaseListingActivity) {
-                                                                ((CaseListingActivity) context).ViewData(position);
+                                                    if (Leads.get(position).getGatepassReport() == null) {
+                                                        binding.tvStatus.setText("Gate Pass Pending");
+                                                    } else {
+                                                        binding.tvStatus.setText("View");
+                                                        binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(View view) {
+                                                                if (context instanceof CaseListingActivity) {
+                                                                    ((CaseListingActivity) context).ViewData(position);
+                                                                }
                                                             }
-                                                        }
-                                                    });
+                                                        });
+                                                    }
                                                 }
                                             }
+
+
                                         }
-
-
                                     }
                                 }
+
                             }
                         }
                     }

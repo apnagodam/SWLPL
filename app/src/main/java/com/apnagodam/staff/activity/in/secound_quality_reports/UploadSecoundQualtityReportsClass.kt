@@ -84,6 +84,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
     var skpWeight = 0;
     var lat = 0.0
     var long = 0.0
+    var avgWeight = "";
 
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
@@ -126,13 +127,20 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
         binding!!.tvTitle.setText("Upload Second Quality Report")
         UserName = intent?.getStringExtra("user_name")
         CaseID = intent?.getStringExtra("case_id")
+        if(intent.getStringExtra("skp_avg_weight")==null){
+            avgWeight = "0"
+        }
+        else{
+            avgWeight = intent?.getStringExtra("skp_avg_weight").toString();
 
+        }
         setSupportActionBar(binding!!.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
         binding!!.tilExtraClaim.visibility = View.VISIBLE
 
+        binding!!.etAvgWeight.setText(avgWeight)
         showDialog()
         qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
         qualitReportViewModel.commodityResponse.observe(this) {

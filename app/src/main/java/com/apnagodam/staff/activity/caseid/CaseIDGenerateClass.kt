@@ -97,7 +97,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 "driver_number" to outwardsStack!!.driverNumber,
                 "otp" to "",
                 "in_out" to outwardsStack!!.inOutType,
-                "stack_id" to outwardsStack!!.stackNumber
+                "stack_id" to outwardsStack!!.stackId
             )
 
             TerminalID = outwardsStack!!.terminalId.toString()
@@ -404,7 +404,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         var otp = otpData.get("otp").toString()
         var driverNumber = otpData.get("driver_number").toString()
         var inOut = otpData.get("in_out").toString()
-        caseIdViewModel.driverOtp(driverNumber, "", "")
+        caseIdViewModel.driverOtp(driverNumber, stackId, inOut)
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -437,7 +437,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         var otp = otpData.get("otp").toString()
         var driverNumber = otpData.get("driver_number").toString()
         var inOut = otpData.get("in_out").toString()
-        caseIdViewModel.driverOtp(driverNumber, "", "", binding!!.etOtp.text.toString())
+        caseIdViewModel.driverOtp(driverNumber, stackId, inOut, binding!!.etOtp.text.toString())
         caseIdViewModel.driverOtpResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {

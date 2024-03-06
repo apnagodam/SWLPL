@@ -58,6 +58,7 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
         @Expose
         private Integer total;
 
+
         public Integer getCurrentPage() {
             return currentPage;
         }
@@ -340,6 +341,19 @@ public class SecoundQuilityReportListResponse extends BaseResponse {
         @SerializedName("s_k_p_case_id")
         @Expose
         private String s_k_p_case_id;
+
+
+        public String getAvgWeight() {
+            return avgWeight;
+        }
+
+        public void setAvgWeight(String avgWeight) {
+            this.avgWeight = avgWeight;
+        }
+
+        @SerializedName("s_k_p_avg_weight")
+        @Expose
+        private String avgWeight;
 
         public Integer getId() {
             return id;
