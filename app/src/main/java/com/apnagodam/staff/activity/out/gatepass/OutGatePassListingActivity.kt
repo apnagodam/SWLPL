@@ -172,7 +172,7 @@ class OutGatePassListingActivity() : BaseActivity<ActivityListingBinding?>() {
                                 } else if (it.data.gatePassData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                     AllCases!!.add(it.data.gatePassData.data[i])
 
-                                } else break
+                                }
 
 
                             }

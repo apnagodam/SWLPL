@@ -329,7 +329,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                         if (Leads.get(position).getCctvReport() == null || Leads.get(position).getCctvReport().isEmpty()) {
                                             binding.tvStatus.setText("CCTV Pending");
                                         } else {
-                                            if (Leads.get(position).getIvrReport() == null) {
+                                            if (Leads.get(position).getIvrReport() == null ) {
                                                 binding.tvStatus.setText("IVR Pending");
                                             } else {
                                                 if (Leads.get(position).getGatepassReport() == null) {

@@ -148,7 +148,7 @@ class OutSecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBindin
                                 } else if (it.data.secoundKataParchiDatum.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                     AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
 
-                                } else break
+                                }
 
 
                             }

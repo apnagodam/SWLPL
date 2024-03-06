@@ -198,7 +198,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             startActivity(intent)
         }
         AllCases = arrayListOf()
-       // requestPermission()
+        // requestPermission()
         getdashboardData()
         getAllCases("")
         binding!!.mainContent.tvCreateCase.setOnClickListener {
@@ -259,7 +259,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 fileSelfie = null
                 binding!!.mainContent.selfieImage.setImageBitmap(null)
                 binding!!.mainContent.cardAttandance.visibility = View.GONE
-                binding!!.mainContent.WelcomeMsg.visibility = View.GONE
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -413,50 +412,55 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     inCasesList.clear()
                     outCasesList.clear()
                     AllCases!!.clear()
-                    if (body.data!!.getaCase() == null) {
-                        binding!!.mainContent.txtemptyMsg.visibility = View.VISIBLE
-                        binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-                        binding!!.mainContent!!.incase.setText("0")
-                        binding!!.mainContent!!.outcase.setText("0")
+                    if (body.data != null) {
+                        if (body.data.status == "1") {
+                            totalPage = body.data.getaCase().lastPage
+                            setAdapter()
+                            for (i in body.data.getaCase().data.indices) {
 
-                    } else {
-                        totalPage = body.data.getaCase().lastPage
-                        setAdapter()
-                        for (i in body.data.getaCase().data.indices) {
+                                if ((
 
-                            if ((body.data.getaCase().data[i].cctvReport == null ||
-                                        body.data.getaCase().data[i].ivrReport == null ||
-                                        body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
-                            ) {
-                                if (userDetails.terminal == null) {
-                                    AllCases.add(body.data.getaCase().data[i])
-                                } else if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
-                                    AllCases.add(body.data.getaCase().data[i])
+                                            body.data.getaCase().data[i].cctvReport == null ||
+                                            body.data.getaCase().data[i].ivrReport == null ||
+                                            body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
+                                ) {
+                                    if (userDetails.terminal != null) {
+                                        if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                            AllCases.add(body.data.getaCase().data[i])
+                                        }
+                                    }
+                                    else {
+                                        AllCases.add(body.data.getaCase().data[i])
+                                    }
 
                                 }
 
 
-                            } else {
-                                break
-                            };
+                            }
 
+                            if (AllCases.isEmpty()) {
+                                binding!!.mainContent.emptyData.visibility = View.VISIBLE
+                                binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
+                            }
+                            casesTopAdapter = CasesTopAdapter(AllCases, this)
 
+                        } else {
+                            showToast(body.message)
+                            binding!!.mainContent.emptyData.visibility = View.VISIBLE
+                            binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                         }
-
-
-                        //  AllCases=body.getCases();
-                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+                    } else {
+                        binding!!.mainContent.emptyData.visibility = View.VISIBLE
+                        binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                     }
-                    casesTopAdapter = CasesTopAdapter(AllCases, this)
 
 
                 }
 
                 is NetworkResult.Error -> {
-                    binding!!.mainContent.txtemptyMsg.visibility = View.GONE
+                    binding!!.mainContent.emptyData.visibility = View.GONE
                     binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-                    binding!!.mainContent!!.incase.setText("0")
-                    binding!!.mainContent!!.outcase.setText("0")
+
 
                 }
 
@@ -913,34 +917,34 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         if (menuModel.hasChildren) {
             childList[menuModel] = childModelsList
         }
-        val menuModel6 = MenuModel(
-            resources.getString(R.string.spot_sell),
-            true,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.deal_track
-        ) //Menu of Android Tutorial. No sub menus
-        val menuModel7 = MenuModel(
-            resources.getString(R.string.intantion_title),
-            true,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.purchase
-        ) //Menu of Android Tutorial. No sub menus
-        val menuModel8 = MenuModel(
-            "Customer Map",
-            true,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.heat_map
-        ) //Menu of Android Tutorial. No sub menus
-        val menuModel9 = MenuModel(
-            resources.getString(R.string.heat_map),
-            true,
-            false,
-            "https://www.journaldev.com/19226/python-fractions",
-            R.drawable.heat_map
-        ) //Menu of Android Tutorial. No sub menus
+//        val menuModel6 = MenuModel(
+//            resources.getString(R.string.spot_sell),
+//            true,
+//            false,
+//            "https://www.journaldev.com/19226/python-fractions",
+//            R.drawable.deal_track
+//        ) //Menu of Android Tutorial. No sub menus
+//        val menuModel7 = MenuModel(
+//            resources.getString(R.string.intantion_title),
+//            true,
+//            false,
+//            "https://www.journaldev.com/19226/python-fractions",
+//            R.drawable.purchase
+//        ) //Menu of Android Tutorial. No sub menus
+//        val menuModel8 = MenuModel(
+//            "Customer Map",
+//            true,
+//            false,
+//            "https://www.journaldev.com/19226/python-fractions",
+//            R.drawable.heat_map
+//        ) //Menu of Android Tutorial. No sub menus
+//        val menuModel9 = MenuModel(
+//            resources.getString(R.string.heat_map),
+//            true,
+//            false,
+//            "https://www.journaldev.com/19226/python-fractions",
+//            R.drawable.heat_map
+//        ) //Menu of Android Tutorial. No sub menus
         val menuMode21 = MenuModel(
             resources.getString(R.string.fastcase),
             true,
@@ -963,10 +967,10 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             R.drawable.out_icon
         ) //Menu of Android Tutorial. No sub menus
         //  headerList.add(menuModel5);
-        headerList.add(menuModel6)
-        headerList.add(menuModel7)
-        headerList.add(menuModel8)
-        headerList.add(menuModel9)
+//        headerList.add(menuModel6)
+//        headerList.add(menuModel7)
+//        headerList.add(menuModel8)
+//        headerList.add(menuModel9)
         headerList.add(menuMode21)
         headerList.add(menuMode22)
         headerList.add(menuMode20)

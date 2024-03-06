@@ -181,7 +181,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
             verifyOtp()
         }
         try {
-          //  setValueOnSpinner()
+            //  setValueOnSpinner()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -449,15 +449,19 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 }
 
                 is NetworkResult.Success -> {
-                    hideDialog()
-                    if (it.data!!.type == "Match") {
-                        binding!!.btnCreateeCase.visibility = View.VISIBLE
-                        binding!!.verifyOtp.visibility = View.GONE
-                        verifyAndCreateCaseId()
-
-                    } else {
-
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            if (it.data.type == "Match") {
+                                binding!!.btnCreateeCase.visibility = View.VISIBLE
+                                binding!!.verifyOtp.visibility = View.GONE
+                                verifyAndCreateCaseId()
+                            }
+                        } else {
+                            showToast(it.data.message)
+                        }
                     }
+                    hideDialog()
+
 
                 }
             }
@@ -728,10 +732,6 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         binding!!.tvDone.setOnClickListener(this)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        //    startActivityAndClear(StaffDashBoardActivity.class);
-    }
 
     override fun onClick(view: View) {
         when (view.id) {
@@ -807,7 +807,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         is NetworkResult.Success -> {
                             if (it.data != null) {
                                 if (it.data.status == "1") {
-                                   startActivityAndClear(StaffDashBoardActivity::class.java)
+                                    startActivityAndClear(StaffDashBoardActivity::class.java)
                                     showToast(it.data.message)
                                 } else {
                                     startActivityAndClear(StaffDashBoardActivity::class.java)

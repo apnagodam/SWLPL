@@ -151,7 +151,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
                                 } else if (it.data.labour.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                     AllCases!!.add(it.data.labour.data[i])
 
-                                } else break
+                                }
 
 
                             }
@@ -168,7 +168,7 @@ class LabourBookListingActivity : BaseActivity<ActivityListingBinding?>() {
                                 } else if (it.data.labour.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                     AllCases!!.add(it.data.labour.data[i])
 
-                                } else break
+                                }
 
 
                             }

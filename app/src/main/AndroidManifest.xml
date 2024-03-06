@@ -35,10 +35,13 @@
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
         <activity
             android:name=".activity.OutwardsListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.InwardListActivity"
-            android:exported="false" />
+            android:exported="false"
+
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.FastCaseListActivity"
             android:exported="false"

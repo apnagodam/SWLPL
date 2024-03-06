@@ -127,9 +127,10 @@ interface ApiService {
     fun doClosedCase(@Body closedCasesPostData: ClosedCasesPostData?): Call<LoginResponse?>?
 
     @POST("emp_api/apna_emp_create_caseid")
-    suspend fun doCreateCaseID(@Body createCaseIDPostData: CreateCaseIDPostData
+    suspend fun doCreateCaseID(
+        @Body createCaseIDPostData: CreateCaseIDPostData
 
-                               ): Response<LoginResponse>
+    ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_create")
     fun doCreateConveyance(@Body createConveyancePostData: CreateConveyancePostData?): Observable<LoginResponse>
@@ -141,15 +142,16 @@ interface ApiService {
     fun doGatePassOTP(@Body oTPGatePassData: OTPGatePassData?): Observable<LoginResponse>
 
     @POST("api/apna_send_otp")
-   suspend fun doLogin(@Body loginPostData: LoginPostData): Response<LoginResponse>
+    suspend fun doLogin(@Body loginPostData: LoginPostData): Response<LoginResponse>
 
     @POST("api/apna_user_logout")
     suspend fun doLogout(): Response<LoginResponse>
+
     @POST("api/apna_user_logout")
     fun doLogout1(): Observable<LoginResponse>
 
     @POST("api/apna_verify_otp")
-   suspend fun doOTPVerify(@Body oTPData: OTPData): Response<OTPvarifedResponse>
+    suspend fun doOTPVerify(@Body oTPData: OTPData): Response<OTPvarifedResponse>
 
     @POST("emp_api/apna_emp_vendor_voucher_create")
     fun doVendorCreateConveyance(@Body createVendorConveyancePostData: CreateVendorConveyancePostData?): Observable<LoginResponse>
@@ -176,8 +178,9 @@ interface ApiService {
         @Query("type") inOut: String,
         @Query("otp") otp: String?
     ): Response<DriverOtpResponse>
+
     @GET("emp_api/apna_emp_leads")
-   suspend fun getAllLeads(
+    suspend fun getAllLeads(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
@@ -216,7 +219,7 @@ interface ApiService {
     suspend fun dashboardData(): Response<DashBoardData>
 
     @GET("emp_api/apna_emp_delivery_order")
-   suspend fun getDeliveredOrderList(
+    suspend fun getDeliveredOrderList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
@@ -226,8 +229,8 @@ interface ApiService {
     @get:GET("emp_api/apna_emp_dhramkanta_list")
     val dharmaKanthaListLevel: Observable<DharmaKanthaPostData>
 
-    @get:GET("emp_api/fc_list")
-    val fastCaseList: Call<ResponseFastcaseList?>?
+    @GET("emp_api/fc_list")
+    suspend fun fastCaseList(): Response<ResponseFastcaseList>
 
     @GET("emp_api/apna_emp_get_gatepass")
     suspend fun getGatePass(
@@ -279,23 +282,23 @@ interface ApiService {
     ): Response<SecoundQuilityReportListResponse>
 
     @GET("emp_api/apna_emp_get_spot_deals")
-   suspend fun getSpotSellDealTrackList(
+    suspend fun getSpotSellDealTrackList(
         @Query("limit") str: String?,
         @Query("page") i: String,
         @Query("search") str2: String?
     ): Response<SpotSellDealTrackPojo>
 
     @POST("emp_api/fc_offline_stack_details")
-    fun getStack(
+    suspend fun getStack(
         @Query("terminal_id") str: String?,
         @Query("commodity_id") str2: String?
-    ): Call<ResponseStackData?>?
+    ): Response<ResponseStackData>
 
     @POST("emp_api/apna_emp_get_stack_number")
     suspend fun getStackList(@Body stackPostData: StackPostData?): Response<StackListPojo>
 
     @GET("emp_api/apna_emp_levelwise_terminal")
-   suspend fun terminalListLevel(): Response<TerminalListPojo>
+    suspend fun terminalListLevel(): Response<TerminalListPojo>
 
     @GET("emp_api/apna_emp_transpoter_detail")
     suspend fun getTransporterDetails(@Query("transport_id") str: String?): Response<TransporterDetailsPojo>
@@ -304,7 +307,7 @@ interface ApiService {
     suspend fun transporterList(): Response<TransporterListPojo>
 
     @GET("emp_api/apna_emp_get_truckbook")
-   suspend fun getTruckBookList(
+    suspend fun getTruckBookList(
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("in_out") str2: String?,
@@ -325,7 +328,7 @@ interface ApiService {
     ): Response<CommodityResponseData>
 
     @POST("emp_api/fc_offline_user_details")
-    fun getUserName(@Query("phone") str: String?): Call<ResponseUserData?>?
+    suspend fun getUserName(@Query("phone") str: String?): Response<ResponseUserData>
 
     @GET("emp_api/apna_emp_vendor_voucher_requestList")
     fun getVendorApprovalRequestConvancyList(
@@ -339,13 +342,13 @@ interface ApiService {
         @Query("limit") str: String?,
         @Query("page") i: Int,
         @Query("search") str2: String?
-    ): Response <AllVendorConvancyList>
+    ): Response<AllVendorConvancyList>
 
-    @get:GET("emp_api/fc_offline_warehouse_details")
-    val warehouseData: Call<ResponseWarehouse?>?
+    @GET("emp_api/fc_offline_warehouse_details")
+    suspend fun getWareHouseData(): Response<ResponseWarehouse>
 
     @GET("emp_api/apna_emp_clock_status")
-    fun getattendanceStatus(): Call<AttendanceResponse?>?
+    fun getattendanceStatus(): Call<AttendanceResponse>
 
     @GET("api/apna_default_list")
     suspend fun getcommuydity_terminal_user_emp_listing(@Query("app_type") str: String?): Response<CommudityResponse>
@@ -359,7 +362,7 @@ interface ApiService {
     ): Response<FirstkanthaParchiListResponse>
 
     @GET("emp_api/apna_emp_get_quality")
-   suspend fun getf_qualityReportsList(
+    suspend fun getf_qualityReportsList(
         @Query("limit") str: String?,
         @Query("page") str2: String?,
         @Query("in_out") str3: String?,
@@ -383,7 +386,7 @@ interface ApiService {
     suspend fun getversionCode(@Query("app_type") str: String?): Response<VersionCodeResponse>
 
     @POST("emp_api/fc_offline_store")
-    fun offlineFastCase(@Body requestOfflineCaseData: RequestOfflineCaseData?): Call<BaseResponse?>?
+    suspend fun offlineFastCase(@Body requestOfflineCaseData: RequestOfflineCaseData?): Response<BaseResponse>
 
     @POST("emp_api/apna_emp_intentiontosell_reject")
     fun rejeectIntantion(@Body approvedIntantionPOst: ApprovedIntantionPOst?): Call<LoginResponse?>?
@@ -404,10 +407,16 @@ interface ApiService {
     suspend fun uploadDeliveredOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_f_quality")
-    suspend fun uploadFirstQualityReports(@Body uploadFirstQualityPostData: UploadFirstQualityPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
+    suspend fun uploadFirstQualityReports(
+        @Body uploadFirstQualityPostData: UploadFirstQualityPostData?,
+        @Query("in_out") inOut: String
+    ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_kanta_parchi")
-    suspend fun uploadFirstkantaParchi(@Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData,@Query("in_out") inOut:String): Response<LoginResponse>
+    suspend fun uploadFirstkantaParchi(
+        @Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData,
+        @Query("in_out") inOut: String
+    ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_gatepass")
     fun uploadGatePass(@Body uploadGatePassPostData: UploadGatePassPostData?): Call<LoginResponse?>?
@@ -422,10 +431,16 @@ interface ApiService {
     suspend fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_quality")
-    suspend fun uploadSecoundQualityReports(@Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
+    suspend fun uploadSecoundQualityReports(
+        @Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,
+        @Query("in_out") inOut: String
+    ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_s_kanta_parchi")
-    suspend fun uploadSecoundkantaParchi(@Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?,@Query("in_out") inOut:String): Response<LoginResponse>
+    suspend fun uploadSecoundkantaParchi(
+        @Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?,
+        @Query("in_out") inOut: String
+    ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_update_truckbook")
     suspend fun uploadTruckDetails(@Body uploadTruckDetailsPostData: UploadTruckDetailsPostData?): Response<LoginResponse>
@@ -446,12 +461,12 @@ interface ApiService {
     ): Call<VerifyOtpFastcase?>?
 
     @POST("emp_api/apna_emp_qulaity_paramters")
-    suspend fun  getCommodityParams(@Query("case_id") case_id:String):Response<QualityParamsResponse>
+    suspend fun getCommodityParams(@Query("case_id") case_id: String): Response<QualityParamsResponse>
 
 
     @POST("emp_api/apna_emp_getkantaparchi")
-    suspend fun  getDharamKanta(@Query("case_id") case_id:String):Response<DharamKanta>
+    suspend fun getDharamKanta(@Query("case_id") case_id: String): Response<DharamKanta>
 
     @POST("emp_api/apna_emp_stack_request")
-    suspend fun getStackRequest():Response<StackRequestResponse>
+    suspend fun getStackRequest(): Response<StackRequestResponse>
 }

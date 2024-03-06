@@ -147,7 +147,7 @@ class FirstQualityReportListingActivity : BaseActivity<ActivityListingBinding?>(
                             } else if (it.data!!.quilityReport.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                 AllCases!!.add(it.data!!.quilityReport.data[i])
 
-                            } else break
+                            }
 
 
                         }

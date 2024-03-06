@@ -1,72 +1,61 @@
-package com.apnagodam.staff.activity;
+package com.apnagodam.staff.activity
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import android.content.Context
+import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkCallback
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Response.ResponseFastcaseList
+import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.adapter.FastCaseListAdapter
+import com.apnagodam.staff.databinding.ActivityFastCaseListBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-import android.content.Context;
-import android.os.Bundle;
-import android.view.View;
-
-import com.apnagodam.staff.Base.BaseActivity;
-import com.apnagodam.staff.Network.NetworkCallback;
-import com.apnagodam.staff.Network.Response.ResponseFastcaseList;
-import com.apnagodam.staff.R;
-import com.apnagodam.staff.activity.in.truckbook.TruckBookListingActivity;
-import com.apnagodam.staff.adapter.FastCaseListAdapter;
-import com.apnagodam.staff.adapter.TruckBookAdapter;
-import com.apnagodam.staff.databinding.ActivityFastCaseBinding;
-import com.apnagodam.staff.databinding.ActivityFastCaseListBinding;
-import com.apnagodam.staff.databinding.ActivityListingBinding;
-import com.apnagodam.staff.module.AllCaseIDResponse;
-
-public class FastCaseListActivity extends BaseActivity<ActivityFastCaseListBinding> {
-
-    private Context mContext;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+@AndroidEntryPoint
+class FastCaseListActivity : BaseActivity<ActivityFastCaseListBinding?>() {
+    private var mContext: Context? = null
+    val caseIdViewModel by viewModels<CaseIdViewModel>()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
-    @Override
-    protected int getLayoutResId() {
-        return R.layout.activity_fast_case_list;
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_fast_case_list
     }
 
-    @Override
-    protected void setUp() {
+    override fun setUp() {
+        mContext = this@FastCaseListActivity
+        binding!!.ivClose.setOnClickListener { onBackPressed() }
+        fastCaseList
+    }
 
-        mContext = FastCaseListActivity.this;
-
-        binding.ivClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                onBackPressed();
-
+    private val fastCaseList: Unit
+        private get() {
+            showDialog()
+            caseIdViewModel.getFastcaseList()
+            caseIdViewModel.fastcaseListResponse.observe(this){
+                when(it){
+                    is NetworkResult.Error -> {
+                        hideDialog()
+                    }
+                    is NetworkResult.Loading -> {}
+                    is NetworkResult.Success -> {
+                        hideDialog()
+                        if (it.data!=null){
+                            if (it.data.status=="1"){
+                                val horizontalLayoutManager =
+                                    LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false)
+                                binding!!.rvFastCaseList.layoutManager = horizontalLayoutManager
+                                val fastCaseListAdapter = FastCaseListAdapter(it.data.data, mContext)
+                                binding!!.rvFastCaseList.adapter = fastCaseListAdapter
+                            }
+                        }
+                    }
+                }
             }
-        });
 
-        getFastCaseList();
-
-    }
-
-
-    private void getFastCaseList() {
-        showDialog();
-        apiService.getFastCaseList().enqueue(new NetworkCallback<ResponseFastcaseList>(getActivity()) {
-            @Override
-            protected void onSuccess(ResponseFastcaseList body) {
-                //        binding.swipeRefresherStock.setRefreshing(false);
-
-                LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
-                binding.rvFastCaseList.setLayoutManager(horizontalLayoutManager);
-                FastCaseListAdapter fastCaseListAdapter = new FastCaseListAdapter(body.getData(), mContext);
-                binding.rvFastCaseList.setAdapter(fastCaseListAdapter);
-
-            }
-        });
-    }
-
+        }
 }

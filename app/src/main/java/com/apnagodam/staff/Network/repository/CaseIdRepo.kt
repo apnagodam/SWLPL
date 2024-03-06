@@ -4,9 +4,16 @@ import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
+import com.apnagodam.staff.Network.Request.RequestOfflineCaseData
 import com.apnagodam.staff.Network.Request.StackPostData
+import com.apnagodam.staff.Network.Response.AttendanceResponse
+import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.ResponseFastcaseList
+import com.apnagodam.staff.Network.Response.ResponseStackData
+import com.apnagodam.staff.Network.Response.ResponseUserData
+import com.apnagodam.staff.Network.Response.ResponseWarehouse
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.AllUserListPojo
@@ -55,7 +62,7 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
     suspend fun getStackList(stackPostData: StackPostData): Flow<NetworkResult<StackListPojo>> {
         return flow {
             emit(safeApiCall { apiService.getStackList(stackPostData) })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getCommodities(
@@ -65,7 +72,7 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
     ): Flow<NetworkResult<CommodityResponseData>> {
         return flow {
             emit(safeApiCall { apiService.getCommodityList(terminalId, inOut, userPhone) })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     suspend fun doCreateCaseId(
@@ -77,7 +84,7 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
                  createCaseIDPostData
                 )
             })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getUserList(
@@ -86,10 +93,49 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
     ): Flow<NetworkResult<AllUserListPojo>> {
         return flow {
             emit(safeApiCall { apiService.getUserList(terminalId, inOut) })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getStackRequestList():Flow<NetworkResult<StackRequestResponse>>{
-        return flow { emit(safeApiCall { apiService.getStackRequest() }) }
+        return flow { emit(safeApiCall { apiService.getStackRequest() }) }.flowOn(Dispatchers.IO)
+    }
+
+
+    suspend fun getFastCaseWarehouse():Flow<NetworkResult<ResponseWarehouse>>{
+        return flow {
+            emit(safeApiCall {
+                apiService.getWareHouseData()
+            })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun getStack(terminalId:String,commodityId:String):Flow<NetworkResult<ResponseStackData>>{
+        return flow {
+            emit(safeApiCall {
+                apiService.getStack(terminalId,commodityId)
+            })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun  getUser(phone:String):Flow<NetworkResult<ResponseUserData>>{
+        return  flow {
+            emit(safeApiCall { apiService.getUserName(phone) })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun offlineFastCase(requestOfflineCaseData: RequestOfflineCaseData):Flow<NetworkResult<BaseResponse>>{
+        return  flow {
+            emit(safeApiCall {
+                apiService.offlineFastCase(requestOfflineCaseData)
+            })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun  getFastCaseList():Flow<NetworkResult<ResponseFastcaseList>>{
+        return  flow {
+            emit(safeApiCall {
+                apiService.fastCaseList()
+            })
+        }.flowOn(Dispatchers.IO)
     }
 }

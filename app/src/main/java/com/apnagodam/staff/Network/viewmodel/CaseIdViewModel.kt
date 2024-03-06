@@ -2,6 +2,7 @@ package com.apnagodam.staff.Network.viewmodel
 
 import android.app.Application
 import android.content.Intent
+import android.net.Network
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,10 +12,16 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
+import com.apnagodam.staff.Network.Request.RequestOfflineCaseData
 import com.apnagodam.staff.Network.Request.StackPostData
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
+import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
+import com.apnagodam.staff.Network.Response.ResponseFastcaseList
+import com.apnagodam.staff.Network.Response.ResponseStackData
+import com.apnagodam.staff.Network.Response.ResponseUserData
+import com.apnagodam.staff.Network.Response.ResponseWarehouse
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.repository.CaseIdRepo
 import com.apnagodam.staff.activity.LoginActivity
@@ -43,20 +50,28 @@ class CaseIdViewModel @Inject constructor(
     private val terminalResponse: MutableLiveData<NetworkResult<TerminalListPojo>> =
         MutableLiveData()
 
-     val driverOtpResponse = MutableLiveData<NetworkResult<DriverOtpResponse>>()
+    val driverOtpResponse = MutableLiveData<NetworkResult<DriverOtpResponse>>()
     val response: LiveData<NetworkResult<AllCaseIDResponse>> = _response
 
     val stackReponse = MutableLiveData<NetworkResult<StackListPojo>>()
 
-    val commoditiesResponse= MutableLiveData<NetworkResult<CommodityResponseData>>()
+    val commoditiesResponse = MutableLiveData<NetworkResult<CommodityResponseData>>()
 
-    val createCaseIdResponse =MutableLiveData<NetworkResult<LoginResponse>>()
+    val createCaseIdResponse = MutableLiveData<NetworkResult<LoginResponse>>()
     val usersListResponse = MutableLiveData<NetworkResult<AllUserListPojo>>()
 
     val stackRequestResponse = MutableLiveData<NetworkResult<StackRequestResponse>>()
+
+    val fastCaseWarehouseResponse = MutableLiveData<NetworkResult<ResponseWarehouse>>()
+
+    val stackResponse = MutableLiveData<NetworkResult<ResponseStackData>>()
+
+    var userResponse =  MutableLiveData<NetworkResult<ResponseUserData>>()
+    val offlineFastcaseResponse = MutableLiveData<NetworkResult<BaseResponse>>()
+    val fastcaseListResponse = MutableLiveData<NetworkResult<ResponseFastcaseList>>()
     fun getCaseId(str: String?, i: Int, str2: String?, str3: String?) = viewModelScope.launch {
         repository.getCaseId(str, i, str2, str3).collect { values ->
-            if(values.data!!.status!="1"){
+            if (values.data!!.status != "1") {
                 SharedPreferencesRepository.logout()
                 val intent = Intent(getApplication(), LoginActivity::class.java)
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -88,26 +103,58 @@ class CaseIdViewModel @Inject constructor(
         }
     }
 
-    fun getCommodities(terminalId:String,inOut:String,userPhone:String) = viewModelScope.launch {
-        repository.getCommodities(terminalId, inOut, userPhone).collect(){
-            commoditiesResponse.value = it
+    fun getCommodities(terminalId: String, inOut: String, userPhone: String) =
+        viewModelScope.launch {
+            repository.getCommodities(terminalId, inOut, userPhone).collect() {
+                commoditiesResponse.value = it
+            }
+        }
+
+    fun doCreateCaseId(createCaseIDPostData: CreateCaseIDPostData) = viewModelScope.launch {
+        repository.doCreateCaseId(createCaseIDPostData).collect() {
+            createCaseIdResponse.value = it
         }
     }
-     fun doCreateCaseId(  createCaseIDPostData: CreateCaseIDPostData)= viewModelScope.launch {
-         repository.doCreateCaseId(createCaseIDPostData).collect(){
-             createCaseIdResponse.value = it
-         }
-     }
 
-    fun getUsersList(terminalId: String,inOut: String) = viewModelScope.launch {
-        repository.getUserList(terminalId, inOut).collect(){
+    fun getUsersList(terminalId: String, inOut: String) = viewModelScope.launch {
+        repository.getUserList(terminalId, inOut).collect() {
             usersListResponse.value = it
         }
     }
 
     fun getStackRequest() = viewModelScope.launch {
-        repository.getStackRequestList().collect(){
+        repository.getStackRequestList().collect() {
             stackRequestResponse.value = it
+        }
+    }
+
+    fun getFastcaseWarehouseData() = viewModelScope.launch {
+        repository.getFastCaseWarehouse().collect {
+            fastCaseWarehouseResponse.value = it
+        }
+    }
+
+    fun  getStack(terminalId:String,commodityId:String) = viewModelScope.launch {
+        repository.getStack(terminalId,commodityId).collect{
+            stackResponse.value =it
+        }
+    }
+
+    fun getUser(phone:String) =  viewModelScope.launch {
+        repository.getUser(phone).collect{
+            userResponse.value = it
+        }
+    }
+
+    fun offlineFastcase(requestOfflineCaseData: RequestOfflineCaseData) = viewModelScope.launch {
+        repository.offlineFastCase(requestOfflineCaseData).collect{
+            offlineFastcaseResponse.value = it
+        }
+    }
+
+    fun getFastcaseList() = viewModelScope.launch {
+        repository.getFastCaseList().collect{
+            fastcaseListResponse.value = it
         }
     }
 

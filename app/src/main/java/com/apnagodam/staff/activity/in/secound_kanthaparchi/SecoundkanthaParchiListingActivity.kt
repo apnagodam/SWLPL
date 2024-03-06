@@ -143,7 +143,7 @@ class SecoundkanthaParchiListingActivity : BaseActivity<ActivityListingBinding?>
                                 } else if (it.data.secoundKataParchiDatum.data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                     AllCases!!.add(it.data.secoundKataParchiDatum.data[i])
 
-                                } else break
+                                }
 
 
                             }

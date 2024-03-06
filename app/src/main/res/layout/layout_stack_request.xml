@@ -55,6 +55,7 @@
                      style="@style/TextStyleBold"
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
+                     android:visibility="gone"
                      android:text="8949422632"
                      android:layout_gravity="center"
                      android:gravity="center"
