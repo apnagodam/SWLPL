@@ -117,6 +117,7 @@
 
     // case id
     <string name="case_id">Create Case ID</string>
+    <string name="simple_case_id">Case Id</string>
     <string name="weight_kg">Enter Weight in KG *</string>
     <string name="vehicle_no">ENTER VEHICLE/TRUCK NO.</string>
     <string name="location">Enter Location *</string>

@@ -6,6 +6,7 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.OTPVerifyGatePassData
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.module.GatePassListResponse
+import com.apnagodam.staff.module.GatePassPDFPojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,5 +24,12 @@ class GatePassRepo @Inject constructor(val apiService: ApiService):BaseApiRespon
     }
     suspend fun doVerifyOtp(otpVerifyGatePassData: OTPVerifyGatePassData):Flow<NetworkResult<LoginResponse>>{
         return  flow { emit(safeApiCall { apiService.doVerifyGatePassOTP(otpVerifyGatePassData) }) }.flowOn(Dispatchers.IO)
+    }
+    suspend fun getGatePassPdf(caseId:String):Flow<NetworkResult<GatePassPDFPojo>>{
+        return flow {
+            emit(safeApiCall {
+                apiService.getGatePassPDf(caseId)
+            })
+        }.flowOn(Dispatchers.IO)
     }
 }

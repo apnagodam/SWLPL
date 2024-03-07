@@ -522,7 +522,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(LanguageActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.lead_generate)) {
                         startActivity(LeadGenerateClass::class.java)
-                    } else if (headerList[groupPosition].menuName == resources.getString(R.string.create_case)) {
+                    } else if (headerList[groupPosition].menuName == resources.getString(R.string.simple_case_id)) {
                         startActivity(CaseListingActivity::class.java)
                     } /*else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.vendor))) {
                             startActivity(MyVendorVoacherListClass.class);
@@ -724,42 +724,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         headerList.add(menuModel)
         headerList.add(menuModel1)
         headerList.add(menuModel2)
-        if (SharedPreferencesRepository.getDataManagerInstance().userPermission != null && SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()) {
-            for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
-                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                        "11",
-                        ignoreCase = true
-                    )
-                ) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                        val menuModel3 = MenuModel(
-                            resources.getString(R.string.lead_generate),
-                            true,
-                            false,
-                            "https://www.journaldev.com/19226/python-fractions",
-                            R.drawable.lead
-                        ) //Menu of Android Tutorial. No sub menus
-                        headerList.add(menuModel3)
-                    }
-                }
-                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                        "12",
-                        ignoreCase = true
-                    )
-                ) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                        val menuModel4 = MenuModel(
-                            resources.getString(R.string.create_case),
-                            true,
-                            false,
-                            "https://www.journaldev.com/19226/python-fractions",
-                            R.drawable.create_case_id
-                        ) //Menu of Android Tutorial. No sub menus
-                        headerList.add(menuModel4)
-                    }
-                }
-            }
-        }
+        val menuModel3 = MenuModel(
+            resources.getString(R.string.lead_generate),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.lead
+        ) //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel3)
+        val menuModel4 = MenuModel(
+            resources.getString(R.string.simple_case_id),
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.create_case_id
+        ) //Menu of Android Tutorial. No sub menus
+        headerList.add(menuModel4)
         if (!menuModel.hasChildren) {
             childList[menuModel] = null
         }
@@ -1398,197 +1378,176 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     override fun onItemClick(view: View, position: Int) {
-        binding!!.drawerLayout.postDelayed({
-            toggleDrawer()
-
-            if (position == 1) {
-                onBackPressed()
-            }
-            if (position == 2) {
-                startActivity(LanguageActivity::class.java)
-            }
-            for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
-
-                if (position == 3) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "11",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(LeadGenerateClass::class.java)
-                        }
-                    }
-                }
-                if (position == 4) {
-                }
-                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                        "12",
-                        ignoreCase = true
-                    )
-                ) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                        startActivity(CaseIDGenerateClass::class.java)
-                    }
-                }
-                if (position == 5) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "13",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(InPricingListingActivity::class.java)
-                        }
-                    }
-                }
-                if (position == 6) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "15",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(TruckBookListingActivity::class.java)
-                        } else {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                    "16",
-                                    ignoreCase = true
-                                )
-                            ) {
-                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                    startActivity(LabourBookListingActivity::class.java)
-                                }
-                            }
-                        }
-                    }
-                }
-                if (position == 7) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "20",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(FirstkanthaParchiListingActivity::class.java)
-                        }
-                    } else {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                                "16",
-                                ignoreCase = true
-                            )
-                        ) {
-                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                                startActivity(LabourBookListingActivity::class.java)
-                            }
-                        }
-                    }
-                }
-                if (position == 8) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "20",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(FirstkanthaParchiListingActivity::class.java)
-                        }
-                    }
-                }
-                if (position == 9) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "18",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(FirstQualityReportListingActivity::class.java)
-                        }
-                    }
-                }
-                if (position == 10) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "20",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(SecoundkanthaParchiListingActivity::class.java)
-                        }
-                    }
-                }
-                if (position == 11) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "18",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            startActivity(SecoundQualityReportListingActivity::class.java)
-                        }
-                    }
-                }
-                if (position == 12) {
-                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-                            "19",
-                            ignoreCase = true
-                        )
-                    ) {
-                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-                            // startActivity(FirstkanthaParchiListingActivity.class);
-                        }
-                    }
-                }
-            }
-            if (position == 13) {
-                logout(resources.getString(R.string.logout_alert), "Logout")
-            }
-            when (position) {
-                0 -> {}
-                1 -> {
-                }
-
-                2 -> startActivity(LanguageActivity::class.java)
-                3 -> startActivity(LeadGenerateClass::class.java)
-                4 -> startActivity(CaseIDGenerateClass::class.java)
-                5 -> startActivity(InPricingListingActivity::class.java)
-                6 -> startActivity(TruckBookListingActivity::class.java)
-                7 -> startActivity(LabourBookListingActivity::class.java)
-                8 -> startActivity(FirstkanthaParchiListingActivity::class.java)
-                9 -> startActivity(FirstQualityReportListingActivity::class.java)
-                10 -> startActivity(SecoundkanthaParchiListingActivity::class.java)
-                11 -> startActivity(SecoundQualityReportListingActivity::class.java)
-                12 -> startActivity(GatePassListingActivity::class.java)
-                13 -> {
-                    loginViewModel.doLogout()
-                    loginViewModel.logoutResponse.observe(this) {
-                        when (it) {
-                            is NetworkResult.Error -> {
-                                showToast(it.message)
-
-                            }
-
-                            is NetworkResult.Loading -> {
-
-
-                            }
-
-                            is NetworkResult.Success -> {
-                                SharedPreferencesRepository.getDataManagerInstance().clear()
-                                SharedPreferencesRepository.setIsUserName(false)
-                                SharedPreferencesRepository.saveSessionToken("")
-                                val intent = Intent(this, LoginActivity::class.java)
-                                intent.putExtra("setting", "")
-                                startActivity(LoginActivity::class.java)
-                                this.finish()
-
-                            }
-                        }
-                    }
-                }        //call logout api
-
-            }
-        }, 10)
+//        binding!!.drawerLayout.postDelayed({
+//            toggleDrawer()
+//
+//            if (position == 1) {
+//                onBackPressed()
+//            }
+//            if (position == 2) {
+//                startActivity(LanguageActivity::class.java)
+//            }
+//            for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
+//
+//                if (position == 3) {
+//                    startActivity(LeadGenerateClass::class.java)
+//
+//                }
+//                if (position == 4) {
+//                    startActivity(CaseListingActivity::class.java)
+//
+//                }
+//                if (position == 5) {
+//                    startActivity(InPricingListingActivity::class.java)
+//
+//                }
+//                if (position == 6) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "15",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(TruckBookListingActivity::class.java)
+//                        } else {
+//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                                    "16",
+//                                    ignoreCase = true
+//                                )
+//                            ) {
+//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                                    startActivity(LabourBookListingActivity::class.java)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                if (position == 7) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "20",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(FirstkanthaParchiListingActivity::class.java)
+//                        }
+//                    } else {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                                "16",
+//                                ignoreCase = true
+//                            )
+//                        ) {
+//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                                startActivity(LabourBookListingActivity::class.java)
+//                            }
+//                        }
+//                    }
+//                }
+//                if (position == 8) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "20",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(FirstkanthaParchiListingActivity::class.java)
+//                        }
+//                    }
+//                }
+//                if (position == 9) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "18",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(FirstQualityReportListingActivity::class.java)
+//                        }
+//                    }
+//                }
+//                if (position == 10) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "20",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(SecoundkanthaParchiListingActivity::class.java)
+//                        }
+//                    }
+//                }
+//                if (position == 11) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "18",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            startActivity(SecoundQualityReportListingActivity::class.java)
+//                        }
+//                    }
+//                }
+//                if (position == 12) {
+//                    if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
+//                            "19",
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
+//                            // startActivity(FirstkanthaParchiListingActivity.class);
+//                        }
+//                    }
+//                }
+//            }
+//            if (position == 13) {
+//                logout(resources.getString(R.string.logout_alert), "Logout")
+//            }
+//            when (position) {
+//                0 -> {}
+//                1 -> {
+//                }
+//
+//                2 -> startActivity(LanguageActivity::class.java)
+//                3 -> startActivity(LeadGenerateClass::class.java)
+//                4 -> startActivity(CaseIDGenerateClass::class.java)
+//                5 -> startActivity(InPricingListingActivity::class.java)
+//                6 -> startActivity(TruckBookListingActivity::class.java)
+//                7 -> startActivity(LabourBookListingActivity::class.java)
+//                8 -> startActivity(FirstkanthaParchiListingActivity::class.java)
+//                9 -> startActivity(FirstQualityReportListingActivity::class.java)
+//                10 -> startActivity(SecoundkanthaParchiListingActivity::class.java)
+//                11 -> startActivity(SecoundQualityReportListingActivity::class.java)
+//                12 -> startActivity(GatePassListingActivity::class.java)
+//                13 -> {
+//                    loginViewModel.doLogout()
+//                    loginViewModel.logoutResponse.observe(this) {
+//                        when (it) {
+//                            is NetworkResult.Error -> {
+//                                showToast(it.message)
+//
+//                            }
+//
+//                            is NetworkResult.Loading -> {
+//
+//
+//                            }
+//
+//                            is NetworkResult.Success -> {
+//                                SharedPreferencesRepository.getDataManagerInstance().clear()
+//                                SharedPreferencesRepository.setIsUserName(false)
+//                                SharedPreferencesRepository.saveSessionToken("")
+//                                val intent = Intent(this, LoginActivity::class.java)
+//                                intent.putExtra("setting", "")
+//                                startActivity(LoginActivity::class.java)
+//                                this.finish()
+//
+//                            }
+//                        }
+//                    }
+//                }        //call logout api
+//
+//            }
+//        }, 10)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

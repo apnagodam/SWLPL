@@ -241,7 +241,7 @@ interface ApiService {
     ): Response<GatePassListResponse>
 
     @GET("emp_api/apna_emp_generate_gate_pass")
-    fun getGatePassPDf(@Query("case_id") str: String?): Call<GatePassPDFPojo?>?
+    suspend fun getGatePassPDf(@Query("case_id") str: String?): Response<GatePassPDFPojo>
 
     @GET("emp_api/apna_emp_get_labourbook")
     suspend fun getLabourBookList(

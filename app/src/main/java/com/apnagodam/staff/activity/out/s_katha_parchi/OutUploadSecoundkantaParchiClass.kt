@@ -37,6 +37,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import java.lang.Exception
 import java.util.Locale
 import java.util.UUID
 
@@ -112,19 +113,41 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         binding!!.etKantaParchiNum.isEnabled = false
         binding!!.llOldBags.visibility = View.GONE
         binding!!.llBags.visibility = View.VISIBLE
+        binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
+            if (binding!!.etWeightKg.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etWeightKg.text!!.isNotEmpty()) {
+                try {
+                    var bagCal = (binding!!.etWeightKg.text.toString().toInt() / 100)
+                    binding!!.etWeight.setText(
+                        bagCal.toString()
+                    )
+                } catch (e:Exception){
+                    binding!!.etWeight.setText("0")
+
+                }
+
+            }
+            else
+            {
+                binding!!.etWeight.setText("0")
+            }
+
+        }
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
 
-            if (binding!!.etWeight.text!!.isNotEmpty() && binding!!.etNoOfBags.text!!.isNotBlank() && binding!!.etNoOfBags.text!!.equals("0")) {
-                var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                    .toInt()
-                binding!!.etAvgWeight.setText(
-                    bagCal.toString()
-                )
+            if (binding!!.etWeight.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etNoOfBags.text!!.isNotEmpty()) {
+                try {
+                    var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
+                        .toInt()
+                    binding!!.etAvgWeight.setText(
+                        bagCal.toString()
+                    )
+                } catch (e: Exception){
 
-            }  else
+                }
+
+            } else
             {
-                binding!!.etAvgWeight.error = "Value is not correct!"
             }
         }
 

@@ -1,5 +1,7 @@
 package com.apnagodam.staff.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.GatePassPDFPrieviewClass;
 import com.apnagodam.staff.activity.caseid.CaseListingActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
 import com.apnagodam.staff.activity.in.first_quality_reports.UploadFirstQualtityReportsClass;
@@ -137,7 +140,6 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                     } else {
                         if (Leads.get(position).getFirstKantaParchi() == null || Leads.get(position).getFirstKantaDharamkanta() == null) {
                             binding.tvStatus.setText("Add First Kanta Parchi");
-
                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -216,9 +218,9 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                                             @Override
                                                             public void onClick(View view) {
-                                                                if (context instanceof CaseListingActivity) {
-                                                                    ((CaseListingActivity) context).ViewData(position);
-                                                                }
+                                                                Intent intent =new Intent(context,GatePassPDFPrieviewClass.class);
+                                                                intent.putExtra("CaseID",Leads.get(position).getCaseId());
+                                                                context.startActivity(intent);
                                                             }
                                                         });
                                                     }
@@ -348,9 +350,12 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                     binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
-                                                            if (context instanceof CaseListingActivity) {
-                                                                ((CaseListingActivity) context).ViewData(position);
-                                                            }
+                                                            Intent intent =new Intent(context,GatePassPDFPrieviewClass.class);
+                                                            intent.putExtra("CaseID",Leads.get(position).getCaseId());
+                                                            intent.putExtra("in_out",Leads.get(position).getInOut());
+                                                            intent.putExtra("bags",Leads.get(position).getNoOfBags());
+                                                            context.startActivity(intent);
+
                                                         }
                                                     });
                                                 }

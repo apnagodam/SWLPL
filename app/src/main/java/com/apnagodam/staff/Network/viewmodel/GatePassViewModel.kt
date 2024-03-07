@@ -13,6 +13,7 @@ import com.apnagodam.staff.Network.repository.GatePassRepo
 import com.apnagodam.staff.activity.LoginActivity
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.GatePassListResponse
+import com.apnagodam.staff.module.GatePassPDFPojo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -23,6 +24,7 @@ class GatePassViewModel @Inject constructor(val gatePassRepo: GatePassRepo,appli
 
     var gatePassList = MutableLiveData<NetworkResult<GatePassListResponse>>()
     var gatePassOtpResponse = MutableLiveData<NetworkResult<LoginResponse>>()
+    var  gatePassPdfResponse  =  MutableLiveData<NetworkResult<GatePassPDFPojo>>()
     fun getGatePassList(limit:String,page:String,inOut:String,search:String)=viewModelScope.launch {
         gatePassRepo.getGatePassListing(limit, page, inOut, search).collect(){
             if(it.data!!.status!="1"){
@@ -40,4 +42,12 @@ class GatePassViewModel @Inject constructor(val gatePassRepo: GatePassRepo,appli
             gatePassOtpResponse.value = it
         }
     }
+
+    fun getGatePassPdf(caseId:String) = viewModelScope.launch {
+        gatePassRepo.getGatePassPdf(caseId).collect{
+            gatePassPdfResponse.value = it
+        }
+    }
+
+
 }

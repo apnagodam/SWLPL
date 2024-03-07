@@ -126,7 +126,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 "driver_number" to inwardsStack!!.driverNumber,
                 "otp" to "",
                 "in_out" to inwardsStack!!.inOutType,
-                "stack_id" to inwardsStack!!.stackNumber
+                "stack_id" to inwardsStack!!.stackId
             )
             TerminalID = inwardsStack!!.terminalId.toString()
             selectInOUt = inwardsStack!!.inOutType
@@ -353,12 +353,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                             parentView.getItemAtPosition(position).toString()
                         var stackData = Stackdata!!.get(position - 1);
                         stackID = stackData.id
-                        otpData = mapOf(
-                            "driver_number" to stackData.driverNumber,
-                            "otp" to stackData.otp,
-                            "in_out" to "IN",
-                            "stack_id" to stackData.stackId
-                        )
+
                         binding!!.etCustomerWeight.setText(
                             (stackData.requestWeight.toString().toInt() * 100).toString()
                         )
@@ -450,6 +445,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
                 is NetworkResult.Success -> {
                     if (it.data != null) {
+
                         if (it.data.status == "1") {
                             if (it.data.type == "Match") {
                                 binding!!.btnCreateeCase.visibility = View.VISIBLE
@@ -802,7 +798,6 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         is NetworkResult.Error -> {
                             hideDialog()
                         }
-
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
                             if (it.data != null) {

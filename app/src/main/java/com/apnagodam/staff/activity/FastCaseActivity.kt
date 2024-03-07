@@ -606,6 +606,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                             if (it.data.status == "1") {
                                 it.data.let { body ->
                                     if (body.data != null) {
+                                        userData = body
                                         binding!!.edtUsername.setText(body.data.name)
                                     } else {
                                         Toast.makeText(mContext, body.message, Toast.LENGTH_SHORT)
@@ -670,6 +671,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                     is NetworkResult.Loading -> {}
                     is NetworkResult.Success -> {
                         if (it.data != null) {
+                            finish()
                             showToast(it.data.message)
                         }
                     }
