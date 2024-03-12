@@ -435,7 +435,11 @@ interface ApiService {
         @Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,
         @Query("in_out") inOut: String
     ): Response<LoginResponse>
-
+    @POST("emp_api/apna_emp_s_quality")
+     fun uploadLabreport(
+        @Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,
+        @Query("in_out") inOut: String
+    ): Observable<LoginResponse>
     @POST("emp_api/apna_emp_s_kanta_parchi")
     suspend fun uploadSecoundkantaParchi(
         @Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?,

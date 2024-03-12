@@ -418,11 +418,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             setAdapter()
                             for (i in body.data.getaCase().data.indices) {
 
-                                if ((
-
-                                            body.data.getaCase().data[i].cctvReport == null ||
-                                                    body.data.getaCase().data[i].ivrReport == null ||
-                                                    body.data.getaCase().data[i].secondQualityReport == null || body.data.getaCase().data[i].firstQuality == null || body.data.getaCase().data[i].firstKantaParchi == null || body.data.getaCase().data[i].secondKantaParchi == null || body.data.getaCase().data[i].labourBook == null || body.data.getaCase().data[i].truckbook == null || body.data.getaCase().data[i].gatepassReport == null)
+                                if ((body.data.getaCase().data[i].cctvReport == null
+                                            || body.data.getaCase().data[i].ivrReport == null
+                                            || body.data.getaCase().data[i].secondQualityReport == null
+                                            || body.data.getaCase().data[i].sendToLab == null
+                                            || body.data.getaCase().data[i].firstKantaParchi == null
+                                            || body.data.getaCase().data[i].secondKantaParchi == null
+                                            || body.data.getaCase().data[i].labourBook == null
+                                            || body.data.getaCase().data[i].truckbook == null
+                                            || body.data.getaCase().data[i].gatepassReport == null)
                                 ) {
                                     if (userDetails.terminal != null) {
                                         if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
@@ -441,7 +445,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 binding!!.mainContent.emptyData.visibility = View.VISIBLE
                                 binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                             }
-                            casesTopAdapter = CasesTopAdapter(AllCases, this)
+                            casesTopAdapter = CasesTopAdapter(AllCases, this, apiService)
 
                         } else {
                             showToast(body.message)
@@ -977,7 +981,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //            })
 //        }
 
-    private fun getdashboardData() {
+    fun getdashboardData() {
 
         homeViewModel.getDashboardData()
 

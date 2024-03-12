@@ -164,7 +164,7 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
                             }
                         }
 //                        AllCases!!.addAll(body.data.getaCase().data)
-                        casesTopAdapter = CasesTopAdapter(AllCases,this)
+                        casesTopAdapter = CasesTopAdapter(AllCases,this,apiService)
                         setAdapter()
 
                         //  AllCases=body.getCases();

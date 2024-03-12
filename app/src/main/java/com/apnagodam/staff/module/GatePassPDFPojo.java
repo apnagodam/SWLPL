@@ -4,6 +4,9 @@ import com.apnagodam.staff.Network.Response.BaseResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 public class GatePassPDFPojo extends BaseResponse {
     @SerializedName("data")
     @Expose
@@ -203,6 +206,140 @@ public class GatePassPDFPojo extends BaseResponse {
         @SerializedName("last_name")
         @Expose
         private String lastName;
+
+        public String getDisplacedBags() {
+            return displacedBags;
+        }
+
+        public void setDisplacedBags(String displacedBags) {
+            this.displacedBags = displacedBags;
+        }
+
+        @SerializedName("displedge_bags")
+        @Expose
+        private String displacedBags;
+
+
+
+        public String getgPCaseId() {
+            return gPCaseId;
+        }
+
+        public void setgPCaseId(String gPCaseId) {
+            this.gPCaseId = gPCaseId;
+        }
+
+        public String getsQCaseId() {
+            return sQCaseId;
+        }
+
+        public void setsQCaseId(String sQCaseId) {
+            this.sQCaseId = sQCaseId;
+        }
+
+        public String getsKPCaseId() {
+            return sKPCaseId;
+        }
+
+        public void setsKPCaseId(String sKPCaseId) {
+            this.sKPCaseId = sKPCaseId;
+        }
+
+        public String getSupervisorEmpId() {
+            return supervisorEmpId;
+        }
+
+        public void setSupervisorEmpId(String supervisorEmpId) {
+            this.supervisorEmpId = supervisorEmpId;
+        }
+
+        @SerializedName("supervisor_emp_id")
+        @Expose
+        private String supervisorEmpId;
+
+        public String getEmployeeEmpId() {
+            return employeeEmpId;
+        }
+
+        public void setEmployeeEmpId(String employeeEmpId) {
+            this.employeeEmpId = employeeEmpId;
+        }
+
+        @SerializedName("employee_emp_id")
+        @Expose
+        private String employeeEmpId;
+
+        @SerializedName("emp_first_name")
+        @Expose
+        private String empFirstName;
+        @SerializedName("emp_last_name")
+        @Expose
+        private String empLastName;
+
+        @SerializedName("emp_phone")
+        @Expose
+        private String empPhone;
+
+        @SerializedName("contractor_id")
+        @Expose
+        private String contractorId;
+
+        @SerializedName("transporter_id")
+        @Expose
+        private String transporterId;
+
+        @SerializedName("qv_data")
+        @Expose
+        private ArrayList<QvData> qvList;
+
+
+        public ArrayList<QvData> getQvList() {
+            return qvList;
+        }
+
+        public void setQvList(ArrayList<QvData> qvList) {
+            this.qvList = qvList;
+        }
+
+        public String getContractorId() {
+            return contractorId;
+        }
+
+        public void setContractorId(String contractorId) {
+            this.contractorId = contractorId;
+        }
+
+        public String getTransporterId() {
+            return transporterId;
+        }
+
+        public void setTransporterId(String transporterId) {
+            this.transporterId = transporterId;
+        }
+
+        public String getEmpFirstName() {
+            return empFirstName;
+        }
+
+        public void setEmpFirstName(String empFirstName) {
+            this.empFirstName = empFirstName;
+        }
+
+        public String getEmpLastName() {
+            return empLastName;
+        }
+
+        public void setEmpLastName(String empLastName) {
+            this.empLastName = empLastName;
+        }
+
+        public String getEmpPhone() {
+            return empPhone;
+        }
+
+        public void setEmpPhone(String empPhone) {
+            this.empPhone = empPhone;
+        }
 
         public Integer getId() {
             return id;
@@ -700,5 +837,32 @@ public class GatePassPDFPojo extends BaseResponse {
             this.lastName = lastName;
         }
 
+
+      public  class QvData implements Serializable {
+
+
+            @SerializedName("name")
+            @Expose
+            private String name;
+            @SerializedName("value")
+            @Expose
+            private String value;
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
     }
 }

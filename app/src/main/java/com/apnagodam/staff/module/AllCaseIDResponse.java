@@ -219,6 +219,18 @@ public class AllCaseIDResponse extends BaseResponse {
         @Expose
         private String saleName;
 
+        public String getSendToLab() {
+            return sendToLab;
+        }
+
+        public void setSendToLab(String sendToLab) {
+            this.sendToLab = sendToLab;
+        }
+
+        @SerializedName("send_to_lab")
+        @Expose
+        private String sendToLab;
+
         public String getStack_number() {
             return stack_number;
         }

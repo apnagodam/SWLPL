@@ -14,12 +14,17 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup.LayoutParams
 import android.view.WindowManager
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.marginLeft
+import androidx.core.view.setMargins
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallbackWProgress
 import com.apnagodam.staff.Network.NetworkResult
@@ -37,8 +42,8 @@ import java.io.IOException
 class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>() {
     private var bitmap: Bitmap? = null
     private var caseiD: String? = ""
-    val  gatePassViewModel by viewModels<GatePassViewModel>()
-    var inOut:String = "IN"
+    val gatePassViewModel by viewModels<GatePassViewModel>()
+    var inOut: String = "IN"
     override fun getLayoutResId(): Int {
         return R.layout.activity_gate_pass_pdf_file
     }
@@ -53,22 +58,24 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
             finish()
         }
 
-        if(inOut=="OUT"){
+        if (inOut == "OUT") {
             binding!!.llTraupline.visibility = View.GONE
         }
-        gatePassViewModel.gatePassPdfResponse.observe(this){
-            when(it){
+        gatePassViewModel.gatePassPdfResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
+
                 is NetworkResult.Loading -> {
 
                 }
+
                 is NetworkResult.Success -> {
                     hideDialog()
-                    if(it.data!=null){
-                        if(it.data.data.status==1){
-                            it.data.let { body->
+                    if (it.data != null) {
+                        if (it.data.data.status == 1) {
+                            it.data.let { body ->
                                 try {
                                     binding!!.gatepassNo.text = "No :" + body.data.gatePass
                                     binding!!.date.text = "Date :" + body.data.gatepassDate
@@ -79,11 +86,45 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
                                     binding!!.truckNo.text = body.data.vehicleNo
                                     binding!!.dharmKathaName.text = body.data.dharamKantaName
                                     binding!!.stackNo.text = body.data.stackNo
-                                    binding!!.bags.text = "" + body.data.noOfBags
+                                    binding!!.bags.text = "${body.data.noOfBags} ( ${body.data.noOfBags} / ${body.data.displacedBags})"
                                     binding!!.avgWweight.text = body.data.totalWeight + " " + "QTL."
                                     binding!!.commodityName.text = body.data.commodityName
                                     binding!!.transporterName.text = body.data.transporterName
                                     binding!!.tansporterMobileNo.text = body.data.transporterPhoneNo
+                                    if(body.data.contractorId.toString().toInt()>1){
+                                        binding!!.labourContractor.text = "Company"
+
+                                    }
+                                    else{
+                                        binding!!.labourContractor.text = "Client"
+
+                                    }
+                                    if(body.data.transporterId.toString().toInt()>1){
+                                        binding!!.transporterName.text = "Company"
+
+                                    }
+                                    else{
+                                        binding!!.transporterName.text = "Client"
+
+                                    }
+
+                                    var listOfQuality  = arrayListOf<String>();
+                                    listOfQuality.add("FF")
+                                    listOfQuality.add("GG")
+                                    listOfQuality.add("Moisture")
+                                    var layoutParams = LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT)
+                                    layoutParams.setMargins(10,5,10,5)
+                                    for (i  in body.data.qvList){
+                                        var textView = TextView(this)
+                                        textView.layoutParams =  layoutParams
+                                        textView.setBackgroundResource(R.drawable.btn_borders_gatepass)
+                                        textView.setPadding(10,5,10,5)
+                                        textView.setTextSize(10f)
+                                        textView.setText("${i.name} : ${i.value}")
+
+                                        binding!!.llQuality.addView(textView)
+
+                                    }
                                     /** */
                                     if (body.data.truckFacility != null) {
                                         binding!!.facilityTruck.text =
@@ -93,15 +134,21 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
                                             if (body.data.bagsFacility.toInt() == 1) "YES" else "No"
                                     }
                                     binding!!.oldKathaParchiNo.text = body.data.oldKantaParchi
-                                    binding!!.oldKathaParchiTotalWeight.text = body.data.oldTotalWeight
-                                    binding!!.oldKathaParchiAvgWeight.text = body.data.oldOriginalWeight
+                                    binding!!.oldKathaParchiTotalWeight.text =
+                                        body.data.oldTotalWeight
+                                    binding!!.oldKathaParchiAvgWeight.text =
+                                        body.data.oldOriginalWeight
                                     binding!!.kathaName.text = body.data.oldKantaName
                                     /** */
-                                    binding!!.driverName.text = "वरिष्ठ अधिकारी : " + body.data.gatePassCdfUserName
-                                    binding!!.driverMobile.text = "चालक का मोबाइल न.: " + body.data.driverPhone
+                                    binding!!.driverName.text =
+                                        "वरिष्ठ अधिकारी : " + body.data.gatePassCdfUserName
+                                    binding!!.driverMobile.text =
+                                        "चालक का मोबाइल न.: " + body.data.driverPhone
+                                    binding!!.whsMobile.text =
+                                        "सुपरवाइजर : " +  body.data.firstName + " " + body.data.lastName+"(${body.data.supervisorEmpId})"
                                     binding!!.whsName.text =
-                                        "सुपरवाइजर का नाम : " + body.data.firstName + " " + body.data.lastName
-                                    binding!!.whsMobile.text = "सुपरवाइजर का  मोबाइल न.: " + body.data.phone
+                                        "वरिष्ठ अधिकारी : " + body.data.empFirstName + " " + body.data.empLastName+"(${body.data.employeeEmpId})"
+
                                     binding!!.comment.text = body.data.notes
                                     hideDialog()
                                 } catch (e: Exception) {
@@ -171,7 +218,7 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
         // close the document
         document.close()
         //  Toast.makeText(this, "PDF of Scroll is created!!!", Toast.LENGTH_SHORT).show();
-     //   openGeneratedPDF(camFile)
+        //   openGeneratedPDF(camFile)
     }
 
     private fun requestPermissions(): Boolean {

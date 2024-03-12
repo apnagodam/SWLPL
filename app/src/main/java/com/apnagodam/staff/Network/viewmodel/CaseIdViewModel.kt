@@ -71,11 +71,13 @@ class CaseIdViewModel @Inject constructor(
     val fastcaseListResponse = MutableLiveData<NetworkResult<ResponseFastcaseList>>()
     fun getCaseId(str: String?, i: Int, str2: String?, str3: String?) = viewModelScope.launch {
         repository.getCaseId(str, i, str2, str3).collect { values ->
-            if (values.data!!.status != "1") {
-                SharedPreferencesRepository.logout()
-                val intent = Intent(getApplication(), LoginActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                ContextCompat.startActivity(getApplication(), intent, null)
+            if(values.data!=null){
+                if (values.data!!.status != "1") {
+                    SharedPreferencesRepository.logout()
+                    val intent = Intent(getApplication(), LoginActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    ContextCompat.startActivity(getApplication(), intent, null)
+                }
             }
             _response.value = values
 

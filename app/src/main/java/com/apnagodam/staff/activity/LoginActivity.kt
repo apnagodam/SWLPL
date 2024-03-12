@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.Task
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+
 @AndroidEntryPoint
 class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     private var smsReceiver: SMSReceiver? = null
@@ -41,8 +42,8 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     private var lat: String? = null
     private var Long: String? = null
     private var settingScreen = ""
-    val loginViewModel : LoginViewModel by viewModels<LoginViewModel>()
-     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    val loginViewModel: LoginViewModel by viewModels<LoginViewModel>()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
             locationUtils!!.startLocationUpdates()
@@ -53,14 +54,14 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
 
 
     override fun getLayoutResId(): Int {
-        return  R.layout.activity_login
+        return R.layout.activity_login
     }
 
-     override fun setUp() {
-         binding!!.btnLogin.setOnClickListener { v -> login }
+    override fun setUp() {
+        binding!!.btnLogin.setOnClickListener { v -> login }
 
 
-     }
+    }
 
     private fun fofrlang() {
         startActivityForResult(
@@ -86,26 +87,32 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
             sharedPrefences.savelat(lat)
             sharedPrefences.savelong(Long)
 
-            loginViewModel.doLogin(  LoginPostData(
+            loginViewModel.doLogin(
+                LoginPostData(
                     stringFromView(binding!!.etPhoneNumber).toString(),
                     "Emp"
-            ))
+                )
+            )
             loginViewModel.response.observe(this)
             {
-                when(it){
+                when (it) {
                     is NetworkResult.Error -> {}
-                    is NetworkResult.Loading ->{
+                    is NetworkResult.Loading -> {
                         showDialog()
                     }
-                    is NetworkResult.Success ->{
-                        if (it.data!=null){
-                            if(it.data.status=="1"){
-                                Toast.makeText(this@LoginActivity, it.data!!.getMessage(), Toast.LENGTH_LONG)
+
+                    is NetworkResult.Success -> {
+                        if (it.data != null) {
+                            if (it.data.status == "1") {
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    it.data!!.getMessage(),
+                                    Toast.LENGTH_LONG
+                                )
                                     .show()
                                 // SMS Listener for listing auto read message lsitner
                                 startSMSListener(it.data.getPhone())
-                            }
-                            else{
+                            } else {
                                 showToast(it.data.message)
                             }
                         }

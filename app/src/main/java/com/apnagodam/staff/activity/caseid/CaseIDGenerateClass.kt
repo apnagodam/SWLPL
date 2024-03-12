@@ -785,6 +785,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     ),
                     stringFromView(binding!!.etCustomerVehicle),
                     stringFromView(binding!!.etSpotToken),
+                    stringFromView(binding!!.etDriverMobileNumber)
                 )
 
                 println(createCaseIDPostData)
@@ -798,6 +799,7 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                         is NetworkResult.Error -> {
                             hideDialog()
                         }
+
                         is NetworkResult.Loading -> {}
                         is NetworkResult.Success -> {
                             if (it.data != null) {

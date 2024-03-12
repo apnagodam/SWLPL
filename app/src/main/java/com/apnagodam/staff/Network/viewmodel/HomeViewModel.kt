@@ -31,12 +31,12 @@ class HomeViewModel @Inject constructor(private val homeRepo: HomeRepo, applicat
     var attendenceResponse = MutableLiveData<NetworkResult<AttendanceResponse>>()
     fun getDashboardData() = viewModelScope.launch {
         homeRepo.getDashboardData().collect() {
-            if(it.data!!.status!="1"){
-                SharedPreferencesRepository.logout()
-                val intent = Intent(getApplication(), LoginActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(getApplication(),intent,null)
-            }
+//            if(it.data!!.status!="1"){
+//                SharedPreferencesRepository.logout()
+//                val intent = Intent(getApplication(), LoginActivity::class.java)
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                startActivity(getApplication(),intent,null)
+//            }
             homeDataResponse.value = it
         }
     }

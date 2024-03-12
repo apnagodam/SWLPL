@@ -38,6 +38,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.lang.Exception
+import java.text.DecimalFormat
 import java.util.Locale
 import java.util.UUID
 
@@ -68,6 +69,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
     var isFirstUpload = true;
     var lat = 0.0
     var long = 0.0
+    val dtime = DecimalFormat("#.##")
 
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
@@ -116,9 +118,9 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
         binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
             if (binding!!.etWeightKg.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etWeightKg.text!!.isNotEmpty()) {
                 try {
-                    var bagCal = (binding!!.etWeightKg.text.toString().toInt() / 100)
+                    var bagCal = (binding!!.etWeightKg.text.toString().toDouble() / 100)
                     binding!!.etWeight.setText(
-                        bagCal.toString()
+                        dtime.format(bagCal)
                     )
                 } catch (e:Exception){
                     binding!!.etWeight.setText("0")
@@ -137,10 +139,11 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
             if (binding!!.etWeight.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etNoOfBags.text!!.isNotEmpty()) {
                 try {
-                    var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                        .toInt()
+                    var bagCal =
+                        (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
+                            .toDouble()
                     binding!!.etAvgWeight.setText(
-                        bagCal.toString()
+                        dtime.format(bagCal)
                     )
                 } catch (e: Exception){
 

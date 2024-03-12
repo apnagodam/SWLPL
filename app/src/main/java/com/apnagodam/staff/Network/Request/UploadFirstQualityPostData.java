@@ -57,7 +57,7 @@ public class UploadFirstQualityPostData {
             this.datum = datum;
         }
 
-        public CommodityData(Integer id, String name, String value, Integer min, Integer max) {
+        public CommodityData(Integer id, String name, String value, Float min, Float max) {
             this.id = id;
             this.name = name;
             this.value = value;
@@ -76,10 +76,10 @@ public class UploadFirstQualityPostData {
         private String value;
         @SerializedName("min")
         @Expose
-        private Integer min;
+        private Float min;
         @SerializedName("max")
         @Expose
-        private Integer max;
+        private Float max;
 
         public Integer getId() {
             return id;
@@ -105,19 +105,19 @@ public class UploadFirstQualityPostData {
             this.value = value;
         }
 
-        public Integer getMin() {
+        public Float getMin() {
             return min;
         }
 
-        public void setMin(Integer min) {
+        public void setMin(Float min) {
             this.min = min;
         }
 
-        public Integer getMax() {
+        public Float getMax() {
             return max;
         }
 
-        public void setMax(Integer max) {
+        public void setMax(Float max) {
             this.max = max;
         }
 

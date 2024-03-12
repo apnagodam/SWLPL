@@ -39,9 +39,13 @@ public class CreateCaseIDPostData {
     @Expose
     private String spot_token;
 
+    @SerializedName("driver_number")
+    @Expose
+    private String driverNumber;
+
 
     public CreateCaseIDPostData(String terminal_id, String in_out, String customer_uid, String commodity_id, String location, String stack_id,
-                                String no_of_bags, String weight, String quantity, String vehicle_no, String spot_token) {
+                                String no_of_bags, String weight, String quantity, String vehicle_no, String spot_token,String driverNumber) {
 
         this.terminal_id = terminal_id;
         this.in_out = in_out;
@@ -54,6 +58,7 @@ public class CreateCaseIDPostData {
         this.quantity = quantity;
         this.vehicle_no = vehicle_no;
         this.spot_token = spot_token;
+        this.driverNumber= driverNumber;
 
 
     }

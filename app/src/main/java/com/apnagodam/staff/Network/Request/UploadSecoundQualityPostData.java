@@ -34,8 +34,11 @@ private String case_id;
     @SerializedName("extra_claim")
     @Expose
     private String extraClaim;
+    @SerializedName("send_to_lab")
+    @Expose
+    private String sendToLab;
 
-    public UploadSecoundQualityPostData(String case_id, String report_file, ArrayList<UploadFirstQualityPostData.CommodityData> commodityList, String packaging_type, String infested, String live_insects, String notes, String commodity_img,String extraClaim) {
+    public UploadSecoundQualityPostData(String case_id, String report_file, ArrayList<UploadFirstQualityPostData.CommodityData> commodityList, String packaging_type, String infested, String live_insects, String notes, String commodity_img,String extraClaim,String sendToLab) {
         this.case_id = case_id;
         this.report_file = report_file;
         this.commodityList = commodityList;
@@ -45,7 +48,10 @@ private String case_id;
         this.notes = notes;
         this.commodity_img = commodity_img;
         this.extraClaim=extraClaim;
+        this.sendToLab = sendToLab;
     }
+
+
 
 
     public static class CommodityData {

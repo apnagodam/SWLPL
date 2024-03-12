@@ -14,8 +14,13 @@ import androidx.databinding.ViewDataBinding;
 import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
+import com.apnagodam.staff.Network.ApiService;
+import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData;
+import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData;
+import com.apnagodam.staff.Network.Response.LoginResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.GatePassPDFPrieviewClass;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.caseid.CaseListingActivity;
 import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
 import com.apnagodam.staff.activity.in.first_quality_reports.UploadFirstQualtityReportsClass;
@@ -31,21 +36,31 @@ import com.apnagodam.staff.activity.out.s_quaility_report.OutUploadSecoundQualti
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
 import com.apnagodam.staff.module.AllCaseIDResponse;
+import com.google.android.gms.common.api.Api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class CasesTopAdapter extends BaseRecyclerViewAdapter {
     private List<AllCaseIDResponse.Datum> Leads;
     private Context context;
     private BaseActivity activity;
+   private  ApiService apiService;
 
-    public CasesTopAdapter(List<AllCaseIDResponse.Datum> leads, Activity caseListingActivity) {
+    public CasesTopAdapter(List<AllCaseIDResponse.Datum> leads, Activity caseListingActivity, ApiService apiService) {
         this.Leads = leads;
         this.context = caseListingActivity;
         this.activity = activity;
+        this.apiService = apiService;
     }
+
 
     @Override
     public BaseViewHolder inflateLayout(ViewDataBinding view) {
@@ -166,12 +181,10 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                     }
                                 });
 
-                            }
-                            else {
+                            } else {
                                 if (Leads.get(position).getFirstQualityTagging() == null) {
                                     binding.tvStatus.setText("IVR Quality Tagging Pending");
-                                }
-                                else {
+                                } else {
                                     if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
                                         binding.tvStatus.setText("Add Second Kanta Parchi");
 
@@ -188,8 +201,42 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                             }
                                         });
                                     } else {
-                                        if (Leads.get(position).getSecondQualityReport() == null) {
+                                        if (Leads.get(position).getSecondQualityReport() == null   || Leads.get(position).getSendToLab()==null) {
                                             binding.tvStatus.setText("Add Second Quality Report");
+
+                                            binding.divider.setVisibility(View.VISIBLE);
+                                            binding.tvLab.setVisibility(View.VISIBLE);
+                                            ArrayList<UploadFirstQualityPostData.CommodityData> commodityData = new ArrayList<>();
+
+                                            binding.tvLab.setOnClickListener(view -> {
+                                                apiService.uploadLabreport(new UploadSecoundQualityPostData(
+                                                                Leads.get(position).getCaseId(),
+                                                                "", commodityData, "", "", "", "", "", "0", "1"
+                                                        ), "OUT").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribe(new Observer<LoginResponse>() {
+                                                            @Override
+                                                            public void onSubscribe(Disposable d) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onNext(LoginResponse loginResponse) {
+                                                                if (context instanceof StaffDashBoardActivity) {
+                                                                    ((StaffDashBoardActivity) context).getdashboardData();
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onError(Throwable e) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onComplete() {
+
+                                                            }
+                                                        });
+                                            });
                                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
@@ -198,7 +245,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                     intent.putExtra("case_id", Leads.get(position).getCaseId());
                                                     intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
                                                     intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
-                                                    intent.putExtra("skp_avg_weight",Leads.get(position).getAvgWeight());
+                                                    intent.putExtra("skp_avg_weight", Leads.get(position).getAvgWeight());
 
                                                     context.startActivity(intent);
 
@@ -218,8 +265,8 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                                             @Override
                                                             public void onClick(View view) {
-                                                                Intent intent =new Intent(context,GatePassPDFPrieviewClass.class);
-                                                                intent.putExtra("CaseID",Leads.get(position).getCaseId());
+                                                                Intent intent = new Intent(context, GatePassPDFPrieviewClass.class);
+                                                                intent.putExtra("CaseID", Leads.get(position).getCaseId());
                                                                 context.startActivity(intent);
                                                             }
                                                         });
@@ -272,46 +319,64 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                         });
 
                     } else {
-                        if (Leads.get(position).getFirstQuality() == null) {
-                            binding.tvStatus.setText("Add Out First Quality Report");
-
+//                        if (Leads.get(position).getFirstQuality() == null) {
+//                            binding.tvStatus.setText("Add Out First Quality Report");
+//
+//                            binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+//                                @Override
+//                                public void onClick(View v) {
+//                                    Intent intent = new Intent(context, UploadOutFirstQualtityReportsClass.class);
+//                                    intent.putExtra("user_name", Leads.get(position).getCustFname());
+//                                    intent.putExtra("case_id", Leads.get(position).getCaseId());
+//                                    intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
+//                                    intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+//                                    context.startActivity(intent);
+//
+//                                }
+//                            });
+//                        } else {
+//
+//                        }
+                        if (Leads.get(position).getFirstKantaParchi() == null || Leads.get(position).getFirstKantaDharamkanta() == null) {
+                            binding.tvStatus.setText("Add Out First Kanta Parchi");
                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(context, UploadOutFirstQualtityReportsClass.class);
+                                    Intent intent = new Intent(context, OutUploadFirrstkantaParchiClass.class);
                                     intent.putExtra("user_name", Leads.get(position).getCustFname());
                                     intent.putExtra("case_id", Leads.get(position).getCaseId());
                                     intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
                                     intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+
                                     context.startActivity(intent);
 
                                 }
                             });
+
                         } else {
-                            if (Leads.get(position).getFirstKantaParchi() == null || Leads.get(position).getFirstKantaDharamkanta() == null) {
-                                binding.tvStatus.setText("Add Out First Kanta Parchi");
+                            if (Leads.get(position).getSecondQualityReport() == null ) {
+                                binding.tvStatus.setText("Add Out Quality Report");
+
                                 binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        Intent intent = new Intent(context, OutUploadFirrstkantaParchiClass.class);
+                                        Intent intent = new Intent(context, OutUploadSecoundQualtityReportsClass.class);
                                         intent.putExtra("user_name", Leads.get(position).getCustFname());
                                         intent.putExtra("case_id", Leads.get(position).getCaseId());
                                         intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                        intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
-
+                                        intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
                                         context.startActivity(intent);
 
                                     }
                                 });
-
                             } else {
-                                if (Leads.get(position).getSecondQualityReport() == null) {
-                                    binding.tvStatus.setText("Add Out Second Quality Report");
+                                if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
+                                    binding.tvStatus.setText("Add Out Second Kanta Parchi");
 
                                     binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            Intent intent = new Intent(context, OutUploadSecoundQualtityReportsClass.class);
+                                            Intent intent = new Intent(context, OutUploadSecoundkantaParchiClass.class);
                                             intent.putExtra("user_name", Leads.get(position).getCustFname());
                                             intent.putExtra("case_id", Leads.get(position).getCaseId());
                                             intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
@@ -321,50 +386,33 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                         }
                                     });
                                 } else {
-                                    if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
-                                        binding.tvStatus.setText("Add Out Second Kanta Parchi");
-
-                                        binding.tvStatus.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = new Intent(context, OutUploadSecoundkantaParchiClass.class);
-                                                intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                                intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                                intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                                intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
-                                                context.startActivity(intent);
-
-                                            }
-                                        });
+                                    if (Leads.get(position).getCctvReport() == null || Leads.get(position).getCctvReport().isEmpty()) {
+                                        binding.tvStatus.setText("CCTV Pending");
                                     } else {
-                                        if (Leads.get(position).getCctvReport() == null || Leads.get(position).getCctvReport().isEmpty()) {
-                                            binding.tvStatus.setText("CCTV Pending");
+                                        if (Leads.get(position).getIvrReport() == null) {
+                                            binding.tvStatus.setText("IVR Pending");
                                         } else {
-                                            if (Leads.get(position).getIvrReport() == null ) {
-                                                binding.tvStatus.setText("IVR Pending");
+                                            if (Leads.get(position).getGatepassReport() == null) {
+                                                binding.tvStatus.setText("Gate Pass Pending");
                                             } else {
-                                                if (Leads.get(position).getGatepassReport() == null) {
-                                                    binding.tvStatus.setText("Gate Pass Pending");
-                                                } else {
-                                                    binding.tvStatus.setText("View");
-                                                    binding.tvStatus.setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            Intent intent =new Intent(context,GatePassPDFPrieviewClass.class);
-                                                            intent.putExtra("CaseID",Leads.get(position).getCaseId());
-                                                            intent.putExtra("in_out",Leads.get(position).getInOut());
-                                                            intent.putExtra("bags",Leads.get(position).getNoOfBags());
-                                                            context.startActivity(intent);
+                                                binding.tvStatus.setText("View");
+                                                binding.tvStatus.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        Intent intent = new Intent(context, GatePassPDFPrieviewClass.class);
+                                                        intent.putExtra("CaseID", Leads.get(position).getCaseId());
+                                                        intent.putExtra("in_out", Leads.get(position).getInOut());
+                                                        intent.putExtra("bags", Leads.get(position).getNoOfBags());
+                                                        context.startActivity(intent);
 
-                                                        }
-                                                    });
-                                                }
+                                                    }
+                                                });
                                             }
                                         }
-
                                     }
 
                                 }
+
                             }
                         }
                     }

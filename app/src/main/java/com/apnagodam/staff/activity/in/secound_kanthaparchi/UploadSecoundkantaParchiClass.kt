@@ -1,8 +1,6 @@
 package com.apnagodam.staff.activity.`in`.secound_kanthaparchi
 
 import android.Manifest
-import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -10,24 +8,18 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
-import android.provider.MediaStore
 import android.view.View
 import android.widget.RadioGroup
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
-import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
 import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
@@ -41,13 +33,11 @@ import com.google.android.gms.location.LocationServices
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.lang.Exception
+import java.text.DecimalFormat
 import java.util.Locale
 import java.util.UUID
 
@@ -85,6 +75,8 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }
+
+    val dtime = DecimalFormat("#.##")
 
     override fun setUp() {
         photoEasy = PhotoEasy.builder().setActivity(this)
@@ -124,20 +116,18 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         binding!!.llOldBags.visibility = View.GONE
         binding!!.llBags.visibility = View.VISIBLE
         binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
-            if (binding!!.etWeightKg.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etWeightKg.text!!.isNotEmpty()) {
+            if (binding!!.etWeightKg.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etWeightKg.text!!.isNotEmpty()) {
                 try {
-                    var bagCal = (binding!!.etWeightKg.text.toString().toInt() / 100)
+                    var bagCal = (binding!!.etWeightKg.text.toString().toDouble() / 100)
                     binding!!.etWeight.setText(
-                        bagCal.toString()
+                        dtime.format(bagCal)
                     )
-                } catch (e:Exception){
+                } catch (e: Exception) {
                     binding!!.etWeight.setText("0")
 
                 }
 
-            }
-            else
-            {
+            } else {
                 binding!!.etWeight.setText("0")
             }
 
@@ -145,20 +135,20 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
 
-            if (binding!!.etWeight.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etNoOfBags.text!!.isNotEmpty()) {
-             try {
-                 var bagCal = (binding!!.etWeight.text.toString().toInt() * 100) / text.toString()
-                     .toInt()
-                 binding!!.etAvgWeight.setText(
-                     bagCal.toString()
-                 )
-             } catch (e:Exception){
+            if (binding!!.etWeight.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etNoOfBags.text!!.isNotEmpty()) {
+                try {
 
-             }
+                    var bagCal =
+                        (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
+                            .toDouble()
+                    binding!!.etAvgWeight.setText(
+                        dtime.format(bagCal)
+                    )
+                } catch (e: Exception) {
 
-            }
-            else
-            {
+                }
+
+            } else {
                 binding!!.etAvgWeight.setText("0")
             }
         }
@@ -167,7 +157,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
         UserName = intent.getStringExtra("user_name")
 
 
-        if (intent.getStringExtra("file3")== null) {
+        if (intent.getStringExtra("file3") == null) {
 
         } else {
             isFirstUpload = false;
@@ -304,7 +294,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         kantaParchiNumber,
                         InTrackID,
                         InBardhanaID
-                    ),"IN"
+                    ), "IN"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
@@ -352,7 +342,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         binding!!.etOldWeightQt.text.toString(),
                         binding!!.etNoOfDispleasedBags.text.toString(),
                         kantaId, kantaName, kantaParchiNumber, InTrackID, InBardhanaID
-                    ),"IN"
+                    ), "IN"
                 )
 
                 kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {

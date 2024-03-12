@@ -409,14 +409,14 @@
                             <TextView
                                 android:id="@+id/tilKantaParchi"
                                 android:layout_width="match_parent"
-                                android:padding="@dimen/_10sdp"
-                                android:gravity="center"
-                                android:textStyle="bold"
-                                android:textSize="@dimen/_14ssp"
-                                android:textColor="@color/colorPrimary"
+                                android:layout_height="wrap_content"
                                 android:background="@drawable/btn_borders"
+                                android:gravity="center"
+                                android:padding="@dimen/_10sdp"
                                 android:text="Select Dharam Kanta"
-                                android:layout_height="wrap_content"/>
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_14ssp"
+                                android:textStyle="bold" />
 
 
                             <LinearLayout
@@ -446,7 +446,6 @@
                                 </com.google.android.material.textfield.TextInputLayout>
 
 
-
                                 <com.google.android.material.textfield.TextInputLayout
                                     android:id="@+id/tilNoOfBags"
                                     style="@style/TextInputStyle"
@@ -467,6 +466,7 @@
                                         android:padding="@dimen/_10sdp"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
+
                                 <com.google.android.material.textfield.TextInputLayout
                                     android:id="@+id/tilWeight"
                                     style="@style/TextInputStyle"
@@ -475,40 +475,42 @@
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/etWeight"
-                                        style="@style/TextStyleNormal"
+                                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
-                                        android:hint="Weight(Qtl)*"
-                                        android:alpha="0.3"
-                                        android:background="@color/grey"
                                         android:focusable="false"
-                                        android:lines="1"
+                                        android:hint="Weight(Qtl)*"
                                         android:imeOptions="actionNext"
                                         android:inputType="number"
+                                        android:lines="1"
                                         android:padding="@dimen/_10sdp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/black"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
+
                                 <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/til_avg_weight"
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
-                                    android:id="@+id/til_avg_weight"
                                     android:layout_height="wrap_content">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/et_avg_weight"
-                                        style="@style/TextStyleNormal"
+                                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginVertical="@dimen/_10sdp"
+                                        android:focusable="false"
                                         android:hint="Avg Weight (Kg)"
                                         android:imeOptions="actionDone"
+
                                         android:inputType="number"
-                                        android:focusable="false"
-                                        android:alpha="0.3"
-                                        android:background="@color/grey"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/black"
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -532,119 +534,120 @@
                                         android:textSize="@dimen/_12ssp" />
                                 </com.google.android.material.textfield.TextInputLayout>
 
-                             <LinearLayout
-                                 android:id="@+id/llTraupline"
-                                 android:visibility="visible"
-                                 android:orientation="vertical"
-                                 android:layout_width="match_parent"
-                                 android:layout_height="wrap_content">
-                                 <LinearLayout
-                                     android:layout_width="match_parent"
-                                     android:layout_height="match_parent"
-                                     android:layout_marginTop="@dimen/_5sdp"
-                                     android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/llTraupline"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible">
 
-                                     <TextView
-                                         style="@style/TextStyleBold"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:layout_marginLeft="@dimen/_10sdp"
-                                         android:layout_marginTop="@dimen/_5sdp"
-                                         android:text="@string/taupline_radio"
-                                         android:textColor="@color/colorBlackLight"
-                                         android:textSize="@dimen/_16ssp"
-                                         app:layout_constraintEnd_toEndOf="parent"
-                                         app:layout_constraintStart_toStartOf="parent" />
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:orientation="vertical">
 
-                                     <RadioGroup
-                                         android:id="@+id/genderRadio"
-                                         android:layout_width="match_parent"
-                                         android:layout_height="wrap_content"
-                                         android:layout_marginTop="@dimen/_6sdp"
-                                         android:orientation="horizontal">
+                                        <TextView
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_10sdp"
+                                            android:layout_marginTop="@dimen/_5sdp"
+                                            android:text="1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ?"
+                                            android:textColor="@color/colorBlackLight"
+                                            android:textSize="@dimen/_16ssp"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent" />
 
-                                         <RadioButton
-                                             android:id="@+id/radioSeller"
-                                             style="@style/TextStyleBold"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:buttonTint="@color/colorPrimary"
-                                             android:text="@string/yes"
-                                             android:textSize="@dimen/_18ssp" />
+                                        <RadioGroup
+                                            android:id="@+id/genderRadio"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/_6sdp"
+                                            android:orientation="horizontal">
 
-                                         <RadioButton
-                                             android:id="@+id/radioBuyer"
-                                             style="@style/TextStyleBold"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:layout_marginLeft="@dimen/_6sdp"
-                                             android:buttonTint="@color/colorPrimary"
-                                             android:checked="true"
-                                             android:text="@string/no"
-                                             android:textColor="@android:color/black"
-                                             android:textSize="@dimen/_18ssp" />
-                                     </RadioGroup>
+                                            <RadioButton
+                                                android:id="@+id/radioSeller"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:text="@string/yes"
+                                                android:textSize="@dimen/_18ssp" />
 
-                                     <View
-                                         android:layout_width="match_parent"
-                                         android:layout_height="1dp"
-                                         android:background="@color/lightGray"></View>
-                                 </LinearLayout>
+                                            <RadioButton
+                                                android:id="@+id/radioBuyer"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginLeft="@dimen/_6sdp"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:checked="true"
+                                                android:text="@string/no"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="@dimen/_18ssp" />
+                                        </RadioGroup>
 
-                                 <LinearLayout
-                                     android:layout_width="match_parent"
-                                     android:layout_height="match_parent"
-                                     android:layout_marginTop="@dimen/_5sdp"
-                                     android:orientation="vertical">
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="1dp"
+                                            android:background="@color/lightGray"></View>
+                                    </LinearLayout>
 
-                                     <TextView
-                                         style="@style/TextStyleBold"
-                                         android:layout_width="wrap_content"
-                                         android:layout_height="wrap_content"
-                                         android:layout_marginLeft="@dimen/_10sdp"
-                                         android:layout_marginTop="@dimen/_5sdp"
-                                         android:text="@string/wet_radio"
-                                         android:textColor="@color/colorBlackLight"
-                                         android:textSize="@dimen/_16ssp"
-                                         app:layout_constraintEnd_toEndOf="parent"
-                                         app:layout_constraintStart_toStartOf="parent" />
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:orientation="vertical">
 
-                                     <RadioGroup
-                                         android:id="@+id/gender"
-                                         android:layout_width="match_parent"
-                                         android:layout_height="wrap_content"
-                                         android:layout_marginTop="@dimen/_6sdp"
-                                         android:orientation="horizontal">
+                                        <TextView
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_10sdp"
+                                            android:layout_marginTop="@dimen/_5sdp"
+                                            android:text="2. क्या Inward में, कुछ बोरिया भीगी हुई थी ?"
+                                            android:textColor="@color/colorBlackLight"
+                                            android:textSize="@dimen/_16ssp"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent" />
 
-                                         <RadioButton
-                                             android:id="@+id/radioyes"
-                                             style="@style/TextStyleBold"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:buttonTint="@color/colorPrimary"
+                                        <RadioGroup
+                                            android:id="@+id/gender"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/_6sdp"
+                                            android:orientation="horizontal">
 
-                                             android:text="@string/yes"
-                                             android:textSize="@dimen/_18ssp" />
+                                            <RadioButton
+                                                android:id="@+id/radioyes"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:buttonTint="@color/colorPrimary"
 
-                                         <RadioButton
-                                             android:id="@+id/radiono"
-                                             style="@style/TextStyleBold"
-                                             android:layout_width="wrap_content"
-                                             android:layout_height="wrap_content"
-                                             android:layout_marginLeft="@dimen/_6sdp"
-                                             android:buttonTint="@color/colorPrimary"
-                                             android:checked="true"
-                                             android:text="@string/no"
-                                             android:textColor="@android:color/black"
-                                             android:textSize="@dimen/_18ssp" />
-                                     </RadioGroup>
+                                                android:text="@string/yes"
+                                                android:textSize="@dimen/_18ssp" />
 
-                                     <View
-                                         android:layout_width="match_parent"
-                                         android:layout_height="1dp"
-                                         android:background="@color/lightGray"></View>
-                                 </LinearLayout>
-                             </LinearLayout>
+                                            <RadioButton
+                                                android:id="@+id/radiono"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginLeft="@dimen/_6sdp"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:checked="true"
+                                                android:text="@string/no"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="@dimen/_18ssp" />
+                                        </RadioGroup>
+
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="1dp"
+                                            android:background="@color/lightGray"></View>
+                                    </LinearLayout>
+                                </LinearLayout>
                             </LinearLayout>
 
                             <LinearLayout
@@ -653,6 +656,7 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:visibility="gone">
+
                                 <androidx.cardview.widget.CardView
                                     android:id="@+id/cardOldKantaParchi"
                                     android:layout_width="match_parent"
@@ -752,6 +756,7 @@
                                         </LinearLayout>
                                     </LinearLayout>
                                 </androidx.cardview.widget.CardView>
+
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
@@ -815,8 +820,8 @@
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/TextInputStyle"
                                     android:layout_width="match_parent"
-                                    android:visibility="gone"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone">
 
                                     <com.google.android.material.textfield.TextInputEditText
                                         android:id="@+id/etWeightQt"

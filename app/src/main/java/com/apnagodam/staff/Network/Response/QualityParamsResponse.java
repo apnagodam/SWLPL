@@ -52,7 +52,7 @@ public class QualityParamsResponse {
             this.datum = datum;
         }
 
-        public Datum(Integer id,String name,Integer min,Integer max){
+        public Datum(Integer id,String name,Float min,Float max){
             this.id = id;
             this.name = name;
             this.max = max;
@@ -66,10 +66,10 @@ public class QualityParamsResponse {
         private String name;
         @SerializedName("min")
         @Expose
-        private Integer min;
+        private Float min;
         @SerializedName("max")
         @Expose
-        private Integer max;
+        private Float max;
 
         public Integer getId() {
             return id;
@@ -87,19 +87,19 @@ public class QualityParamsResponse {
             this.name = name;
         }
 
-        public Integer getMin() {
+        public Float getMin() {
             return min;
         }
 
-        public void setMin(Integer min) {
+        public void setMin(Float min) {
             this.min = min;
         }
 
-        public Integer getMax() {
+        public Float getMax() {
             return max;
         }
 
-        public void setMax(Integer max) {
+        public void setMax(Float max) {
             this.max = max;
         }
 

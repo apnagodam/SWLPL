@@ -388,7 +388,7 @@
                         style="@style/TextStyleBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="8). नग / विस्थापित नग :"
+                        android:text="8). नग / डिस्प्लेज नग :"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
@@ -486,12 +486,68 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp" />
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        style="@style/TextStyleBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12). लेबर कांटे टर का नाम :"
+                        android:textColor="@color/colorBlackLight"
+                        android:textSize="@dimen/_8ssp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/labourContractor"
+                        style="@style/TextStyleBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorBlackLight"
+                        android:textSize="@dimen/_8ssp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_4sdp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        style="@style/TextStyleBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="13).Quality:"
+                        android:textColor="@color/colorBlackLight"
+                        android:textSize="@dimen/_8ssp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llQuality"
+                    style="@style/TextStyleBold"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlackLight"
+                    ></LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:visibility="gone"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
@@ -712,12 +768,22 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <TextView
+                        android:id="@+id/driver_mobile"
+                        style="@style/TextStyleBold"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ड्राइवर का मोबाइल न.: 8437464203"
+                        android:textColor="@color/colorBlackLight"
+                        android:textSize="@dimen/_8ssp"
+                        android:textStyle="bold" />
+                    <TextView
                         android:id="@+id/driver_name"
                         style="@style/TextStyleBold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:text="चालक का नाम: Siku Kumar"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
@@ -745,12 +811,11 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <TextView
-                        android:id="@+id/driver_mobile"
+                        android:id="@+id/driver_mobile1"
                         style="@style/TextStyleBold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="ड्राइवर का मोबाइल न.: 8437464203"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
@@ -761,6 +826,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:gravity="start"
+                        android:visibility="visible"
                         android:text="वरिष्ठ अधिकारी का मोबाइल न.: 9779529667"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp" />

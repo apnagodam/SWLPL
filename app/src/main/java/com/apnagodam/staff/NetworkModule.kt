@@ -54,6 +54,7 @@ object NetworkModule {
                 newRequest.header("language", SharedPreferencesRepository.getDataManagerInstance().selectedLanguage)
                 newRequest.header("lat", SharedPreferencesRepository.getDataManagerInstance().getlat())
                 newRequest.header("long", SharedPreferencesRepository.getDataManagerInstance().getlong())
+                newRequest.header("Connection", "close")
                 newRequest.header("Authorization", accessToken).method(originalRequest.method, originalRequest.body)
                 // newRequest.header("Authorization", Credentials.basic("power", "$power2019$")).build();
                 originalRequest = newRequest.build()

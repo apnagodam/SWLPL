@@ -390,7 +390,7 @@ class UploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityRepo
                     stringFromView(binding!!.etLive),
                     stringFromView(binding!!.notes),
                     CommudityFileSelectImage,
-                    binding!!.etExtraClaim.text!!.toString()
+                    binding!!.etExtraClaim.text!!.toString(),"2"
                 ),"IN"
             )
 
