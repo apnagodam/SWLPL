@@ -534,14 +534,15 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/llQuality"
                     style="@style/TextStyleBold"
                     android:orientation="horizontal"
-                    android:layout_width="wrap_content"
+                    app:flexWrap="wrap"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorBlackLight"
-                    ></LinearLayout>
+                    ></com.google.android.flexbox.FlexboxLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -788,16 +789,18 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
-
                     <TextView
-                        android:id="@+id/whs_name"
+                        android:id="@+id/whs_mobile"
                         style="@style/TextStyleBold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="वरिष्ठ अधिकारी : AzadwinderSingh"
+                        android:gravity="start"
+                        android:visibility="visible"
+                        android:text="वरिष्ठ अधिकारी का मोबाइल न.: 9779529667"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -819,18 +822,16 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
-
                     <TextView
-                        android:id="@+id/whs_mobile"
+                        android:id="@+id/whs_name"
                         style="@style/TextStyleBold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="start"
-                        android:visibility="visible"
-                        android:text="वरिष्ठ अधिकारी का मोबाइल न.: 9779529667"
+                        android:text="वरिष्ठ अधिकारी : AzadwinderSingh"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp" />
+
                 </LinearLayout>
 
                 <LinearLayout

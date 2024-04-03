@@ -229,6 +229,7 @@ class MyConveyanceListClass() : BaseActivity<ConvencyListBinding?>() {
 
                 }
                 is NetworkResult.Success -> {
+                    hideDialog()
                     getapproveCount()
                     tempraryList!!.clear()
                     getOrdersList!!.clear()

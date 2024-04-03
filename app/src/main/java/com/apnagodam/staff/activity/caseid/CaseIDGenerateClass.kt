@@ -38,6 +38,11 @@ import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
 import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnClickListener,
@@ -171,16 +176,28 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                 showToast("Driver not available ")
             }
         }
-        binding!!.etOtp.doOnTextChanged { text, start, before, count ->
-            if (text!!.length == 6) {
-                verifyOtp()
+        binding!!.reSendOtp.setOnClickListener {
+            if (binding!!.etDriverMobileNumber.text!!.isNotEmpty()) {
+                onSendOtp()
 
+            } else {
+                showToast("Driver not available ")
             }
         }
+//        binding!!.etOtp.doOnTextChanged { text, start, before, count ->
+//            if (text!!.length == 6) {
+//                binding!!.tilOtp.isEnabled = false;
+//                binding!!.tilOtp.isFocusable = false
+//                verifyOtp()
+//            }
+//        }
+//
+
         binding!!.verifyOtp.setOnClickListener {
             verifyOtp()
         }
         try {
+            //  setValueOnSpinner()
             //  setValueOnSpinner()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -200,6 +217,79 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
             override fun afterTextChanged(editable: Editable) {}
         })
+        caseIdViewModel.driverOtpResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    binding!!.verifyOtp.isEnabled = true
+
+                }
+
+                is NetworkResult.Loading -> {
+                    binding!!.verifyOtp.isEnabled = false
+
+                }
+
+                is NetworkResult.Success -> {
+
+                    if (it.data != null) {
+
+                        if (it.data.status == "1") {
+                            if (it.data.type == "Match") {
+                                binding!!.btnCreateeCase.visibility = View.VISIBLE
+                                binding!!.btnCreateeCase.isEnabled = true;
+                                binding!!.verifyOtp.isEnabled = false
+                                binding!!.etOtp.isFocusable = false;
+                                binding!!.etOtp.isEnabled = false;
+
+                                binding!!.verifyOtp.visibility = View.GONE
+                            }
+                        } else {
+                            showToast(it.data.message)
+                        }
+                    }
+                    hideDialog()
+
+
+                }
+            }
+        }
+        binding!!.btnCreateeCase.setOnClickListener {
+            verifyAndCreateCaseId()
+
+        }
+        caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
+        {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    binding!!.btnCreateeCase.isEnabled = true;
+                    binding!!.verifyOtp.isEnabled = true;
+                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            binding!!.btnCreateeCase.isEnabled = true;
+                            binding!!.verifyOtp.isEnabled = true;
+                            binding!!.btnCreateeCase.isEnabled = true;
+                            binding!!.verifyOtp.isEnabled = true;
+
+                            startActivityAndClear(StaffDashBoardActivity::class.java)
+                            showToast(it.data.message)
+                        } else {
+                            startActivityAndClear(StaffDashBoardActivity::class.java)
+                            showToast(it.data.message)
+                        }
+                    }
+                    hideDialog()
+                }
+            }
+        }
     }
 
     val isOTPValid: Boolean
@@ -433,35 +523,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
         var driverNumber = otpData.get("driver_number").toString()
         var inOut = otpData.get("in_out").toString()
         caseIdViewModel.driverOtp(driverNumber, stackId, inOut, binding!!.etOtp.text.toString())
-        caseIdViewModel.driverOtpResponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {
-                    hideDialog()
-                }
+        binding!!.verifyOtp.isEnabled = false
 
-                is NetworkResult.Loading -> {
-
-                }
-
-                is NetworkResult.Success -> {
-                    if (it.data != null) {
-
-                        if (it.data.status == "1") {
-                            if (it.data.type == "Match") {
-                                binding!!.btnCreateeCase.visibility = View.VISIBLE
-                                binding!!.verifyOtp.visibility = View.GONE
-                                verifyAndCreateCaseId()
-                            }
-                        } else {
-                            showToast(it.data.message)
-                        }
-                    }
-                    hideDialog()
-
-
-                }
-            }
-        }
     }
 
     private fun getstack() {
@@ -738,6 +801,8 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
     }
 
     fun verifyAndCreateCaseId() {
+        binding!!.btnCreateeCase.isEnabled = false;
+        binding!!.verifyOtp.isEnabled = false;
         if (isValid) {
             if (TerminalID == null) {
                 Toast.makeText(
@@ -745,78 +810,71 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
                     resources.getString(R.string.terminal_name),
                     Toast.LENGTH_LONG
                 ).show()
+                binding!!.btnCreateeCase.isEnabled = true;
+                binding!!.verifyOtp.isEnabled = true;
+
+
             } else if (selectInOUt == null) {
                 Toast.makeText(
                     this@CaseIDGenerateClass,
                     resources.getString(R.string.select_in_out),
                     Toast.LENGTH_LONG
                 ).show()
+                binding!!.btnCreateeCase.isEnabled = true;
+                binding!!.verifyOtp.isEnabled = true;
+
+
             } else if (seleectCoustomer == null) {
                 Toast.makeText(
                     this@CaseIDGenerateClass,
                     resources.getString(R.string.select_coustomer),
                     Toast.LENGTH_LONG
                 ).show()
+                binding!!.btnCreateeCase.isEnabled = true;
+                binding!!.verifyOtp.isEnabled = true;
+
+
             } else if (commudityID == null) {
                 Toast.makeText(
                     this@CaseIDGenerateClass,
                     resources.getString(R.string.commudity_name),
                     Toast.LENGTH_LONG
                 ).show()
+                binding!!.btnCreateeCase.isEnabled = true;
+                binding!!.verifyOtp.isEnabled = true;
+
+
             } else if (stackID == null) {
                 Toast.makeText(
                     this@CaseIDGenerateClass,
                     "Select Stack Number",
                     Toast.LENGTH_LONG
                 ).show()
+                binding!!.btnCreateeCase.isEnabled = true;
+                binding!!.verifyOtp.isEnabled = true;
+
             } else {
                 showDialog()
-                var createCaseIDPostData = CreateCaseIDPostData(
-                    TerminalID,
-                    selectInOUt,
-                    seleectCoustomer,
-                    commudityID,
-                    "",
-                    stackID,
-                    "",
-                    stringFromView(binding!!.etCustomerWeight),
-                    stringFromView(
-                        binding!!.etCustomerWeightQuantal
-                    ),
-                    stringFromView(binding!!.etCustomerVehicle),
-                    stringFromView(binding!!.etSpotToken),
-                    stringFromView(binding!!.etDriverMobileNumber)
-                )
-
-                println(createCaseIDPostData)
                 caseIdViewModel.doCreateCaseId(
-                    createCaseIDPostData
+                    CreateCaseIDPostData(
+                        TerminalID,
+                        selectInOUt,
+                        seleectCoustomer,
+                        commudityID,
+                        "",
+                        stackID,
+                        "",
+                        stringFromView(binding!!.etCustomerWeight),
+                        stringFromView(
+                            binding!!.etCustomerWeightQuantal
+                        ),
+                        stringFromView(binding!!.etCustomerVehicle),
+                        stringFromView(binding!!.etSpotToken),
+                        stringFromView(binding!!.etDriverMobileNumber)
+                    )
                 )
 
-                caseIdViewModel.createCaseIdResponse.observe(this@CaseIDGenerateClass)
-                {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            hideDialog()
-                        }
 
-                        is NetworkResult.Loading -> {}
-                        is NetworkResult.Success -> {
-                            if (it.data != null) {
-                                if (it.data.status == "1") {
-                                    startActivityAndClear(StaffDashBoardActivity::class.java)
-                                    showToast(it.data.message)
-                                } else {
-                                    startActivityAndClear(StaffDashBoardActivity::class.java)
-                                    showToast(it.data.message)
-                                }
-
-
-                            }
-                            hideDialog()
-                        }
-                    }
-                }
 
             }
         }
@@ -837,4 +895,35 @@ class CaseIDGenerateClass() : BaseActivity<ActivityCaseIdBinding?>(), View.OnCli
 
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View, i: Int, l: Long) {}
     override fun onNothingSelected(adapterView: AdapterView<*>?) {}
+}
+fun <T> debounce(
+    delayMillis: Long = 300L,
+    scope: CoroutineScope,
+    action: (T) -> Unit
+): (T) -> Unit {
+    var debounceJob: Job? = null
+    return { param: T ->
+        if (debounceJob == null) {
+            debounceJob = scope.launch {
+                action(param)
+                delay(delayMillis)
+                debounceJob = null
+            }
+        }
+    }
+}
+fun <T> throttleFirst(
+    skipMs: Long = 300L,
+    coroutineScope: CoroutineScope,
+    destinationFunction: (T) -> Unit
+): (T) -> Unit {
+    var throttleJob: Job? = null
+    return { param: T ->
+        if (throttleJob?.isCompleted != false) {
+            throttleJob = coroutineScope.launch {
+                destinationFunction(param)
+                delay(skipMs)
+            }
+        }
+    }
 }

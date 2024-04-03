@@ -99,12 +99,7 @@ class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
     private fun setAdapter() {
         casesTopAdapter = StackRequestAdapterOutwards(allCasesList, this)
 
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =

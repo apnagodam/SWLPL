@@ -223,26 +223,30 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                         "0000-00-00"
                     )
                 )
-                hideDialog()
-                finish()
 
                 labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
                     when (it) {
                         is NetworkResult.Error -> {
+                            showToast(it.message)
                             hideDialog()
                         }
 
-                        is NetworkResult.Loading -> {}
-                        is NetworkResult.Success -> {
-                            hideDialog()
-                            when (it.data) {
-                                null -> {
-                                }
+                        is NetworkResult.Loading -> {
+                        }
 
-                                else -> {
-                                    showToast(it.data.message)
+                        is NetworkResult.Success -> {
+                            if (it.data != null) {
+                                if (it.data.status == "1") {
+                                    hideDialog()
+                                    showToast(it.data!!.message.toString())
+                                    finish()
+
+                                } else {
+                                    showToast(it.data!!.message.toString())
+
                                 }
                             }
+
 
                         }
                     }

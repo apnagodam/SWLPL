@@ -100,18 +100,21 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
         } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                lat = it.latitude
-                long = it.longitude
+                if(it!=null){
+                    lat = it.latitude
+                    long = it.longitude
 
-                val geocoder = Geocoder(this, Locale.getDefault())
-                val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null) {
-                    currentLocation =
-                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                            addresses.first().adminArea
-                        }"
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(lat, long, 1)
+                    if (addresses != null) {
+                        currentLocation =
+                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                addresses.first().adminArea
+                            }"
 
+                    }
                 }
+
             }
         }
 

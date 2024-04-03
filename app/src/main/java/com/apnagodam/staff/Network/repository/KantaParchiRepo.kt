@@ -38,7 +38,7 @@ class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiR
             emit(safeApiCall {
                 apiService.uploadFirstkantaParchi(uploadFirstQualityPostData,inOut)
             })
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     suspend fun getSecondKantaParchiList(

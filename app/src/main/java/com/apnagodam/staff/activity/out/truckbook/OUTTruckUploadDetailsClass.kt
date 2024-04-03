@@ -171,23 +171,22 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                             binding!!.btnLogin.isEnabled = false
                         }
 
-                       else->{
-                           if(position == 2){
-                               checked = false
-                               NotChecked()
-                               binding!!.layoutTransport.visibility = View.VISIBLE
-                               binding!!.btnLogin.isEnabled = true
+                        else -> {
+                            if (position == 2) {
+                                checked = false
+                                NotChecked()
+                                binding!!.layoutTransport.visibility = View.VISIBLE
+                                binding!!.btnLogin.isEnabled = true
 
-                           }
-                           else if (position == 1){
-                               checked = true
-                               Checked()
-                               binding!!.layoutTransport.visibility = View.GONE
-                               binding!!.btnLogin.isEnabled = true
-                           }
+                            } else if (position == 1) {
+                                checked = true
+                                Checked()
+                                binding!!.layoutTransport.visibility = View.GONE
+                                binding!!.btnLogin.isEnabled = true
+                            }
 
 
-                       }
+                        }
                     }
                 }
 
@@ -273,7 +272,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                             selectedString: String
                         ) {
                             binding!!.etTransporterName.setText(selectedString)
-                            if (data != null ) {
+                            if (data != null) {
                                 val presentMeterStatusID = selectedString
                                 for (i in data!!.indices) {
                                     if (presentMeterStatusID.contains(data!![i].transporterName + "(" + data!![i].transporterUniqueId + ")")) {
@@ -347,7 +346,6 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
 
     override fun dispatchTakePictureIntent() {
         photoEasy.startActivityForResult(this)
-
 
 
     }
@@ -560,12 +558,12 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
 
-
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.iv_close ->{
+            R.id.iv_close -> {
                 finish()
             }
+
             R.id.et_start_date_time -> popUpDatePicker()
             R.id.lp_commite_date -> popUpDatePicker()
 
@@ -593,7 +591,7 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 "",
                 "",
                 "",
-               "",
+                binding!!.etTransportRate.text.toString(),
                 stringFromView(
                     binding!!.etAdvancePatyment
                 ),
@@ -608,7 +606,8 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                 spinnerRateType,
                 stringFromView(
                     binding!!.etRealteCaseid,
-                ), binding!!.etLocation.text.toString()
+                ), binding!!.etLocation.text.toString(),
+                binding!!.etTransportRate.text.toString()
             )
         )
         truckBookViewModel.uploadTruckResponse.observe(this)
@@ -643,21 +642,39 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
                     )
                 } else if (fileBiltyImage == null) {
                     showToast("please select bilty image")
+                    return false;
+
                 } else if (Validationhelper().fieldEmpty(binding!!.tilAdvancePatyment)) {
                     binding!!.tilAdvancePatyment.error = "This Field is Required"
+                    return false;
+
                 }
-//                else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount)) {
+//                else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount))
+//                {
 //                    binding!!.tilFinalSettalementAmount.error = "This Field is Required"
 //                }
+
                 else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
                     binding!!.tilLocation.error = "This Field is required"
+                    return false;
+
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate))|| Integer.parseInt(
+                        binding!!.etTransportRate.text.toString()
+                    ) == 0
+                ) {
+                    binding!!.tilTransportRate.error = "This Field is required"
+                    return false;
+
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etAdvancePatyment))
+                ) {
+                    binding!!.tilAdvancePatyment.error = "This Field is required"
+                    return false;
+
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etLocation))) {
+                    binding!!.tilLocation.error = "This Field is required"
+                    return false;
+
                 }
-//                else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
-//                    return Utility.showEditTextError(
-//                        binding!!.tilTotalTransCost,
-//                        R.string.total_trans_cost_val
-//                    )
-//                }
 
 
             }

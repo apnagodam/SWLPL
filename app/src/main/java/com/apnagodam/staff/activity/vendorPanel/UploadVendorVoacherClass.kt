@@ -1,11 +1,17 @@
 package com.apnagodam.staff.activity.vendorPanel
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.location.Geocoder
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -18,6 +24,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
@@ -31,19 +38,29 @@ import com.apnagodam.staff.module.AllLevelEmpListPojo
 import com.apnagodam.staff.module.VendorExpensionApprovedListPojo
 import com.apnagodam.staff.module.VendorExpensionNamePojo
 import com.apnagodam.staff.module.VendorNamePojo
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.SearchableSpinner
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 @AndroidEntryPoint
 class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
@@ -86,8 +103,10 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     lateinit var SpinnerVendorAdapter: ArrayAdapter<String>
     var SelectedVendorIDIs: String? = null
     var options: Options? = null
-
-    val conveyanceViewModel  by  viewModels<ConveyanceViewModel>()
+    var currentLocation = ""
+    var lat = 0.0
+    var long = 0.0
+    val conveyanceViewModel by viewModels<ConveyanceViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.vendor_conveyance
     }
@@ -120,27 +139,61 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         showDialog()
         conveyanceViewModel.getVendorUserList()
-        conveyanceViewModel.vendorUserListResponse.observe(this){
-            when(it){
+        conveyanceViewModel.vendorUserListResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
                     showToast(it.message)
                 }
+
                 is NetworkResult.Loading -> {
 
                 }
+
                 is NetworkResult.Success -> {
-                    if(it.data!=null){
-                        it.data.let {
-                            body-> for (i in body.data.indices) {
-                            vnedorName.add(body.data[i].vendorFirstName + " " + body.data[i].vendorLastName + "(" + body.data[i].phone + ")")
-                            vendorID.add(body.data[i].phone)
-                        }
+                    hideDialog()
+                    if (it.data != null) {
+                        it.data.let { body ->
+                            for (i in body.data.indices) {
+                                vnedorName.add(body.data[i].vendorFirstName + " " + body.data[i].vendorLastName + "(" + body.data[i].phone + ")")
+                                vendorID.add(body.data[i].phone)
+                            }
                             // get Warehouse person  list
                             locationWherHouseName()
                         }
                     }
                 }
+            }
+        }
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        } else {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                if (it != null) {
+                    lat = it.latitude
+                    long = it.longitude
+
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(lat, long, 1)
+                    if (addresses != null) {
+                        currentLocation =
+                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                addresses.first().adminArea
+                            }"
+
+                    }
+                }
+
             }
         }
 
@@ -405,38 +458,53 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
                 ) {
                     val otherExpenseValue = binding!!.etTotal.text.toString().trim { it <= ' ' }
                         .toInt()
-                    apiService.ExpensionApprovedList(
-                        SelectedExpansionIDIs,
-                        "" + otherExpenseValue
-                    ).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext {body->
-                            approveName.clear()
-                            approveID.clear()
-                            approveName = ArrayList()
-                            approveID = ArrayList()
-                            approveName.add(resources.getString(R.string.approved_by))
-                            approveID.add("0")
-                            binding!!.etLocation.visibility = View.GONE
-                            binding!!.etLocation.setText("" + body.data)
-                            binding!!.etLocation.isClickable = false
-                            binding!!.etLocation.isEnabled = false
-                            binding!!.etLocation.isFocusable = false
-                            binding!!.etLocation.isFocusableInTouchMode = false
-                            // Approved listing
-                            for (i in body.data.indices) {
-                                approveID.add(body.data[i].userId)
-                                approveName.add(body.data[i].firstName + " " + body.data[i].lastName + "(" + body.data[i].empId + ")")
+                    showDialog()
+                    conveyanceViewModel.expensionApprovedList(SelectedExpansionIDIs.toString(),otherExpenseValue.toString())
+                    conveyanceViewModel.expensionApprovedList.observe(this){
+                        when(it){
+                            is NetworkResult.Error -> {
+                                hideDialog()
+                                showToast(it.message)
                             }
-                            SpinnerApproveByAdapter =
-                                ArrayAdapter(this@UploadVendorVoacherClass,
-                                    R.layout.multiline_spinner_item,
-                                    approveName)
+                            is NetworkResult.Loading -> {
 
-                            SpinnerApproveByAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
-                            // Set Adapter in the spinner
-                            binding!!.spinnerApprovedBy.adapter = SpinnerApproveByAdapter
+                            }
+                            is NetworkResult.Success -> {
+                                if (it.data!=null){
+                                    it.data.let { body->
+                                        approveName.clear()
+                                        approveID.clear()
+                                        approveName = ArrayList()
+                                        approveID = ArrayList()
+                                        approveName.add(resources.getString(R.string.approved_by))
+                                        approveID.add("0")
+                                        binding!!.etLocation.visibility = View.GONE
+                                        binding!!.etLocation.setText("" + body.data)
+                                        binding!!.etLocation.isClickable = false
+                                        binding!!.etLocation.isEnabled = false
+                                        binding!!.etLocation.isFocusable = false
+                                        binding!!.etLocation.isFocusableInTouchMode = false
+                                        // Approved listing
+                                        for (i in body.data.indices) {
+                                            approveID.add(body.data[i].userId)
+                                            approveName.add(body.data[i].firstName + " " + body.data[i].lastName + "(" + body.data[i].empId + ")")
+                                        }
+                                        SpinnerApproveByAdapter =
+                                            ArrayAdapter(
+                                                this@UploadVendorVoacherClass,
+                                                R.layout.multiline_spinner_item,
+                                                approveName
+                                            )
+
+                                        SpinnerApproveByAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
+                                        // Set Adapter in the spinner
+                                        binding!!.spinnerApprovedBy.adapter = SpinnerApproveByAdapter
+                                    }
+                                }
+                            }
                         }
+                    }
+
 
                     /*   if (otherExpenseValue <= 5000) {
                                 // Approved listing
@@ -548,8 +616,7 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
 
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .doOnNext {
-                                    body->
+                                .doOnNext { body ->
                                     for (i in body.data.indices) {
                                         expansionName.add(body.data[i].expensesName)
                                         expansionID.add(body.data[i].id)
@@ -593,9 +660,10 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
                             if (EmpID.equals(expansionName.get(position), ignoreCase = true)) {
                                 SelectedExpansionIDIs = expansionID.get(position)
                                 binding!!.rlTerminal.visibility = View.VISIBLE
-                                apiService.TerminalList(SelectedVendorIDIs).subscribeOn(Schedulers.io())
+                                apiService.TerminalList(SelectedVendorIDIs)
+                                    .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .doOnNext { body->
+                                    .doOnNext { body ->
                                         for (i in body.warehouse_detail.indices) {
                                             TerminalID.add(body.warehouse_detail[i].id)
                                             TerminalName.add(body.warehouse_detail[i].name + "(" + body.warehouse_detail[i].warehouse_code + ")")
@@ -648,23 +716,26 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
 
     private fun locationWherHouseName() {
         conveyanceViewModel.getlevelwiselist()
-        conveyanceViewModel.conveyanceListResponse.observe(this){
-            when(it){
-                is NetworkResult.Error ->{
+        conveyanceViewModel.conveyanceListResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
                     hideDialog()
                     showToast(it.message)
                 }
+
                 is NetworkResult.Loading -> {
 
                 }
-                is NetworkResult.Success ->{
-                    if(it.data!=null){
-                        it.data.let {body->
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        it.data.let { body ->
                             for (i in body.data.indices) {
                                 if (body.request_count > 0) {
                                     binding!!.tvDone.isClickable = true
                                     binding!!.tvDone.isEnabled = true
-                                    binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
+                                    binding!!.tvDone.text =
+                                        "Approval Request " + "(" + body.request_count + ")"
                                 }
                                 /*  approveID.add(body.getData().get(i).getUserId());
                                 approveName.add(body.getData().get(i).getFirstName() + " " + body.getData().get(i).getLastName() + "(" + body.getData().get(i).getEmpId() + ")");*/
@@ -766,7 +837,7 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener { finish() }
         binding!!.tvDone.setOnClickListener {
-           finish()
+            finish()
         }
         binding!!.btnSubmit.setOnClickListener {
             Utility.showDecisionDialog(
@@ -822,12 +893,14 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
         binding!!.uploadReport.setOnClickListener {
             ReportsFileSelect = true
             CommudityFileSelect = false
-            callImageSelector(REQUEST_CAMERA)
+            dispatchTakePictureIntent()
+            //allImageSelector(REQUEST_CAMERA)
         }
         binding!!.uploadCommudity.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = true
-            callImageSelector(REQUEST_CAMERA)
+            dispatchTakePictureIntent()
+            //  callImageSelector(REQUEST_CAMERA)
         }
         binding!!.ReportsImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -873,6 +946,62 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
         binding!!.userCommitmentDate.setText(sdf.format(calender!!.time).toString())
     }
 
+    override fun dispatchTakePictureIntent() {
+        ImagePicker.with(this)
+            .setDismissListener {
+                Toast.makeText(this@UploadVendorVoacherClass,"Please Select Image to upload",Toast.LENGTH_SHORT)
+            }
+            .galleryOnly()    //User can only select image from Gallery
+            .start()
+        permissionsBuilder(Manifest.permission.READ_EXTERNAL_STORAGE).build().send() {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+
+//                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+//                    intent.type = "image/*"
+//                    if (intent.resolveActivity(packageManager) != null) {
+//                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+//                    }
+                }
+
+                is PermissionStatus.RequestRequired -> {
+//                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+//                    intent.type = "image/*"
+//                    if (intent.resolveActivity(packageManager) != null) {
+//                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+//                    }
+                }
+            }
+
+        }
+
+
+    }
+
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
+
     private fun callImageSelector(requestCamera: Int) {
         options = Options.init()
             .setRequestCode(requestCamera) //Request code for activity results
@@ -911,7 +1040,7 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
             )
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
+            .doOnNext { body ->
                 Utility.showAlertDialog(
                     this@UploadVendorVoacherClass,
                     getString(R.string.alert),
@@ -941,31 +1070,42 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CAMERA) {
-            if (resultCode == RESULT_OK) {
-                if (data!!.hasExtra(Pix.IMAGE_RESULTS)) {
-                    val returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
-                    Log.e("getImageesValue", returnValue[0].toString())
-                    if (requestCode == REQUEST_CAMERA) {
-                        if (ReportsFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileReport = File(compressImage(returnValue[0].toString()))
-                            val uri = Uri.fromFile(fileReport)
-                            reportFile = uri.toString()
-                            binding!!.ReportsImage.setImageURI(uri)
-                        } else if (CommudityFileSelect) {
-                            ReportsFileSelect = false
-                            CommudityFileSelect = false
-                            fileCommudity = File(compressImage(returnValue[0].toString()))
-                            val uri = Uri.fromFile(fileCommudity)
-                            commudityFile = uri.toString()
-                            binding!!.CommudityImage.setImageURI(uri)
-                        }
-                    }
-                }
+        val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+        var stampMap = mapOf(
+            "current_location" to "$currentLocation",
+            "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+        )
+        if (data != null && data.data != null) {
+            if (ReportsFileSelect) {
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, data?.data)
+
+                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                    File(compressImage(bitmapToFile(thumbnail!!).path)),
+                    stampMap
+                )
+                ReportsFileSelect = false
+                CommudityFileSelect = false
+                fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
+                val uri = Uri.fromFile(fileReport)
+                reportFile = uri.toString()
+                binding!!.ReportsImage.setImageURI(uri)
+            } else if (CommudityFileSelect) {
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, data?.data)
+
+                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                    File(compressImage(bitmapToFile(thumbnail!!).path)),
+                    stampMap
+                )
+                ReportsFileSelect = false
+                CommudityFileSelect = false
+                fileCommudity = File(compressImage(bitmapToFile(stampedBitmap).path))
+                val uri = Uri.fromFile(fileCommudity)
+                commudityFile = uri.toString()
+                binding!!.CommudityImage.setImageURI(uri)
             }
         }
+
     }
 
     override fun onRequestPermissionsResult(

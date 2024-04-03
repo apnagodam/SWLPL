@@ -109,7 +109,16 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
             }
-            binding.tvId.setText("" + Leads.get(position).getCaseId());
+            if(context instanceof StaffDashBoardActivity){
+                binding.llCaseId.setVisibility(View.VISIBLE);
+                binding.tvCaseId.setText("" + Leads.get(position).getCaseId());
+                binding.tvId.setText(Leads.get(position).getStack_number());
+
+            }
+            else {
+                binding.llCaseId.setVisibility(View.GONE);
+                binding.tvId.setText(Leads.get(position).getCaseId());
+            }
             binding.tvName.setText(Leads.get(position).getCustFname());
             binding.tvPhone.setText(Leads.get(position).getPhone());
 

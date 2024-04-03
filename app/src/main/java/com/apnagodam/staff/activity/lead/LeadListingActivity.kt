@@ -121,12 +121,7 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
     }
 
     private fun setAdapter() {
-        binding!!.rvDefaultersStatus.addItemDecoration(
-            DividerItemDecoration(
-                this@LeadListingActivity,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =
@@ -162,7 +157,7 @@ class LeadListingActivity() : BaseActivity<ActivityListingBinding?>() {
                         totalPage = it.data.leads.lastPage
                         AllCases!!.addAll(it.data.leads.data)
                         leadsTopAdapter =
-                            LeadsTopAdapter(AllCases, response, this@LeadListingActivity, activity)
+                            LeadsTopAdapter(AllCases, response, this, this)
                         setAdapter()
                         //   binding.rvDefaultersStatus.setAdapter(new LeadsTopAdapter(body.getLeads(), LeadListingActivity.this));
                     }

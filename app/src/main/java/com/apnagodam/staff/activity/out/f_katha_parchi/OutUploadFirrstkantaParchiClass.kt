@@ -326,7 +326,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                         oldKanthaImage,
                         binding!!.etKantaOldParchiNum.text.toString(),
                         binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etOldNoOfBags.text.toString()
+                        binding!!.etOldNoOfBags.text.toString(),"","","","",""
 
                     ),"OUT"
                 )
@@ -355,12 +355,21 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                     }
                 }
             }
+            else{
+                Toast.makeText(this,"Please upload Kanta/Warehouse image!",Toast.LENGTH_SHORT).show()
+            }
         } else {
             if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
                 showToast("Please select kanta name")
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
                 binding!!.etKantaParchiNum.setError("This field can't be empty")
-            } else {
+            }
+            else if (fileKantha == null) {
+                Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
+            } else if (fileTruck == null) {
+                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
+            }
+            else {
                 kantaParchiViewModel.uploadFirstKantaParchi(
                     UploadFirstkantaParchiPostData(
                         CaseID,
@@ -375,7 +384,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>
                         oldKanthaImage,
                         binding!!.etKantaOldParchiNum.text.toString(),
                         binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etOldNoOfBags.text.toString()
+                        binding!!.etOldNoOfBags.text.toString(),"","","","",""
                     ),"OUT"
                 )
                 kantaParchiViewModel.uploadFirstKantaParchiResponse.observe(this) {

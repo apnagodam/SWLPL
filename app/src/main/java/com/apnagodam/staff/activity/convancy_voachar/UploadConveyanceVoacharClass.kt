@@ -1,45 +1,53 @@
 package com.apnagodam.staff.activity.convancy_voachar
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.location.Geocoder
 import android.net.Uri
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.View.OnFocusChangeListener
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateConveyancePostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.ConveyanceViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityEmpConveyanceBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.AllLevelEmpListPojo
+import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.location.LocationServices
+import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 @AndroidEntryPoint
 class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>() {
@@ -56,7 +64,7 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
     var OtherFileSelect = false
     private var reportFile: String? = null
     private var commudityFile: String? = null
-    private var OtherFile: String=""
+    private var OtherFile: String = ""
     private lateinit var calender: Calendar
 
     // approved for
@@ -72,6 +80,10 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
     var SelectedTerminalIDIs: String? = null
 
     val conveyanceViewModel by viewModels<ConveyanceViewModel>()
+    lateinit var photoEasy: PhotoEasy
+    var currentLocation = ""
+    var lat = 0.0
+    var long = 0.0
     override fun getLayoutResId(): Int {
         return R.layout.activity_emp_conveyance
     }
@@ -94,24 +106,27 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
         // get approve person  list
         showDialog()
         conveyanceViewModel.getlevelwiselist()
-        conveyanceViewModel.conveyanceListResponse.observe(this){
-            when(it){
-                is NetworkResult.Error ->{
+        conveyanceViewModel.conveyanceListResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
                     hideDialog()
                     showToast(it.message)
                 }
+
                 is NetworkResult.Loading -> {
 
                 }
-                is NetworkResult.Success ->{
+
+                is NetworkResult.Success -> {
                     hideDialog()
-                    if(it.data!=null){
-                        it.data.let {body->
+                    if (it.data != null) {
+                        it.data.let { body ->
                             for (i in body.data.indices) {
                                 if (body.request_count > 0) {
                                     binding!!.tvDone.isClickable = true
                                     binding!!.tvDone.isEnabled = true
-                                    binding!!.tvDone.text = "Approval Request " + "(" + body.request_count + ")"
+                                    binding!!.tvDone.text =
+                                        "Approval Request " + "(" + body.request_count + ")"
                                 }
                                 approveID.add(body.data[i].userId)
                                 approveName.add(body.data[i].firstName + " " + body.data[i].lastName + "(" + body.data[i].empId + ")")
@@ -125,7 +140,39 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
                 }
             }
         }
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+
+        } else {
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                if (it != null) {
+                    lat = it.latitude
+                    long = it.longitude
+
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(lat, long, 1)
+                    if (addresses != null) {
+                        currentLocation =
+                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                addresses.first().adminArea
+                            }"
+
+                    }
+                }
+
+            }
+        }
 
 
         clickListner()
@@ -448,7 +495,7 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
     }
 
     private fun clickListner() {
-        binding!!.ivClose.setOnClickListener { startActivityAndClear(MyConveyanceListClass::class.java) }
+        binding!!.ivClose.setOnClickListener { finish() }
         binding!!.tvDone.setOnClickListener {
             startActivityAndClear(
                 ApprovalRequestConveyanceListClass::class.java
@@ -529,19 +576,19 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
             ReportsFileSelect = true
             CommudityFileSelect = false
             OtherFileSelect = false
-            callImageSelector()
+            dispatchTakePictureIntent()
         }
         binding!!.uploadOther.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = false
             OtherFileSelect = true
-            callImageSelector()
+            dispatchTakePictureIntent()
         }
         binding!!.uploadCommudity.setOnClickListener {
             ReportsFileSelect = false
             CommudityFileSelect = true
             OtherFileSelect = false
-            callImageSelector()
+            dispatchTakePictureIntent()
         }
         binding!!.OtherImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -622,7 +669,7 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
         if (FileOther != null) {
             otherFileImage = "" + Utility.transferImageToBase64(FileOther)
         }
-        apiService.doCreateConveyance(
+        conveyanceViewModel.uploadConveyanceVoucher(
             CreateConveyancePostData(
                 stringFromView(binding!!.userCommitmentDate),
                 KanthaImage,
@@ -649,15 +696,31 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
                 packagingTypeID,
                 SelectedTerminalIDIs
             )
-        ).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnNext {body->
-                Utility.showAlertDialog(
-                    this@UploadConveyanceVoacharClass,
-                    getString(R.string.alert),
-                    body.message
-                ) { startActivityAndClear(MyConveyanceListClass::class.java) }
-            }.subscribe()
+        )
+
+        conveyanceViewModel.conveyanceUploadRespomse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        Utility.showAlertDialog(
+                            this@UploadConveyanceVoacharClass,
+                            getString(R.string.alert),
+                            it.data.message
+                        ) { finish() }
+                    }
+                }
+            }
+        }
+
 
     }
 
@@ -682,37 +745,183 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == 2) {
-            val returnValue = data!!.getStringArrayListExtra(Pix.IMAGE_RESULTS)!!
-            Log.e("getImageesValue", returnValue[0].toString())
-            if (requestCode == REQUEST_CAMERA_PICTURE) {
+        val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            val uri: Uri = data?.data!!
+
+            // Use Uri object instead of File to avoid storage permissions
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+            var stampMap = mapOf(
+                "current_location" to "$currentLocation",
+                "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+            )
+
+            val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+            if (thumbnail != null) {
                 if (ReportsFileSelect) {
+
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail!!).path)),
+                        stampMap
+                    )
                     ReportsFileSelect = false
                     CommudityFileSelect = false
                     OtherFileSelect = false
-                    fileReport = File(compressImage(returnValue[0].toString()))
+                    fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
                     val uri = Uri.fromFile(fileReport)
                     reportFile = uri.toString()
                     binding!!.ReportsImage.setImageURI(uri)
                 } else if (CommudityFileSelect) {
+
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail!!).path)),
+                        stampMap
+                    )
                     ReportsFileSelect = false
                     CommudityFileSelect = false
                     OtherFileSelect = false
-                    fileCommudity = File(compressImage(returnValue[0].toString()))
+                    fileCommudity = File(compressImage(bitmapToFile(stampedBitmap).path))
                     val uri = Uri.fromFile(fileCommudity)
                     commudityFile = uri.toString()
                     binding!!.CommudityImage.setImageURI(uri)
                 } else if (OtherFileSelect) {
+
+                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                        File(compressImage(bitmapToFile(thumbnail!!).path)),
+                        stampMap
+                    )
                     ReportsFileSelect = false
                     CommudityFileSelect = false
                     OtherFileSelect = false
-                    FileOther = File(compressImage(returnValue[0].toString()))
+                    FileOther = File(compressImage(bitmapToFile(stampedBitmap).path))
                     val uri = Uri.fromFile(FileOther)
                     OtherFile = uri.toString()
                     binding!!.OtherImage.setImageURI(uri)
                 }
+
             }
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
         }
+
+//        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+//            override fun onFinish(thumbnail: Bitmap?) {
+//                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+//
+//                var stampMap = mapOf(
+//                    "current_location" to "$currentLocation",
+//                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+//                )
+//                if (thumbnail != null) {
+//                    if (ReportsFileSelect) {
+//
+//                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+//                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+//                            stampMap
+//                        )
+//                        ReportsFileSelect = false
+//                        CommudityFileSelect = false
+//                        OtherFileSelect = false
+//                        fileReport = File(compressImage(bitmapToFile(stampedBitmap).path))
+//                        val uri = Uri.fromFile(fileReport)
+//                        reportFile = uri.toString()
+//                        binding!!.ReportsImage.setImag1eURI(uri)
+//                    } else if (CommudityFileSelect) {
+//
+//                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+//                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+//                            stampMap
+//                        )
+//                        ReportsFileSelect = false
+//                        CommudityFileSelect = false
+//                        OtherFileSelect = false
+//                        fileCommudity = File(compressImage(bitmapToFile(stampedBitmap).path))
+//                        val uri = Uri.fromFile(fileCommudity)
+//                        commudityFile = uri.toString()
+//                        binding!!.CommudityImage.setImageURI(uri)
+//                    } else if (OtherFileSelect) {
+//
+//                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+//                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+//                            stampMap
+//                        )
+//                        ReportsFileSelect = false
+//                        CommudityFileSelect = false
+//                        OtherFileSelect = false
+//                        FileOther = File(compressImage(bitmapToFile(stampedBitmap).path))
+//                        val uri = Uri.fromFile(FileOther)
+//                        OtherFile = uri.toString()
+//                        binding!!.OtherImage.setImageURI(uri)
+//                    }
+//
+//                }
+//
+//            }
+//
+//        })
+
+
+    }
+
+    override fun dispatchTakePictureIntent() {
+        ImagePicker.with(this).start();
+//        ImagePicker.with(this)
+//            .galleryOnly()	//User can only select image from Gallery
+//            .start()
+//        permissionsBuilder(Manifest.permission.CAMERA).build().send() {
+//            when (it.first()) {
+//                is PermissionStatus.Denied.Permanently -> {}
+//                is PermissionStatus.Denied.ShouldShowRationale -> {}
+//                is PermissionStatus.Granted -> {
+//                    photoEasy.startActivityForResult(this)
+//
+////                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+////                    intent.type = "image/*"
+////                    if (intent.resolveActivity(packageManager) != null) {
+////                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+////                    }
+//                }
+//
+//                is PermissionStatus.RequestRequired -> {
+//                    photoEasy.startActivityForResult(this)
+//
+////                    val intent = Intent(Intent.ACTION_GET_CONTENT)
+////                    intent.type = "image/*"
+////                    if (intent.resolveActivity(packageManager) != null) {
+////                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
+////                    }
+//                }
+//            }
+//
+//        }
+
+
+    }
+
+    private fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
     }
 
     override fun onRequestPermissionsResult(
@@ -737,4 +946,10 @@ class UploadConveyanceVoacharClass : BaseActivity<ActivityEmpConveyanceBinding?>
             }
         }
     }
+
+    companion object {
+        private val REQUEST_TAKE_PHOTO = 0
+        private val REQUEST_SELECT_IMAGE_IN_ALBUM = 1
+    }
 }
+

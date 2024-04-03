@@ -69,10 +69,10 @@ object NetworkModule {
         //     httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         // set the connection time to 1 minutes
         httpClient.protocols(listOf(Protocol.HTTP_1_1))
-        httpClient.connectTimeout(15, TimeUnit.SECONDS) // connect timeout
-                .writeTimeout(15, TimeUnit.SECONDS) // write timeout
-                .readTimeout(15, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(false) //.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager())
+        httpClient.connectTimeout(3, TimeUnit.MINUTES) // connect timeout
+                .writeTimeout(3, TimeUnit.MINUTES) // write timeout
+                .readTimeout(3, TimeUnit.MINUTES)
+                .retryOnConnectionFailure(true) //.sslSocketFactory(tlsSocketFactory, tlsSocketFactory.getTrustManager())
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         return httpClient.build()
     }
@@ -87,7 +87,7 @@ object NetworkModule {
             gsonConverterFactory: GsonConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
-                .baseUrl("https://apnagodam.com/test/")
+                .baseUrl(Constants.API_BASE_URL)
                 .client(okHttpClient())
                 .addConverterFactory(gsonConverterFactory)
                 .build()

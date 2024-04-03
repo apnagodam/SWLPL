@@ -11,6 +11,7 @@ import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.StaffDashBoardActivity;
 import com.apnagodam.staff.activity.lead.LeadListingActivity;
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
 import com.apnagodam.staff.module.AllLeadsResponse;
@@ -79,6 +80,12 @@ public class LeadsTopAdapter extends BaseRecyclerViewAdapter {
                 binding.getRoot().setBackgroundColor(Color.parseColor("#EBEBEB"));
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
+            }
+            if(context instanceof StaffDashBoardActivity){
+                binding.llCaseId.setVisibility(View.VISIBLE);
+            }
+            else {
+                binding.llCaseId.setVisibility(View.GONE);
             }
             binding.tvId.setText("" + Leads.get(position).getId());
             binding.tvName.setText(Leads.get(position).getCustomerName());

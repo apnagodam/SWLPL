@@ -312,7 +312,7 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:padding="@dimen/_4sdp"
-                            android:text="@string/lead_id"
+                            android:text="Stack No."
                             android:textColor="@color/colorWhite"
                             android:textSize="@dimen/_10ssp" />
 

@@ -655,7 +655,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical"
-                                android:visibility="gone">
+                                android:visibility="visible">
 
                                 <androidx.cardview.widget.CardView
                                     android:id="@+id/cardOldKantaParchi"
@@ -770,7 +770,28 @@
                                         android:layout_marginVertical="@dimen/_10sdp"
                                         android:editable="true"
                                         android:hint="Old Kanta Parchi Number"
+                                        android:text="0"
                                         android:imeOptions="actionDone"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldName"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:text=""
+                                        android:hint="Old Kanta Parchi Name"
+                                        android:imeOptions="actionNext"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
                                         android:textSize="@dimen/_12ssp" />
@@ -778,6 +799,69 @@
 
                                 <com.google.android.material.textfield.TextInputLayout
                                     style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldNetWeight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Net Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldTare"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Tare Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldGrossWeight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Gross Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilOldWeightQt"
+                                    style="@style/TextInputStyle"
+                                    android:visibility="gone"
                                     android:layout_width="match_parent"
 
                                     android:layout_height="wrap_content">
@@ -790,6 +874,7 @@
                                         android:layout_marginVertical="@dimen/_10sdp"
                                         android:hint="@string/weight_quintal"
                                         android:imeOptions="actionNext"
+                                        android:text="0"
                                         android:inputType="number"
                                         android:lines="1"
                                         android:padding="@dimen/_10sdp"
@@ -913,7 +998,7 @@
                                             android:layout_marginTop="@dimen/_10sdp"
                                             android:gravity="center"
                                             android:maxLines="7"
-                                            android:text="@string/upload_kanta_parchi_file"
+                                            android:text="@string/truck_file_start"
                                             android:textColor="@color/dark_gray_shade" />
 
                                     </LinearLayout>

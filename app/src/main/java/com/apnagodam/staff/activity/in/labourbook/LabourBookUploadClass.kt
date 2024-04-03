@@ -70,6 +70,34 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         contractorName = ArrayList()
 
         getCommodityList()
+        labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    showToast(it.message)
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            hideDialog()
+                            showToast(it.data!!.message.toString())
+                            finish()
+
+                        } else {
+                            showToast(it.data!!.message.toString())
+
+                        }
+                    }
+
+
+                }
+            }
+        }
+
     }
 
     private fun setValueOnSpinner() {
@@ -175,6 +203,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
+                    showToast(it.message)
                     hideDialog()
                 }
 
@@ -183,18 +212,14 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 }
 
                 is NetworkResult.Success -> {
-                    if (it.data != null) {
-                        if (BuildConfig.APPLICATION_ID != null) {
-                            SharedPreferencesRepository.getDataManagerInstance()
-                                .setCommdity(it.data.categories)
-                            SharedPreferencesRepository.getDataManagerInstance().employee =
-                                it.data.employee
-                            SharedPreferencesRepository.getDataManagerInstance()
-                                .setContractor(it.data.labourList)
-                        }
-                        if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
-                            setValueOnSpinner()
-                        }
+                    SharedPreferencesRepository.getDataManagerInstance()
+                        .setCommdity(it.data!!.categories)
+                    SharedPreferencesRepository.getDataManagerInstance().employee =
+                        it.data.employee
+                    SharedPreferencesRepository.getDataManagerInstance()
+                        .setContractor(it.data.labourList)
+                    if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
+                        setValueOnSpinner()
                     }
                     hideDialog()
                 }
@@ -240,26 +265,6 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                         "0000-00-00"
                     )
                 )
-                hideDialog()
-                finish()
-                labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            showToast(it.message)
-                            hideDialog()
-                        }
-
-                        is NetworkResult.Loading -> {
-                            showToast(it.message)
-                        }
-                        is NetworkResult.Success -> {
-                            showToast(it.data!!.message.toString())
-
-
-
-                        }
-                    }
-                }
 
 
 //                if (contractorsID == null) {
@@ -291,7 +296,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             return true
         }
 
-    fun popUpDatePicker() {
+    fun popUpDatePicker() { 
         val dateDialog = DatePickerDialog(
             this, date, calender
             !!.get(Calendar.YEAR), calender!![Calendar.MONTH],

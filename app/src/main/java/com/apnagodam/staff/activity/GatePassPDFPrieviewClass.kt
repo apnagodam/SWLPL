@@ -65,6 +65,7 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
             when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
+                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT)
                 }
 
                 is NetworkResult.Loading -> {
@@ -91,6 +92,10 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
                                     binding!!.commodityName.text = body.data.commodityName
                                     binding!!.transporterName.text = body.data.transporterName
                                     binding!!.tansporterMobileNo.text = body.data.transporterPhoneNo
+                                    binding!!.oldKathaParchiNo.text  = body.data.oldKantaParchiNumber
+                                    binding!!.oldKathaParchiAvgWeight.text = body.data.oldGrossWeight
+                                    binding!!.oldKathaParchiTotalWeight.text = body.data.oldNetWeight
+                                    binding!!.kathaName.text = body.data.oldKantaName
                                     if(body.data.contractorId.toString().toInt()>1){
                                         binding!!.labourContractor.text = "Company"
 
@@ -133,12 +138,12 @@ class GatePassPDFPrieviewClass : BaseActivity<ActivityGatePassPdfFileBinding?>()
                                         binding!!.facilityBardhna.text =
                                             if (body.data.bagsFacility.toInt() == 1) "YES" else "No"
                                     }
-                                    binding!!.oldKathaParchiNo.text = body.data.oldKantaParchi
-                                    binding!!.oldKathaParchiTotalWeight.text =
-                                        body.data.oldTotalWeight
-                                    binding!!.oldKathaParchiAvgWeight.text =
-                                        body.data.oldOriginalWeight
-                                    binding!!.kathaName.text = body.data.oldKantaName
+//                                    binding!!.oldKathaParchiNo.text = body.data.oldKantaParchi
+//                                    binding!!.oldKathaParchiTotalWeight.text =
+//                                        body.data.oldTotalWeight
+//                                    binding!!.oldKathaParchiAvgWeight.text =
+//                                        body.data.oldOriginalWeight
+//                                    binding!!.kathaName.text = body.data.oldKantaName
                                     /** */
                                     binding!!.driverName.text =
                                         "वरिष्ठ अधिकारी : " + body.data.gatePassCdfUserName

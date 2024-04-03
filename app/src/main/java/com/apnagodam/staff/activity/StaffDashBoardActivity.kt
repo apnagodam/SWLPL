@@ -331,7 +331,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         caseIdViewModel.stackRequestResponse.observe(this) { it ->
             when (it) {
                 is NetworkResult.Error -> {
-                    showToast(it.message)
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
                     hideDialog()
                 }
 
@@ -348,6 +348,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 inwardsList.clear()
                                 outwardsList.clear()
                                 for (i in it.data.inwardRequestData.indices) {
+
                                     if (userDetails!!.terminal == null) {
                                         inwardsList.add(it.data.inwardRequestData[i])
                                     } else if (it.data.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
@@ -403,55 +404,61 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     private fun getAllCases(search: String) {
-        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
         showDialog()
         caseIdViewModel.getCaseId("15", pageOffset, "1", search)
         caseIdViewModel.response.observe(this) { body ->
+
             when (body) {
                 is NetworkResult.Success -> {
-                    inCasesList.clear()
-                    outCasesList.clear()
-                    AllCases!!.clear()
+
                     if (body.data != null) {
                         if (body.data.status == "1") {
-                            totalPage = body.data.getaCase().lastPage
-                            setAdapter()
-                            for (i in body.data.getaCase().data.indices) {
+                            AllCases!!.clear()
+                            SharedPreferencesRepository.getDataManagerInstance().user.let {
+                                if (it != null) {
+                                    totalPage = body.data.getaCase().lastPage
+                                    setAdapter()
+                                    for (i in body.data.getaCase().data.indices) {
 
-                                if ((body.data.getaCase().data[i].cctvReport == null
-                                            || body.data.getaCase().data[i].ivrReport == null
-                                            || body.data.getaCase().data[i].secondQualityReport == null
-                                            || body.data.getaCase().data[i].sendToLab == null
-                                            || body.data.getaCase().data[i].firstKantaParchi == null
-                                            || body.data.getaCase().data[i].secondKantaParchi == null
-                                            || body.data.getaCase().data[i].labourBook == null
-                                            || body.data.getaCase().data[i].truckbook == null
-                                            || body.data.getaCase().data[i].gatepassReport == null)
-                                ) {
-                                    if (userDetails.terminal != null) {
-                                        if (body.data.getaCase().data[i].terminalId.toString() == userDetails.terminal.toString()) {
-                                            AllCases.add(body.data.getaCase().data[i])
+                                        if ((body.data.getaCase().data[i].cctvReport == null
+                                                    || body.data.getaCase().data[i].ivrReport == null
+                                                    || body.data.getaCase().data[i].secondQualityReport == null
+                                                    || body.data.getaCase().data[i].sendToLab == null
+                                                    || body.data.getaCase().data[i].firstKantaParchi == null
+                                                    || body.data.getaCase().data[i].secondKantaParchi == null
+                                                    || body.data.getaCase().data[i].labourBook == null
+                                                    || body.data.getaCase().data[i].truckbook == null
+                                                    || body.data.getaCase().data[i].gatepassReport == null)
+                                        ) {
+                                            if (it.terminal != null) {
+                                                if (body.data.getaCase().data[i].terminalId.toString() == it.terminal.toString()) {
+                                                    AllCases.add(body.data.getaCase().data[i])
+                                                }
+                                            } else {
+                                                AllCases.add(body.data.getaCase().data[i])
+                                            }
+
                                         }
-                                    } else {
-                                        AllCases.add(body.data.getaCase().data[i])
+
+
                                     }
 
+                                    if (AllCases.isEmpty()) {
+                                        binding!!.mainContent.emptyData.visibility = View.VISIBLE
+                                        binding!!.mainContent!!.rvDefaultersStatus.visibility =
+                                            View.GONE
+                                    }
+                                    casesTopAdapter = CasesTopAdapter(AllCases, this, apiService)
+
                                 }
-
-
                             }
-
-                            if (AllCases.isEmpty()) {
-                                binding!!.mainContent.emptyData.visibility = View.VISIBLE
-                                binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-                            }
-                            casesTopAdapter = CasesTopAdapter(AllCases, this, apiService)
-
                         } else {
-                            showToast(body.message)
+                            Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
                             binding!!.mainContent.emptyData.visibility = View.VISIBLE
                             binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                         }
+
+
                     } else {
                         binding!!.mainContent.emptyData.visibility = View.VISIBLE
                         binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
@@ -461,6 +468,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
 
                 is NetworkResult.Error -> {
+                    Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
                     binding!!.mainContent.emptyData.visibility = View.GONE
                     binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
 
@@ -468,6 +476,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
 
                 is NetworkResult.Loading -> {
+                    Toast.makeText(this,"Loading",Toast.LENGTH_SHORT)
                 }
             }
 
@@ -543,11 +552,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.fastcase_list)) {
                         startActivity(FastCaseListActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
+                        showDialog()
                         loginViewModel.doLogout()
                         loginViewModel.logoutResponse.observe(this) {
                             when (it) {
                                 is NetworkResult.Error -> {
-                                    showToast(it.message)
+                                    hideDialog()
+                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
                                     SharedPreferencesRepository.getDataManagerInstance().clear()
                                     SharedPreferencesRepository.setIsUserName(false)
                                     SharedPreferencesRepository.saveSessionToken("")
@@ -563,6 +574,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                 }
 
                                 is NetworkResult.Success -> {
+                                    hideDialog()
                                     if (it.data != null) {
                                         SharedPreferencesRepository.getDataManagerInstance().clear()
                                         SharedPreferencesRepository.setIsUserName(false)
@@ -1022,7 +1034,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 is NetworkResult.Error -> {
                     binding!!.swipeRefresherHome.isRefreshing = false;
 
-                    showToast(it.message)
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
                 }
 
                 is NetworkResult.Loading -> {
@@ -1096,7 +1108,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     when (it) {
                         is NetworkResult.Error -> {
                             hideDialog()
-                            showToast(it.message)
+                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
                             binding!!.swipeRefresherHome.isRefreshing = false;
 
                         }

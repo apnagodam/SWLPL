@@ -88,7 +88,7 @@ public class UploadTruckDetailsPostData {
                                       String driver_phone, String min_weight, String max_weight, String turnaround_time, String total_weight,
                                       String no_of_bags, String total_transport_cost, String advance_payment, String start_date_time,
                                       String final_settlement_amount, String end_date_time, String notes
-            , String transporter_id, String bilty_image, String truckbook_rate_type, String truckbook_related_caseId,String location) {
+            , String transporter_id, String bilty_image, String truckbook_rate_type, String truckbook_related_caseId,String location,String ratePerKm) {
         this.case_id = case_id;
         this.transporter = transporter;
         this.vehicle = vehicle;
@@ -110,6 +110,7 @@ public class UploadTruckDetailsPostData {
         this.truckbook_rate_type = truckbook_rate_type;
         this.truckbook_related_caseId = truckbook_related_caseId;
         this.location = location;
+        this.rate_per_km = ratePerKm;
     }
 }
 

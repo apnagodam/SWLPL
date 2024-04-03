@@ -164,9 +164,6 @@ public class GatePassPDFPojo extends BaseResponse {
         @SerializedName("bags_facility")
         @Expose
         private String bagsFacility;
-        @SerializedName("old_kanta_parchi")
-        @Expose
-        private String oldKantaParchi;
         @SerializedName("old_total_weight")
         @Expose
         private String oldTotalWeight;
@@ -206,6 +203,43 @@ public class GatePassPDFPojo extends BaseResponse {
         @SerializedName("last_name")
         @Expose
         private String lastName;
+
+        @SerializedName("old_kanta_parchi")
+        @Expose
+        private String oldKantaParchiNumber;
+
+        @SerializedName("old_gross_weight")
+        @Expose
+        private String oldGrossWeight;
+
+        @SerializedName("old_net_weight")
+        @Expose
+        private String oldNetWeight;
+
+
+        public String getOldKantaParchiNumber() {
+            return oldKantaParchiNumber;
+        }
+
+        public void setOldKantaParchiNumber(String oldKantaParchiNumber) {
+            this.oldKantaParchiNumber = oldKantaParchiNumber;
+        }
+
+        public String getOldGrossWeight() {
+            return oldGrossWeight;
+        }
+
+        public void setOldGrossWeight(String oldGrossWeight) {
+            this.oldGrossWeight = oldGrossWeight;
+        }
+
+        public String getOldNetWeight() {
+            return oldNetWeight;
+        }
+
+        public void setOldNetWeight(String oldNetWeight) {
+            this.oldNetWeight = oldNetWeight;
+        }
 
         public String getDisplacedBags() {
             return displacedBags;
@@ -725,13 +759,7 @@ public class GatePassPDFPojo extends BaseResponse {
             this.bagsFacility = bagsFacility;
         }
 
-        public String getOldKantaParchi() {
-            return oldKantaParchi;
-        }
 
-        public void setOldKantaParchi(String oldKantaParchi) {
-            this.oldKantaParchi = oldKantaParchi;
-        }
 
         public String getOldTotalWeight() {
             return oldTotalWeight;

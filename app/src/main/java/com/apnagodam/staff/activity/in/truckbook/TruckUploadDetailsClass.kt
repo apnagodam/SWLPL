@@ -106,18 +106,21 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            lat = it.latitude
-            long = it.longitude
+            if(it!=null){
+                lat = it.latitude
+                long = it.longitude
 
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val addresses = geocoder.getFromLocation(lat, long, 1)
+                if (addresses != null) {
+                    currentLocation =
+                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                            addresses.first().adminArea
+                        }"
 
+                }
             }
+
         }
 
         if (ActivityCompat.checkSelfPermission(
@@ -220,7 +223,29 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             )
         }
 
+        truckBookViewModel.uploadTruckResponse.observe(this)
+        {
+            when (it) {
+                is NetworkResult.Error -> {
+                    showToast(it.message)
+                    hideDialog()
+                }
 
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (it.data.status.equals("1")) {
+                            finish()
+                        } else
+                            showToast(it.data.message)
+                    }
+                    hideDialog()
+                }
+            }
+        }
 
     }
 
@@ -616,15 +641,15 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             UploadTruckDetailsPostData(
                 CaseID,
                 TransporterID,
-                stringFromView(binding!!.etVehicleNo),
-                stringFromView(binding!!.etDriverName),
-                stringFromView(binding!!.etDriverPhoneNo),
+                binding!!.etVehicleNo.text.toString(),
+               binding!!.etDriverName.text.toString(),
+                binding!!.etDriverPhoneNo.text.toString(),
                 "",
                 "",
                 "",
                 "",
                 "",
-                "",
+                binding!!.etTransportRate.text.toString(),
                 stringFromView(
                     binding!!.etAdvancePatyment
                 ),
@@ -639,32 +664,11 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 spinnerRateType,
                 stringFromView(
                     binding!!.etRealteCaseid,
-                ), binding!!.etLocation.text.toString()
+                ), binding!!.etLocation.text.toString(),
+                binding!!.etTransportRate.text.toString()
             )
         )
-        truckBookViewModel.uploadTruckResponse.observe(this)
-        {
-            when (it) {
-                is NetworkResult.Error -> {
-                    showToast(it.message)
-                    hideDialog()
-                }
 
-                is NetworkResult.Loading -> {
-
-                }
-
-                is NetworkResult.Success -> {
-                    if (it.data != null) {
-                        if (it.data.status.equals("1")) {
-                            finish()
-                        } else
-                            showToast(it.data.message)
-                    }
-                    hideDialog()
-                }
-            }
-        }
 
     }
 
@@ -691,8 +695,12 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     )
                 } else if (fileBiltyImage == null) {
                     showToast("please select bilty image")
+                    return false;
+
                 } else if (Validationhelper().fieldEmpty(binding!!.tilAdvancePatyment)) {
                     binding!!.tilAdvancePatyment.error = "This Field is Required"
+                    return false;
+
                 }
 //                else if (Validationhelper().fieldEmpty(binding!!.tilFinalSettalementAmount))
 //                {
@@ -701,9 +709,24 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
                 else if (Validationhelper().fieldEmpty(binding!!.tilLocation)) {
                     binding!!.tilLocation.error = "This Field is required"
+                    return false;
+
                 }
+                else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate)) || Integer.parseInt(binding!!.etTransportRate.text.toString())==0) {
+                    binding!!.tilTransportRate.error = "This Field is required"
+                    return false;
 
+                }
+                else if (TextUtils.isEmpty(stringFromView(binding!!.etAdvancePatyment)) ) {
+                    binding!!.tilAdvancePatyment.error = "This Field is required"
+                    return false;
 
+                }
+                else if (TextUtils.isEmpty(stringFromView(binding!!.etLocation)) ) {
+                    binding!!.tilLocation.error = "This Field is required"
+                    return false;
+
+                }
 //                else if (TextUtils.isEmpty(stringFromView(binding!!.etTotalTransCost))) {
 //                    return Utility.showEditTextError(
 //                        binding!!.tilTotalTransCost,

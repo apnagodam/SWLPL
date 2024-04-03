@@ -8,9 +8,9 @@ plugins {
 android {
     signingConfigs {
         release {
-              keyAlias 'employee'
+              keyAlias 'apnagodamemp'
               keyPassword 'apnagodamemp'
-              storeFile file('/B:/backup/employee/play_store/newFolder/keystoreFile.jks')
+              storeFile file('/Users/apnagodamdeveloper/swlpl_key')
               storePassword 'apnagodamemp'
         }
     }
@@ -33,12 +33,12 @@ android {
         viewBinding true
     }
     defaultConfig {
-        applicationId "com.apnagodam.staff"
+        applicationId "apnagodam.staff"
         minSdkVersion 21
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 34
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 11
+        versionName "1.0.11"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -56,21 +56,21 @@ android {
             multiDexEnabled true
             // Enables code shrinking, obfuscation, and optimization for only
             // your project's release build type.
-            minifyEnabled true
+          //  minifyEnabled true
             debuggable false
-    //        useProguard true
+//            useProguard true
             // Enables resource shrinking, which is performed by the
             // Android Gradle plugin.
-            shrinkResources true
-            crunchPngs true
-            pseudoLocalesEnabled false
-            zipAlignEnabled true
-            jniDebuggable false
-            renderscriptDebuggable false
+//            shrinkResources true
+//            crunchPngs true
+//            pseudoLocalesEnabled false
+//            zipAlignEnabled true
+//            jniDebuggable false
+//            renderscriptDebuggable false
             // Includes the default ProGuard rules files that are packaged with
             // the Android Gradle plugin.
             // R8 configuration files.
-       //     proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -208,6 +208,12 @@ dependencies {
     implementation 'com.github.leoncydsilva:SearchableSpinner:1.0.1'
     //permission helper
     implementation 'com.github.pankaj89:PermissionHelper:2.3'
+
+    //gallery picker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+    //flex box
+    implementation 'com.google.android.flexbox:flexbox:3.0.0'
+
 
 
 }

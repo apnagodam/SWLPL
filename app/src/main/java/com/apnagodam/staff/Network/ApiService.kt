@@ -97,10 +97,10 @@ interface ApiService {
     fun ApproveIntantion(@Body approvedIntantionPOst: ApprovedIntantionPOst?): Call<LoginResponse?>?
 
     @GET("emp_api/apna_emp_vendor_approveBy")
-    fun ExpensionApprovedList(
+    suspend fun ExpensionApprovedList(
         @Query("exp_id") str: String?,
         @Query("charge_amount") str2: String?
-    ): Observable<VendorExpensionApprovedListPojo>
+    ): Response<VendorExpensionApprovedListPojo>
 
     @GET("emp_api/apna_emp_vendor_exp_list")
     fun ExpensionList(@Query("phone_no") str: String?): Observable<VendorExpensionNamePojo>
@@ -133,7 +133,7 @@ interface ApiService {
     ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_create")
-    fun doCreateConveyance(@Body createConveyancePostData: CreateConveyancePostData?): Observable<LoginResponse>
+    suspend fun doCreateConveyance(@Body createConveyancePostData: CreateConveyancePostData?): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_create_lead")
     fun doCreateLeads(@Body createLeadsPostData: CreateLeadsPostData?): Observable<LoginResponse>
@@ -414,6 +414,7 @@ interface ApiService {
 
     @POST("emp_api/apna_emp_kanta_parchi")
     suspend fun uploadFirstkantaParchi(
+
         @Body uploadFirstkantaParchiPostData: UploadFirstkantaParchiPostData,
         @Query("in_out") inOut: String
     ): Response<LoginResponse>

@@ -147,7 +147,7 @@
     <string name="purpose">Purpose</string>
     <string name="create_date">Created On</string>
     <string name="action">Action</string>
-    <string name="case_idd">Case_ID</string>
+    <string name="case_idd">Case ID</string>
     <string name="sub_user">Sub Users</string>
 
     <string name="converted_by">Converted By</string>

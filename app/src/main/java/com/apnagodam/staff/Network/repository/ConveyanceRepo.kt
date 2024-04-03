@@ -1,12 +1,16 @@
 package com.apnagodam.staff.Network.repository
 
+import android.net.Network
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.CreateConveyancePostData
 import com.apnagodam.staff.Network.Response.BaseResponse
+import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.module.AllConvancyList
 import com.apnagodam.staff.module.AllLevelEmpListPojo
 import com.apnagodam.staff.module.AllVendorConvancyList
+import com.apnagodam.staff.module.VendorExpensionApprovedListPojo
 import com.apnagodam.staff.module.VendorNamePojo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -53,6 +57,20 @@ class ConveyanceRepo @Inject constructor(val apiService: ApiService) : BaseApiRe
             emit(safeApiCall {
                 apiService.getVendorConvancyList(limit, page, search)
             })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun createConveyance(createConveyancePostData: CreateConveyancePostData): Flow<NetworkResult<LoginResponse>> {
+        return flow {
+            emit(safeApiCall {
+                apiService.doCreateConveyance(createConveyancePostData)
+            })
+        }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun expensionApprovedList(expId:String,chargeAmount:String):Flow<NetworkResult<VendorExpensionApprovedListPojo>>{
+        return flow {
+            emit(safeApiCall { apiService.ExpensionApprovedList(expId,chargeAmount) })
         }.flowOn(Dispatchers.IO)
     }
 }

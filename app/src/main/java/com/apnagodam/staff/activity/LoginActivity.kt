@@ -82,46 +82,49 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
         }
 
     fun login() {
-        if (Utility.isNetworkAvailable(this)) {
-            var sharedPrefences = SharedPreferencesRepository.getDataManagerInstance();
-            sharedPrefences.savelat(lat)
-            sharedPrefences.savelong(Long)
-
-            loginViewModel.doLogin(
-                LoginPostData(
-                    stringFromView(binding!!.etPhoneNumber).toString(),
-                    "Emp"
-                )
+        showDialog()
+        loginViewModel.doLogin(
+            LoginPostData(
+                stringFromView(binding!!.etPhoneNumber).toString(),
+                "Emp"
             )
-            loginViewModel.response.observe(this)
-            {
-                when (it) {
-                    is NetworkResult.Error -> {}
-                    is NetworkResult.Loading -> {
-                        showDialog()
-                    }
+        )
+        loginViewModel.response.observe(this)
+        {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                    Toast.makeText(this,"${it.message}",Toast.LENGTH_SHORT)
+                }
+                is NetworkResult.Loading -> {
+                }
 
-                    is NetworkResult.Success -> {
-                        if (it.data != null) {
-                            if (it.data.status == "1") {
-                                Toast.makeText(
-                                    this@LoginActivity,
-                                    it.data!!.getMessage(),
-                                    Toast.LENGTH_LONG
-                                )
-                                    .show()
-                                // SMS Listener for listing auto read message lsitner
-                                startSMSListener(it.data.getPhone())
-                            } else {
-                                showToast(it.data.message)
-                            }
+                is NetworkResult.Success -> {
+                    hideDialog()
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            Toast.makeText(this,"${it.data.message}",Toast.LENGTH_SHORT)
+
+                            // SMS Listener for listing auto read message lsitner
+                            startSMSListener(it.data.phone)
+                        } else {
+                            Toast.makeText(this,"${it.data.message}",Toast.LENGTH_SHORT)
+
+
                         }
-
-                        hideDialog()
-
                     }
+
+                    hideDialog()
+
                 }
             }
+        }
+        if (Utility.isNetworkAvailable(this)) {
+//            var sharedPrefences = SharedPreferencesRepository.getDataManagerInstance();
+//            sharedPrefences.savelat(lat)
+//            sharedPrefences.savelong(Long)
+
+
 
 
         } else {
@@ -145,6 +148,8 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                 bundle.putString("setting", settingScreen)
                 startActivity(OtpActivity::class.java, bundle)
             }.addOnFailureListener {
+                Toast.makeText(this,"${it.message}${it.cause}",Toast.LENGTH_SHORT)
+
                 it.printStackTrace()
                 val bundle = Bundle()
                 bundle.putString("mobile", phone)

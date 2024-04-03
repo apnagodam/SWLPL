@@ -28,12 +28,9 @@ class LabourRepo @Inject constructor(val apiService: ApiService) : BaseApiRespon
     }
 
     suspend fun uploadLabourDetails(uploadLabourDetailsPostData: UploadLabourDetailsPostData): Flow<NetworkResult<LoginResponse>> {
-        return flow<NetworkResult<LoginResponse>> {
-            safeApiCall {
-                apiService.uploadLabourDetails(
-                    uploadLabourDetailsPostData
-                )
-            }
+        return flow {
+            emit(safeApiCall { apiService.uploadLabourDetails(uploadLabourDetailsPostData) })
         }.flowOn(Dispatchers.IO)
+
     }
 }

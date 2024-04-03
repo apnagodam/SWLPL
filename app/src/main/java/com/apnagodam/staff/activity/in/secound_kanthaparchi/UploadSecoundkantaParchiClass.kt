@@ -10,6 +10,7 @@ import android.location.Geocoder
 import android.net.Uri
 import android.view.View
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
@@ -79,6 +80,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     val dtime = DecimalFormat("#.##")
 
     override fun setUp() {
+        binding!!.tilOldWeightQt.visibility = View.VISIBLE
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -137,7 +139,6 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
             if (binding!!.etWeight.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etNoOfBags.text!!.isNotEmpty()) {
                 try {
-
                     var bagCal =
                         (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
                             .toDouble()
@@ -273,7 +274,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
 
         if (isFirstUpload) {
-            if (fileTruck2 != null) {
+            if (fileTruck2 != null && fileTruck2!!.path.isNotEmpty()) {
                 showDialog()
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
@@ -325,6 +326,9 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                         }
                     }
                 }
+            }
+            else {
+                Toast.makeText(this,"Please select Kanta/Warehouse Image",Toast.LENGTH_SHORT)
             }
         } else {
             if (validateFields()) {
@@ -492,14 +496,15 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             binding!!.tilNoOfBags.error = "This Field cannot be empty"
             return false
         }
-        if (fileTruck == null) {
-            showToast("Please upload truck file")
-            return false
-        }
         if (fileKantha == null) {
             showToast("Please upload kanta file")
             return false
         }
+        if (fileTruck == null) {
+            showToast("Please upload truck file")
+            return false
+        }
+
 
         return true
     }
