@@ -3,10 +3,13 @@ package com.apnagodam.staff.adapter;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
@@ -52,7 +55,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
     private List<AllCaseIDResponse.Datum> Leads;
     private Context context;
     private BaseActivity activity;
-   private  ApiService apiService;
+    private ApiService apiService;
 
     public CasesTopAdapter(List<AllCaseIDResponse.Datum> leads, Activity caseListingActivity, ApiService apiService) {
         this.Leads = leads;
@@ -109,13 +112,12 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
             }
-            if(context instanceof StaffDashBoardActivity){
+            if (context instanceof StaffDashBoardActivity) {
                 binding.llCaseId.setVisibility(View.VISIBLE);
                 binding.tvCaseId.setText("" + Leads.get(position).getCaseId());
                 binding.tvId.setText(Leads.get(position).getStack_number());
 
-            }
-            else {
+            } else {
                 binding.llCaseId.setVisibility(View.GONE);
                 binding.tvId.setText(Leads.get(position).getCaseId());
             }
@@ -210,7 +212,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                             }
                                         });
                                     } else {
-                                        if (Leads.get(position).getSecondQualityReport() == null   || Leads.get(position).getSendToLab()==null) {
+                                        if (Leads.get(position).getSecondQualityReport() == null || Leads.get(position).getSendToLab() == null) {
                                             binding.tvStatus.setText("Add Second Quality Report");
 
                                             binding.divider.setVisibility(View.VISIBLE);
@@ -218,33 +220,55 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                             ArrayList<UploadFirstQualityPostData.CommodityData> commodityData = new ArrayList<>();
 
                                             binding.tvLab.setOnClickListener(view -> {
-                                                apiService.uploadLabreport(new UploadSecoundQualityPostData(
-                                                                Leads.get(position).getCaseId(),
-                                                                "", commodityData, "", "", "", "", "", "0", "1"
-                                                        ), "OUT").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                                                        .subscribe(new Observer<LoginResponse>() {
-                                                            @Override
-                                                            public void onSubscribe(Disposable d) {
 
-                                                            }
+                                                Dialog dialog = new Dialog(context);
+                                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                                dialog.setCancelable(false);
+                                                dialog.setContentView(R.layout.dialog_lab_report);
 
-                                                            @Override
-                                                            public void onNext(LoginResponse loginResponse) {
-                                                                if (context instanceof StaffDashBoardActivity) {
-                                                                    ((StaffDashBoardActivity) context).getdashboardData();
+                                                TextView btYes = dialog.findViewById(R.id.btYes);
+
+                                                TextView btNo = dialog.findViewById(R.id.btNo);
+                                                btYes.setOnClickListener((v) -> {
+                                                    apiService.uploadLabreport(new UploadSecoundQualityPostData(
+                                                                    Leads.get(position).getCaseId(),
+                                                                    "", commodityData, "", "", "", "", "", "0", "1"
+                                                            ), "OUT").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                                                            .subscribe(new Observer<LoginResponse>() {
+                                                                @Override
+                                                                public void onSubscribe(Disposable d) {
+
                                                                 }
-                                                            }
 
-                                                            @Override
-                                                            public void onError(Throwable e) {
+                                                                @Override
+                                                                public void onNext(LoginResponse loginResponse) {
+                                                                    if (context instanceof StaffDashBoardActivity) {
+                                                                        ((StaffDashBoardActivity) context).getdashboardData();
+                                                                    }
+                                                                    dialog.dismiss();
 
-                                                            }
+                                                                }
 
-                                                            @Override
-                                                            public void onComplete() {
+                                                                @Override
+                                                                public void onError(Throwable e) {
+                                                                    dialog.dismiss();
 
-                                                            }
-                                                        });
+                                                                }
+
+                                                                @Override
+                                                                public void onComplete() {
+                                                                    dialog.dismiss();
+
+                                                                }
+                                                            });
+                                                });
+                                                btNo.setOnClickListener((v) -> {
+                                                    dialog.dismiss();
+                                                });
+
+
+                                                dialog.show();
+
                                             });
                                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                                 @Override
@@ -363,7 +387,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                             });
 
                         } else {
-                            if (Leads.get(position).getSecondQualityReport() == null ) {
+                            if (Leads.get(position).getSecondQualityReport() == null) {
                                 binding.tvStatus.setText("Add Out Quality Report");
 
                                 binding.tvStatus.setOnClickListener(new View.OnClickListener() {

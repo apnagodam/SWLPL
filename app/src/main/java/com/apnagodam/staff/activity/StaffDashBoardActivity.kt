@@ -410,7 +410,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
             when (body) {
                 is NetworkResult.Success -> {
-
                     if (body.data != null) {
                         if (body.data.status == "1") {
                             AllCases!!.clear()
@@ -448,7 +447,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                         binding!!.mainContent!!.rvDefaultersStatus.visibility =
                                             View.GONE
                                     }
-                                    casesTopAdapter = CasesTopAdapter(AllCases, this, apiService)
+                                    casesTopAdapter = CasesTopAdapter(AllCases.reversed(), this, apiService)
 
                                 }
                             }
@@ -463,18 +462,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         binding!!.mainContent.emptyData.visibility = View.VISIBLE
                         binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                     }
-
-
                 }
-
                 is NetworkResult.Error -> {
                     Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
                     binding!!.mainContent.emptyData.visibility = View.GONE
                     binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
 
-
                 }
-
                 is NetworkResult.Loading -> {
                     Toast.makeText(this,"Loading",Toast.LENGTH_SHORT)
                 }

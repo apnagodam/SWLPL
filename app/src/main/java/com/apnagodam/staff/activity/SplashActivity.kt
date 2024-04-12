@@ -1,27 +1,18 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
-import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings.Global
-import android.view.Window
-import android.view.WindowManager
-import android.widget.Button
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.apnagodam.staff.ApnaGodamApp
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.LoginActivity
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.AllUserPermissionsResultListResponse.UserPermissionsResult
 import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +26,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     var market_uri = "https://play.google.com/store/apps/details?id=com.apnagodam.staff&hl=en"
+//    private lateinit var inAppUpdate: InAppUpdate
 
     val homeViewModel by viewModels<HomeViewModel>()
     override fun getLayoutResId(): Int {
@@ -54,6 +46,7 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }
 
     override fun setUp() {
+
         getappVersion()
         afterpermissionNext()
     }
@@ -123,6 +116,20 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+//        inAppUpdate.onResume()
+    }
+
+    override fun onDestroy() {
+//        inAppUpdate.onDestroy()
+        super.onDestroy()
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+//        inAppUpdate.onActivityResult(requestCode,resultCode, data)
+
+    }
 
     suspend private fun requestPermissions(): Flow<Boolean> {
 
