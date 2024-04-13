@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="menuItem"
+            type="com.apnagodam.staff.module.MenuItem" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:cardElevation="3dp"
+        android:layout_margin="@dimen/_2sdp"
+        android:padding="@dimen/_5sdp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/relativeId"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:background="?android:selectableItemBackground"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_height="40dp">
+
+            <ImageView
+                android:id="@+id/menuImage"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="30dp"
+                android:src="@{menuItem.menuImage}"
+                app:tint="@color/colorPrimary" />
+
+
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                android:layout_toRightOf="@id/menuImage"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/menuTitle"
+                style="@style/Base.TextAppearance.AppCompat.Subhead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_toRightOf="@id/menuImage"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:text="@{menuItem.menuTitle}"
+                android:textColor="@color/dark_gray_shade" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:padding="5dp"
+                android:src="@drawable/ic_baseline_arrow_forward_24"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/subMenuItemsRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_below="@+id/relativeId"/>
+
+    </androidx.cardview.widget.CardView>
+</layout>

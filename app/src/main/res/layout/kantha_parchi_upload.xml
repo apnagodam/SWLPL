@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_5sdp"
+            tools:layout_editor_absoluteX="80dp">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="?actionBarSize"
+                        android:background="@color/colorPrimary"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/iv_close"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/ic_arrow_back"
+                            android:padding="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:text="@string/upload_kantha_parchi"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_done"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            android:text="@string/lead_listing"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <TextView
+                android:id="@+id/case_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_10ssp"
+                android:gravity="center"
+                android:text="@string/set_pricing"
+                android:textColor="@color/lead_btn"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/app_bar" />
+
+            <TextView
+                android:id="@+id/customer_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/set_pricing"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/case_id" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_10ssp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/ll_document"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <LinearLayout
+                            android:id="@+id/llKanta"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardKanta"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/_5sdp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="wrap">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tvTruckParchiImage"
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="@string/kanta_parchi_file"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_90sdp"
+                                        android:orientation="horizontal"
+                                        android:weightSum="2">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_80sdp"
+                                            android:layout_margin="@dimen/_5sdp"
+                                            android:layout_weight="1"
+                                            android:background="@drawable/white_back_black_border"
+                                            android:gravity="left">
+
+                                            <ImageView
+                                                android:id="@+id/KanthaImage"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:scaleType="fitXY" />
+                                        </RelativeLayout>
+
+                                        <LinearLayout
+                                            android:id="@+id/uploadKantha"
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_120sdp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_marginLeft="@dimen/_40sdp"
+                                            android:layout_marginTop="@dimen/_15sdp"
+                                            android:layout_weight="1"
+                                            android:orientation="vertical">
+
+                                            <ImageView
+                                                android:layout_width="25dp"
+                                                android:layout_height="25dp"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/upload" />
+
+                                            <TextView
+                                                style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:layout_marginTop="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:maxLines="7"
+                                                android:text="@string/upload_kanta_parchi_file"
+                                                android:textColor="@color/dark_gray_shade" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardTruck"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/_5sdp"
+                                android:visibility="visible"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="wrap">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="@string/truck_image"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        android:visibility="visible"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_90sdp"
+                                        android:layout_marginBottom="@dimen/_10sdp"
+                                        android:orientation="horizontal"
+                                        android:weightSum="2">
+
+                                        <RelativeLayout
+                                            android:id="@+id/uploadPassbookImage"
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_80sdp"
+                                            android:layout_margin="@dimen/_5sdp"
+                                            android:layout_weight="1"
+                                            android:background="@drawable/white_back_black_border"
+                                            android:gravity="left">
+
+                                            <FrameLayout
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent">
+
+                                                <ImageView
+                                                    android:id="@+id/TruckImage"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="match_parent"
+                                                    android:scaleType="fitXY" />
+
+                                                <TextView
+                                                    style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="match_parent"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:layout_marginTop="@dimen/_10sdp"
+                                                    android:gravity="center"
+                                                    android:maxLines="3"
+                                                    android:text="@string/upload_picture"
+                                                    android:textColor="@color/dark_gray_shade"
+                                                    android:visibility="gone" />
+                                            </FrameLayout>
+                                        </RelativeLayout>
+
+                                        <LinearLayout
+                                            android:id="@+id/upload_truck"
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_120sdp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_marginLeft="@dimen/_40sdp"
+                                            android:layout_marginTop="@dimen/_15sdp"
+                                            android:layout_weight="1"
+                                            android:orientation="vertical">
+
+                                            <ImageView
+                                                android:layout_width="25dp"
+                                                android:layout_height="25dp"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/upload" />
+
+                                            <TextView
+                                                style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:gravity="center"
+                                                android:maxLines="3"
+                                                android:padding="@dimen/_10sdp"
+                                                android:text="@string/upload_truck_image"
+                                                android:textColor="@color/dark_gray_shade" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cardKantaOld"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/_5sdp"
+                                android:visibility="gone"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintWidth_default="wrap">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextStyleBold"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/_10sdp"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:text="Old Kanta Parchi *"
+                                        android:textColor="@color/colorBlackLight"
+                                        android:textSize="@dimen/_16ssp"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent" />
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/_90sdp"
+                                        android:orientation="horizontal"
+                                        android:weightSum="2">
+
+                                        <RelativeLayout
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_80sdp"
+                                            android:layout_margin="@dimen/_5sdp"
+                                            android:layout_weight="1"
+                                            android:background="@drawable/white_back_black_border"
+                                            android:gravity="left">
+
+                                            <ImageView
+                                                android:id="@+id/KanthaImageOld"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="match_parent"
+                                                android:scaleType="fitXY" />
+                                        </RelativeLayout>
+
+                                        <LinearLayout
+                                            android:id="@+id/uploadKanthaOld"
+                                            android:layout_width="0dp"
+                                            android:layout_height="@dimen/_120sdp"
+                                            android:layout_centerVertical="true"
+                                            android:layout_marginLeft="@dimen/_40sdp"
+                                            android:layout_marginTop="@dimen/_15sdp"
+                                            android:layout_weight="1"
+                                            android:orientation="vertical">
+
+                                            <ImageView
+                                                android:layout_width="25dp"
+                                                android:layout_height="25dp"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/upload" />
+
+                                            <TextView
+                                                style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_gravity="center"
+                                                android:layout_marginTop="@dimen/_10sdp"
+                                                android:gravity="center"
+                                                android:maxLines="7"
+                                                android:text="Upload Old Kanta Parchi Image"
+                                                android:textColor="@color/dark_gray_shade" />
+
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </LinearLayout>
+
+                            </androidx.cardview.widget.CardView>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/TextInputStyle"
+                                android:layout_width="match_parent"
+
+                                android:layout_height="wrap_content">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etKantaParchiNum"
+                                    style="@style/TextStyleNormal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginVertical="@dimen/_10sdp"
+                                    android:editable="true"
+                                    android:hint="@string/kanta_parchi_number"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
+                                    android:lines="1"
+                                    android:padding="@dimen/_10sdp"
+                                    android:textSize="@dimen/_12ssp" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <TextView
+                                android:id="@+id/tilKantaParchi"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/btn_borders"
+                                android:gravity="center"
+                                android:padding="@dimen/_10sdp"
+                                android:text="Select Dharam Kanta"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_14ssp"
+                                android:textStyle="bold" />
+
+
+                            <LinearLayout
+                                android:id="@+id/llBags"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilWeightKg"
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etWeightKg"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Weight(KG)*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilNoOfBags"
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etNoOfBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="No of Bags*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilWeight"
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etWeight"
+                                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:focusable="false"
+                                        android:hint="Weight(Qtl)*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/black"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/til_avg_weight"
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/et_avg_weight"
+                                        style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:focusable="false"
+                                        android:hint="Avg Weight (Kg)"
+                                        android:imeOptions="actionDone"
+
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textColor="@color/black"
+                                        android:textColorHint="@color/black"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etNoOfDispleasedBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="No of Displeased Bags"
+                                        android:imeOptions="actionDone"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/llTraupline"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="visible">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_10sdp"
+                                            android:layout_marginTop="@dimen/_5sdp"
+                                            android:text="1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ?"
+                                            android:textColor="@color/colorBlackLight"
+                                            android:textSize="@dimen/_16ssp"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent" />
+
+                                        <RadioGroup
+                                            android:id="@+id/genderRadio"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/_6sdp"
+                                            android:orientation="horizontal">
+
+                                            <RadioButton
+                                                android:id="@+id/radioSeller"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:text="@string/yes"
+                                                android:textSize="@dimen/_18ssp" />
+
+                                            <RadioButton
+                                                android:id="@+id/radioBuyer"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginLeft="@dimen/_6sdp"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:checked="true"
+                                                android:text="@string/no"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="@dimen/_18ssp" />
+                                        </RadioGroup>
+
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="1dp"
+                                            android:background="@color/lightGray"></View>
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="@dimen/_5sdp"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_10sdp"
+                                            android:layout_marginTop="@dimen/_5sdp"
+                                            android:text="2. क्या Inward में, कुछ बोरिया भीगी हुई थी ?"
+                                            android:textColor="@color/colorBlackLight"
+                                            android:textSize="@dimen/_16ssp"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent" />
+
+                                        <RadioGroup
+                                            android:id="@+id/gender"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="@dimen/_6sdp"
+                                            android:orientation="horizontal">
+
+                                            <RadioButton
+                                                android:id="@+id/radioyes"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:buttonTint="@color/colorPrimary"
+
+                                                android:text="@string/yes"
+                                                android:textSize="@dimen/_18ssp" />
+
+                                            <RadioButton
+                                                android:id="@+id/radiono"
+                                                style="@style/TextStyleBold"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginLeft="@dimen/_6sdp"
+                                                android:buttonTint="@color/colorPrimary"
+                                                android:checked="true"
+                                                android:text="@string/no"
+                                                android:textColor="@android:color/black"
+                                                android:textSize="@dimen/_18ssp" />
+                                        </RadioGroup>
+
+                                        <View
+                                            android:layout_width="match_parent"
+                                            android:layout_height="1dp"
+                                            android:background="@color/lightGray"></View>
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/llOldBags"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:visibility="visible">
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/cardOldKantaParchi"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="@dimen/_5sdp"
+                                    android:visibility="visible"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintWidth_default="wrap">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            style="@style/TextStyleBold"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginLeft="@dimen/_10sdp"
+                                            android:layout_marginTop="@dimen/_5sdp"
+                                            android:text="@string/upload_kantha_parchi_old"
+                                            android:textColor="@color/colorBlackLight"
+                                            android:textSize="@dimen/_16ssp"
+                                            android:visibility="visible"
+                                            app:layout_constraintEnd_toEndOf="parent"
+                                            app:layout_constraintStart_toStartOf="parent" />
+
+                                        <LinearLayout
+                                            android:layout_width="match_parent"
+                                            android:layout_height="@dimen/_90sdp"
+                                            android:layout_marginBottom="@dimen/_10sdp"
+                                            android:orientation="horizontal"
+                                            android:weightSum="2">
+
+                                            <RelativeLayout
+                                                android:id="@+id/uploadOldKantaParchi"
+                                                android:layout_width="0dp"
+                                                android:layout_height="@dimen/_80sdp"
+                                                android:layout_margin="@dimen/_5sdp"
+                                                android:layout_weight="1"
+                                                android:background="@drawable/white_back_black_border"
+                                                android:gravity="left">
+
+                                                <FrameLayout
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="match_parent">
+
+                                                    <ImageView
+                                                        android:id="@+id/oldKantaImage"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="match_parent"
+                                                        android:scaleType="fitXY" />
+
+                                                    <TextView
+                                                        style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                        android:layout_width="match_parent"
+                                                        android:layout_height="match_parent"
+                                                        android:layout_gravity="center_horizontal"
+                                                        android:layout_marginTop="@dimen/_10sdp"
+                                                        android:gravity="center"
+                                                        android:maxLines="3"
+                                                        android:text="@string/upload_picture"
+                                                        android:textColor="@color/dark_gray_shade"
+                                                        android:visibility="gone" />
+                                                </FrameLayout>
+                                            </RelativeLayout>
+
+                                            <LinearLayout
+                                                android:id="@+id/upload_old_kanta"
+                                                android:layout_width="0dp"
+                                                android:layout_height="@dimen/_120sdp"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginLeft="@dimen/_40sdp"
+                                                android:layout_marginTop="@dimen/_15sdp"
+                                                android:layout_weight="1"
+                                                android:orientation="vertical">
+
+                                                <ImageView
+                                                    android:layout_width="25dp"
+                                                    android:layout_height="25dp"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:src="@drawable/upload" />
+
+                                                <TextView
+                                                    style="@style/Base.TextAppearance.AppCompat.Caption"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center"
+                                                    android:gravity="center"
+                                                    android:maxLines="3"
+                                                    android:padding="@dimen/_10sdp"
+                                                    android:text="@string/upload_truck_image"
+                                                    android:textColor="@color/dark_gray_shade" />
+
+                                            </LinearLayout>
+                                        </LinearLayout>
+                                    </LinearLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldParchiNum"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Number"
+                                        android:text="0"
+                                        android:imeOptions="actionDone"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldName"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:text=""
+                                        android:hint="Old Kanta Parchi Name"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldLocation"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:text=""
+                                        android:hint="Old Kanta Parchi Location"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldNetWeight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Net Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldTare"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Tare Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etKantaOldGrossWeight"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:editable="true"
+                                        android:hint="Old Kanta Parchi Gross Weight(Kg)"
+                                        android:imeOptions="actionNext"
+                                        android:lines="1"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputLayout
+                                    android:id="@+id/tilOldWeightQt"
+                                    style="@style/TextInputStyle"
+                                    android:visibility="gone"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etOldWeightQt"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="@string/weight_quintal"
+                                        android:imeOptions="actionNext"
+                                        android:text="0"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+
+                                    android:layout_height="wrap_content">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etOldNoOfBags"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="Old No of Bags*"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+
+                                <com.google.android.material.textfield.TextInputLayout
+                                    style="@style/TextInputStyle"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone">
+
+                                    <com.google.android.material.textfield.TextInputEditText
+                                        android:id="@+id/etWeightQt"
+                                        style="@style/TextStyleNormal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:hint="@string/weight_quintal"
+                                        android:imeOptions="actionNext"
+                                        android:inputType="number"
+                                        android:lines="1"
+                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_12ssp" />
+                                </com.google.android.material.textfield.TextInputLayout>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/cardTruck2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp"
+                            android:visibility="visible"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="wrap">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/TextStyleBold"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/_10sdp"
+                                    android:layout_marginTop="@dimen/_5sdp"
+                                    android:text="@string/truck_file_start"
+                                    android:textColor="@color/colorBlackLight"
+                                    android:textSize="@dimen/_16ssp"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/_90sdp"
+                                    android:orientation="horizontal"
+                                    android:weightSum="2">
+
+                                    <RelativeLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="@dimen/_80sdp"
+                                        android:layout_margin="@dimen/_5sdp"
+                                        android:layout_weight="1"
+                                        android:background="@drawable/white_back_black_border"
+                                        android:gravity="left">
+
+                                        <ImageView
+                                            android:id="@+id/truckImage2"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:scaleType="fitXY" />
+                                    </RelativeLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/uploadTruck2"
+                                        android:layout_width="0dp"
+                                        android:layout_height="@dimen/_120sdp"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginLeft="@dimen/_40sdp"
+                                        android:layout_marginTop="@dimen/_15sdp"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:layout_width="20dp"
+                                            android:layout_height="23dp"
+                                            android:layout_gravity="center_horizontal"
+                                            android:src="@drawable/upload" />
+
+                                        <TextView
+                                            style="@style/Base.TextAppearance.AppCompat.Caption"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:layout_marginTop="@dimen/_10sdp"
+                                            android:gravity="center"
+                                            android:maxLines="7"
+                                            android:text="@string/truck_file_start"
+                                            android:textColor="@color/dark_gray_shade" />
+
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/notes"
+                        style="@style/TextStyleBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5ssp"
+                        android:background="@drawable/white_back_black_border"
+                        android:gravity="top"
+                        android:hint="Notes"
+                        android:imeOptions="actionDone"
+                        android:lines="5"
+                        android:padding="@dimen/_5sdp"
+                        android:textSize="@dimen/_12ssp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_login"
+                        style="@style/ButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_10ssp"
+                        android:text="@string/submit"
+                        android:textAllCaps="false"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/spinner_purpose"
+                        app:layout_constraintWidth_default="wrap" />
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
