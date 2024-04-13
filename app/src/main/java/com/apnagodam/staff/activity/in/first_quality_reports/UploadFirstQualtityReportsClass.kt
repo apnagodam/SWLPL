@@ -168,7 +168,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data!!.status == "1") {
-                        Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@UploadFirstQualtityReportsClass,it.message,Toast.LENGTH_SHORT).show()
                         finish()
 
                     } else {

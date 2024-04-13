@@ -82,6 +82,9 @@ import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -200,6 +203,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     fun setUI() {
         setSupportActionBar(binding!!.mainContent.mainHeader.toolbar)
+        getdashboardData()
+
         getAllCases("")
         prepareMenuData()
         populateExpandableList()
@@ -408,8 +413,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     fun takePicture(){
-        photoEasy.startActivityForResult(this)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
 
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+
+                }
+            }
+
+        }
     }
     private fun populateExpandableList() {
         expandableListAdapter = ExpandableListAdapter(this, headerList, childList)
@@ -894,7 +913,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }
 
     fun setObservers(){
-        getdashboardData()
         caseIdViewModel.response.observe(this) { body ->
 
             when (body) {
@@ -969,78 +987,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
             }
         }
-        caseIdViewModel.stackRequestResponse.observe(this) { it ->
-            when (it) {
-                is NetworkResult.Error -> {
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-                    hideDialog()
-                }
-
-                is NetworkResult.Loading -> {
-                    showDialog()
-                }
-
-                is NetworkResult.Success -> {
-                    when (it.data) {
-                        null -> {}
-                        else -> {
-                            if (it.data.status == "1") {
-                                inwardsList.clear()
-                                outwardsList.clear()
-                                for (i in it.data.inwardRequestData.indices) {
-
-                                    if (userDetails!!.terminal == null) {
-                                        inwardsList.add(it.data.inwardRequestData[i])
-                                    } else if (it.data.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
-                                        inwardsList.add(it.data.inwardRequestData[i])
-                                    }
-                                }
-
-                                for (j in it.data.outwardRequestData.indices) {
-                                    if (userDetails!!.terminal == null) {
-                                        outwardsList.add(it.data.outwardRequestData[j])
-                                    } else if (it.data.outwardRequestData[j].terminalId.toString() == userDetails!!.terminal) {
-                                        outwardsList.add(it.data.outwardRequestData[j])
-                                    }
-                                }
-
-
-                                binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
-                                binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
-                                when (it.data.inwardRequestData.size) {
-                                    0 -> {
-
-                                    }
-
-                                    else -> {
-                                        binding!!.mainContent!!.cardIncase.setOnClickListener {
-                                            val intent =
-                                                Intent(this, InwardListActivity::class.java)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                }
-
-                                when (it.data.outwardRequestData.size) {
-                                    0 -> {
-
-                                    }
-
-                                    else -> {
-                                        binding!!.mainContent!!.cardOutCase.setOnClickListener {
-                                            val intent =
-                                                Intent(this, OutwardsListActivity::class.java)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                }
-            }
-        }
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -1089,6 +1035,83 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
             }
         }
+        caseIdViewModel.stackRequestResponse.observe(this) { it ->
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+
+                is NetworkResult.Success -> {
+                    when (it.data) {
+                        null -> {}
+                        else -> {
+                            if (it.data.status == "1") {
+                                inwardsList.clear()
+                                outwardsList.clear()
+                                for (i in it.data.inwardRequestData.indices) {
+
+                                    if(userDetails!=null){
+                                        if (userDetails!!.terminal == null) {
+                                            inwardsList.add(it.data.inwardRequestData[i])
+                                        } else if (it.data.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
+                                            inwardsList.add(it.data.inwardRequestData[i])
+                                        }
+                                    }
+                                }
+
+                                for (j in it.data.outwardRequestData.indices) {
+                                    if(userDetails!=null){
+                                        if (userDetails!!.terminal == null) {
+                                            outwardsList.add(it.data.outwardRequestData[j])
+                                        } else if (it.data.outwardRequestData[j].terminalId.toString() == userDetails!!.terminal) {
+                                            outwardsList.add(it.data.outwardRequestData[j])
+                                        }
+                                    }
+                                }
+
+
+                                binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
+                                binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
+                                when (it.data.inwardRequestData.size) {
+                                    0 -> {
+
+                                    }
+
+                                    else -> {
+                                        binding!!.mainContent!!.cardIncase.setOnClickListener {
+                                            val intent =
+                                                Intent(this, InwardListActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    }
+                                }
+
+                                when (it.data.outwardRequestData.size) {
+                                    0 -> {
+
+                                    }
+
+                                    else -> {
+                                        binding!!.mainContent!!.cardOutCase.setOnClickListener {
+                                            val intent =
+                                                Intent(this, OutwardsListActivity::class.java)
+                                            startActivity(intent)
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 //        homeViewModel.attendenceResponse.observe(this) {
 //            when (it) {
 //                is NetworkResult.Error -> {
@@ -1247,7 +1270,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+        permissionsBuilder(Manifest.permission.CAMERA).build().send {
+            when (it.first()) {
+                is PermissionStatus.Denied.Permanently -> {}
+                is PermissionStatus.Denied.ShouldShowRationale -> {}
+                is PermissionStatus.Granted -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+
+                }
+
+                is PermissionStatus.RequestRequired -> {
+                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+
+                }
+            }
+
+        }
 
     }
 
