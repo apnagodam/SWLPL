@@ -154,18 +154,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     var long = 0.0
     private var AllCases = arrayListOf<AllCaseIDResponse.Datum>()
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
-    private var pageOffset = 1
+    private var pageOffset = MutableLiveData<Int>();
     private var totalPage = 0
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     var inwardsList = arrayListOf<StackRequestResponse.InwardRequestDatum>()
     var outwardsList = arrayListOf<OutwardRequestDatum>()
 
+    var lastPage = MutableLiveData<Int>();
+
     override fun getLayoutResId(): Int {
         return R.layout.staff_dashboard
     }
 
     override fun setUp() {
+        pageOffset.value = 1;
+        lastPage.value = 0;
         var permissionHelper = PermissionHelper(
             this,
             arrayOf(
@@ -254,6 +258,43 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             startActivity(CaseIDGenerateClass::class.java)
 
         }
+        binding!!.mainContent.tvNext.setOnClickListener {
+            pageOffset.value = pageOffset.value!! + 1
+            caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
+        };
+        pageOffset.observe(this){
+
+            if(it==1){
+                binding!!.mainContent.tvPrevious.isEnabled = false
+            }
+            else{
+                binding!!.mainContent.tvPrevious.isEnabled = true
+
+                binding!!.mainContent.tvPrevious.setOnClickListener {_->
+                    pageOffset.value= it-1;
+                    showDialog()
+                    caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
+                }
+            }
+        }
+
+        lastPage.observe(this){page->
+            if(page == pageOffset.value){
+                binding!!.mainContent.tvNext.isEnabled = false
+
+            }
+            else{
+                binding!!.mainContent.tvNext.isEnabled = true
+
+                binding!!.mainContent.tvNext.setOnClickListener {_->
+                    pageOffset.value= pageOffset.value!!+1;
+                    showDialog()
+                    caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
+                }
+            }
+        }
+
+
         locationget()
 
         if (ActivityCompat.checkSelfPermission(
@@ -382,7 +423,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
      fun getAllCases(search: String) {
         showDialog()
-        caseIdViewModel.getCaseId("15", pageOffset, "1", search)
+        caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", search)
         caseIdViewModel.getStackRequest()
 
     }
@@ -394,7 +435,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //                LinearLayoutManager.VERTICAL
 //            )
 //        )
-        binding!!.mainContent.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.mainContent.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -914,50 +954,47 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     fun setObservers(){
         caseIdViewModel.response.observe(this) { body ->
-
             when (body) {
                 is NetworkResult.Success -> {
+                    hideDialog();
                     binding!!.swipeRefresherHome.isRefreshing = false;
-
                     if (body.data != null) {
+                        AllCases.clear()
                         if (body.data.status == "1") {
-                            AllCases!!.clear()
                             SharedPreferencesRepository.getDataManagerInstance().user.let {
-                                if (it != null) {
-                                    totalPage = body.data.getaCase().lastPage
-                                    for (i in body.data.getaCase().data.indices) {
+                                totalPage = body.data.getaCase().lastPage
+                                for (i in body.data.getaCase().data.indices) {
 
-                                        if ((body.data.getaCase().data[i].cctvReport == null
-                                                    || body.data.getaCase().data[i].ivrReport == null
-                                                    || body.data.getaCase().data[i].secondQualityReport == null
-                                                    || body.data.getaCase().data[i].sendToLab == null
-                                                    || body.data.getaCase().data[i].firstKantaParchi == null
-                                                    || body.data.getaCase().data[i].secondKantaParchi == null
-                                                    || body.data.getaCase().data[i].labourBook == null
-                                                    || body.data.getaCase().data[i].truckbook == null
-                                                    || body.data.getaCase().data[i].gatepassReport == null)
-                                        ) {
-                                            if (it.terminal != null) {
-                                                if (body.data.getaCase().data[i].terminalId.toString() == it.terminal.toString()) {
-                                                    AllCases.add(body.data.getaCase().data[i])
-                                                }
-                                            } else {
+                                    if ((body.data.getaCase().data[i].cctvReport == null
+                                                || body.data.getaCase().data[i].ivrReport == null
+                                                || body.data.getaCase().data[i].secondQualityReport == null
+                                                || body.data.getaCase().data[i].sendToLab == null
+                                                || body.data.getaCase().data[i].firstKantaParchi == null
+                                                || body.data.getaCase().data[i].secondKantaParchi == null
+                                                || body.data.getaCase().data[i].labourBook == null
+                                                || body.data.getaCase().data[i].truckbook == null
+                                                || body.data.getaCase().data[i].gatepassReport == null)
+                                    ) {
+                                        if (it.terminal != null) {
+                                            if (body.data.getaCase().data[i].terminalId.toString() == it.terminal.toString()) {
                                                 AllCases.add(body.data.getaCase().data[i])
                                             }
+                                        } else {
+                                            AllCases.add(body.data.getaCase().data[i])
                                         }
                                     }
-                                    casesTopAdapter = CasesTopAdapter(AllCases.reversed(), this, apiService)
-                                    casesTopAdapter!!.notifyDataSetChanged()
-                                    setAdapter()
-                                    if (AllCases.isEmpty()) {
-                                        binding!!.mainContent.emptyData.visibility = View.VISIBLE
-                                        binding!!.mainContent!!.rvDefaultersStatus.visibility =
-                                            View.GONE
-                                    }
+                                }
 
-                                    hideDialog()
+                                binding!!.mainContent.tvNext.isEnabled = AllCases.isNotEmpty()
 
-
+                                casesTopAdapter = CasesTopAdapter(AllCases.reversed(), this, apiService)
+                                casesTopAdapter!!.notifyDataSetChanged()
+                                setAdapter()
+                                hideDialog()
+                                if (AllCases.isEmpty()) {
+                                    binding!!.mainContent.emptyData.visibility = View.VISIBLE
+                                    binding!!.mainContent!!.rvDefaultersStatus.visibility =
+                                        View.GONE
                                 }
                             }
                         } else {
@@ -967,7 +1004,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             binding!!.mainContent.emptyData.visibility = View.VISIBLE
                             binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
                         }
-
+                        lastPage.value= body.data.getaCase().lastPage
 
                     } else {
                         hideDialog()
@@ -977,6 +1014,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
                 }
                 is NetworkResult.Error -> {
+                    hideDialog()
                     Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
                     binding!!.mainContent.emptyData.visibility = View.GONE
                     binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
@@ -984,54 +1022,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
                 is NetworkResult.Loading -> {
                     showDialog()
-                }
-            }
-        }
-        homeViewModel.commoditiesReponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {
-                    hideDialog()
-                    binding!!.swipeRefresherHome.isRefreshing = false;
-
-                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-                }
-
-                is NetworkResult.Loading -> {
-                    showDialog()
-                }
-
-                is NetworkResult.Success -> {
-                    binding!!.swipeRefresherHome.isRefreshing = false;
-
-                    SharedPreferencesRepository.getDataManagerInstance()
-                        .setCommdity(it.data!!.categories)
-                    SharedPreferencesRepository.getDataManagerInstance().employee =
-                        it.data!!.employee
-                    SharedPreferencesRepository.getDataManagerInstance()
-                        .setContractor(it.data.labourList)
-                    userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-                    if (userDetails != null) {
-                        if (userDetails!!.getProfileImage() != null) {
-                            Glide.with(binding!!.userProfileImage.context)
-                                .load(Constants.IMAGE_BASE_URL + userDetails!!.getProfileImage())
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .placeholder(R.drawable.user_shape)
-                                .circleCrop()
-                                .into(binding!!.userProfileImage)
-                        }
-                        binding!!.userNameText.text =
-                            userDetails!!.getFname() + " " + userDetails!!.getLname() + "(" + userDetails!!.getEmp_id() + ")"
-
-                        val navigationVLCAdapter = NavigationAdapter(
-                            menuList,
-                            userDetails,
-                            this
-                        )
-                        navigationVLCAdapter.setOnProfileClickInterface(this)
-
-
-
-                    }
                 }
             }
         }
@@ -1112,6 +1102,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         }
 
+
+
 //        homeViewModel.attendenceResponse.observe(this) {
 //            when (it) {
 //                is NetworkResult.Error -> {
@@ -1162,7 +1154,29 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //                }
 //            }
 //        }
+        userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        if (userDetails != null) {
+            if (userDetails!!.getProfileImage() != null) {
+                Glide.with(binding!!.userProfileImage.context)
+                    .load(Constants.IMAGE_BASE_URL + userDetails!!.getProfileImage())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.user_shape)
+                    .circleCrop()
+                    .into(binding!!.userProfileImage)
+            }
+            binding!!.userNameText.text =
+                userDetails!!.getFname() + " " + userDetails!!.getLname() + "(" + userDetails!!.getEmp_id() + ")"
 
+            val navigationVLCAdapter = NavigationAdapter(
+                menuList,
+                userDetails,
+                this
+            )
+            navigationVLCAdapter.setOnProfileClickInterface(this)
+
+
+
+        }
 
     }
     fun getdashboardData() {

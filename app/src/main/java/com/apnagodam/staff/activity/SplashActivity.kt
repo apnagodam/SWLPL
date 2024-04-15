@@ -49,7 +49,34 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     override fun setUp() {
 
         getappVersion()
-        afterpermissionNext()
+        homeViewModel.commoditiesReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+
+                }
+
+                is NetworkResult.Loading -> {
+                    showDialog()
+                }
+
+                is NetworkResult.Success -> {
+
+                    SharedPreferencesRepository.getDataManagerInstance()
+                        .setCommdity(it.data!!.categories)
+                    SharedPreferencesRepository.getDataManagerInstance().employee =
+                        it.data!!.employee
+                    SharedPreferencesRepository.getDataManagerInstance()
+                        .setContractor(it.data.labourList)
+
+                    afterpermissionNext()
+
+
+                }
+            }
+
+
+        }
     }
 
     private fun nextMClass() {
