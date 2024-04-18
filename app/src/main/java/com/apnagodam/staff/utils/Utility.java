@@ -69,6 +69,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class Utility {
 
     private static int TYPE_WIFI = 1;

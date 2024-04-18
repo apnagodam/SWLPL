@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id("dagger.hilt.android.plugin")
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -213,6 +214,9 @@ dependencies {
     implementation 'com.github.dhaval2404:imagepicker:2.1'
     //flex box
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
+    //paging
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+
 
 
 

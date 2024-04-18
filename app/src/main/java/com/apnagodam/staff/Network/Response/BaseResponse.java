@@ -8,6 +8,9 @@ public class BaseResponse {
     @SerializedName("message")
     @Expose
     protected String message;
+
+
+
     @SerializedName("phone")
     @Expose
     protected String phone;

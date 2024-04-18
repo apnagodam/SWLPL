@@ -153,6 +153,7 @@
                         android:imeOptions="actionDone"
                         android:inputType="numberDecimal"
                         android:maxLines="1"
+                        android:text="0"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout

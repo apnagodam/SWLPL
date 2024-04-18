@@ -125,50 +125,51 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
             }
             if (context instanceof StaffDashBoardActivity) {
                 binding.llCaseId.setVisibility(View.VISIBLE);
-                binding.tvCaseId.setText("" + Leads.get(position).getCaseId());
-                binding.tvId.setText(Leads.get(position).getStack_number());
+                binding.tvCaseId.setText("" + Leads.get(position).caseId);
+                binding.tvId.setText(Leads.get(position).stack_number);
 
             } else {
                 binding.llCaseId.setVisibility(View.GONE);
-                binding.tvId.setText(Leads.get(position).getCaseId());
+                binding.tvId.setText(Leads.get(position).caseId);
             }
-            binding.tvName.setText(Leads.get(position).getCustFname());
-            binding.tvPhone.setText(Leads.get(position).getPhone());
+            binding.tvName.setText(Leads.get(position).custFname);
+            binding.tvPhone.setText(Leads.get(position).phone);
 
-            binding.tvVehicle.setText(Leads.get(position).getVehicleNo());
+            binding.tvVehicle.setText(Leads.get(position).vehicleNo);
+            binding.tvDriverNum.setText(Leads.get(position).drivePhone.toString());
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);
 
-            if (Objects.equals(Leads.get(position).getInOut(), "IN")) {
-                if (Leads.get(position).getTruckbook() == null) {
+            if (Objects.equals(Leads.get(position).inOut, "IN")) {
+                if (Leads.get(position).truckbook == null) {
                     binding.tvStatus.setText("Add Truck");
 
                     binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, TruckUploadDetailsClass.class);
-                            intent.putExtra("user_name", Leads.get(position).getCustFname());
-                            intent.putExtra("case_id", Leads.get(position).getCaseId());
-                            intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                            intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                            intent.putExtra("user_name", Leads.get(position).custFname);
+                            intent.putExtra("case_id", Leads.get(position).caseId);
+                            intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                            intent.putExtra("file3", Leads.get(position).firstKantaFile3);
                             context.startActivity(intent);
 
                         }
                     });
 
                 } else {
-                    if (Leads.get(position).getLabourBook() == null) {
+                    if (Leads.get(position).labourBook == null) {
 
                         binding.tvStatus.setText("Add Labour");
                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, LabourBookUploadClass.class);
-                                intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                intent.putExtra("user_name", Leads.get(position).custFname);
+                                intent.putExtra("case_id", Leads.get(position).caseId);
+                                intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                intent.putExtra("file3", Leads.get(position).firstKantaFile3);
                                 context.startActivity(intent);
 
 
@@ -176,55 +177,55 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                         });
 
                     } else {
-                        if (Leads.get(position).getFirstKantaParchi() == null || Leads.get(position).getFirstKantaDharamkanta() == null) {
+                        if (Leads.get(position).firstKantaParchi == null || Leads.get(position).firstKantaDharamkanta == null) {
                             binding.tvStatus.setText("Add First Kanta Parchi");
                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(context, UploadFirstkantaParchiClass.class);
-                                    intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                    intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                    intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                    intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                    intent.putExtra("user_name", Leads.get(position).custFname);
+                                    intent.putExtra("case_id", Leads.get(position).caseId);
+                                    intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                    intent.putExtra("file3", Leads.get(position).firstKantaFile3);
                                     context.startActivity(intent);
                                 }
                             });
                         } else {
-                            if (Leads.get(position).getFirstQuality() == null) {
+                            if (Leads.get(position).firstQuality == null) {
                                 binding.tvStatus.setText("Add First Quality");
                                 binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(context, UploadFirstQualtityReportsClass.class);
-                                        intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                        intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                        intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
+                                        intent.putExtra("user_name", Leads.get(position).custFname);
+                                        intent.putExtra("case_id", Leads.get(position).caseId);
+                                        intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
                                         context.startActivity(intent);
 
                                     }
                                 });
 
                             } else {
-                                if (Leads.get(position).getFirstQualityTagging() == null) {
+                                if (Leads.get(position).firstQualityTagging == null) {
                                     binding.tvStatus.setText("IVR Quality Tagging Pending");
                                 } else {
-                                    if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
+                                    if (Leads.get(position).secondKantaParchi == null || Leads.get(position).secondKantaDharamkanta == null) {
                                         binding.tvStatus.setText("Add Second Kanta Parchi");
 
                                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 Intent intent = new Intent(context, UploadSecoundkantaParchiClass.class);
-                                                intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                                intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                                intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                                intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
+                                                intent.putExtra("user_name", Leads.get(position).custFname);
+                                                intent.putExtra("case_id", Leads.get(position).caseId);
+                                                intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                                intent.putExtra("file3", Leads.get(position).secondKantaFile3);
                                                 context.startActivity(intent);
 
                                             }
                                         });
                                     } else {
-                                        if (Leads.get(position).getSecondQualityReport() == null || Leads.get(position).getSendToLab() == null) {
+                                        if (Leads.get(position).secondQualityReport == null || Leads.get(position).sendToLab == null) {
                                             binding.tvStatus.setText("Add Second Quality Report");
 
                                             binding.divider.setVisibility(View.VISIBLE);
@@ -276,7 +277,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                                 public void onClick(View view) {
                                                                     ((StaffDashBoardActivity) context).showDialog();
                                                                     apiService.uploadLabreport(new UploadSecoundQualityPostData(
-                                                                                    Leads.get(position).getCaseId(),
+                                                                                    Leads.get(position).caseId,
                                                                                     "", commodityData, "", "", "", "", "", "0", "1",
                                                                                     labReportBase64
                                                                             ), "OUT").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -332,24 +333,24 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                         ((StaffDashBoardActivity) context).takePicture();
                                                     }
                                                     Intent intent = new Intent(context, UploadSecoundQualtityReportsClass.class);
-                                                    intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                                    intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                                    intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                                    intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
-                                                    intent.putExtra("skp_avg_weight", Leads.get(position).getAvgWeight());
+                                                    intent.putExtra("user_name", Leads.get(position).custFname);
+                                                    intent.putExtra("case_id", Leads.get(position).caseId);
+                                                    intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                                    intent.putExtra("file3", Leads.get(position).firstKantaFile3);
+                                                    intent.putExtra("skp_avg_weight", Leads.get(position).avgWeight);
 
                                                     context.startActivity(intent);
 
                                                 }
                                             });
                                         } else {
-                                            if (Leads.get(position).getCctvReport() == null) {
+                                            if (Leads.get(position).cctvReport == null) {
                                                 binding.tvStatus.setText("CCTV Pending");
                                             } else {
-                                                if (Leads.get(position).getIvrReport() == null) {
+                                                if (Leads.get(position).ivrReport == null) {
                                                     binding.tvStatus.setText("IVR Pending");
                                                 } else {
-                                                    if (Leads.get(position).getGatepassReport() == null) {
+                                                    if (Leads.get(position).gatepassReport == null) {
                                                         binding.tvStatus.setText("Gate Pass Pending");
                                                     } else {
                                                         binding.tvStatus.setText("View");
@@ -357,7 +358,7 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                             @Override
                                                             public void onClick(View view) {
                                                                 Intent intent = new Intent(context, GatePassPDFPrieviewClass.class);
-                                                                intent.putExtra("CaseID", Leads.get(position).getCaseId());
+                                                                intent.putExtra("CaseID", Leads.get(position).caseId);
                                                                 context.startActivity(intent);
                                                             }
                                                         });
@@ -375,34 +376,34 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                     }
                 }
             } else {
-                if (Leads.get(position).getTruckbook() == null) {
+                if (Leads.get(position).truckbook == null) {
                     binding.tvStatus.setText("Add Out Truck");
 
                     binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(context, OUTTruckUploadDetailsClass.class);
-                            intent.putExtra("user_name", Leads.get(position).getCustFname());
-                            intent.putExtra("case_id", Leads.get(position).getCaseId());
-                            intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                            intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                            intent.putExtra("user_name", Leads.get(position).custFname);
+                            intent.putExtra("case_id", Leads.get(position).caseId);
+                            intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                            intent.putExtra("file3", Leads.get(position).firstKantaFile3);
                             context.startActivity(intent);
 
                         }
                     });
 
                 } else {
-                    if (Leads.get(position).getLabourBook() == null) {
+                    if (Leads.get(position).labourBook == null) {
                         binding.tvStatus.setText("Add Out Labour");
 
                         binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(context, OUTLabourBookUploadClass.class);
-                                intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                intent.putExtra("user_name", Leads.get(position).custFname);
+                                intent.putExtra("case_id", Leads.get(position).caseId);
+                                intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                intent.putExtra("file3", Leads.get(position).firstKantaFile3);
                                 context.startActivity(intent);
 
 
@@ -428,16 +429,16 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
 //                        } else {
 //
 //                        }
-                        if (Leads.get(position).getFirstKantaParchi() == null || Leads.get(position).getFirstKantaDharamkanta() == null) {
+                        if (Leads.get(position).firstKantaParchi == null || Leads.get(position).firstKantaDharamkanta == null) {
                             binding.tvStatus.setText("Add Out First Kanta Parchi");
                             binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     Intent intent = new Intent(context, OutUploadFirrstkantaParchiClass.class);
-                                    intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                    intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                    intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                    intent.putExtra("file3", Leads.get(position).getFirstKantaFile3());
+                                    intent.putExtra("user_name", Leads.get(position).custFname);
+                                    intent.putExtra("case_id", Leads.get(position).caseId);
+                                    intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                    intent.putExtra("file3", Leads.get(position).firstKantaFile3);
 
                                     context.startActivity(intent);
 
@@ -445,45 +446,45 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                             });
 
                         } else {
-                            if (Leads.get(position).getSecondQualityReport() == null) {
+                            if (Leads.get(position).secondQualityReport == null) {
                                 binding.tvStatus.setText("Add Out Quality Report");
 
                                 binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         Intent intent = new Intent(context, OutUploadSecoundQualtityReportsClass.class);
-                                        intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                        intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                        intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                        intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
+                                        intent.putExtra("user_name", Leads.get(position).custFname);
+                                        intent.putExtra("case_id", Leads.get(position).caseId);
+                                        intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                        intent.putExtra("file3", Leads.get(position).secondKantaFile3);
                                         context.startActivity(intent);
 
                                     }
                                 });
                             } else {
-                                if (Leads.get(position).getSecondKantaParchi() == null || Leads.get(position).getSecondKantaDharamkanta() == null) {
+                                if (Leads.get(position).secondKantaParchi == null || Leads.get(position).secondKantaDharamkanta == null) {
                                     binding.tvStatus.setText("Add Out Second Kanta Parchi");
 
                                     binding.tvStatus.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
                                             Intent intent = new Intent(context, OutUploadSecoundkantaParchiClass.class);
-                                            intent.putExtra("user_name", Leads.get(position).getCustFname());
-                                            intent.putExtra("case_id", Leads.get(position).getCaseId());
-                                            intent.putExtra("vehicle_no", Leads.get(position).getVehicleNo());
-                                            intent.putExtra("file3", Leads.get(position).getSecondKantaFile3());
+                                            intent.putExtra("user_name", Leads.get(position).custFname);
+                                            intent.putExtra("case_id", Leads.get(position).caseId);
+                                            intent.putExtra("vehicle_no", Leads.get(position).vehicleNo);
+                                            intent.putExtra("file3", Leads.get(position).secondKantaFile3);
                                             context.startActivity(intent);
 
                                         }
                                     });
                                 } else {
-                                    if (Leads.get(position).getCctvReport() == null || Leads.get(position).getCctvReport().isEmpty()) {
+                                    if (Leads.get(position).cctvReport == null || Leads.get(position).cctvReport.isEmpty()) {
                                         binding.tvStatus.setText("CCTV Pending");
                                     } else {
-                                        if (Leads.get(position).getIvrReport() == null) {
+                                        if (Leads.get(position).ivrReport == null) {
                                             binding.tvStatus.setText("IVR Pending");
                                         } else {
-                                            if (Leads.get(position).getGatepassReport() == null) {
+                                            if (Leads.get(position).gatepassReport == null) {
                                                 binding.tvStatus.setText("Gate Pass Pending");
                                             } else {
                                                 binding.tvStatus.setText("View");
@@ -491,9 +492,9 @@ public class CasesTopAdapter extends BaseRecyclerViewAdapter {
                                                     @Override
                                                     public void onClick(View view) {
                                                         Intent intent = new Intent(context, GatePassPDFPrieviewClass.class);
-                                                        intent.putExtra("CaseID", Leads.get(position).getCaseId());
-                                                        intent.putExtra("in_out", Leads.get(position).getInOut());
-                                                        intent.putExtra("bags", Leads.get(position).getNoOfBags());
+                                                        intent.putExtra("CaseID", Leads.get(position).caseId);
+                                                        intent.putExtra("in_out", Leads.get(position).inOut);
+                                                        intent.putExtra("bags", Leads.get(position).noOfBags);
                                                         context.startActivity(intent);
 
                                                     }

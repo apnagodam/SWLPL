@@ -11,6 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
@@ -22,12 +24,17 @@ import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.paging.adapter.CasesAdapter
+import com.apnagodam.staff.paging.state.ListLoadStateAdapter
+import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var casesTopAdapter: CasesTopAdapter? = null
@@ -35,19 +42,22 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     private var totalPage = 0
     private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null
 
+    @Inject
+    lateinit var adapter: CasesAdapter
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_listing
     }
 
     override fun setUp() {
-      setView()
+        setView()
     }
 
-    private fun setView(){
-        binding!!.pageNextPrivious.visibility = View.VISIBLE
+    private fun setView() {
+        binding!!.pageNextPrivious.visibility = View.GONE
         AllCases = arrayListOf()
 
+        setObservers()
         getAllCases("")
 
         setSupportActionBar(binding!!.toolbar)
@@ -55,7 +65,10 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
         binding!!.tvId.text = resources.getString(R.string.case_idd)
         binding!!.tvMoreView.text = resources.getString(R.string.status_title)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener { getAllCases("") })
+        binding!!.swipeRefresherStock.setOnRefreshListener(OnRefreshListener {
+
+            getAllCases("")
+        })
         binding!!.ivClose.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 finish()
@@ -96,29 +109,18 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
                 })
                 submit.setOnClickListener(object : View.OnClickListener {
                     override fun onClick(v: View) {
-                        if (notes.text.toString()
-                                .trim { it <= ' ' } != null && !notes.text.toString()
-                                .trim { it <= ' ' }
-                                .isEmpty()
-                        ) {
-                            alertDialog.dismiss()
-                            pageOffset = 1
-                            getAllCases(notes.text.toString().trim { it <= ' ' })
-                            //     ClosedPricing(alertDialog, AllCases.get(postion).getCaseId(), notes.getText().toString().trim());
-                        } else {
-                            Toast.makeText(
-                                applicationContext,
-                                "Please Fill Text",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                        caseIdViewModel.getAllCasesPagingData(searchQuery = notes.text.toString())
+                        alertDialog.dismiss()
+                        pageOffset = 1
                     }
                 })
                 //  setDateTimeField();
             }
         })
     }
+
     private fun setAdapter() {
+
 
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
         binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
@@ -126,63 +128,100 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
             LinearLayoutManager(this@CaseListingActivity, LinearLayoutManager.VERTICAL, false)
         binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
 
-        binding!!.rvDefaultersStatus.adapter = casesTopAdapter
+        binding!!.rvDefaultersStatus.adapter = adapter.withLoadStateFooter(
+            footer = ListLoadStateAdapter {
+                caseIdViewModel.getPagingData()
+            })
+
     }
 
 
     override fun onResume() {
+        caseIdViewModel.getAllCasesPagingData()
         super.onResume()
-        getAllCases("")
+    }
+
+    private fun setObservers() {
+        caseIdViewModel.allCasesPaginatino.observe(this) {
+            lifecycleScope.launch {
+                adapter.submitData(it)
+
+            }
+        }
+        setAdapter()
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collect {
+                when (it.refresh) {
+                    is LoadState.Error -> {
+
+                    }
+
+                    LoadState.Loading -> {
+                        Utility.showDialog(this@CaseListingActivity, "")
+                    }
+
+                    is LoadState.NotLoading -> {
+                        Utility.hideDialog(this@CaseListingActivity)
+                        binding!!.swipeRefresherStock.isRefreshing = false
+                    }
+                }
+                // to determine if we are done with the loading state,
+                // you should have already  shown your loading view elsewhere when the entering your fragment
+
+
+            }
+        }
     }
 
     private fun getAllCases(search: String) {
-        showDialog()
-        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
 
-        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
-        caseIdViewModel.response.observe(this){
-            body->
-            when(body){
-                is NetworkResult.Success->
-                {
-                    binding!!.swipeRefresherStock.isRefreshing = false
-                    AllCases!!.clear()
-                    if (body.data!!.getaCase() == null) {
-                        binding!!.txtemptyMsg.visibility = View.VISIBLE
-                        binding!!.rvDefaultersStatus.visibility = View.GONE
-                        binding!!.pageNextPrivious.visibility = View.GONE
-                    } else {
-                        AllCases!!.clear()
-                        totalPage = body.data.getaCase().lastPage
-                        body.data.getaCase().data.forEach {
-                            if (userDetails.terminal==null){
-                                AllCases!!.add(it)
-                            }
-                            else if (it.terminalId.toString() == userDetails.terminal.toString()) {
-                                AllCases!!.add(it)
-
-                            }
-                        }
-//                        AllCases!!.addAll(body.data.getaCase().data)
-                        casesTopAdapter = CasesTopAdapter(AllCases!!.reversed(),this,apiService)
-                        setAdapter()
-
-                        //  AllCases=body.getCases();
-                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
-                    }
-                    hideDialog()
-
-                }
-
-                is NetworkResult.Error ->{
-                    hideDialog()
-
-                }
-                is NetworkResult.Loading -> {}
-            }
+        caseIdViewModel.getAllCasesPagingData()
 
 
-        }
+//        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
+//        caseIdViewModel.response.observe(this){
+//            body->
+//            when(body){
+//                is NetworkResult.Success->
+//                {
+//                    binding!!.swipeRefresherStock.isRefreshing = false
+//                    AllCases!!.clear()
+//                    if (body.data!!.getaCase() == null) {
+//                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+//                        binding!!.rvDefaultersStatus.visibility = View.GONE
+//                        binding!!.pageNextPrivious.visibility = View.GONE
+//                    } else {
+//                        AllCases!!.clear()
+//                        totalPage = body.data.getaCase()!!.lastPage!!
+//                        body.data.getaCase()!!.data!!.forEach {
+//                            if (userDetails.terminal==null){
+//                                AllCases!!.add(it)
+//                            }
+//                            else if (it.terminalId.toString() == userDetails.terminal.toString()) {
+//                                AllCases!!.add(it)
+//
+//                            }
+//                        }
+////                        AllCases!!.addAll(body.data.getaCase().data)
+//                        casesTopAdapter = CasesTopAdapter(AllCases!!.reversed(),this,apiService)
+//                        setAdapter()
+//
+//                        //  AllCases=body.getCases();
+//                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
+//                    }
+//                    hideDialog()
+//
+//                }
+//
+//                is NetworkResult.Error ->{
+//                    hideDialog()
+//
+//                }
+//                is NetworkResult.Loading -> {}
+//            }
+//
+//
+//        }
 
 
     }

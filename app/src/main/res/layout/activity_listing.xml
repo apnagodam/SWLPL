@@ -204,7 +204,7 @@
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:gravity="bottom"
                 android:orientation="horizontal"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <Button
                     android:id="@+id/tvPrevious"

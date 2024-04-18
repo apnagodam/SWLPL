@@ -10,6 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
 import com.apnagodam.staff.Network.Request.RequestOfflineCaseData
@@ -37,6 +40,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import javax.inject.Inject
@@ -66,12 +70,17 @@ class CaseIdViewModel @Inject constructor(
 
     val stackResponse = MutableLiveData<NetworkResult<ResponseStackData>>()
 
-    var userResponse =  MutableLiveData<NetworkResult<ResponseUserData>>()
+    var userResponse = MutableLiveData<NetworkResult<ResponseUserData>>()
     val offlineFastcaseResponse = MutableLiveData<NetworkResult<BaseResponse>>()
     val fastcaseListResponse = MutableLiveData<NetworkResult<ResponseFastcaseList>>()
+
+
+    val userCasesPagination = MutableLiveData<PagingData<AllCaseIDResponse.Datum>>()
+    val allCasesPaginatino = MutableLiveData<PagingData<AllCaseIDResponse.Datum>>()
+    val cancelCaseIdResponse = MutableLiveData<NetworkResult<BaseResponse>>()
     fun getCaseId(str: String?, i: Int, str2: String?, str3: String?) = viewModelScope.launch {
         repository.getCaseId(str, i, str2, str3).collect { values ->
-            if(values.data!=null){
+            if (values.data != null) {
                 if (values.data!!.status != "1") {
                     SharedPreferencesRepository.logout()
                     val intent = Intent(getApplication(), LoginActivity::class.java)
@@ -82,6 +91,23 @@ class CaseIdViewModel @Inject constructor(
             _response.value = values
 
 
+        }
+    }
+
+    fun cancelCaseId(caseId:String,notes:String) =viewModelScope.launch {
+        repository.cancelCaseIdRequest(caseId, notes).collect(){
+            cancelCaseIdResponse.value=it
+        }
+    }
+    fun getPagingData() = viewModelScope.launch {
+        repository.getPaginationCaseId().cachedIn(viewModelScope).collect() {
+            userCasesPagination.value = it
+        }
+    }
+
+    fun getAllCasesPagingData(searchQuery:String="")= viewModelScope.launch {
+        repository.getAllCasesPagination(searchQuery).cachedIn(viewModelScope).collect(){
+            allCasesPaginatino.value = it
         }
     }
 
@@ -136,26 +162,26 @@ class CaseIdViewModel @Inject constructor(
         }
     }
 
-    fun  getStack(terminalId:String,commodityId:String) = viewModelScope.launch {
-        repository.getStack(terminalId,commodityId).collect{
-            stackResponse.value =it
+    fun getStack(terminalId: String, commodityId: String) = viewModelScope.launch {
+        repository.getStack(terminalId, commodityId).collect {
+            stackResponse.value = it
         }
     }
 
-    fun getUser(phone:String) =  viewModelScope.launch {
-        repository.getUser(phone).collect{
+    fun getUser(phone: String) = viewModelScope.launch {
+        repository.getUser(phone).collect {
             userResponse.value = it
         }
     }
 
     fun offlineFastcase(requestOfflineCaseData: RequestOfflineCaseData) = viewModelScope.launch {
-        repository.offlineFastCase(requestOfflineCaseData).collect{
+        repository.offlineFastCase(requestOfflineCaseData).collect {
             offlineFastcaseResponse.value = it
         }
     }
 
     fun getFastcaseList() = viewModelScope.launch {
-        repository.getFastCaseList().collect{
+        repository.getFastCaseList().collect {
             fastcaseListResponse.value = it
         }
     }

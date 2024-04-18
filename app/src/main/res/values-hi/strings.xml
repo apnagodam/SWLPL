@@ -9,6 +9,7 @@
     <string name="alert">चेतावनी</string>
     <string name="taupline_radio">1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ? </string>
     <string name="wet_radio">2. क्या Inward में, कुछ बोरिया भीगी हुई थी ? </string>
+    <string name="cancel_case_id">केस आईडी रद्द करें</string>
 
     <string name="yes">हाँ</string>
     <string name="no">नहीं</string>

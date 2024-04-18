@@ -3,7 +3,9 @@
     <string name="need_permission">Need Permissions</string>
     <string name="msg_permission">This app needs permission to use this feature. You can grant them in app settings.</string>
     <string name="permission_alert">GOTO SETTINGS</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Cancel Case Id</string>
+    <string name="cancel_case_id">Cancel Case Id</string>
+
     <string name="ok">ok</string>
     <string name="logout_alert">Do you want to logout?</string>
     <string name="alert">Alert</string>

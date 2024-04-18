@@ -1,5 +1,8 @@
 package com.apnagodam.staff.Network.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.NetworkResult
@@ -16,10 +19,13 @@ import com.apnagodam.staff.Network.Response.ResponseUserData
 import com.apnagodam.staff.Network.Response.ResponseWarehouse
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.module.AllCaseIDResponse.Datum
 import com.apnagodam.staff.module.AllUserListPojo
 import com.apnagodam.staff.module.CommodityResponseData
 import com.apnagodam.staff.module.StackListPojo
 import com.apnagodam.staff.module.TerminalListPojo
+import com.apnagodam.staff.paging.AllCasesPagingDataSource
+import com.apnagodam.staff.paging.CasesPagingDataSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -40,6 +46,37 @@ class CaseIdRepo @Inject constructor(private val apiService: ApiService): BaseAp
 
         }.flowOn(Dispatchers.IO)
     }
+
+
+    suspend fun cancelCaseIdRequest(caseId:String,notes:String):Flow<NetworkResult<BaseResponse>>{
+        return  flow {
+            emit(safeApiCall { apiService.cancelCaseRequest(caseId, notes) })
+        }
+    }
+
+    suspend fun getPaginationCaseId():Flow<PagingData<Datum>>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 30,
+                prefetchDistance = 1, initialLoadSize = 1
+
+            ),
+            pagingSourceFactory = { CasesPagingDataSource(apiService)}
+        ).flow
+    }
+
+
+    fun getAllCasesPagination(searchQuery:String=""):Flow<PagingData<Datum>>{
+        return Pager(
+            config = PagingConfig(
+                pageSize = 30,
+                prefetchDistance = 1, initialLoadSize = 1
+
+            ),
+            pagingSourceFactory = { AllCasesPagingDataSource(apiService, searchQuery = searchQuery)}
+        ).flow
+    }
+
 
     suspend fun getTerminalList(): Flow<NetworkResult<TerminalListPojo>> {
         return flow {

@@ -170,6 +170,19 @@ interface ApiService {
         @Query("search") str3: String?
     ): Response<AllCaseIDResponse>
 
+    @POST("emp_api/store_cancelcase_request")
+    suspend fun cancelCaseRequest(
+        @Query("case_id") caseId: String,
+        @Query("notes") notes: String
+    ): Response<BaseResponse>
+
+    @GET("emp_api/apna_emp_get_caseid")
+    suspend fun getAllCasesPagination(
+        @Query("limit") limit: String?,
+        @Query("page") page: Int,
+        @Query("status") status: String?,
+        @Query("search") search: String?
+    ): AllCaseIDResponse
 
     @POST("emp_api/apna_emp_caseid_otp")
     suspend fun driverOtp(
@@ -436,11 +449,13 @@ interface ApiService {
         @Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,
         @Query("in_out") inOut: String
     ): Response<LoginResponse>
+
     @POST("emp_api/apna_emp_s_quality")
-     fun uploadLabreport(
+    fun uploadLabreport(
         @Body uploadSecoundQualityPostData: UploadSecoundQualityPostData?,
         @Query("in_out") inOut: String
     ): Observable<LoginResponse>
+
     @POST("emp_api/apna_emp_s_kanta_parchi")
     suspend fun uploadSecoundkantaParchi(
         @Body uploadSecoundkantaParchiPostData: UploadSecoundkantaParchiPostData?,
