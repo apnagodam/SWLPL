@@ -42,6 +42,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiService) :
@@ -76,7 +78,8 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
             binding.tvPhone.setText(Leads.phone)
             binding.tvVehicle.setText(Leads.vehicleNo)
             binding.tvDriverNum.setText(Leads.drivePhone.toString())
-            binding.tvDate.append(Leads.updatedAt.toString())
+
+            binding.tvDate.append(Leads.createdAt.toString())
             if (Leads.inOut == "IN") {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Truck"

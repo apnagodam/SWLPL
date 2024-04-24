@@ -19,6 +19,7 @@ import com.apnagodam.staff.Network.Response.PvResponseModel
 import com.apnagodam.staff.Network.viewmodel.PvViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdatePvBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.EventBus
 import com.apnagodam.staff.utils.Utility
 import com.leo.searchablespinner.SearchableSpinner
@@ -209,10 +210,21 @@ class UpdatePv : AppCompatActivity() {
                             }
                         }
 
-                        terminalList.forEach { pvResponse ->
-                            listOfTerminals.add("${pvResponse.name}(${pvResponse.warehouseCode})")
+                        SharedPreferencesRepository.getDataManagerInstance().user.let { userDetails ->
 
+
+                            for (i in terminalList.indices) {
+
+                                if (userDetails.terminal != null) {
+                                    if (terminalList[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                        listOfTerminals.add("${terminalList[i].name}")
+                                    }
+                                } else {
+                                    listOfTerminals.add("${terminalList[i].name}")
+                                }
+                            }
                         }
+
                         searchableSpinner.setSpinnerListItems(listOfTerminals)
 
                         searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
