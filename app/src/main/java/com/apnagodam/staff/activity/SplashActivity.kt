@@ -61,15 +61,17 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 }
 
                 is NetworkResult.Success -> {
+                    if(it.data!=null){
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setCommdity(it.data.categories)
+                        SharedPreferencesRepository.getDataManagerInstance().employee =
+                            it.data.employee
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setContractor(it.data.labourList)
 
-                    SharedPreferencesRepository.getDataManagerInstance()
-                        .setCommdity(it.data!!.categories)
-                    SharedPreferencesRepository.getDataManagerInstance().employee =
-                        it.data!!.employee
-                    SharedPreferencesRepository.getDataManagerInstance()
-                        .setContractor(it.data.labourList)
+                        afterpermissionNext()
+                    }
 
-                    afterpermissionNext()
 
 
                 }

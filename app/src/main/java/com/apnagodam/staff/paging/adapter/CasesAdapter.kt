@@ -76,6 +76,7 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
             binding.tvPhone.setText(Leads.phone)
             binding.tvVehicle.setText(Leads.vehicleNo)
             binding.tvDriverNum.setText(Leads.drivePhone.toString())
+            binding.tvDate.append(Leads.updatedAt.toString())
             if (Leads.inOut == "IN") {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Truck"

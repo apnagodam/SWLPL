@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:background="@drawable/btn_borders_case_id"
-
         android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/cell_container"
@@ -161,6 +160,7 @@
                         android:text="Submit lab report"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_10ssp" />
+
                 </LinearLayout>
 
                 <TextView
@@ -208,6 +208,20 @@
             <!--                />-->
             <!--        </LinearLayout>-->
         </LinearLayout>
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/_5sdp"
+            android:textStyle="bold"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:text="Case Created On: "
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp" />
         <LinearLayout
             android:id="@+id/llCaseId"
             android:layout_width="match_parent"
@@ -227,6 +241,7 @@
                 android:textSize="@dimen/_10ssp"
                 android:visibility="gone"
                 android:textStyle="bold"/>
+
             <TextView
                 android:id="@+id/tv_case_id"
                 android:layout_width="match_parent"

@@ -1,6 +1,5 @@
 package com.apnagodam.staff.Network
 
-import androidx.lifecycle.LiveData
 import com.apnagodam.staff.Network.Request.ApprovedConveyancePOst
 import com.apnagodam.staff.Network.Request.ApprovedIntantionPOst
 import com.apnagodam.staff.Network.Request.ApprovedRejectConveyancePOst
@@ -38,6 +37,7 @@ import com.apnagodam.staff.Network.Response.DharamKanta
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
+import com.apnagodam.staff.Network.Response.PvResponseModel
 import com.apnagodam.staff.Network.Response.QualityParamsResponse
 import com.apnagodam.staff.Network.Response.ResponseFastcaseList
 import com.apnagodam.staff.Network.Response.ResponseSendOtp
@@ -489,4 +489,18 @@ interface ApiService {
 
     @POST("emp_api/apna_emp_stack_request")
     suspend fun getStackRequest(): Response<StackRequestResponse>
+
+    @POST("emp_api/get_pv")
+    suspend fun getPv(
+        @Query("type") type: String? = "Terminal",
+        @Query("terminal_id") terminalId: Int? = null
+    ): Response<PvResponseModel>
+
+
+    @POST("emp_api/save_pv_data")
+    suspend fun postPV(
+        @Body pvUpdate: PvRequestModel,
+    )
+            : Response<BaseResponse>
 }
+

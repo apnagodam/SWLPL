@@ -11,15 +11,66 @@
             android:id="@+id/llParent"
             android:orientation="vertical"
             android:layout_width="match_parent"
+            android:layout_margin="@dimen/_10sdp"
             android:layout_height="wrap_content"
             tools:context=".activity.UpdatePv">
+            <TextView
+                android:id="@+id/tvTerminal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_borders"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
+                android:text="Select Terminal"
+                android:maxLines="1"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvStacks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_borders"
+                android:gravity="center"
+                android:visibility="gone"
+                android:maxLines="1"
+
+                android:padding="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                android:text="Select Stack Number"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPv"
+                android:layout_width="match_parent"
+                tools:listitem="@layout/layout_pv_rv"
+                tools:itemCount="1"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/btAddPV"
+                android:padding="@dimen/_10sdp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_margin="@dimen/_10sdp"
+                android:text="Add Pv Report"
+                android:layout_width="match_parent"
+                android:background="@drawable/btn_borders"
+                android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btAdd"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_margin="@dimen/_10sdp"
-                android:text="Add Layout"
+                android:text="Submit"
+                android:background="@drawable/btn_borders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

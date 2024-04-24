@@ -44,8 +44,6 @@ import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestD
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
-import com.apnagodam.staff.paging.adapter.CasesAdapter
-import com.apnagodam.staff.paging.state.ListLoadStateAdapter
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
 import com.apnagodam.staff.activity.caseid.CaseListingActivity
@@ -78,6 +76,8 @@ import com.apnagodam.staff.interfaces.OnProfileClickListener
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.MenuModel
 import com.apnagodam.staff.module.UserDetails
+import com.apnagodam.staff.paging.adapter.CasesAdapter
+import com.apnagodam.staff.paging.state.ListLoadStateAdapter
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.LocationUtils
@@ -406,9 +406,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         super.onResume()
     }
 
-    private fun getStackRequests() {
-
-    }
 
     fun getAllCases(search: String) {
         caseIdViewModel.getPagingData();
@@ -465,9 +462,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         binding!!.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
             if (headerList[groupPosition].isGroup) {
                 if (!headerList[groupPosition].hasChildren) {
-                    Log.e("groupclick", "gdddddd")
                     if (headerList[groupPosition].menuName == resources.getString(R.string.home)) {
-                        getAllCases("")
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.referral_code)) {
                         val phone = SharedPreferencesRepository.getDataManagerInstance().user.phone
                         val sharedUrl =
@@ -502,7 +497,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     } else if (headerList.get(groupPosition).menuName == resources.getString(R.string.cancel_case_id)) {
                         startActivity(CancelCaseId::class.java)
                     } else if (headerList.get(groupPosition).menuName.equals("PV")) {
-                        startActivity(pv::class.java)
+                        startActivity(UpdatePv::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         showDialog()
                         loginViewModel.doLogout()
@@ -980,8 +975,17 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             userAdapter.loadStateFlow.collect {
                 // to determine if we are done with the loading state,
                 // you should have already  shown your loading view elsewhere when the entering your fragment
+//                binding!!.mainContent.rvDefaultersStatus.isVisible =
+//                    it.source.refresh is LoadState.Loading && !it.append.endOfPaginationReached && userAdapter.itemCount > 1
+//                binding!!.mainContent.emptyData.isVisible =
+//                    it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && userAdapter.itemCount < 1
+
+
                 when (it.refresh) {
+
                     is LoadState.Error -> {
+                        Utility.hideDialog(this@StaffDashBoardActivity)
+                        binding!!.swipeRefresherHome.isRefreshing = false
                         Toast.makeText(
                             this@StaffDashBoardActivity, "Something went Wrong", Toast.LENGTH_SHORT
                         ).show()

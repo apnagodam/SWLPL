@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dhangLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+
+            android:textStyle="bold"
+            android:padding="@dimen/_5sdp"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Select Danda"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <Spinner
+            android:id="@+id/edDanda"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:hint="Danda" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Select Dhang"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <Spinner
+            android:id="@+id/edDhang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:hint="Dhang"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Select Height"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <Spinner
+            android:id="@+id/edHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:hint="Select Height"
+
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Select Plus Minus "
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <Spinner
+            android:id="@+id/edPlusMinus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:hint="Plus/Minus" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:text="Enter Plus Minus Value"
+            android:textColor="@color/colorPrimary"
+
+            />
+
+        <EditText
+            android:id="@+id/edMinusPlusvalue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_borders"
+            android:hint="Plus/Minus"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:inputType="number"
+            android:padding="@dimen/_10sdp"
+
+            />
+
+        <EditText
+            android:id="@+id/edTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_10sdp"
+            android:background="@color/grey"
+            android:clickable="false"
+            android:focusable="false"
+            android:hint="Total"
+
+            android:padding="@dimen/_5sdp" />
+
+        <Button
+            android:id="@+id/btSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:visibility="gone"
+            android:background="@drawable/btn_borders"
+            android:inputType="number"
+            android:text="Submit" />
+    </LinearLayout>
+</layout>

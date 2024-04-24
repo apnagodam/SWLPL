@@ -5,6 +5,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -45,6 +46,7 @@
                             android:textColor="@color/colorBlackDark"
                             android:textSize="@dimen/_18ssp"
                             android:textStyle="bold" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -281,12 +283,12 @@
                             android:layout_marginVertical="@dimen/_10sdp"
                             android:background="@drawable/btn_green_background"
                             android:gravity="center"
-                            android:visibility="gone"
                             android:padding="@dimen/_5sdp"
                             android:text="Generate new case"
                             android:textColor="@color/white"
                             android:textSize="@dimen/_12ssp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:visibility="gone" />
 
                         <TextView
                             android:layout_width="match_parent"
@@ -366,42 +368,46 @@
                                 android:textSize="@dimen/_10ssp" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/emptyData"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_10sdp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/deal_statment" />
+
+                            <TextView
+                                style="@style/TextStyleBold"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:text="No Data Found"
+                                android:textColor="@color/colorPrimary" />
+                        </LinearLayout>
+
                         <androidx.coordinatorlayout.widget.CoordinatorLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
-                            <LinearLayout
-                                android:id="@+id/emptyData"
-                                android:layout_width="match_parent"
-                                android:orientation="vertical"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:visibility="gone"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintRight_toRightOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                android:padding="@dimen/_10sdp"
-                                android:layout_height="match_parent">
-                                <ImageView
-                                    android:layout_width="match_parent"
-                                    android:src="@drawable/deal_statment"
-                                    android:layout_height="wrap_content"/>
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:text="No Data Found"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:textColor="@color/colorPrimary"
-                                    style="@style/TextStyleBold"
-                                    android:layout_height="wrap_content"/>
-                            </LinearLayout>
+
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rv_defaulters_status"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:visibility="visible"
+                                tools:itemCount="3"
                                 tools:listitem="@layout/layout_top_case_generate" />
-
 
 
                         </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -591,9 +597,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-
-
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

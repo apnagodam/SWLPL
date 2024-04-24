@@ -5,7 +5,9 @@
     style="?android:attr/spinnerDropDownItemStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/_2sdp"
+    android:padding="@dimen/_10sdp"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
+    android:checkMarkTint="@color/colorPrimary"
+    android:checked="true"
     android:ellipsize="marquee"
     android:singleLine="false" />
