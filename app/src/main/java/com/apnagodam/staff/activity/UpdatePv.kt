@@ -27,6 +27,10 @@ import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 
 @AndroidEntryPoint
@@ -253,4 +257,19 @@ class UpdatePv : AppCompatActivity() {
 inline fun <T, R> Iterable<T>.allUniqueBy(transform: (T) -> R): Boolean {
     val hashset = hashSetOf<R>()
     return this.all { hashset.add(transform(it)) }
+}
+
+fun String.toDate(
+    dateFormat: String = "yyyy-MM-dd HH:mm:ss",
+    timeZone: TimeZone = TimeZone.getTimeZone("UTC")
+): Date {
+    val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+    parser.timeZone = timeZone
+    return parser.parse(this)
+}
+
+fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+    val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+    formatter.timeZone = timeZone
+    return formatter.format(this)
 }

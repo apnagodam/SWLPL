@@ -24,6 +24,7 @@ import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.GatePassPDFPrieviewClass
 import com.apnagodam.staff.activity.StaffDashBoardActivity
+import com.apnagodam.staff.activity.formatTo
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.UploadFirstkantaParchiClass
 import com.apnagodam.staff.activity.`in`.first_quality_reports.UploadFirstQualtityReportsClass
 import com.apnagodam.staff.activity.`in`.labourbook.LabourBookUploadClass
@@ -35,6 +36,7 @@ import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookUploadClass
 import com.apnagodam.staff.activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass
 import com.apnagodam.staff.activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass
+import com.apnagodam.staff.activity.toDate
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.utils.Utility
@@ -42,13 +44,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
-class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiService) :
+class CasesAdapter @Inject constructor(var context: Activity, var apiService: ApiService) :
     PagingDataAdapter<AllCaseIDResponse.Datum, CasesAdapter.UserViewHolder>(Comparator) {
-    class UserViewHolder(private val binding: LayoutTopCaseGenerateBinding, context:Activity , apiService:ApiService ) : RecyclerView.ViewHolder(binding.root) {
+    class UserViewHolder(
+        private val binding: LayoutTopCaseGenerateBinding,
+        context: Activity,
+        apiService: ApiService
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(Leads: AllCaseIDResponse.Datum, context: Activity, apiService: ApiService) {
             binding.executePendingBindings()
             binding.tvCaseId.text = Leads.caseId
@@ -56,7 +60,7 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
 
 
             //  binding.moreView.setVisibility(View.GONE);
-            binding.tvId.text =Leads.stack_number
+            binding.tvId.text = Leads.stack_number
 
             binding.moreCase.visibility = View.VISIBLE
             /* if (position==0){
@@ -79,7 +83,7 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
             binding.tvVehicle.setText(Leads.vehicleNo)
             binding.tvDriverNum.setText(Leads.drivePhone.toString())
 
-            binding.tvDate.append(Leads.createdAt.toString())
+            binding.tvDate.setText("Case Created On: ${Leads.createdAt!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
             if (Leads.inOut == "IN") {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Truck"
@@ -186,7 +190,7 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
                                                 (context as StaffDashBoardActivity).labFile.observe(
                                                     (context as StaffDashBoardActivity).activity,
                                                     object : Observer<File> {
-                                                        override  fun onChanged(file: File) {
+                                                        override fun onChanged(file: File) {
                                                             if (file != null && !file.path.isEmpty()) {
                                                                 val uri =
                                                                     Uri.fromFile(file)
@@ -223,7 +227,9 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
                                                                             ) {
                                                                             }
 
-                                                                            override fun onNext(loginResponse: LoginResponse) {
+                                                                            override fun onNext(
+                                                                                loginResponse: LoginResponse
+                                                                            ) {
                                                                                 if (context is StaffDashBoardActivity) {
                                                                                     (context as StaffDashBoardActivity).setObservers()
                                                                                     (context as StaffDashBoardActivity).getAllCases(
@@ -451,7 +457,13 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        getItem(position)?.let { userItemUiState -> holder.bind(userItemUiState,context,apiService) }
+        getItem(position)?.let { userItemUiState ->
+            holder.bind(
+                userItemUiState,
+                context,
+                apiService
+            )
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
@@ -462,11 +474,14 @@ class CasesAdapter @Inject constructor(var context:Activity,var apiService: ApiS
             parent,
             false
         )
-        return UserViewHolder(binding,this.context,this.apiService)
+        return UserViewHolder(binding, this.context, this.apiService)
     }
 
     object Comparator : DiffUtil.ItemCallback<AllCaseIDResponse.Datum>() {
-        override fun areItemsTheSame(oldItem: AllCaseIDResponse.Datum, newItem: AllCaseIDResponse.Datum): Boolean {
+        override fun areItemsTheSame(
+            oldItem: AllCaseIDResponse.Datum,
+            newItem: AllCaseIDResponse.Datum
+        ): Boolean {
             return oldItem == newItem
         }
 

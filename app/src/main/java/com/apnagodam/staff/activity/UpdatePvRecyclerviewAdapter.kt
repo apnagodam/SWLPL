@@ -54,7 +54,7 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                 var height = MutableLiveData<String>()
                 var minusPlus = MutableLiveData<String>()
                 var total = MutableLiveData<String>()
-                var listOfDanda = (1..10).toList()
+                var listOfDanda = (1..50).toList()
 
                 var plusMinusValue = MutableLiveData<String>()
 
@@ -462,3 +462,4 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
 
     }
 }
+
