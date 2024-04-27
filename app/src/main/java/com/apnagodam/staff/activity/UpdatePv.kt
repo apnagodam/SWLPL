@@ -64,6 +64,7 @@ class UpdatePv : AppCompatActivity() {
         stackSearchableSpinner = SearchableSpinner(this)
 
         setObservers()
+        Utility.showDialog(this@UpdatePv,"")
         pvViewModel.getPvTerminal()
 
         binding.rvPv.let {
@@ -145,6 +146,7 @@ class UpdatePv : AppCompatActivity() {
         pvViewModel.postPvResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
+                    Utility.hideDialog(this@UpdatePv)
                     try {
                         Toast.makeText(this@UpdatePv, it.message, Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
@@ -154,7 +156,9 @@ class UpdatePv : AppCompatActivity() {
 
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
+                    Utility.hideDialog(this@UpdatePv)
                     if (it.data != null) {
+                        Utility.showDialog(this@UpdatePv,"")
                         pvViewModel.getPvTerminal()
                         finish()
 
