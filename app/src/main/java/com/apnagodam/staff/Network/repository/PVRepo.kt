@@ -29,7 +29,7 @@ class PVRepo @Inject constructor(private val apiService: ApiService) : BaseApiRe
 
     }
 
-    suspend fun postPv(pvUpdateMode: PvRequestModel, terminalId: Int, stackId:String): Flow<NetworkResult<BaseResponse>> {
+    suspend fun postPv(pvUpdateMode: PvRequestModel): Flow<NetworkResult<BaseResponse>> {
         return flow {
             emit(safeApiCall {
                 apiService.postPV(pvUpdateMode)

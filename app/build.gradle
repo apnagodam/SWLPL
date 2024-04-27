@@ -38,8 +38,8 @@ android {
         minSdkVersion 21
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 34
-        versionCode 24
-        versionName "1.0.24"
+        versionCode 27
+        versionName "1.0.27"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -215,6 +215,10 @@ dependencies {
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     //paging
     implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation 'com.google.android.play:app-update:2.1.0'
+
+    // For Kotlin users also add the Kotlin extensions library for Play In-App Update:
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
 
 
 }

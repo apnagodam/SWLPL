@@ -498,7 +498,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(CancelCaseId::class.java)
                     } else if (headerList.get(groupPosition).menuName.equals("PV")) {
                         startActivity(UpdatePv::class.java)
-                    } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
+                    }
+                    else if (headerList[groupPosition].menuName == "Advances"){
+                    startActivity(AdvancesActivity::class.java)
+                    }
+                    else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         showDialog()
                         loginViewModel.doLogout()
                         loginViewModel.logoutResponse.observe(this) {
@@ -914,7 +918,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             false,
             "https://www.journaldev.com/19226/python-fractions",
             R.drawable.create_case_id
-        ) // Android
+        ) // And
+
+        val menuModel25 = MenuModel(
+            "Advances",
+            true,
+            false,
+            "https://www.journaldev.com/19226/python-fractions",
+            R.drawable.earn
+        ) // // roid
         val menuMode20 = MenuModel(
             resources.getString(R.string.logout),
             true,
@@ -927,6 +939,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        headerList.add(menuModel7)
 //        headerList.add(menuModel8)
 //        headerList.add(menuModel9)
+        headerList.add(menuModel25)
         headerList.add(menuModel23)
         headerList.add(menuModel24)
         headerList.add(menuMode21)

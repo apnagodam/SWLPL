@@ -8,19 +8,21 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.apnagodam.staff.R
-import com.apnagodam.staff.databinding.LayoutCancelCaseIdBinding
 import com.apnagodam.staff.databinding.LayoutListLoadBinding
 
-class ListLoadStateAdapter(private val retry:()->Unit) :LoadStateAdapter<ListLoadStateAdapter.ListLoadViewHolder>(){
+class ListLoadStateAdapter(private val retry: () -> Unit) :
+    LoadStateAdapter<ListLoadStateAdapter.ListLoadViewHolder>() {
 
-    class ListLoadViewHolder(private val binding:LayoutListLoadBinding,retry :()->Unit):RecyclerView.ViewHolder(binding.root){
+    class ListLoadViewHolder(private val binding: LayoutListLoadBinding, retry: () -> Unit) :
+        RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.btRetry.setOnClickListener {
                 retry.invoke()
             }
         }
-        fun bind(loadState: LoadState){
+
+        fun bind(loadState: LoadState) {
             binding.tvError.isVisible = loadState is LoadState.Error
 
             if (loadState is LoadState.Error) {
@@ -45,7 +47,7 @@ class ListLoadStateAdapter(private val retry:()->Unit) :LoadStateAdapter<ListLoa
             false
         )
 
-        return ListLoadViewHolder(binding,retry)
+        return ListLoadViewHolder(binding, retry)
 
     }
 }

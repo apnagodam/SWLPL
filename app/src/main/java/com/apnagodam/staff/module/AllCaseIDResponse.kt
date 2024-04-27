@@ -244,9 +244,20 @@ class AllCaseIDResponse : BaseResponse() {
         var truckbook: String? = null
 
         @JvmField
+        @SerializedName("truckbook_date")
+        @Expose
+        var truckbookDate: String? = null
+
+
+        @JvmField
         @SerializedName("labourbook")
         @Expose
         var labourBook: String? = null
+
+        @JvmField
+        @SerializedName("labourbook_date")
+        @Expose
+        var labourBookDate: String? = null
 
         @JvmField
         @SerializedName("first_kanta_parchi")
@@ -254,9 +265,19 @@ class AllCaseIDResponse : BaseResponse() {
         var firstKantaParchi: String? = null
 
         @JvmField
+        @SerializedName("first_kanta_parchi_date")
+        @Expose
+        var firstKantaParchiDate: String? = null
+
+        @JvmField
         @SerializedName("first_quality")
         @Expose
         var firstQuality: String? = null
+
+        @JvmField
+        @SerializedName("first_quality_date")
+        @Expose
+        var firstQualityDate: String? = null
 
         @JvmField
         @SerializedName("f_q_tagging")
@@ -264,14 +285,29 @@ class AllCaseIDResponse : BaseResponse() {
         var firstQualityTagging: String? = null
 
         @JvmField
+        @SerializedName("f_q_tagging_date")
+        @Expose
+        var firstQualityTaggingDate: String? = null
+
+        @JvmField
         @SerializedName("s_k_parchi")
         @Expose
         var secondKantaParchi: String? = null
 
         @JvmField
+        @SerializedName("s_k_parchi_date")
+        @Expose
+        var secondKantaParchiDate: String? = null
+
+        @JvmField
         @SerializedName("s_quality_report")
         @Expose
         var secondQualityReport: String? = null
+
+        @JvmField
+        @SerializedName("s_quality_report_date")
+        @Expose
+        var secondQualityReportDate: String? = null
 
         @JvmField
         @SerializedName("cctv_report")

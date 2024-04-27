@@ -2,7 +2,7 @@ package com.apnagodam.staff.Network
 
 data class PvRequestModel(
     var terminal_id: String,
-    var stack_no: String,
+    var stack_no: Float,
     var block_no: ArrayList<BlockNo>
 ) {
 

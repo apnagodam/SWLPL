@@ -83,10 +83,10 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
             binding.tvVehicle.setText(Leads.vehicleNo)
             binding.tvDriverNum.setText(Leads.drivePhone.toString())
 
-            binding.tvDate.setText("Case Created On: ${Leads.createdAt!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
             if (Leads.inOut == "IN") {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Truck"
+                    binding.tvDate.setText("${Leads.createdAt!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
                     binding.tvStatus.setOnClickListener {
                         val intent = Intent(context, TruckUploadDetailsClass::class.java)
                         intent.putExtra("user_name", Leads.custFname)
@@ -98,6 +98,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                 } else {
                     if (Leads.labourBook == null) {
                         binding.tvStatus.text = "Add Labour"
+                        binding.tvDate.setText("${Leads.truckbookDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                         binding.tvStatus.setOnClickListener {
                             val intent = Intent(context, LabourBookUploadClass::class.java)
                             intent.putExtra("user_name", Leads.custFname)
@@ -110,6 +112,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         if (Leads.firstKantaParchi == null || Leads.firstKantaDharamkanta == null
                         ) {
                             binding.tvStatus.text = "Add First Kanta Parchi"
+                            binding.tvDate.setText("${Leads.labourBookDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                             binding.tvStatus.setOnClickListener {
                                 val intent =
                                     Intent(context, UploadFirstkantaParchiClass::class.java)
@@ -122,6 +126,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         } else {
                             if (Leads.firstQuality == null) {
                                 binding.tvStatus.text = "Add First Quality"
+                                binding.tvDate.setText("${Leads.firstKantaParchiDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                 binding.tvStatus.setOnClickListener {
                                     val intent =
                                         Intent(context, UploadFirstQualtityReportsClass::class.java)
@@ -133,10 +139,14 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             } else {
                                 if (Leads.firstQualityTagging == null) {
                                     binding.tvStatus.text = "IVR Quality Tagging Pending"
+                                    binding.tvDate.setText("${Leads.firstQualityDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                 } else {
                                     if (Leads.secondKantaParchi == null || Leads.secondKantaDharamkanta == null
                                     ) {
                                         binding.tvStatus.text = "Add Second Kanta Parchi"
+                                        binding.tvDate.setText("${Leads.firstQualityTaggingDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                         binding.tvStatus.setOnClickListener {
                                             val intent = Intent(
                                                 context,
@@ -161,6 +171,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                         if (Leads.secondQualityReport == null || Leads.sendToLab == null
                                         ) {
                                             binding.tvStatus.text = "Add Second Quality Report"
+                                            binding.tvDate.setText("${Leads.secondKantaParchiDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                             binding.divider.visibility = View.VISIBLE
                                             binding.tvLab.visibility = View.VISIBLE
                                             val commodityData =
@@ -293,6 +305,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                             }
                                         } else {
                                             if (Leads.cctvReport == null) {
+                                                binding.tvDate.setText("${Leads.secondQualityReportDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                                 binding.tvStatus.text = "CCTV Pending"
                                             } else {
                                                 if (Leads.ivrReport == null) {
@@ -327,6 +341,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
             } else {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Out Truck"
+                    binding.tvDate.setText("${Leads.firstQualityTaggingDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
                     binding.tvStatus.setOnClickListener {
                         val intent = Intent(context, OUTTruckUploadDetailsClass::class.java)
                         intent.putExtra("user_name", Leads.custFname)
@@ -338,6 +353,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                 } else {
                     if (Leads.labourBook == null) {
                         binding.tvStatus.text = "Add Out Labour"
+                        binding.tvDate.setText("${Leads.truckbookDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                         binding.tvStatus.setOnClickListener {
                             val intent = Intent(context, OUTLabourBookUploadClass::class.java)
                             intent.putExtra("user_name", Leads.custFname)
@@ -380,6 +397,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         } else {
                             if (Leads.secondQualityReport == null) {
                                 binding.tvStatus.text = "Add Out Quality Report"
+                                binding.tvDate.setText("${Leads.labourBookDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                 binding.tvStatus.setOnClickListener {
                                     val intent = Intent(
                                         context,
@@ -395,6 +414,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 if (Leads.secondKantaParchi == null || Leads.secondKantaDharamkanta == null
                                 ) {
                                     binding.tvStatus.text = "Add Out Second Kanta Parchi"
+                                    binding.tvDate.setText("${Leads.secondQualityReportDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                     binding.tvStatus.setOnClickListener {
                                         val intent = Intent(
                                             context,
@@ -416,6 +437,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     if (Leads.cctvReport == null || Leads.cctvReport.toString()
                                             .isEmpty()
                                     ) {
+                                        binding.tvDate.setText("${Leads.secondKantaParchiDate!!.toDate().formatTo("dd MMM yyyy HH:mm a")}")
+
                                         binding.tvStatus.text = "CCTV Pending"
                                     } else {
                                         if (Leads.ivrReport == null) {

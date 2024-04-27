@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -48,7 +49,7 @@ class UpdatePv : AppCompatActivity() {
     lateinit var searchableSpinner: SearchableSpinner
     lateinit var stackSearchableSpinner: SearchableSpinner
     var terminalId: Int = 0;
-    var stackId: String = "0";
+    var stackId: Float = 0.0f;
     lateinit var pvUploadRequestModel: PvUploadRequestModel
     var updateModelData = PvRequestModel.BlockNo(
         "", "", "", "", ""
@@ -70,23 +71,27 @@ class UpdatePv : AppCompatActivity() {
             it.adapter = pvRecyclerviewAdapter
         }
 
-
+        var count = 1
         this.lifecycleScope.launch {
             EventBus.subscribe<PvRequestModel.BlockNo> { updateModel ->
+                count++
+                Log.d("Event count", count.toString())
+                pvModelList.add(updateModel)
 
+                if (pvModelList.isNotEmpty()) {
+                    for (i in pvModelList.indices) {
+                        if (pvModelList[i].block_no == updateModel.block_no) {
+                            pvModelList[i].plusMinus = updateModel.plusMinus
+                            pvModelList[i].height = updateModel.height
+                            pvModelList[i].dhang = updateModel.dhang
+                            pvModelList[i].danda = updateModel.danda
+                        }
 
-                if (updateModelData.block_no == updateModel.block_no) {
-                    if (pvModelList.isNotEmpty()) {
-                        pvModelList[index].plusMinus = updateModel.plusMinus
                     }
-                } else {
-                    pvModelList.add(updateModel)
-                    index = pvModelList.indexOf(updateModel)
-
                 }
-                updateModelData = updateModel
+                var list2 = pvModelList.distinct();
 
-                if (terminalId == 0 || stackId == "0") {
+                if (terminalId == 0 || stackId == 0.0f) {
                     try {
                         Toast.makeText(
                             this@UpdatePv,
@@ -100,13 +105,16 @@ class UpdatePv : AppCompatActivity() {
                 } else {
 
                     binding.btAdd.setOnClickListener {
+                        if (pvModelList.isNotEmpty()) {
+                            Log.e("Tag", list2.toString())
+                        }
                         pvViewModel.postPvData(
                             PvRequestModel(
                                 terminal_id = terminalId.toString(),
                                 stack_no = stackId,
-                                block_no = pvModelList
+                                block_no = list2 as ArrayList<PvRequestModel.BlockNo>
 
-                            ), terminalId, stackId
+                            )
                         )
 
 
@@ -171,50 +179,59 @@ class UpdatePv : AppCompatActivity() {
 
                 is NetworkResult.Success -> {
                     Utility.hideDialog(this@UpdatePv)
+                    SharedPreferencesRepository.getDataManagerInstance().user.let { userDetails ->
 
-                    if (it.data != null) {
-                        val listOfTerminals = arrayListOf<String>()
-                        val listOfStacks = arrayListOf<String>()
-                        terminalList =
-                            it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>
-                        searchableSpinner.windowTitle = "Select Terminal"
-                        stackSearchableSpinner.windowTitle = "Select Stack"
+                        if (it.data != null) {
+                            val listOfTerminals = arrayListOf<String>()
+                            val listOfStacks = arrayListOf<String>()
 
-                        if (it.data.stackData != null) {
-                            if (it.data.stackData!!.isNotEmpty()) {
-                                stackList =
-                                    (it.data.stackData as ArrayList<PvResponseModel.StackDatum>?)!!
-                                stackList.forEach {
-                                    listOfStacks.add(it.stackNo.toString())
+                            for (i in (it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>).indices) {
+
+                                if (userDetails.terminal != null) {
+                                    if ((it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i].terminalId.toString() == userDetails.terminal.toString()) {
+
+                                        terminalList.add((it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i])
+                                        //  listOfTerminals.add("${(it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i].name}")
+                                    }
+                                } else {
+                                    terminalList.add((it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i])
                                 }
-                                stackSearchableSpinner.setSpinnerListItems(listOfStacks)
-                                stackSearchableSpinner.onItemSelectListener =
-                                    object : OnItemSelectListener {
-                                        override fun setOnItemSelectListener(
-                                            position: Int,
-                                            selectedString: String
-                                        ) {
-                                            val df = DecimalFormat("#")
+                            }
+                            searchableSpinner.windowTitle = "Select Terminal"
+                            stackSearchableSpinner.windowTitle = "Select Stack"
 
-                                            val result =
-                                                it.data.stackData!![position].stackNo!!.toDouble()
-                                                    .toInt()
+                            if (it.data.stackData != null) {
+                                if (it.data.stackData!!.isNotEmpty()) {
+                                    stackList =
+                                        (it.data.stackData as ArrayList<PvResponseModel.StackDatum>?)!!
+                                    stackList.forEach {
+                                        listOfStacks.add(it.stackNo.toString())
+                                    }
+                                    stackSearchableSpinner.setSpinnerListItems(listOfStacks)
+                                    stackSearchableSpinner.onItemSelectListener =
+                                        object : OnItemSelectListener {
+                                            override fun setOnItemSelectListener(
+                                                position: Int,
+                                                selectedString: String
+                                            ) {
+                                                val df = DecimalFormat("#")
 
-                                            stackId = result.toString()
-                                            binding.tvStacks.text = selectedString
-                                            binding.btAddPV.visibility = View.VISIBLE
-                                            binding.btAddPV.setOnClickListener {
-                                                list.add("hello")
-                                                pvRecyclerviewAdapter.notifyItemInserted(list.size)
+                                                val result =
+                                                    it.data.stackData!![position].stackNo!!.toFloat()
+                                                stackId = result
+                                                binding.tvStacks.text = selectedString
+                                                binding.btAddPV.visibility = View.VISIBLE
+                                                binding.btAddPV.setOnClickListener {
+                                                    list.add("hello")
+                                                    pvRecyclerviewAdapter.notifyItemInserted(list.size - 1)
+                                                }
+
                                             }
 
                                         }
-
-                                    }
+                                }
                             }
-                        }
 
-                        SharedPreferencesRepository.getDataManagerInstance().user.let { userDetails ->
 
 
                             for (i in terminalList.indices) {
@@ -227,37 +244,36 @@ class UpdatePv : AppCompatActivity() {
                                     listOfTerminals.add("${terminalList[i].name}")
                                 }
                             }
-                        }
 
-                        searchableSpinner.setSpinnerListItems(listOfTerminals)
 
-                        searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
-                            override fun setOnItemSelectListener(
-                                position: Int,
-                                selectedString: String
-                            ) {
-                                binding.tvTerminal.text = selectedString
-                                terminalId = terminalList[position].terminalId!!
-                                pvViewModel.getPvTerminal(terminalId = terminalList[position].terminalId)
-                                binding.tvStacks.visibility = View.VISIBLE
+                            searchableSpinner.setSpinnerListItems(listOfTerminals)
 
+                            searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+                                override fun setOnItemSelectListener(
+                                    position: Int,
+                                    selectedString: String
+                                ) {
+                                    binding.tvTerminal.text = selectedString
+                                    terminalId = terminalList[position].terminalId!!
+                                    pvViewModel.getPvTerminal(terminalId = terminalList[position].terminalId)
+                                    binding.tvStacks.visibility = View.VISIBLE
+
+                                }
                             }
-                        }
-                        binding.tvTerminal.setOnClickListener { searchableSpinner.show() }
-                        binding.tvStacks.setOnClickListener { stackSearchableSpinner.show() }
+                            binding.tvTerminal.setOnClickListener { searchableSpinner.show() }
+                            binding.tvStacks.setOnClickListener { stackSearchableSpinner.show() }
 
+                        }
                     }
                 }
             }
         }
+
     }
 
+
 }
 
-inline fun <T, R> Iterable<T>.allUniqueBy(transform: (T) -> R): Boolean {
-    val hashset = hashSetOf<R>()
-    return this.all { hashset.add(transform(it)) }
-}
 
 fun String.toDate(
     dateFormat: String = "yyyy-MM-dd HH:mm:ss",

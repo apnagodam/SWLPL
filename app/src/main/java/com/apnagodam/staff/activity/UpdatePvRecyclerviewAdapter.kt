@@ -2,6 +2,7 @@ package com.apnagodam.staff.activity
 
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,19 +90,19 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
 
                 plusMinusValue.observe(activity) { pm ->
                     if (!danda.value.isNullOrEmpty() && !dhang.value.isNullOrEmpty() && !height.value.isNullOrEmpty() && !it.edMinusPlusvalue.text.isNullOrEmpty()) {
-
-                        scope.launch {
-                            delay(1000)
-                            EventBus.publish(
-                                PvRequestModel.BlockNo(
-                                    block_no = position.toString(),
-                                    danda.value!!,
-                                    dhang.value!!,
-                                    height.value!!,
-                                    plusMinus = it.edMinusPlusvalue.text.toString()
-                                )
-                            )
-                        }
+//
+//                        scope.launch {
+//                            delay(1000)
+//                            EventBus.publish(
+//                                PvRequestModel.BlockNo(
+//                                    block_no = position.toString(),
+//                                    danda.value!!,
+//                                    dhang.value!!,
+//                                    height.value!!,
+//                                    plusMinus = it.edMinusPlusvalue.text.toString()
+//                                )
+//                            )
+//                        }
                     }
                 }
 
@@ -186,7 +187,9 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                 it.edMinusPlusvalue.doOnTextChanged { text, start, before, count ->
 
                     scope.launch {
-                        delay(1000)
+                        delay(1000).let {
+
+                        }
                         if (!danda.value.isNullOrEmpty() && !dhang.value.isNullOrEmpty() && !height.value.isNullOrEmpty() && !text.isNullOrEmpty()) {
                             if (minusPlus.value.equals("+")) {
                                 val plusMinus =
@@ -195,17 +198,23 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                 it.edTotal.setText(
                                     plusMinus
                                 )
-                                if (!it.edMinusPlusvalue.text.isNullOrEmpty()) {
+                                if (!it.edTotal.text.isNullOrEmpty()) {
+                                    Handler().postDelayed({
+                                        scope.launch {
+                                            EventBus.publish(
+                                                PvRequestModel.BlockNo(
+                                                    block_no = position.toString(),
+                                                    danda.value!!,
+                                                    dhang.value!!,
+                                                    height.value!!,
+                                                    plusMinus = it.edMinusPlusvalue.text.toString()
+                                                )
+                                            )
+                                        }
 
-                                    EventBus.publish(
-                                        PvRequestModel.BlockNo(
-                                            block_no = position.toString(),
-                                            danda.value!!,
-                                            dhang.value!!,
-                                            height.value!!,
-                                            plusMinus = it.edMinusPlusvalue.text.toString()
-                                        )
-                                    )
+                                    }, 1000)
+
+
                                 }
                             } else if (minusPlus.value.equals("-")) {
                                 val plusMinus =
@@ -214,17 +223,23 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                 it.edTotal.setText(
                                     plusMinus
                                 )
-                                if (!it.edMinusPlusvalue.text.isNullOrEmpty()) {
+                                if (!it.edTotal.text.isNullOrEmpty()) {
+                                    Handler().postDelayed({
+                                        scope.launch {
+                                            EventBus.publish(
+                                                PvRequestModel.BlockNo(
+                                                    block_no = position.toString(),
+                                                    danda.value!!,
+                                                    dhang.value!!,
+                                                    height.value!!,
+                                                    plusMinus = it.edMinusPlusvalue.text.toString()
+                                                )
+                                            )
+                                        }
 
-                                    EventBus.publish(
-                                        PvRequestModel.BlockNo(
-                                            block_no = position.toString(),
-                                            danda.value!!,
-                                            dhang.value!!,
-                                            height.value!!,
-                                            plusMinus = it.edMinusPlusvalue.text.toString()
-                                        )
-                                    )
+                                    }, 1000)
+
+
                                 }
                             }
 
@@ -234,56 +249,6 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                     }
 
 
-                }
-                it.edTotal.doOnTextChanged { text, start, before, count ->
-
-                    scope.launch {
-                        delay(1000)
-                        if (!danda.value.isNullOrEmpty() && !dhang.value.isNullOrEmpty() && !height.value.isNullOrEmpty() && !it.edMinusPlusvalue.text.isNullOrEmpty()) {
-                            if (minusPlus.value.equals("+")) {
-                                val plusMinus =
-                                    (((dhang.value!!.toInt() + danda.value!!.toInt()) * height.value!!.toInt()) + it.edMinusPlusvalue.text.toString()
-                                        .toInt()).toString()
-                                it.edTotal.setText(
-                                    plusMinus
-                                )
-                                if (!it.edTotal.text.isNullOrEmpty()) {
-
-                                    EventBus.publish(
-                                        PvRequestModel.BlockNo(
-                                            block_no = position.toString(),
-                                            danda.value!!,
-                                            dhang.value!!,
-                                            height.value!!,
-                                            plusMinus = it.edMinusPlusvalue.text.toString()
-                                        )
-                                    )
-                                }
-                            } else if (minusPlus.value.equals("-")) {
-                                val plusMinus =
-                                    (((dhang.value!!.toInt() + danda.value!!.toInt()) * height.value!!.toInt()) - it.edMinusPlusvalue.text.toString()
-                                        .toInt()).toString()
-                                it.edTotal.setText(
-                                    plusMinus
-                                )
-                                if (!it.edTotal.text.isNullOrEmpty()) {
-
-                                    EventBus.publish(
-                                        PvRequestModel.BlockNo(
-                                            block_no = position.toString(),
-                                            danda.value!!,
-                                            dhang.value!!,
-                                            height.value!!,
-                                            plusMinus = it.edMinusPlusvalue.text.toString()
-                                        )
-                                    )
-                                }
-                            }
-
-
-                        }
-
-                    }
                 }
 
                 it.edDanda.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,

@@ -28,8 +28,8 @@ class PvViewModel @Inject constructor(private val pvRepo: PVRepo, application: A
         }
     }
 
-    fun postPvData(pvUpdateModel: PvRequestModel, terminalId: Int, stackId:String) = viewModelScope.launch {
-        pvRepo.postPv(pvUpdateModel,terminalId,stackId).collect(){
+    fun postPvData(pvUpdateModel: PvRequestModel) = viewModelScope.launch {
+        pvRepo.postPv(pvUpdateModel).collect(){
             postPvResponse.value = it
         }
     }

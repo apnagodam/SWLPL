@@ -1,10 +1,8 @@
 package com.apnagodam.staff.paging
 
-import android.view.View
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.apnagodam.staff.Network.ApiService
-import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
 
@@ -63,8 +61,9 @@ class CasesPagingDataSource(private val apiService: ApiService) :
 
 
             }
+            var distinctiveList = allCasesList.distinctBy { it.caseId }
             LoadResult.Page(
-                data = allCasesList.reversed(),
+                data = distinctiveList.reversed(),
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page.minus(1),
                 nextKey = if (response.getaCase()!!.data!!.isEmpty() || page > 5) null else page.plus(
                     1
