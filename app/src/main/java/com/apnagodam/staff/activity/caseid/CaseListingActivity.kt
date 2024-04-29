@@ -37,7 +37,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
-    private var casesTopAdapter: CasesTopAdapter? = null
     private var pageOffset = 1
     private var totalPage = 0
     private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null

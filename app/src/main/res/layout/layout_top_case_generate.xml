@@ -219,7 +219,6 @@
             android:scrollHorizontally="true"
             android:ellipsize="end"
             android:maxLines="4"
-            android:text="Case Created On: "
             android:textColor="@color/black"
             android:textSize="@dimen/_10ssp" />
         <LinearLayout

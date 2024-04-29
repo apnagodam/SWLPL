@@ -57,6 +57,7 @@ class TruckBookAdapter(
         @SuppressLint("SetTextI18n")
         override fun onBind(position: Int) {
           if(binding!=null){
+
               binding.let {
                   it!!.tvActionDone.setVisibility(View.GONE)
                   it.tvAction.setVisibility(View.GONE)
@@ -68,6 +69,7 @@ class TruckBookAdapter(
               } else {
                   it.getRoot().setBackgroundColor(Color.WHITE)
               }
+
                   it.tvId.setText("" + Leads[position]!!.caseId)
                   it.tvName.setText(Leads[position]!!.custFname)
                   if (Leads[position]!!.tbCaseId != null) {

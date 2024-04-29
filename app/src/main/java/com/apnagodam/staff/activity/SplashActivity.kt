@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
@@ -61,7 +62,7 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 }
 
                 is NetworkResult.Success -> {
-                    if(it.data!=null){
+                    if (it.data != null) {
                         SharedPreferencesRepository.getDataManagerInstance()
                             .setCommdity(it.data.categories)
                         SharedPreferencesRepository.getDataManagerInstance().employee =
@@ -73,20 +74,65 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                     }
 
 
-
                 }
             }
 
 
         }
+        homeViewModel.response.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
+
+                }
+
+                is NetworkResult.Loading -> {
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .saveUserPermissionData(it.data.userPermissionsResult)
+                        startActivityAndClear(StaffDashBoardActivity::class.java)
+
+                    }
+
+
+                }
+
+            }
+        }
+        homeViewModel.commoditiesReponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+
+                }
+
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setCommdity(it.data.categories)
+                        SharedPreferencesRepository.getDataManagerInstance().employee =
+                            it.data.employee
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setContractor(
+                                it.data
+                                    .labourList
+                            )
+                    }
+                }
+            }
+        }
     }
 
     private fun nextMClass() {
-        GlobalScope.launch {
+        lifecycleScope.launch {
             requestPermissions().collect() {
-                if(it == true){
+                if (it == true) {
 
-                }else{
+                } else {
                     ActivityCompat.requestPermissions(
                         this@SplashActivity,
                         arrayOf(
@@ -106,36 +152,13 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     private fun afterpermissionNext() {
         SharedPreferencesRepository.getDataManagerInstance().userPermission
-        if(SharedPreferencesRepository.getDataManagerInstance().userPermission!=null&&SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()){
+        if (SharedPreferencesRepository.getDataManagerInstance().userPermission != null && SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()) {
             startActivityAndClear(StaffDashBoardActivity::class.java)
-        }
-
-        else{
+        } else {
             val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
             if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
                 homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
-                homeViewModel.response.observe(this) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show();
 
-                        }
-                        is NetworkResult.Loading -> {
-                        }
-                        is NetworkResult.Success -> {
-                            if (it.data != null) {
-
-                                SharedPreferencesRepository.getDataManagerInstance()
-                                    .saveUserPermissionData(it.data.userPermissionsResult)
-                                startActivityAndClear(StaffDashBoardActivity::class.java)
-
-                            }
-
-
-                        }
-
-                    }
-                }
 
             } else {
                 val intent = Intent(this@SplashActivity, LoginActivity::class.java)
@@ -148,20 +171,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-//        inAppUpdate.onResume()
-    }
-
-    override fun onDestroy() {
-//        inAppUpdate.onDestroy()
-        super.onDestroy()
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-//        inAppUpdate.onActivityResult(requestCode,resultCode, data)
-
-    }
 
     suspend private fun requestPermissions(): Flow<Boolean> {
 
@@ -252,25 +261,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     private fun getCommodityList() {
         homeViewModel.getCommodities("Emp")
-        homeViewModel.commoditiesReponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {}
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    if (BuildConfig.APPLICATION_ID != null) {
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setCommdity(it.data!!.categories)
-                        SharedPreferencesRepository.getDataManagerInstance().employee =
-                            it.data!!.employee
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setContractor(
-                                it.data
-                                    .labourList
-                            )
-                    }
-                }
-            }
-        }
 
 
     }

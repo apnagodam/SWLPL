@@ -67,9 +67,9 @@ object NetworkModule {
         //     httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         // set the connection time to 1 minutes
         httpClient.protocols(listOf(Protocol.HTTP_1_1))
-        httpClient.connectTimeout(15, TimeUnit.SECONDS) // connect timeout
-                .writeTimeout(15, TimeUnit.SECONDS) // write timeout
-                .readTimeout(15, TimeUnit.SECONDS)
+        httpClient.connectTimeout(1, TimeUnit.MINUTES) // connect timeout
+                .writeTimeout(1, TimeUnit.MINUTES) // write timeout
+                .readTimeout(1, TimeUnit.MINUTES)
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         return httpClient.build()
     }

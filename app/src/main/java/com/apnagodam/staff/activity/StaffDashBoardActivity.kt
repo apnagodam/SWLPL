@@ -503,41 +503,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     startActivity(AdvancesActivity::class.java)
                     }
                     else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
-                        showDialog()
                         loginViewModel.doLogout()
-                        loginViewModel.logoutResponse.observe(this) {
-                            when (it) {
-                                is NetworkResult.Error -> {
-                                    hideDialog()
-                                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-                                    SharedPreferencesRepository.getDataManagerInstance().clear()
-                                    SharedPreferencesRepository.setIsUserName(false)
-                                    SharedPreferencesRepository.saveSessionToken("")
-                                    val intent = Intent(this, LoginActivity::class.java)
-                                    intent.putExtra("setting", "")
-                                    startActivityAndClear(LoginActivity::class.java)
 
-                                }
-
-                                is NetworkResult.Loading -> {
-
-
-                                }
-
-                                is NetworkResult.Success -> {
-                                    hideDialog()
-                                    if (it.data != null) {
-                                        SharedPreferencesRepository.getDataManagerInstance().clear()
-                                        SharedPreferencesRepository.setIsUserName(false)
-                                        SharedPreferencesRepository.saveSessionToken("")
-                                        val intent = Intent(this, LoginActivity::class.java)
-                                        intent.putExtra("setting", "")
-                                        startActivityAndClear(LoginActivity::class.java)
-                                    }
-
-                                }
-                            }
-                        }
                         // logout(resources.getString(R.string.logout_alert), "Logout")
                     }
                 }
@@ -1012,6 +979,33 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         Utility.hideDialog(this@StaffDashBoardActivity)
                         binding!!.swipeRefresherHome.isRefreshing = false
                     }
+                }
+            }
+        }
+        loginViewModel.logoutResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    SharedPreferencesRepository.getDataManagerInstance().clear()
+                    SharedPreferencesRepository.setIsUserName(false)
+                    SharedPreferencesRepository.saveSessionToken("")
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.putExtra("setting", "")
+                    startActivityAndClear(LoginActivity::class.java)
+
+                }
+
+                is NetworkResult.Loading -> {
+
+
+                }
+
+                is NetworkResult.Success -> {
+                    SharedPreferencesRepository.getDataManagerInstance().clear()
+                    SharedPreferencesRepository.setIsUserName(false)
+                    SharedPreferencesRepository.saveSessionToken("")
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.putExtra("setting", "")
+                    startActivityAndClear(LoginActivity::class.java)
                 }
             }
         }
