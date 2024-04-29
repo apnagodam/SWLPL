@@ -54,7 +54,7 @@ class UpdatePv : AppCompatActivity() {
     var updateModelData = PvRequestModel.BlockNo(
         "", "", "", "", ""
     )
-    var index = 0
+    var index = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +64,7 @@ class UpdatePv : AppCompatActivity() {
         stackSearchableSpinner = SearchableSpinner(this)
 
         setObservers()
-        Utility.showDialog(this@UpdatePv,"")
+        Utility.showDialog(this@UpdatePv, "")
         pvViewModel.getPvTerminal()
 
         binding.rvPv.let {
@@ -113,7 +113,7 @@ class UpdatePv : AppCompatActivity() {
                             PvRequestModel(
                                 terminal_id = terminalId.toString(),
                                 stack_no = stackId,
-                                block_no = list2 as ArrayList<PvRequestModel.BlockNo>
+                                block_no = list2
 
                             )
                         )
@@ -147,20 +147,20 @@ class UpdatePv : AppCompatActivity() {
             when (it) {
                 is NetworkResult.Error -> {
                     Utility.hideDialog(this@UpdatePv)
-                    try {
-                        Toast.makeText(this@UpdatePv, it.message, Toast.LENGTH_LONG).show()
-                    } catch (e: Exception) {
 
-                    }
                 }
 
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
+
                     Utility.hideDialog(this@UpdatePv)
                     if (it.data != null) {
-                        Utility.showDialog(this@UpdatePv,"")
-                        pvViewModel.getPvTerminal()
-                        finish()
+                        if (it.data.status == "1") {
+                            pvViewModel.getPvTerminal()
+                            finish()
+                        } else {
+
+                        }
 
                     }
                 }
@@ -289,7 +289,7 @@ fun String.toDate(
 }
 
 fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
-    val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+    val formatter = SimpleDateFormat(dateFormat, Locale.ENGLISH)
     formatter.timeZone = timeZone
     return formatter.format(this)
 }

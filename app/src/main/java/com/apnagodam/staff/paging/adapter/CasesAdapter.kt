@@ -44,6 +44,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 import javax.inject.Inject
 
 class CasesAdapter @Inject constructor(var context: Activity, var apiService: ApiService) :
@@ -88,7 +91,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                     binding.tvStatus.text = "Add Truck"
                     binding.tvDate.setText(
                         "${
-                            Leads.createdAt?.toDate()?.formatTo("dd MMM yyyy hh:mm a")
+                            Leads.createdAt?.let { formatDate(it.toDate().toString()) }
                         }"
                     )
                     binding.tvStatus.setOnClickListener {
@@ -104,7 +107,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         binding.tvStatus.text = "Add Labour"
                         binding.tvDate.setText(
                             "${
-                                Leads.truckbookDate?.toDate()?.formatTo("dd MMM yyyy hh:mm a")
+                                Leads.truckbookDate?.let { formatDate(it.toDate().toString()) }
                             }"
                         )
 
@@ -122,7 +125,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             binding.tvStatus.text = "Add First Kanta Parchi"
                             binding.tvDate.setText(
                                 "${
-                                    Leads.labourBookDate?.toDate()?.formatTo("dd MMM yyyy hh:mm a")
+                                    Leads.labourBookDate?.let { formatDate(it.toDate().toString()) }
                                 }"
                             )
 
@@ -140,8 +143,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 binding.tvStatus.text = "Add First Quality"
                                 binding.tvDate.setText(
                                     "${
-                                        Leads.firstKantaParchiDate?.toDate()
-                                            ?.formatTo("dd MMM yyyy hh:mm a")
+                                        Leads.firstKantaParchiDate?.let { formatDate(it.toDate().toString()) }
+
                                     }"
                                 )
 
@@ -158,8 +161,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     binding.tvStatus.text = "IVR Quality Tagging Pending"
                                     binding.tvDate.setText(
                                         "${
-                                            Leads.firstQualityDate?.toDate()
-                                                ?.formatTo("dd MMM yyyy hh:mm a")
+                                            Leads.firstQualityDate?.let { formatDate(it.toDate().toString()) }
+
                                         }"
                                     )
 
@@ -169,8 +172,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                         binding.tvStatus.text = "Add Second Kanta Parchi"
                                         binding.tvDate.setText(
                                             "${
-                                                Leads.firstQualityTaggingDate?.toDate()
-                                                    ?.formatTo("dd MMM yyyy hh:mm a")
+                                                Leads.firstQualityTaggingDate?.let { formatDate(it.toDate().toString()) }
+
                                             }"
                                         )
 
@@ -200,8 +203,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                             binding.tvStatus.text = "Add Second Quality Report"
                                             binding.tvDate.setText(
                                                 "${
-                                                    Leads.secondKantaParchiDate?.toDate()
-                                                        ?.formatTo("dd MMM yyyy hh:mm a")
+                                                    Leads.secondKantaParchiDate?.let { formatDate(it.toDate().toString()) }
+
                                                 }"
                                             )
 
@@ -338,18 +341,26 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                         } else {
                                             if (Leads.cctvReport == null) {
                                                 binding.tvDate.setText(
-                                                    Leads.secondQualityReportDate?.toDate()
-                                                        ?.formatTo("dd MMM yyyy hh:mm a")
+                                                    Leads.secondQualityReportDate?.let { formatDate(it.toDate().toString()) }
+
                                                 )
                                                 binding.tvStatus.text = "CCTV Pending"
                                             } else {
                                                 if (Leads.ivrReport == null) {
+                                                    binding.tvDate.setText(
+                                                        Leads.cctvReportDate?.let { formatDate(it.toDate().toString()) }
+
+                                                    )
                                                     binding.tvStatus.text = "IVR Pending"
                                                 } else {
                                                     if (Leads.gatepassReport == null
                                                     ) {
+                                                        Leads.firstQualityTaggingDate?.let { formatDate(it.toDate().toString()) }
+
                                                         binding.tvStatus.text = "Gate Pass Pending"
                                                     } else {
+                                                        Leads.firstQualityTaggingDate?.let { formatDate(it.toDate().toString()) }
+
                                                         binding.tvStatus.text = "View"
                                                         binding.tvStatus.setOnClickListener {
                                                             val intent = Intent(
@@ -377,7 +388,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                     binding.tvStatus.text = "Add Out Truck"
                     binding.tvDate.setText(
                         "${
-                            Leads.firstQualityTaggingDate?.toDate()?.formatTo("dd MMM yyyy hh:mm a")
+                            Leads.createdAt?.let { formatDate(it.toDate().toString()) }
                         }"
                     )
                     binding.tvStatus.setOnClickListener {
@@ -393,7 +404,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         binding.tvStatus.text = "Add Out Labour"
                         binding.tvDate.setText(
                             "${
-                                Leads.truckbookDate?.toDate()?.formatTo("dd MMM yyyy hh:mm a")
+                                Leads.truckbookDate?.let { formatDate(it.toDate().toString()) }
                             }"
                         )
 
@@ -427,6 +438,11 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         if (Leads.firstKantaParchi == null || Leads.firstKantaDharamkanta == null
                         ) {
                             binding.tvStatus.text = "Add Out First Kanta Parchi"
+                            binding.tvDate.setText(
+                                "${
+                                    Leads.labourBookDate?.let { formatDate(it.toDate().toString()) }
+                                }"
+                            )
                             binding.tvStatus.setOnClickListener {
                                 val intent =
                                     Intent(context, OutUploadFirrstkantaParchiClass::class.java)
@@ -441,8 +457,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 binding.tvStatus.text = "Add Out Quality Report"
                                 binding.tvDate.setText(
                                     "${
-                                        Leads.labourBookDate?.toDate()
-                                            ?.formatTo("dd MMM yyyy hh:mm a")
+                                        Leads.firstKantaParchiDate?.let { formatDate(it.toDate().toString()) }
+
                                     }"
                                 )
 
@@ -463,8 +479,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     binding.tvStatus.text = "Add Out Second Kanta Parchi"
                                     binding.tvDate.setText(
                                         "${
-                                            Leads.secondQualityReportDate?.toDate()
-                                                ?.formatTo("dd MMM yyyy hh:mm a")
+                                            Leads.secondQualityReportDate?.let { formatDate(it.toDate().toString()) }
+
                                         }"
                                     )
 
@@ -491,8 +507,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     ) {
                                         binding.tvDate.setText(
                                             "${
-                                                Leads.secondKantaParchiDate?.toDate()
-                                                    ?.formatTo("dd MMM yyyy hh:mm a")
+                                                Leads.secondKantaParchiDate?.let { formatDate(it.toDate().toString()) }
+
                                             }"
                                         )
 
@@ -500,9 +516,21 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     } else {
                                         if (Leads.ivrReport == null) {
                                             binding.tvStatus.text = "IVR Pending"
+                                            binding.tvDate.setText(
+                                                "${
+                                                    Leads.cctvReportDate?.let { formatDate(it.toDate().toString()) }
+
+                                                }"
+                                            )
                                         } else {
                                             if (Leads.gatepassReport == null) {
                                                 binding.tvStatus.text = "Gate Pass Pending"
+                                                binding.tvDate.setText(
+                                                    "${
+                                                        Leads.ivrReportDate?.let { formatDate(it.toDate().toString()) }
+
+                                                    }"
+                                                )
                                             } else {
                                                 binding.tvStatus.text = "View"
                                                 binding.tvStatus.setOnClickListener {
@@ -576,3 +604,10 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
 }
 
+fun formatDate(dateString: String): String {
+    TimeZone.setDefault(TimeZone.getTimeZone("Asia/India")) // (GMT+11:00)
+    val locale = Locale.ENGLISH
+    val time = SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", locale).parse(dateString)?.time
+
+    return SimpleDateFormat("dd/MM/yyyy hh:mm a", locale).format(time)
+}

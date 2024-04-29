@@ -313,12 +313,19 @@ class AllCaseIDResponse : BaseResponse() {
         @SerializedName("cctv_report")
         @Expose
         var cctvReport: String? = null
+        @JvmField
+        @SerializedName("cctv_date")
+        @Expose
+        var cctvReportDate: String? = null
 
         @JvmField
         @SerializedName("ivr_report")
         @Expose
         var ivrReport: String? = null
-
+        @JvmField
+        @SerializedName("ivr_date")
+        @Expose
+        var ivrReportDate: String? = null
         @JvmField
         @SerializedName("gatepass_report")
         @Expose
