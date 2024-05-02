@@ -9,7 +9,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -34,6 +36,7 @@ import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -345,8 +348,33 @@ class OUTTruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>
     }
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                if(it.allGranted()){
+                    photoEasy.startActivityForResult(this)
+                }
+                else{
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+
+            }
+        }
+        else{
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+
+        }
 
     }
 

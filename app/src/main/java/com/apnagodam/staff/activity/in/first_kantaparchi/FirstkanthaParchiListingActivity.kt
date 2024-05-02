@@ -3,7 +3,6 @@ package com.apnagodam.staff.activity.`in`.first_kantaparchi
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
-import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -47,6 +46,54 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
                 LinearLayoutManager.VERTICAL
             )
         )
+        kantaParchiViewModel.kantaParchiResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    binding!!.swipeRefresherStock.isRefreshing = false
+                    AllCases!!.clear()
+                    if (it.data!!.firstKataParchiData == null) {
+                        binding!!.txtemptyMsg.visibility = View.VISIBLE
+                        binding!!.rvDefaultersStatus.visibility = View.GONE
+                        binding!!.pageNextPrivious.visibility = View.GONE
+                    } else {
+                        AllCases!!.clear()
+
+                        totalPage = it.data!!.firstKataParchiData.lastPage
+                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+
+                        for (i in it.data!!.firstKataParchiData.data.indices) {
+
+                            if (userDetails.terminal == null) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+
+                            }
+
+
+                        }
+                        firstkanthaparchiAdapter =
+                            FirstkanthaparchiAdapter(
+                                AllCases,
+                                this@FirstkanthaParchiListingActivity,
+                                activity
+                            )
+                        setAdapter()
+                        //   AllCases = body.getFirstKataParchiData();
+                        //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
+                    }
+                    hideDialog()
+                }
+            }
+        }
         getAllCases("")
         binding!!.pageNextPrivious.visibility = View.VISIBLE
         AllCases = arrayListOf()
@@ -140,56 +187,6 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
     private fun getAllCases(search: String) {
         showDialog()
         kantaParchiViewModel.getKantaParchiListing("10", "" + pageOffset, "IN", search)
-        kantaParchiViewModel.kantaParchiResponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {
-                    hideDialog()
-                }
-
-                is NetworkResult.Loading -> {
-
-                }
-
-                is NetworkResult.Success -> {
-                    binding!!.swipeRefresherStock.isRefreshing = false
-                    AllCases!!.clear()
-                    if (it.data!!.firstKataParchiData == null) {
-                        binding!!.txtemptyMsg.visibility = View.VISIBLE
-                        binding!!.rvDefaultersStatus.visibility = View.GONE
-                        binding!!.pageNextPrivious.visibility = View.GONE
-                    } else {
-                        AllCases!!.clear()
-
-                        totalPage = it.data!!.firstKataParchiData.lastPage
-                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-
-                        for (i in it.data!!.firstKataParchiData.data.indices) {
-
-                            if (userDetails.terminal == null) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
-                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
-
-                            }
-
-
-                        }
-                        firstkanthaparchiAdapter =
-                            FirstkanthaparchiAdapter(
-                                AllCases,
-                                this@FirstkanthaParchiListingActivity,
-                                activity
-                            )
-                        setAdapter()
-                        //   AllCases = body.getFirstKataParchiData();
-                        //  binding.rvDefaultersStatus.setAdapter(new FirstkanthaparchiAdapter(body.getFirstKataParchiData(), FirstkanthaParchiListingActivity.this));
-                    }
-                    hideDialog()
-                }
-            }
-        }
-
-
     }
 
     override fun onResume() {

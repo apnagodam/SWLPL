@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -51,9 +50,7 @@ class UpdatePv : AppCompatActivity() {
     var terminalId: Int = 0;
     var stackId: Float = 0.0f;
     lateinit var pvUploadRequestModel: PvUploadRequestModel
-    var updateModelData = PvRequestModel.BlockNo(
-        "", "", "", "", ""
-    )
+    var totalBags = 0;
     var index = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,28 +67,35 @@ class UpdatePv : AppCompatActivity() {
         binding.rvPv.let {
             it.layoutManager = LinearLayoutManager(this)
             it.adapter = pvRecyclerviewAdapter
+            it.setItemViewCacheSize(50)
+            it.setDrawingCacheEnabled(true)
         }
 
         var count = 1
+        var total = 0;
+
         this.lifecycleScope.launch {
+
             EventBus.subscribe<PvRequestModel.BlockNo> { updateModel ->
-                count++
-                Log.d("Event count", count.toString())
+                total = 0
+
                 pvModelList.add(updateModel)
 
                 if (pvModelList.isNotEmpty()) {
                     for (i in pvModelList.indices) {
                         if (pvModelList[i].block_no == updateModel.block_no) {
-                            pvModelList[i].plusMinus = updateModel.plusMinus
-                            pvModelList[i].height = updateModel.height
-                            pvModelList[i].dhang = updateModel.dhang
-                            pvModelList[i].danda = updateModel.danda
-                        }
+                            pvModelList[i] = updateModel
 
+                        }
                     }
                 }
-                var list2 = pvModelList.distinct();
+                var list2 = pvModelList.distinct()
 
+                list2.forEach {
+                    total += it.total.toInt()
+                }
+
+                binding.tvTotalBags.text = "Total Bags: ${total}"
                 if (terminalId == 0 || stackId == 0.0f) {
                     try {
                         Toast.makeText(
@@ -106,9 +110,43 @@ class UpdatePv : AppCompatActivity() {
                 } else {
 
                     binding.btAdd.setOnClickListener {
-                        if (pvModelList.isNotEmpty()) {
-                            Log.e("Tag", list2.toString())
-                        }
+
+                        pvViewModel.postPvData(
+                            PvRequestModel(
+                                terminal_id = terminalId.toString(),
+                                stack_no = stackId,
+                                block_no = list2
+                            )
+                        )
+
+
+                    }
+                }
+
+
+            }
+
+
+        }
+        lifecycleScope.launch {
+            EventBus.subscribe<Int> { position ->
+                if (pvModelList.isNotEmpty()) {
+                    total -= pvModelList[position].total.toInt()
+                    var list2 = arrayListOf<PvRequestModel.BlockNo>()
+                    list2 = pvModelList.distinct() as ArrayList<PvRequestModel.BlockNo>
+                    if (position == 0) {
+                        total = 0
+                        list2.clear()
+                        //  list.clear()
+                        //pvModelList.clear()
+
+                    }
+                    list.removeAt(position)
+                    list2.removeAt(position)
+                    pvRecyclerviewAdapter.notifyItemRemoved(position)
+                    binding.tvTotalBags.text = "Total Bags: ${total}"
+
+                    binding.btAdd.setOnClickListener {
                         pvViewModel.postPvData(
                             PvRequestModel(
                                 terminal_id = terminalId.toString(),
@@ -120,12 +158,10 @@ class UpdatePv : AppCompatActivity() {
 
 
                     }
+
                 }
-
-
             }
         }
-
     }
 
 
@@ -146,6 +182,8 @@ class UpdatePv : AppCompatActivity() {
         pvViewModel.postPvResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
+                    Toast.makeText(this@UpdatePv, "${it.message}", Toast.LENGTH_LONG)
+                        .show()
                     Utility.hideDialog(this@UpdatePv)
 
                 }
@@ -154,24 +192,35 @@ class UpdatePv : AppCompatActivity() {
                 is NetworkResult.Success -> {
 
                     Utility.hideDialog(this@UpdatePv)
-                    if (it.data != null) {
-                        if (it.data.status == "1") {
-                            pvViewModel.getPvTerminal()
-                            finish()
-                        } else {
 
+                    if (it.data != null) {
+                        it.data.let {
+                            Toast.makeText(this@UpdatePv, "${it.message}", Toast.LENGTH_LONG)
+                                .show()
+
+                            if (it.status == "1") {
+                                pvViewModel.getPvTerminal()
+                                finish()
+                            } else {
+
+                            }
                         }
+
 
                     }
                 }
             }
         }
         pvViewModel.pvTerminalResponse.observe(this) {
+            val listOfStacks = arrayListOf<String>()
+            val listOfTerminals = arrayListOf<String>()
+
             when (it) {
                 is NetworkResult.Error -> {
+                    Toast.makeText(this@UpdatePv, "${it.message}", Toast.LENGTH_LONG).show()
                     Utility.hideDialog(this@UpdatePv)
                     try {
-                        Toast.makeText(this@UpdatePv, it.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@UpdatePv, "${it.message}", Toast.LENGTH_LONG).show()
                     } catch (e: Exception) {
 
                     }
@@ -186,14 +235,13 @@ class UpdatePv : AppCompatActivity() {
                     SharedPreferencesRepository.getDataManagerInstance().user.let { userDetails ->
 
                         if (it.data != null) {
-                            val listOfTerminals = arrayListOf<String>()
-                            val listOfStacks = arrayListOf<String>()
-
+                            terminalList.clear()
+                            listOfTerminals.clear();
+                            listOfStacks.clear()
                             for (i in (it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>).indices) {
 
                                 if (userDetails.terminal != null) {
                                     if ((it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i].terminalId.toString() == userDetails.terminal.toString()) {
-
                                         terminalList.add((it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i])
                                         //  listOfTerminals.add("${(it.data.terminalData as ArrayList<PvResponseModel.TerminalDatum>)[i].name}")
                                     }
@@ -205,6 +253,8 @@ class UpdatePv : AppCompatActivity() {
                             stackSearchableSpinner.windowTitle = "Select Stack"
 
                             if (it.data.stackData != null) {
+                                stackList.clear()
+                                listOfStacks.clear()
                                 if (it.data.stackData!!.isNotEmpty()) {
                                     stackList =
                                         (it.data.stackData as ArrayList<PvResponseModel.StackDatum>?)!!
@@ -219,7 +269,6 @@ class UpdatePv : AppCompatActivity() {
                                                 selectedString: String
                                             ) {
                                                 val df = DecimalFormat("#")
-
                                                 val result =
                                                     it.data.stackData!![position].stackNo!!.toFloat()
                                                 stackId = result

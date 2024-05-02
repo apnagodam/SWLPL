@@ -3,30 +3,23 @@ package com.apnagodam.staff.activity.`in`.truckbook
 import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
-import android.os.Environment
-import android.provider.ContactsContract.Contacts.Photo
-import android.provider.MediaStore
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import android.widget.ImageView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -43,6 +36,9 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
+import com.fondesa.kpermissions.allGranted
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.fxn.pix.Pix
 import com.fxn.utility.PermUtil
@@ -52,16 +48,12 @@ import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
@@ -104,22 +96,42 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            if(it!=null){
-                lat = it.latitude
-                long = it.longitude
 
-                val geocoder = Geocoder(this, Locale.getDefault())
-                val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null) {
-                    currentLocation =
-                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                            addresses.first().adminArea
-                        }"
+        setObservers()
+
+
+        permissionsBuilder(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ).build().send() {
+            if (it.allGranted()) {
+                val fusedLocationProviderClient =
+                    LocationServices.getFusedLocationProviderClient(this)
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                    if (it != null) {
+                        lat = it.latitude
+                        long = it.longitude
+
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        val addresses = geocoder.getFromLocation(lat, long, 1)
+                        if (addresses != null) {
+                            currentLocation =
+                                "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                    addresses.first().adminArea
+                                }"
+
+                        }
+                    }
 
                 }
+            } else {
+                Toast.makeText(
+                    this,
+                    "Location or  Camera Permissions Denied",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
 
         }
 
@@ -223,11 +235,15 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             )
         }
 
+
+    }
+
+    private fun setObservers() {
         truckBookViewModel.uploadTruckResponse.observe(this)
         {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT)
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
 
                     hideDialog()
                 }
@@ -241,7 +257,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                         if (it.data.status.equals("1")) {
                             finish()
                         } else
-                            Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT)
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT)
                     }
                     hideDialog()
                 }
@@ -337,7 +353,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
         truckBookViewModel.getTransporterDetails(transporterID)
 
 
-
     }
 
     fun transporterList() {
@@ -400,7 +415,34 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
 
     override fun dispatchTakePictureIntent() {
-        photoEasy.startActivityForResult(this)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                if(it.allGranted()){
+                    photoEasy.startActivityForResult(this)
+                }
+                else{
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+
+            }
+        }
+        else{
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+
+        }
+
 
 
     }
@@ -644,7 +686,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                 CaseID,
                 TransporterID,
                 binding!!.etVehicleNo.text.toString(),
-               binding!!.etDriverName.text.toString(),
+                binding!!.etDriverName.text.toString(),
                 binding!!.etDriverPhoneNo.text.toString(),
                 "",
                 "",
@@ -696,7 +738,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                         R.string.transport_rate_validation
                     )
                 } else if (fileBiltyImage == null) {
-                    Toast.makeText(this,"please select bilty image",Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "please select bilty image", Toast.LENGTH_SHORT)
 
                     return false;
 
@@ -714,18 +756,18 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
                     binding!!.tilLocation.error = "This Field is required"
                     return false;
 
-                }
-                else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate)) || Integer.parseInt(binding!!.etTransportRate.text.toString())==0) {
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etTransportRate)) || Integer.parseInt(
+                        binding!!.etTransportRate.text.toString()
+                    ) == 0
+                ) {
                     binding!!.tilTransportRate.error = "This Field is required"
                     return false;
 
-                }
-                else if (TextUtils.isEmpty(stringFromView(binding!!.etAdvancePatyment)) ) {
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etAdvancePatyment))) {
                     binding!!.tilAdvancePatyment.error = "This Field is required"
                     return false;
 
-                }
-                else if (TextUtils.isEmpty(stringFromView(binding!!.etLocation)) ) {
+                } else if (TextUtils.isEmpty(stringFromView(binding!!.etLocation))) {
                     binding!!.tilLocation.error = "This Field is required"
                     return false;
 

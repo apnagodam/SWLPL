@@ -24,7 +24,7 @@
                 android:text="Select Terminal"
                 android:maxLines="1"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_14ssp"
+                android:textSize="@dimen/_12sdp"
                 android:textStyle="bold" />
             <TextView
                 android:id="@+id/tvStacks"
@@ -39,7 +39,7 @@
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:text="Select Stack Number"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/_14ssp"
+                android:textSize="@dimen/_12sdp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -63,6 +63,16 @@
                 android:layout_width="match_parent"
                 android:background="@drawable/btn_borders"
                 android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tvTotalBags"
+                android:text="Total bags: 0"
+                android:layout_width="match_parent"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textSize="@dimen/_12sdp"
+                android:textColor="@color/colorPrimary"
+                android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/btAdd"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -70,6 +80,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_margin="@dimen/_10sdp"
                 android:text="Submit"
+                android:textSize="@dimen/_12sdp"
                 android:background="@drawable/btn_borders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

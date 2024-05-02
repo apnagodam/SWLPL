@@ -12,7 +12,8 @@ data class PvRequestModel(
         var danda: String,
         var dhang: String,
         var height: String,
-        var plusMinus: String
+        var plusMinus: String,
+        var total:String
     ) {
     }
 }

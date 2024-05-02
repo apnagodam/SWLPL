@@ -10,6 +10,8 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
 
 class ImageHelper {
 
@@ -32,10 +34,19 @@ class ImageHelper {
         val dest = mutableBitmap.copy(Bitmap.Config.ARGB_8888, true)
 
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/India")) // (GMT+11:00)
+        val locale = Locale.ENGLISH
         val dateTime =
-            sdf.format(Calendar.getInstance().time) // reading local time in the system
+            sdf.format(
+                Calendar.getInstance(
+                    TimeZone.getTimeZone("Asia/India"),
+                    Locale.ENGLISH
+                ).time
+            ) // reading local time in the system
+        val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale).parse(dateTime)?.time
+        val timeZone: TimeZone = TimeZone.getTimeZone("Asia/Kolkata") // India Standard Time
 
-
+        val calendar = Calendar.getInstance(timeZone)
         val cs = Canvas(dest)
         val tPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         tPaint.textSize = 32f
@@ -43,7 +54,16 @@ class ImageHelper {
         tPaint.style = Paint.Style.FILL
         cs.drawBitmap(src, 0f, 0f, null)
         val height = tPaint.measureText("yY")
-        cs.drawText(dateTime, 0f, dest.height.toFloat() - 5f, tPaint)
+        cs.drawText(
+            "Date: ${calendar.get(Calendar.DAY_OF_MONTH)}/${(calendar.get(Calendar.MONTH) + 1)}/${
+                calendar.get(
+                    Calendar.YEAR
+                )
+            } Time: ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}",
+            0f,
+            dest.height.toFloat() - 5f,
+            tPaint
+        )
         cs.drawText(map.get("current_location").toString(), 0f, dest.height.toFloat() - 60f, tPaint)
         cs.drawText(map.get("emp_name").toString(), 0f, dest.height.toFloat() - 120f, tPaint)
 
@@ -57,7 +77,6 @@ class ImageHelper {
                 FileOutputStream(File("/sdcard/timeStampedImage.jpg"))
             )
         } catch (e: FileNotFoundException) {
-            // TODO Auto-generated catch block
             e.printStackTrace()
         }
 

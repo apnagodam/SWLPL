@@ -12,8 +12,10 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.text.TextUtils
@@ -40,6 +42,7 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -279,20 +282,31 @@ class OutUploadSecoundQualtityReportsClass : BaseActivity<ActivityUpdateQualityR
     }
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                if(it.allGranted()){
+                    photoEasy.startActivityForResult(this)
+                }
+                else{
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
 
-                }
             }
+        }
+        else{
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
 

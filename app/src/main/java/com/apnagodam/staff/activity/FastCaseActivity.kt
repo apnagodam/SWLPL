@@ -6,17 +6,14 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -26,11 +23,9 @@ import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.RequestOfflineCaseData
-import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.ResponseSendOtp
 import com.apnagodam.staff.Network.Response.ResponseStackData
 import com.apnagodam.staff.Network.Response.ResponseUserData
-import com.apnagodam.staff.Network.Response.ResponseWarehouse
 import com.apnagodam.staff.Network.Response.ResponseWarehouse.CommodityList
 import com.apnagodam.staff.Network.Response.ResponseWarehouse.ContractorList
 import com.apnagodam.staff.Network.Response.ResponseWarehouse.DharmKanta
@@ -43,9 +38,11 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.Utility
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.google.android.gms.location.LocationServices
+import com.master.permissionhelper.PermissionHelper
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
@@ -90,6 +87,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
     var lat = 0.0
     var long = 0.0
     var currentLocation = ""
+    lateinit var permissionHelper: PermissionHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,8 +125,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-        }
-        else{
+        } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
                 lat = it.latitude
                 long = it.longitude
@@ -262,27 +259,20 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
             }
         }
     }
+
     override fun dispatchTakePictureIntent() {
 
         permissionsBuilder(Manifest.permission.CAMERA).build().send() {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
-
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
-
-                }
+            if (it.allGranted()){
+                photoEasy.startActivityForResult(this)
             }
+
 
         }
 
 
     }
+
     private fun warehouse() {
         showDialog()
         caseIdViewModel.getFastcaseWarehouseData()
@@ -362,7 +352,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                                     }
                                     setStackSpinner(StackName)
                                 }
-                            } else Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                            } else Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -372,7 +362,8 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
     private fun setCommoditySpinner(CommudityName: List<String>) {
 
         // commodity listing
-        SpinnerCommudityAdapter = ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,CommudityName)
+        SpinnerCommudityAdapter =
+            ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, CommudityName)
 
         // Set Adapter in the spinner
         binding!!.spinnerCommudity.adapter = SpinnerCommudityAdapter
@@ -428,7 +419,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
 
         // commodity listing
         SpinnerStackAdapter =
-           ArrayAdapter(this, R.layout.multiline_spinner_item, stackName!!)
+            ArrayAdapter(this, R.layout.multiline_spinner_item, stackName!!)
         // Set Adapter in the spinner
         binding!!.spinnerStack.adapter = SpinnerStackAdapter
         binding!!.spinnerStack.onItemSelectedListener =
@@ -454,7 +445,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
     private fun setKantaSpinner(terminalName: List<String>?) {
         // commodity listing
         SpinnerKantaAdapter =
-          ArrayAdapter(this, R.layout.multiline_spinner_item, terminalName!!)
+            ArrayAdapter(this, R.layout.multiline_spinner_item, terminalName!!)
         // Set Adapter in the spinner
         binding!!.spinnerKanta.adapter = SpinnerKantaAdapter
         binding!!.spinnerKanta.onItemSelectedListener =
@@ -481,7 +472,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
 
         // commodity listing
         SpinnerContractorAdapter =
-           ArrayAdapter(this, R.layout.multiline_spinner_item, terminalName!!)
+            ArrayAdapter(this, R.layout.multiline_spinner_item, terminalName!!)
         // Set Adapter in the spinner
         binding!!.spinnerLabourContractor.adapter = SpinnerContractorAdapter
         binding!!.spinnerLabourContractor.onItemSelectedListener =
@@ -515,7 +506,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                     "current_location" to "$currentLocation",
                     "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
                 )
-                if(thumbnail!=null){
+                if (thumbnail != null) {
 
                     if (IMAGE == "TRUCK") {
                         var stampedBitmap = ImageHelper().createTimeStampinBitmap(
@@ -566,6 +557,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
 //            e.printStackTrace()
 //        }
     }
+
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
@@ -614,7 +606,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                                     }
                                 }
                             } else
-                               Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -672,7 +664,7 @@ class FastCaseActivity : BaseActivity<ActivityFastCaseBinding?>() {
                     is NetworkResult.Success -> {
                         if (it.data != null) {
                             finish()
-                            Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

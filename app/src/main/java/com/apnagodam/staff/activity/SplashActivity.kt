@@ -1,38 +1,41 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.BuildConfig
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.LoginActivity.Companion.TAG
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
+import com.fondesa.kpermissions.allGranted
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.extension.send
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
+import com.google.android.play.core.install.model.ActivityResult
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
+import com.google.android.play.core.install.model.InstallStatus
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     var market_uri = "https://play.google.com/store/apps/details?id=com.apnagodam.staff&hl=en"
-//    private lateinit var inAppUpdate: InAppUpdate
 
+    //    private lateinit var inAppUpdate: InAppUpdate
     val homeViewModel by viewModels<HomeViewModel>()
     override fun getLayoutResId(): Int {
-
         return R.layout.activity_splash
     }
 
@@ -49,6 +52,44 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     override fun setUp() {
 
+
+        nextMClass()
+
+    }
+
+    override fun onDestroy() {
+
+        super.onDestroy()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 12345) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    Log.d(TAG, "" + "Result Ok")
+                    //  handle user's approval }
+                }
+                Activity.RESULT_CANCELED -> {
+                    {
+//if you want to request the update again just call checkUpdate()
+                    }
+                    Log.d(TAG, "" + "Result Cancelled")
+                    //  handle user's rejection  }
+                }
+                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                    //if you want to request the update again just call checkUpdate()
+                    Log.d(TAG, "" + "Update Failure")
+                    //  handle update failure
+                }
+            }
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+
+    }
+    private fun setObservers() {
         getappVersion()
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
@@ -62,15 +103,19 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 }
 
                 is NetworkResult.Success -> {
-                    if (it.data != null) {
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setCommdity(it.data.categories)
-                        SharedPreferencesRepository.getDataManagerInstance().employee =
-                            it.data.employee
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setContractor(it.data.labourList)
+                    it.data?.let {
+                        if (it.status == "2" || it.status == "3" || it.status == "0") {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        } else if (it.status == "1") {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setCommdity(it.categories)
+                            SharedPreferencesRepository.getDataManagerInstance().employee =
+                                it.employee
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setContractor(it.labourList)
 
-                        afterpermissionNext()
+                            afterpermissionNext()
+                        }
                     }
 
 
@@ -90,12 +135,14 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 }
 
                 is NetworkResult.Success -> {
-                    if (it.data != null) {
-
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .saveUserPermissionData(it.data.userPermissionsResult)
-                        startActivityAndClear(StaffDashBoardActivity::class.java)
-
+                    it.data?.let {
+                        if (it.status == "2" || it.status == "3" || it.status == "0") {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        } else if (it.status == "1") {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .saveUserPermissionData(it.userPermissionsResult)
+                            startActivityAndClear(StaffDashBoardActivity::class.java)
+                        }
                     }
 
 
@@ -111,44 +158,50 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
-                    if (it.data != null) {
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setCommdity(it.data.categories)
-                        SharedPreferencesRepository.getDataManagerInstance().employee =
-                            it.data.employee
-                        SharedPreferencesRepository.getDataManagerInstance()
-                            .setContractor(
-                                it.data
-                                    .labourList
-                            )
+                    it.data?.let {
+                        if (it.status == "2" || it.status == "3" || it.status == "0") {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        } else if (it.status == "1") {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setCommdity(it.categories)
+                            SharedPreferencesRepository.getDataManagerInstance().employee =
+                                it.employee
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setContractor(
+                                    it
+                                        .labourList
+                                )
+                        }
                     }
+
                 }
             }
         }
     }
 
     private fun nextMClass() {
-        lifecycleScope.launch {
-            requestPermissions().collect() {
-                if (it == true) {
 
-                } else {
-                    ActivityCompat.requestPermissions(
-                        this@SplashActivity,
-                        arrayOf(
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ),
-                        REQUEST_CAMERA_CODE
-                    )
-                }
-
+        permissionsBuilder(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ).build().send() {
+            if (it.allGranted()) {
+                setObservers()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Location or  Camera Permissions Denied",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
+
         }
 
 
     }
+
+
 
     private fun afterpermissionNext() {
         SharedPreferencesRepository.getDataManagerInstance().userPermission
@@ -172,53 +225,11 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }
 
 
-    suspend private fun requestPermissions(): Flow<Boolean> {
-
-        return flow<Boolean> {
-            val cameraPermission =
-                ContextCompat.checkSelfPermission(this@SplashActivity, Manifest.permission.CAMERA)
-            val writeExternalPermission = ContextCompat.checkSelfPermission(
-                this@SplashActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            val readExternalPermission = ContextCompat.checkSelfPermission(
-                this@SplashActivity, Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            emit(
-                cameraPermission == PackageManager.PERMISSION_GRANTED && writeExternalPermission == PackageManager.PERMISSION_GRANTED && readExternalPermission == PackageManager.PERMISSION_GRANTED
-            )
-        }
-            .flowOn(Dispatchers.IO)
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray
     ) {
-        when (requestCode) {
-            REQUEST_CAMERA_CODE -> if (grantResults.isNotEmpty()) {
-                var i = 0
-                while (i < grantResults.size) {
-                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                        GlobalScope.launch {
-                            requestPermissions().collect()
-                        }
-
-                        if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                                this,
-                                permissions[i]
-                            )
-                        ) return
-                    } else {
-                        //  requestPermissions();
-                    }
-                    i++
-                }
-
-                // open dialog
-            }
-
-        }
         afterpermissionNext()
 
     }
@@ -249,7 +260,14 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                 is NetworkResult.Error -> {}
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
-                    getCommodityList()
+                    it.data?.let {
+                        if (it.status == "2" || it.status == "3" || it.status == "0") {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        } else if (it.status == "1") {
+                            getCommodityList()
+
+                        }
+                    }
 
                 }
             }
@@ -268,5 +286,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     companion object {
         private const val REQUEST_CAMERA_CODE = 120
+        private const val REQUEST_UPDATE=12345
     }
 }

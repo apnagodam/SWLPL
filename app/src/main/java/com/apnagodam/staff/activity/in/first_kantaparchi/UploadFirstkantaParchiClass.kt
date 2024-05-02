@@ -9,9 +9,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedDispatcher
@@ -31,6 +33,7 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -96,80 +99,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-        } else {
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                if (it != null) {
-                    lat = it.latitude
-                    long = it.longitude
-
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val addresses = geocoder.getFromLocation(lat, long, 1)
-                    if (addresses != null) {
-                        currentLocation =
-                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                                addresses.first().adminArea
-                            }"
-
-                    }
-                }
-
-            }
-        }
-        binding!!.tvTitle.setText("Upload First Kanta Parchi")
-        UserName = intent?.getStringExtra("user_name")
-        CaseID = intent?.getStringExtra("case_id")
-        file3 = intent?.getStringExtra("file3")
-        if (validData(bundle)) {
-
-        }
-
-
-//        allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
-        dharamKantas = arrayListOf()
-        searchableSpinner = SearchableSpinner(this)
-
-        getKantaList("")
-
-        setSupportActionBar(binding!!.toolbar)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        binding!!.customerName.text = UserName
-        binding!!.caseId.text = CaseID
-        binding!!.llOldBags.visibility = View.VISIBLE
-        binding!!.llBags.visibility = View.GONE
-
-        if (file3 == null) {
-            isFirstUpload = true
-
-        } else {
-            isFirstUpload = false;
-
-        }
-
-
-        if (isFirstUpload) {
-            binding!!.llKanta.visibility = View.GONE
-            binding!!.llOldBags.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
-
-        } else {
-            binding!!.llKanta.visibility = View.VISIBLE
-            binding!!.llOldBags.visibility = View.VISIBLE
-            binding!!.cardTruck2.visibility = View.GONE
-        }
-
-
-        clickListner()
-
         kantaParchiViewModel.kantaParchiResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> hideDialog()
@@ -232,6 +161,89 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 }
             }
         }
+       try {
+
+           if (ActivityCompat.checkSelfPermission(
+                   this,
+                   Manifest.permission.ACCESS_FINE_LOCATION
+               ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                   this,
+                   Manifest.permission.ACCESS_COARSE_LOCATION
+               ) != PackageManager.PERMISSION_GRANTED
+           ) {
+               Toast.makeText(this@UploadFirstkantaParchiClass,"Location not enabled",Toast.LENGTH_SHORT).show()
+
+           } else {
+               fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                   it?.let {
+                       lat = it.latitude
+                       long = it.longitude
+
+                       val geocoder = Geocoder(this, Locale.getDefault())
+                       val addresses = geocoder.getFromLocation(lat, long, 1)
+                       if (addresses != null) {
+                           currentLocation =
+                               "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                   addresses.first().adminArea
+                               }"
+
+                       }
+                   }
+
+
+               }
+           }
+       }
+       catch (e:Exception){
+           Toast.makeText(this@UploadFirstkantaParchiClass,"Location not enabled",Toast.LENGTH_SHORT).show()
+       }
+
+        binding!!.tvTitle.setText("Upload First Kanta Parchi")
+        UserName = intent?.getStringExtra("user_name")
+        CaseID = intent?.getStringExtra("case_id")
+        file3 = intent?.getStringExtra("file3")
+        if (validData(bundle)) {
+
+        }
+
+
+//        allCases = intent.getSerializableExtra("all_cases") as FirstkanthaParchiListResponse.Datum
+        dharamKantas = arrayListOf()
+        searchableSpinner = SearchableSpinner(this)
+
+        getKantaList("")
+
+        setSupportActionBar(binding!!.toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        binding!!.customerName.text = UserName
+        binding!!.caseId.text = CaseID
+        binding!!.llOldBags.visibility = View.VISIBLE
+        binding!!.llBags.visibility = View.GONE
+
+        if (file3 == null) {
+            isFirstUpload = true
+
+        } else {
+            isFirstUpload = false;
+
+        }
+
+
+        if (isFirstUpload) {
+            binding!!.llKanta.visibility = View.GONE
+            binding!!.llOldBags.visibility = View.GONE
+            binding!!.cardTruck2.visibility = View.VISIBLE
+
+        } else {
+            binding!!.llKanta.visibility = View.VISIBLE
+            binding!!.llOldBags.visibility = View.VISIBLE
+            binding!!.cardTruck2.visibility = View.GONE
+        }
+
+
+        clickListner()
+
+
     }
 
     fun validData(bundle: Bundle?): Boolean {
@@ -556,26 +568,38 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
 
      override fun dispatchTakePictureIntent() {
+         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        permissionsBuilder(Manifest.permission.CAMERA).build().send() {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
-
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
-
-                }
-            }
-
-        }
+         if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+             permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                 if(it.allGranted()){
+                     photoEasy.startActivityForResult(this)
+                 }
+                 else{
+                     Toast.makeText(
+                         this,
+                         "Location or Camera Permissions Denied",
+                         Toast.LENGTH_SHORT
+                     ).show()
+                 }
 
 
-    }
+             }
+         }
+         else{
+             Toast.makeText(
+                 this,
+                 "GPS Not Enabled",
+                 Toast.LENGTH_SHORT
+             ).show()
+             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+
+         }
+
+
+
+
+     }
 
     fun takePicture(){
         photoEasy.startActivityForResult(this)

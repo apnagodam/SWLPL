@@ -7,7 +7,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
+import android.provider.Settings
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
@@ -27,6 +29,7 @@ import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -94,21 +97,23 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
+            Toast.makeText(this,"Location not enabled",Toast.LENGTH_SHORT).show()
         } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                lat = it.latitude
-                long = it.longitude
+               it?.let {
+                   lat = it.latitude
+                   long = it.longitude
 
-                val geocoder = Geocoder(this, Locale.getDefault())
-                val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null) {
-                    currentLocation =
-                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                            addresses.first().adminArea
-                        }"
+                   val geocoder = Geocoder(this, Locale.getDefault())
+                   val addresses = geocoder.getFromLocation(lat, long, 1)
+                   if (addresses != null) {
+                       currentLocation =
+                           "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                               addresses.first().adminArea
+                           }"
 
-                }
+                   }
+               }
             }
 
         }
@@ -360,22 +365,35 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     }
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                if(it.allGranted()){
+                    photoEasy.startActivityForResult(this)
+                }
+                else{
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
 
-                }
             }
+        }
+        else{
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
+
+
 
 
     }

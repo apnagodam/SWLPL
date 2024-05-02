@@ -43,6 +43,7 @@ import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.SearchableSpinner
 import com.apnagodam.staff.utils.Utility
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -947,35 +948,26 @@ class UploadVendorVoacherClass : BaseActivity<VendorConveyanceBinding?>() {
     }
 
     override fun dispatchTakePictureIntent() {
-        ImagePicker.with(this)
-            .setDismissListener {
-                Toast.makeText(this@UploadVendorVoacherClass,"Please Select Image to upload",Toast.LENGTH_SHORT)
-            }
-            .galleryOnly()    //User can only select image from Gallery
-            .start()
-        permissionsBuilder(Manifest.permission.READ_EXTERNAL_STORAGE).build().send() {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
 
-//                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-//                    intent.type = "image/*"
-//                    if (intent.resolveActivity(packageManager) != null) {
-//                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
-//                    }
-                }
-
-                is PermissionStatus.RequestRequired -> {
-//                    val intent = Intent(Intent.ACTION_GET_CONTENT)
-//                    intent.type = "image/*"
-//                    if (intent.resolveActivity(packageManager) != null) {
-//                        startActivityForResult(intent, REQUEST_SELECT_IMAGE_IN_ALBUM)
-//                    }
-                }
+        permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION).build().send() {
+            if(it.allGranted()){
+                ImagePicker.with(this)
+                    .setDismissListener {
+                        Toast.makeText(this@UploadVendorVoacherClass,"Please Select Image to upload",Toast.LENGTH_SHORT)
+                    }
+                    .galleryOnly()    //User can only select image from Gallery
+                    .start()            }
+            else{
+                Toast.makeText(
+                    this,
+                    "Location or  Camera Permissions Denied",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
+
 
         }
+
 
 
     }

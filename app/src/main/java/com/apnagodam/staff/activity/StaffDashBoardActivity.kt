@@ -86,6 +86,7 @@ import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -198,7 +199,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         setUI()
         setObservers()
 
-
         binding!!.swipeRefresherHome.setOnRefreshListener {
             getAllCases("")
         }
@@ -293,37 +293,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
 
 
-        locationget()
 
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            //requestPermission()
-        } else {
-            val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                if (it != null) {
-                    lat = it.latitude
-                    long = it.longitude
-                }
 
-                currentLocation = "$lat $long"
-
-//                val geocoder = Geocoder(this, Locale.getDefault())
-//                val addresses = geocoder.getFromLocation(lat, long, 1)
-//                if (addresses != null && addresses.isNotEmpty()) {
-//                    currentLocation =
-//                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-//                            addresses.first().adminArea
-//                        }"
-//
-//                }
-            }
-
-        }
         binding!!.mainContent.mainHeader.toogleIcon.setOnClickListener(this)
         toggle = ActionBarDrawerToggle(
             this@StaffDashBoardActivity, binding!!.drawerLayout, toolbar, 0, 0
@@ -333,7 +304,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         toggle!!.syncState()
         //        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
 //        binding.menuList.addOnItemTouchListener(new RecyclerItemClickListener(StaffDashBoardActivity.this, this));
-        binding!!.mainContent.mainHeader.tvIvr.setOnClickListener { singlePerm() }
         binding!!.mainContent.mainHeader.attendanceOnOff.setOnClickListener { v: View? ->
             TakeAttendance(
                 OnOfffAttendance
@@ -964,7 +934,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 when (it.refresh) {
 
                     is LoadState.Error -> {
-                        Utility.hideDialog(this@StaffDashBoardActivity)
                         binding!!.swipeRefresherHome.isRefreshing = false
                         Toast.makeText(
                             this@StaffDashBoardActivity, "Something went Wrong", Toast.LENGTH_SHORT
@@ -972,11 +941,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     }
 
                     LoadState.Loading -> {
-                        Utility.showDialog(this@StaffDashBoardActivity, "")
                     }
 
                     is LoadState.NotLoading -> {
-                        Utility.hideDialog(this@StaffDashBoardActivity)
                         binding!!.swipeRefresherHome.isRefreshing = false
                     }
                 }
@@ -1107,62 +1074,66 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     when (it.data) {
                         null -> {}
                         else -> {
-                            if (it.data.status == "1") {
-                                inwardsList.clear()
-                                outwardsList.clear()
-                                for (i in it.data.inwardRequestData.indices) {
+                            it.data?.let {
+                                if (it.status == "2" || it.status=="3" || it.status=="0") {
+                                    startActivity(Intent(this, LoginActivity::class.java))
+                                } else  {
+                                    inwardsList.clear()
+                                    outwardsList.clear()
+                                    for (i in it.inwardRequestData.indices) {
 
-                                    if (userDetails != null) {
-                                        if (userDetails!!.terminal == null) {
-                                            inwardsList.add(it.data.inwardRequestData[i])
-                                        } else if (it.data.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
-                                            inwardsList.add(it.data.inwardRequestData[i])
+                                        if (userDetails != null) {
+                                            if (userDetails!!.terminal == null) {
+                                                inwardsList.add(it.inwardRequestData[i])
+                                            } else if (it.inwardRequestData[i].terminalId.toString() == userDetails!!.terminal) {
+                                                inwardsList.add(it.inwardRequestData[i])
+                                            }
+                                        }
+                                    }
+
+                                    for (j in it.outwardRequestData.indices) {
+                                        if (userDetails != null) {
+                                            if (userDetails!!.terminal == null) {
+                                                outwardsList.add(it.outwardRequestData[j])
+                                            } else if (it.outwardRequestData[j].terminalId.toString() == userDetails!!.terminal) {
+                                                outwardsList.add(it.outwardRequestData[j])
+                                            }
+                                        }
+                                    }
+
+
+                                    binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
+                                    binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
+                                    when (it.inwardRequestData.size) {
+                                        0 -> {
+
+                                        }
+
+                                        else -> {
+                                            binding!!.mainContent!!.cardIncase.setOnClickListener {
+                                                val intent =
+                                                    Intent(this, InwardListActivity::class.java)
+                                                startActivity(intent)
+                                            }
+                                        }
+                                    }
+
+                                    when (it.outwardRequestData.size) {
+                                        0 -> {
+
+                                        }
+
+                                        else -> {
+                                            binding!!.mainContent!!.cardOutCase.setOnClickListener {
+                                                val intent =
+                                                    Intent(this, OutwardsListActivity::class.java)
+                                                startActivity(intent)
+                                            }
                                         }
                                     }
                                 }
-
-                                for (j in it.data.outwardRequestData.indices) {
-                                    if (userDetails != null) {
-                                        if (userDetails!!.terminal == null) {
-                                            outwardsList.add(it.data.outwardRequestData[j])
-                                        } else if (it.data.outwardRequestData[j].terminalId.toString() == userDetails!!.terminal) {
-                                            outwardsList.add(it.data.outwardRequestData[j])
-                                        }
-                                    }
-                                }
-
-
-                                binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
-                                binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
-                                when (it.data.inwardRequestData.size) {
-                                    0 -> {
-
-                                    }
-
-                                    else -> {
-                                        binding!!.mainContent!!.cardIncase.setOnClickListener {
-                                            val intent =
-                                                Intent(this, InwardListActivity::class.java)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                }
-
-                                when (it.data.outwardRequestData.size) {
-                                    0 -> {
-
-                                    }
-
-                                    else -> {
-                                        binding!!.mainContent!!.cardOutCase.setOnClickListener {
-                                            val intent =
-                                                Intent(this, OutwardsListActivity::class.java)
-                                            startActivity(intent)
-                                        }
-                                    }
-                                }
-
                             }
+
                         }
                     }
                 }
@@ -1306,16 +1277,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         })
         UploadImage.setOnClickListener(View.OnClickListener {
-            var permissionHelper = PermissionHelper(
-                this, arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), 100
-            )
-            permissionHelper.requestAll {
-                dispatchTakePictureIntent()
-            }
+           dispatchTakePictureIntent()
+
 
             // callProfileImageSelector(REQUEST_CAMERA);
         })
@@ -1375,108 +1338,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         return Uri.parse(file.absolutePath)
     }
 
-    private fun locationget() {
-        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-        if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            OnGPS()
-        } else {
-            location
-        }
-    }
 
-    private fun OnGPS() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("Enable GPS").setCancelable(false)
-            .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int) {
-                    startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                }
-            }).setNegativeButton("No", object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int) {
-                    dialog.cancel()
-                }
-            })
-        val alertDialog = builder.create()
-        alertDialog.show()
-    }
 
-    private val location: Unit
-        private get() {
-            if (ActivityCompat.checkSelfPermission(
-                    this@StaffDashBoardActivity, Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this@StaffDashBoardActivity, Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_LOCATION
-                )
-            } else {
-                val locationGPS =
-                    locationManager!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                if (locationGPS != null) {
-                    val lat = locationGPS.latitude
-                    val longi = locationGPS.longitude
-                    latitude = lat.toString()
-                    longitude = longi.toString()
-                    //  Toast.makeText(this, "Your Location: " + "\n" + "Latitude: " + latitude + "\n" + "Longitude: " + longitude, Toast.LENGTH_LONG).show();
-                } else {
-                    //Toast.makeText(this, "Unable to find location.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
 
-    fun singlePerm() {
-        Dexter.withActivity(this).withPermission(Manifest.permission.CALL_PHONE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-//Single Permission is granted
-                    val intent = Intent(Intent.ACTION_CALL)
-                    intent.setData(Uri.parse("tel:+91-7733901154"))
-                    startActivity(intent)
-                }
 
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-// check for permanent denial of permission
-                    if (response.isPermanentlyDenied()) {
-                        openSettingsDialog()
-                    }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest, token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
-    }
 
-    fun openSettingsDialog() {
-        val builder = AlertDialog.Builder(this@StaffDashBoardActivity)
-        builder.setTitle("Permissions Required")
-        builder.setMessage("Permission is required for using this app. Please enable them in app settings.")
-        builder.setPositiveButton("Go to SETTINGS", object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface, which: Int) {
-                dialog.cancel()
-                showsettings()
-            }
-        })
-        builder.setNegativeButton("Cancel", object : DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface, which: Int) {
-                dialog.cancel()
-            }
-        })
-        builder.show()
-    }
 
-    fun showsettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.setData(uri)
-        startActivityForResult(intent, 101)
-    }
 
     override fun onClick(v: View) {
         when (v.id) {

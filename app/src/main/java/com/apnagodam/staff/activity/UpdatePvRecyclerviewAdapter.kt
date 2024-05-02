@@ -39,6 +39,7 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
     ) :
         RecyclerView.ViewHolder(layoutPvRvBinding.root) {
 
+
         fun bind(
             context: Context,
             scope: LifecycleCoroutineScope,
@@ -63,6 +64,17 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                 var listOfMinusPlus = arrayListOf<String>()
                 listOfMinusPlus.add("+")
                 listOfMinusPlus.add("-")
+
+                it.fabRemoveItem.setOnClickListener { _ ->
+                    if (it.edMinusPlusvalue.hasFocus()) it.edMinusPlusvalue.clearFocus()
+                    scope.launch {
+                        EventBus.publish(
+                            position
+                        )
+
+                    }
+                }
+
                 it.edDanda.adapter = ArrayAdapter(
                     context,
                     R.layout.multiline_spinner_dropdown_item,
@@ -81,7 +93,7 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                 it.edPlusMinus.adapter =
                     ArrayAdapter(
                         context,
-                        R.layout.multiline_spinner_dropdown_item,
+                        R.layout.support_simple_spinner_dropdown_item,
                         listOfMinusPlus
                     )
 
@@ -207,7 +219,9 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                                     danda.value!!,
                                                     dhang.value!!,
                                                     height.value!!,
-                                                    plusMinus = it.edMinusPlusvalue.text.toString()
+                                                    plusMinus = it.edMinusPlusvalue.text.toString(),
+                                                    total = it.edTotal.text.toString()
+
                                                 )
                                             )
                                         }
@@ -232,7 +246,9 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                                     danda.value!!,
                                                     dhang.value!!,
                                                     height.value!!,
-                                                    plusMinus = it.edMinusPlusvalue.text.toString()
+                                                    plusMinus = it.edMinusPlusvalue.text.toString(),
+                                                    total = it.edTotal.text.toString()
+
                                                 )
                                             )
                                         }
@@ -334,7 +350,8 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                     danda.value!!,
                                     dhang.value!!,
                                     height.value!!,
-                                    plusMinus = it.edMinusPlusvalue.text.toString()
+                                    plusMinus = it.edMinusPlusvalue.text.toString(),
+                                    total = it.edTotal.text.toString()
                                 )
                             )
                         }
@@ -415,6 +432,7 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
             parent,
             false
         )
+
         return UpdatePvViewholder(binding, parent.context, activity)
     }
 

@@ -69,7 +69,12 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.caseId.text = CaseID
         contractorName = ArrayList()
 
+        setObservers()
         getCommodityList()
+
+
+    }
+    private fun setObservers(){
         labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -122,9 +127,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 }
             }
         }
-
     }
-
     private fun setValueOnSpinner() {
 
         for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {

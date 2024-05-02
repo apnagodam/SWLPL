@@ -2,16 +2,16 @@ package com.apnagodam.staff.activity.`in`.first_quality_reports
 
 import android.Manifest
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Geocoder
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
+import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
 import android.view.View
@@ -32,7 +32,7 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
-import com.fondesa.kpermissions.PermissionStatus
+import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -92,15 +92,15 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
+            Toast.makeText(this, "Location not enabled", Toast.LENGTH_SHORT).show()
         } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                if(it!=null){
+                it?.let {
                     lat = it.latitude
                     long = it.longitude
 
@@ -128,6 +128,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                 is NetworkResult.Error -> {
                     hideDialog()
                 }
+
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
@@ -162,13 +163,17 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
         qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
 
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data!!.status == "1") {
-                        Toast.makeText(this@UploadFirstQualtityReportsClass,it.message,Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@UploadFirstQualtityReportsClass,
+                            it.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
                         finish()
 
                     } else {
@@ -266,7 +271,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                     isFieldEmpty = false;
                 }
             }
-            if (!isFieldEmpty ) {
+            if (!isFieldEmpty) {
                 qualitReportViewModel.uploadFirstQualityReport(
                     UploadFirstQualityPostData(
                         CaseID,
@@ -277,12 +282,11 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                         stringFromView(binding!!.etLive),
                         stringFromView(binding!!.notes),
                         CommudityFileSelectImage
-                    ),"IN"
+                    ), "IN"
                 )
 
 
             }
-
 
 
         }
@@ -336,25 +340,38 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this)
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
+                if(it.allGranted()){
+                    photoEasy.startActivityForResult(this)
+                }
+                else{
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this)
 
-                }
             }
+        }
+        else{
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
 
 
+
     }
+
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
