@@ -56,8 +56,6 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
         apiService: ApiService
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(Leads: AllCaseIDResponse.Datum, context: Activity, apiService: ApiService) {
-            binding.executePendingBindings()
-            binding.tvCaseId.text = Leads.caseId
             //  binding.moreView.setVisibility(View.GONE);
 
 
@@ -378,7 +376,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                 } else {
                                                     if (Leads.gatepassReport == null
                                                     ) {
-                                                        Leads.firstQualityTaggingDate?.let {
+                                                        Leads.ivrReportDate?.let {
                                                             formatDate(
                                                                 it.toDate().toString()
                                                             )
@@ -386,7 +384,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                                         binding.tvStatus.text = "Gate Pass Pending"
                                                     } else {
-                                                        Leads.firstQualityTaggingDate?.let {
+                                                        Leads.ivrReportDate?.let {
                                                             formatDate(
                                                                 it.toDate().toString()
                                                             )
@@ -515,7 +513,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     if (Leads.secondKantaParchiDate == null) {
                                         binding.tvDate.setText(
                                             "${
-                                                Leads.firstKantaParchiDate?.let {
+                                                Leads.secondQualityReportDate?.let {
                                                     formatDate(
                                                         it.toDate().toString()
                                                     )
@@ -586,7 +584,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                 binding.tvStatus.text = "Gate Pass Pending"
                                                 binding.tvDate.setText(
                                                     "${
-                                                        Leads.ivrReportDate?.let {
+                                                        Leads.cctvReportDate?.let {
                                                             formatDate(
                                                                 it.toDate().toString()
                                                             )

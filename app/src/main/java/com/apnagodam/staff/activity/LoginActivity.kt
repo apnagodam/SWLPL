@@ -59,8 +59,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
 
     override fun setUp() {
         binding!!.btnLogin.setOnClickListener { v -> login }
-
-
     }
 
     private fun fofrlang() {
@@ -94,8 +92,9 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
             when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
-                    Toast.makeText(this,"${it.message}",Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT)
                 }
+
                 is NetworkResult.Loading -> {
                 }
 
@@ -103,12 +102,12 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                     hideDialog()
                     if (it.data != null) {
                         if (it.data.status == "1") {
-                            Toast.makeText(this,"${it.data.message}",Toast.LENGTH_SHORT)
+                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT)
 
                             // SMS Listener for listing auto read message lsitner
                             startSMSListener(it.data.phone)
                         } else {
-                            Toast.makeText(this,"${it.data.message}",Toast.LENGTH_SHORT)
+                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT)
 
 
                         }
@@ -123,8 +122,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
 //            var sharedPrefences = SharedPreferencesRepository.getDataManagerInstance();
 //            sharedPrefences.savelat(lat)
 //            sharedPrefences.savelong(Long)
-
-
 
 
         } else {
@@ -148,7 +145,7 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                 bundle.putString("setting", settingScreen)
                 startActivity(OtpActivity::class.java, bundle)
             }.addOnFailureListener {
-                Toast.makeText(this,"${it.message}${it.cause}",Toast.LENGTH_SHORT)
+                Toast.makeText(this, "${it.message}${it.cause}", Toast.LENGTH_SHORT)
 
                 it.printStackTrace()
                 val bundle = Bundle()

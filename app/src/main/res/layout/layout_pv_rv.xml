@@ -57,8 +57,8 @@
                                 android:layout_weight="1"
                                 android:padding="@dimen/_5sdp"
                                 android:text="Dhang"
-                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_12sdp"
 
                                 />
 
@@ -68,9 +68,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/_10sdp"
                                 android:layout_weight="1"
-                                android:textSize="@dimen/_12sdp"
                                 android:background="@drawable/btn_borders"
                                 android:hint="Dhang"
+                                android:textSize="@dimen/_12sdp"
 
                                 />
                         </LinearLayout>
@@ -88,8 +88,8 @@
                                 android:layout_weight="1"
                                 android:padding="@dimen/_5sdp"
                                 android:text="Danda"
-                                android:textSize="@dimen/_12sdp"
-                                android:textColor="@color/colorPrimary" />
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_12sdp" />
 
                             <Spinner
                                 android:id="@+id/edDanda"
@@ -97,9 +97,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/_10sdp"
                                 android:layout_weight="1"
-                                android:textSize="@dimen/_12sdp"
                                 android:background="@drawable/btn_borders"
-                                android:hint="Danda" />
+                                android:hint="Danda"
+                                android:textSize="@dimen/_12sdp" />
                         </LinearLayout>
 
 
@@ -115,8 +115,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="@dimen/_5sdp"
                                 android:text="Height"
-                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_12sdp"
 
                                 />
 
@@ -124,10 +124,10 @@
                                 android:id="@+id/edHeight"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="@dimen/_12sdp"
                                 android:layout_marginVertical="@dimen/_10sdp"
                                 android:background="@drawable/btn_borders"
                                 android:hint="Select Height"
+                                android:textSize="@dimen/_12sdp"
 
                                 />
 
@@ -139,6 +139,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_10sdp"
                         android:orientation="horizontal">
 
 
@@ -158,30 +159,28 @@
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:orientation="vertical">
 
                                     <TextView
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:padding="@dimen/_5sdp"
-                                        android:textSize="@dimen/_12sdp"
-                                        android:text="Plus Minus "
+                                        android:text="Plus / Minus "
                                         android:textColor="@color/colorPrimary"
+                                        android:textSize="@dimen/_12sdp"
 
                                         />
 
                                     <Spinner
                                         android:id="@+id/edPlusMinus"
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:padding="@dimen/_5sdp"
-                                        android:layout_marginVertical="@dimen/_10sdp"
+                                        android:layout_height="wrap_content"
                                         android:layout_weight="1"
                                         android:background="@drawable/btn_borders"
                                         android:gravity="center"
-                                        android:hint="Plus/Minus" />
+                                        android:hint="Plus/Minus"
+                                         />
                                 </LinearLayout>
 
                                 <LinearLayout
@@ -193,10 +192,9 @@
                                     <TextView
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:padding="@dimen/_5sdp"
-                                        android:textSize="@dimen/_12sdp"
-                                        android:text="Plus Minus Value"
+                                        android:text=" Value"
                                         android:textColor="@color/colorPrimary"
+                                        android:textSize="@dimen/_12sdp"
 
                                         />
 
@@ -204,41 +202,54 @@
                                         android:id="@+id/edMinusPlusvalue"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginVertical="@dimen/_10sdp"
-                                        android:layout_weight="0.2"
                                         android:layout_marginLeft="@dimen/_5sdp"
+                                        android:layout_weight="0.2"
+                                        android:padding="@dimen/_5sdp"
                                         android:background="@drawable/btn_borders"
                                         android:hint="Plus/Minus"
-                                        android:textSize="@dimen/_12sdp"
                                         android:inputType="number"
                                         android:paddingLeft="@dimen/_5sdp"
+                                        android:textSize="@dimen/_12sdp"
 
                                         />
                                 </LinearLayout>
+
                                 <LinearLayout
                                     android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
-                                    android:layout_height="wrap_content">
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="Total"
+                                        android:textColor="@color/colorPrimary"
+                                        android:textSize="@dimen/_12sdp"
+
+                                        />
+
                                     <EditText
                                         android:id="@+id/edTotal"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:layout_marginHorizontal="@dimen/_5sdp"
-                                        android:layout_marginVertical="@dimen/_10sdp"
-                                        android:background="@drawable/btn_borders_disabled"
                                         android:clickable="false"
+                                        android:paddingBottom="@dimen/_5sdp"
                                         android:focusable="false"
-                                        android:hint="Total"
-                                        android:textSize="@dimen/_12sdp"
 
-                                        android:padding="@dimen/_5sdp" />
+                                        android:layout_marginLeft="@dimen/_5sdp"
+                                        android:layout_weight="0.2"
+                                        android:padding="@dimen/_5sdp"
+                                        android:background="@drawable/btn_borders_disabled"
+                                        android:hint="Total"
+                                        android:inputType="number"
+                                        android:paddingLeft="@dimen/_5sdp"
+                                        android:textSize="@dimen/_12sdp"/>
                                 </LinearLayout>
                             </LinearLayout>
 
                         </LinearLayout>
                     </LinearLayout>
-
-
 
 
                     <Button
@@ -257,19 +268,19 @@
         </FrameLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabRemoveItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fabRemoveItem"
-            android:backgroundTint="@color/colorPrimary"
-            android:foregroundTint="@color/white"
-            app:tint="@android:color/white"
-            android:tint="@android:color/white"
-            app:layout_anchor="@id/cardPv"
-            android:visibility="gone"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_close_24"
+            android:backgroundTint="@color/colorPrimary"
             android:foregroundGravity="center"
-            app:layout_anchorGravity="top|right" />
+            android:foregroundTint="@color/white"
+            android:src="@drawable/baseline_close_24"
+            android:tint="@android:color/white"
+            android:visibility="gone"
+            app:layout_anchor="@id/cardPv"
+            app:layout_anchorGravity="top|right"
+            app:tint="@android:color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

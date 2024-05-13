@@ -62,23 +62,12 @@
                             android:layout_gravity="center"
                             android:ellipsize="end"
                             android:gravity="center"
-                            android:maxLines="2"
                             android:text="Employee Name"
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_10ssp"
                             android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/tv_phone"
-                            style="@style/TextStyleBold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:text="8949422632"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="@dimen/_10ssp"
-                            android:textStyle="bold" />
+
                     </LinearLayout>
 
                     <include layout="@layout/layout_divider_horizontal" />

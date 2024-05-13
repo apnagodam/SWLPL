@@ -90,7 +90,7 @@ public class StackRequestAdapterOutwards extends BaseRecyclerViewAdapter {
             binding.tvCommodity.setText(Leads.get(position).getCommodity());
             binding.tvVehicle.setText(Leads.get(position).getVehicleNumber());
             binding.tvStatus.setText(Leads.get(position).getStackNumber());
-
+            binding.tvMobile.setText(Leads.get(position).getDriverNumber());
             binding.tvId.setTextColor(Color.BLACK);
             binding.tvName.setTextColor(Color.BLACK);
             binding.tvPhone.setTextColor(Color.BLACK);

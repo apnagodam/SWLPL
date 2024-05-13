@@ -7,7 +7,8 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
 import javax.inject.Inject
 
-class AllCasesPagingDataSource (private val apiService: ApiService,var searchQuery :String ="") :PagingSource<Int, AllCaseIDResponse.Datum>(){
+class AllCasesPagingDataSource(private val apiService: ApiService, var searchQuery: String = "") :
+    PagingSource<Int, AllCaseIDResponse.Datum>() {
     override fun getRefreshKey(state: PagingState<Int, AllCaseIDResponse.Datum>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
@@ -45,9 +46,12 @@ class AllCasesPagingDataSource (private val apiService: ApiService,var searchQue
 
 
             }
+            val list = allCasesList.distinctBy { it.caseId }
             LoadResult.Page(
-                data = allCasesList,
-                prevKey = if (page == AllCasesPagingDataSource.STARTING_PAGE_INDEX) null else page.minus(1),
+                data = list.reversed().toList(),
+                prevKey = if (page == AllCasesPagingDataSource.STARTING_PAGE_INDEX) null else page.minus(
+                    1
+                ),
                 nextKey = if (response.getaCase()!!.data!!.isEmpty()) null else page.plus(
                     1
                 )
@@ -56,6 +60,7 @@ class AllCasesPagingDataSource (private val apiService: ApiService,var searchQue
             return LoadResult.Error(exception)
         }
     }
+
     companion object {
         private const val STARTING_PAGE_INDEX = 1
     }

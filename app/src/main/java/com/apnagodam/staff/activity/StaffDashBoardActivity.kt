@@ -45,6 +45,12 @@ import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.audit.AuditNeighbourActivity
+import com.apnagodam.staff.activity.audit.AuditPvActivity
+import com.apnagodam.staff.activity.audit.AuditQualityStock
+import com.apnagodam.staff.activity.audit.CmDetailsActivity
+import com.apnagodam.staff.activity.audit.InOutActivity
+import com.apnagodam.staff.activity.audit.VideoRecordingActivity
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
 import com.apnagodam.staff.activity.caseid.CaseListingActivity
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
@@ -78,6 +84,7 @@ import com.apnagodam.staff.module.MenuModel
 import com.apnagodam.staff.module.UserDetails
 import com.apnagodam.staff.paging.adapter.CasesAdapter
 import com.apnagodam.staff.paging.state.ListLoadStateAdapter
+import com.apnagodam.staff.utils.ConstantObjects
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.LocationUtils
@@ -125,7 +132,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     OnConnectionFailedListener {
     private var toggle: ActionBarDrawerToggle? = null
     private var casesTopAdapter: CasesTopAdapter? = null
-
+    val audit = "Audit";
     private val toolbar: Toolbar? = null
     var doubleBackToExitPressedOnce = false
     var locationManager: LocationManager? = null
@@ -432,8 +439,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         binding!!.expandableListView.setOnGroupClickListener { parent, v, groupPosition, id ->
             if (headerList[groupPosition].isGroup) {
                 if (!headerList[groupPosition].hasChildren) {
-                    if (headerList[groupPosition].menuName == resources.getString(R.string.home)) {
-                    } else if (headerList[groupPosition].menuName == resources.getString(R.string.referral_code)) {
+
+                    if (headerList[groupPosition].menuName == resources.getString(R.string.referral_code)) {
                         val phone = SharedPreferencesRepository.getDataManagerInstance().user.phone
                         val sharedUrl =
                             "click here for download to Farmer App:- https://play.google.com/store/apps/details?id=com.apnagodam&hl=en&referrer=$phone"
@@ -468,15 +475,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(CancelCaseId::class.java)
                     } else if (headerList.get(groupPosition).menuName.equals("PV")) {
                         startActivity(UpdatePv::class.java)
-                    }
-                    else if (headerList[groupPosition].menuName == "Advances"){
-                    startActivity(AdvancesActivity::class.java)
-                    }
-                    else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
+                    } else if (headerList[groupPosition].menuName == "Advances") {
+                        Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show()
+                        // startActivity(AdvancesActivity::class.java)
+                    } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         loginViewModel.doLogout()
 
                         // logout(resources.getString(R.string.logout_alert), "Logout")
                     }
+
                 }
             }
             false
@@ -485,118 +492,134 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             if (childList[headerList[groupPosition]] != null) {
                 val model = childList[headerList[groupPosition]]!![childPosition]
                 if (model.url.isNotEmpty() && SharedPreferencesRepository.getDataManagerInstance().userPermission != null) {
-                    if (model.menuName == resources.getString(R.string.price)) {
-                        Log.e("pricing", "pricing")
-                        startActivity(InPricingListingActivity::class.java)
-                        return@OnChildClickListener true
-                        //  startActivity(InPricingListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.truck_book)) {
+                    when (model.menuName) {
+                        resources.getString(R.string.price) -> {
+                            startActivity(InPricingListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
 
-                        startActivity(TruckBookListingActivity::class.java)
-                        return@OnChildClickListener true
-                        // startActivity(TruckBookListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.labour_book)) {
+                        resources.getString(R.string.truck_book) -> {
+                            startActivity(TruckBookListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
 
-                        startActivity(LabourBookListingActivity::class.java)
-                        return@OnChildClickListener true
-                        //   startActivity(LabourBookListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.firstkanta_parchi)) {
-                        startActivity(FirstkanthaParchiListingActivity::class.java)
-                        return@OnChildClickListener true
-                        // startActivity(FirstkanthaParchiListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.f_quality_repots)) {
-                        startActivity(FirstQualityReportListingActivity::class.java)
-                        return@OnChildClickListener true
-                        // startActivity(FirstQualityReportListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.secoundkanta_parchi)) {
-                        startActivity(SecoundkanthaParchiListingActivity::class.java)
-                        return@OnChildClickListener true
-                        //  startActivity(SecoundkanthaParchiListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.s_quality_repots)) {
-                        startActivity(SecoundQualityReportListingActivity::class.java)
-                        return@OnChildClickListener true
-                        //  startActivity(SecoundQualityReportListingActivity.class);
+                        resources.getString(R.string.labour_book) -> {
+                            startActivity(LabourBookListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.firstkanta_parchi) -> {
+                            startActivity(FirstkanthaParchiListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.f_quality_repots) -> {
+                            startActivity(FirstQualityReportListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.secoundkanta_parchi) -> {
+                            startActivity(SecoundkanthaParchiListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.s_quality_repots) -> {
+                            startActivity(SecoundQualityReportListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.my_convance) -> {
+                            startActivity(MyConveyanceListClass::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.vendor) -> {
+                            startActivity(MyVendorVoacherListClass::class.java)
+                        }
+
+                        resources.getString(R.string.case_status_in) -> {
+                            startActivity(CaseStatusINListClass::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.case_status_out) -> {
+                            startActivity(CaseStatusINListClass::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_relase_book) -> {
+                            startActivity(OUTRelaseOrderListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_truck_book) -> {
+                            startActivity(OUTTruckBookListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_labour_book) -> {
+                            startActivity(OUTLabourBookListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_f_katha_book) -> {
+                            startActivity(OutFirstkanthaParchiListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_f_quality_book) -> {
+                            startActivity(OutFirstQualityReportListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_s_katha__book) -> {
+                            startActivity(OutSecoundkanthaParchiListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        resources.getString(R.string.out_s_quality_book) -> {
+                            startActivity(OutSecoundQualityReportListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        ConstantObjects.AUDIT_CM -> {
+                            startActivity(CmDetailsActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        ConstantObjects.AUDIT_VIDEO -> {
+                            startActivity(VideoRecordingActivity::class.java)
+                            return@OnChildClickListener true
+
+                        }
+
+                        ConstantObjects.AUDIT_NEIGHBOUR -> {
+                            startActivity(AuditNeighbourActivity::class.java)
+                            return@OnChildClickListener true
+
+                        }
+
+                        ConstantObjects.AUDIT_PV -> {
+                            startActivity(AuditPvActivity::class.java)
+                            return@OnChildClickListener true
+
+                        }
+
+                        ConstantObjects.AUDIT_IN_OUT_LOCATION -> {
+                            startActivity(InOutActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        ConstantObjects.AUDIT_QZ -> {
+                            startActivity(AuditQualityStock::class.java)
+                            return@OnChildClickListener true
+
+                        }
+
+                        else-> return@OnChildClickListener false
                     }
-//                        else if (model.menuName == resources.getString(R.string.gate_passs)) {
-//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-//                                    "19",
-//                                    ignoreCase = true
-//                                )
-//                            ) {
-//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-//                                    startActivity(GatePassListingActivity::class.java)
-//                                    return@OnChildClickListener true
-//                                }
-//                            }
-//                            //   startActivity(GatePassListingActivity.class);
-//                        }
-                    else if (model.menuName == resources.getString(R.string.my_convance)) {
-                        startActivity(MyConveyanceListClass::class.java)
-                        return@OnChildClickListener true
-                        //startActivity(MyConveyanceListClass.class);
-                    } else if (model.menuName == resources.getString(R.string.vendor)) {
-                        startActivity(MyVendorVoacherListClass::class.java)
-                    } else if (model.menuName == resources.getString(R.string.case_status_in)) {
-                        startActivity(CaseStatusINListClass::class.java)
-                        return@OnChildClickListener true
-                        //startActivity(MyConveyanceListClass.class);
-                    } else if (model.menuName == resources.getString(R.string.case_status_out)) {
-                        startActivity(CaseStatusINListClass::class.java)
-                        return@OnChildClickListener true
-                        //startActivity(MyConveyanceListClass.class);
-                    } else if (model.menuName == resources.getString(R.string.out_relase_book)) {
-                        startActivity(OUTRelaseOrderListingActivity::class.java)
-                        return@OnChildClickListener true
-                    }
-//                        else if (model.menuName == resources.getString(R.string.out_deiverd_book)) {
-//                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-//                                    "25",
-//                                    ignoreCase = true
-//                                )
-//                            ) {
-//                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-//                                    startActivity(OUTDeliverdOrderListingActivity::class.java)
-//                                    return@OnChildClickListener true
-//                                }
-//                            }
-//                            // startActivity(TruckBookListingActivity.class);
-//                        }
-                    else if (model.menuName == resources.getString(R.string.out_truck_book)) {
-                        startActivity(OUTTruckBookListingActivity::class.java)
-                        return@OnChildClickListener true
-                        // startActivity(TruckBookListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.out_labour_book)) {
-                        startActivity(OUTLabourBookListingActivity::class.java)
-                        return@OnChildClickListener true
-                        //   startActivity(LabourBookListingActivity.class);
-                    } else if (model.menuName == resources.getString(R.string.out_f_katha_book)) {
-                        startActivity(OutFirstkanthaParchiListingActivity::class.java)
-                        return@OnChildClickListener true
-                    } else if (model.menuName == resources.getString(R.string.out_f_quality_book)) {
-                        startActivity(OutFirstQualityReportListingActivity::class.java)
-                        return@OnChildClickListener true
-                    } else if (model.menuName == resources.getString(R.string.out_s_katha__book)) {
-                        startActivity(OutSecoundkanthaParchiListingActivity::class.java)
-                        return@OnChildClickListener true
-                    } else if (model.menuName == resources.getString(R.string.out_s_quality_book)) {
-                        startActivity(OutSecoundQualityReportListingActivity::class.java)
-                        return@OnChildClickListener true
-                    }
-//                    for (i in SharedPreferencesRepository.getDataManagerInstance().userPermission.indices) {
-//
-////                        else if (model.menuName == resources.getString(R.string.out_gatepass_book)) {
-////                            if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].permissionId.equals(
-////                                    "19",
-////                                    ignoreCase = true
-////                                )
-////                            ) {
-////                                if (SharedPreferencesRepository.getDataManagerInstance().userPermission[i].view == 1) {
-////                                    startActivity(OutGatePassListingActivity::class.java)
-////                                    return@OnChildClickListener true
-////                                }
-////                            }
-////                        }
-//                    }
+
+
                 }
             }
             false
@@ -608,21 +631,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.home),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.dashboard
         ) //Menu of Android Tutorial. No sub menus
         val menuModel1 = MenuModel(
             resources.getString(R.string.referral_code),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.earn
         ) //Menu of Android Tutorial. No sub menus
         val menuModel2 = MenuModel(
             resources.getString(R.string.select_language),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.translate
         ) //Menu of Android Tutorial. No sub menus
         headerList.add(menuModel)
@@ -632,7 +655,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.lead_generate),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.lead
         ) //Menu of Android Tutorial. No sub menus
         headerList.add(menuModel3)
@@ -640,7 +663,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.simple_case_id),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.create_case_id
         ) //Menu of Android Tutorial. No sub menus
         headerList.add(menuModel4)
@@ -653,7 +676,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             "IN",
             true,
             true,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.internal
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
@@ -661,7 +684,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.truck_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.truck_option
         )
         childModelsList.add(childModel)
@@ -669,7 +692,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.labour_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.labour_option
         )
         childModelsList.add(childModel)
@@ -677,7 +700,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.firstkanta_parchi),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.kanta_parchi_one
         )
         childModelsList.add(childModel)
@@ -685,7 +708,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.f_quality_repots),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.first_quality_report
         )
         childModelsList.add(childModel)
@@ -693,7 +716,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.secoundkanta_parchi),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.second_kanta_parchi
         )
         childModelsList.add(childModel)
@@ -701,7 +724,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.s_quality_repots),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.second_quality_report
         )
 
@@ -715,7 +738,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             "OUT",
             true,
             true,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.external
         ) //Menu of Python Tutorials
         headerList.add(menuModel)
@@ -724,7 +747,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_truck_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.truck_option
         )
         childModelsList.add(childModel)
@@ -732,7 +755,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_labour_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.labour_option
         )
         childModelsList.add(childModel)
@@ -740,7 +763,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_f_quality_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.first_quality_report
         )
         childModelsList.add(childModel)
@@ -748,7 +771,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_f_katha_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.kanta_parchi_one
         )
         childModelsList.add(childModel)
@@ -756,7 +779,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_s_quality_book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.second_quality_report
         )
         childModelsList.add(childModel)
@@ -764,7 +787,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.out_s_katha__book),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.second_kanta_parchi
         )
 
@@ -776,7 +799,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             "Voucher",
             true,
             true,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.voucher
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
@@ -785,7 +808,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.my_convance),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.voucher
         )
         childModelsList.add(childModel)
@@ -793,7 +816,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             resources.getString(R.string.vendor),
             false,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.voucher
         )
         childModelsList.add(childModel)
@@ -804,56 +827,57 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //            resources.getString(R.string.spot_sell),
 //            true,
 //            false,
-//            "https://www.journaldev.com/19226/python-fractions",
+//            ConstantObjects.EXPANDABLE_LIST_URL,
 //            R.drawable.deal_track
 //        ) //Menu of Android Tutorial. No sub menus
 //        val menuModel7 = MenuModel(
 //            resources.getString(R.string.intantion_title),
 //            true,
 //            false,
-//            "https://www.journaldev.com/19226/python-fractions",
+//            ConstantObjects.EXPANDABLE_LIST_URL,
 //            R.drawable.purchase
 //        ) //Menu of Android Tutorial. No sub menus
 //        val menuModel8 = MenuModel(
 //            "Customer Map",
 //            true,
 //            false,
-//            "https://www.journaldev.com/19226/python-fractions",
+//            ConstantObjects.EXPANDABLE_LIST_URL,
 //            R.drawable.heat_map
 //        ) //Menu of Android Tutorial. No sub menus
 //        val menuModel9 = MenuModel(
 //            resources.getString(R.string.heat_map),
 //            true,
 //            false,
-//            "https://www.journaldev.com/19226/python-fractions",
+//            ConstantObjects.EXPANDABLE_LIST_URL,
 //            R.drawable.heat_map
 //        ) //Menu of Android Tutorial. No sub menus
+
         val menuMode21 = MenuModel(
             resources.getString(R.string.fastcase),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.heat_map
         ) //Menu of Android Tutorial. No sub menus
         val menuMode22 = MenuModel(
             resources.getString(R.string.fastcase_list),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.heat_map
         ) //Menu of
         val menuModel23 = MenuModel(
             resources.getString(R.string.cancel_case_id),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.create_case_id
         ) // Android Tutorial. No sub menus
         val menuModel24 = MenuModel(
             "PV",
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.create_case_id
         ) // And
 
@@ -861,14 +885,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             "Advances",
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.earn
         ) // // roid
         val menuMode20 = MenuModel(
             resources.getString(R.string.logout),
             true,
             false,
-            "https://www.journaldev.com/19226/python-fractions",
+            ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.out_icon
         ) //Menu of Android Tutorial. No sub menus
         //  headerList.add(menuModel5);
@@ -876,12 +900,84 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        headerList.add(menuModel7)
 //        headerList.add(menuModel8)
 //        headerList.add(menuModel9)
+
+        menuModel = MenuModel(
+            ConstantObjects.AUDIT,
+            true,
+            true,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.audit
+        )
+        headerList.add(menuModel)
+
+        childModelsList = ArrayList()
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_PV,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.pv
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_QZ,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.wheat
+        )
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_NEIGHBOUR,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.neighbour
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_CM,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.cm
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_VIDEO,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.camera
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_IN_OUT_LOCATION,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.location
+        )
+        childModelsList.add(childModel)
+        childModel = MenuModel(
+            ConstantObjects.AUDIT_QZ,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.quaility
+        )
+        childModelsList.add(childModel)
+        if (menuModel.hasChildren) {
+            Log.d("API123", "here")
+            childList[menuModel] = childModelsList
+        }
+
         headerList.add(menuModel25)
         headerList.add(menuModel23)
         headerList.add(menuModel24)
         headerList.add(menuMode21)
         headerList.add(menuMode22)
         headerList.add(menuMode20)
+
     }
 
 
@@ -934,16 +1030,18 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 when (it.refresh) {
 
                     is LoadState.Error -> {
+                        Utility.hideDialog(this@StaffDashBoardActivity)
                         binding!!.swipeRefresherHome.isRefreshing = false
-                        Toast.makeText(
-                            this@StaffDashBoardActivity, "Something went Wrong", Toast.LENGTH_SHORT
-                        ).show()
+
                     }
 
                     LoadState.Loading -> {
+                        Utility.showDialog(this@StaffDashBoardActivity, "")
+                        binding?.let { it.swipeRefresherHome.isRefreshing = true }
                     }
 
                     is LoadState.NotLoading -> {
+                        Utility.hideDialog(this@StaffDashBoardActivity)
                         binding!!.swipeRefresherHome.isRefreshing = false
                     }
                 }
@@ -1075,9 +1173,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         null -> {}
                         else -> {
                             it.data?.let {
-                                if (it.status == "2" || it.status=="3" || it.status=="0") {
+                                if (it.status == "2" || it.status == "3" || it.status == "0") {
                                     startActivity(Intent(this, LoginActivity::class.java))
-                                } else  {
+                                } else {
                                     inwardsList.clear()
                                     outwardsList.clear()
                                     for (i in it.inwardRequestData.indices) {
@@ -1277,7 +1375,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         })
         UploadImage.setOnClickListener(View.OnClickListener {
-           dispatchTakePictureIntent()
+            dispatchTakePictureIntent()
 
 
             // callProfileImageSelector(REQUEST_CAMERA);
@@ -1337,13 +1435,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
-
-
-
-
-
-
-
 
 
     override fun onClick(v: View) {

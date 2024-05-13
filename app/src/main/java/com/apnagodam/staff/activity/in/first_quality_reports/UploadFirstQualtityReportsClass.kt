@@ -129,8 +129,13 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
                     hideDialog()
                 }
 
-                is NetworkResult.Loading -> {}
+                is NetworkResult.Loading -> {
+                    showDialog()
+
+                }
                 is NetworkResult.Success -> {
+                    hideDialog()
+
                     if (it.data != null) {
                         listOfParams = it.data.data as ArrayList<Datum>
                         for (data in it.data.data) {
@@ -152,41 +157,51 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
                     }
-                    hideDialog()
 
                 }
             }
         }
-        showDialog()
-        qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
 
+        qualitReportViewModel.getCommodityParams(case_id = CaseID.toString())
         qualitReportViewModel.fQualityUploadResponse.observe(this@UploadFirstQualtityReportsClass) {
             when (it) {
                 is NetworkResult.Error -> {
+                    hideDialog()
+
                     Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    if (it.data!!.status == "1") {
-                        Toast.makeText(
-                            this@UploadFirstQualtityReportsClass,
-                            it.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        finish()
+                is NetworkResult.Loading -> {
+                    showDialog()
 
-                    } else {
-                        Utility.showAlertDialog(
-                            this@UploadFirstQualtityReportsClass,
-                            getString(R.string.alert),
-                            it.data!!.getMessage()
-                        ) { }
+                }
+                is NetworkResult.Success -> {
+                    hideDialog()
+
+                    it.data?.let {
+
+                        if (it.status == "1") {
+
+                            finish()
+                            Toast.makeText(
+                                this@UploadFirstQualtityReportsClass,
+                                it.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Utility.showAlertDialog(
+                                this@UploadFirstQualtityReportsClass,
+                                getString(R.string.alert),
+                                it.message
+                            ) { }
+                        }
                     }
+
 
                 }
             }
         }
+
 
         var i = 0;
         paramList.forEach {
@@ -342,12 +357,15 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
     override fun dispatchTakePictureIntent() {
         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
-                if(it.allGranted()){
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            permissionsBuilder(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).build().send() {
+                if (it.allGranted()) {
                     photoEasy.startActivityForResult(this)
-                }
-                else{
+                } else {
                     Toast.makeText(
                         this,
                         "Location or Camera Permissions Denied",
@@ -357,8 +375,7 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
 
 
             }
-        }
-        else{
+        } else {
             Toast.makeText(
                 this,
                 "GPS Not Enabled",
@@ -367,7 +384,6 @@ class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReport
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
-
 
 
     }

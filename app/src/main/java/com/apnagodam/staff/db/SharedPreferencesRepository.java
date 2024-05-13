@@ -250,12 +250,12 @@ public class SharedPreferencesRepository implements Tags {
         return userArray;
     }
 
-    public void SETTerminal(List<CommudityResponse.Terminals> datumMonthlyLedger) {
+    public void setTerminals(List<CommudityResponse.Terminals> datumMonthlyLedger) {
         String data = new Gson().toJson(datumMonthlyLedger);
         sharedPrefEditor.putString(Terminal, data).commit();
     }
 
-    public ArrayList<CommudityResponse.Terminals> GetTerminal() {
+    public ArrayList<CommudityResponse.Terminals> getTerminals() {
         String userMonthlyLedger = sharedPreferences.getString(Terminal, null);
         Gson gson = new Gson();
         Type userListType = new TypeToken<ArrayList<CommudityResponse.Terminals>>() {

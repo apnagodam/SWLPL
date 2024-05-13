@@ -2,6 +2,7 @@ package com.apnagodam.staff.activity.caseid
 
 import android.app.Activity
 import android.graphics.Rect
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
+class CaseListingActivity() : com.apnagodam.staff.activity.BaseActivity<ActivityListingBinding>() {
     private var pageOffset = 1
     private var totalPage = 0
     private var AllCases: MutableList<AllCaseIDResponse.Datum?>? = null
@@ -44,20 +45,12 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
     @Inject
     lateinit var adapter: CasesAdapter
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
-    override fun getLayoutResId(): Int {
-        return R.layout.activity_listing
-    }
 
-    override fun setUp() {
-        setView()
-    }
 
-    private fun setView() {
+    override fun setUI() {
         binding!!.pageNextPrivious.visibility = View.GONE
         AllCases = arrayListOf()
 
-        setObservers()
-        getAllCases("")
 
         setSupportActionBar(binding!!.toolbar)
         binding!!.titleHeader.text = resources.getString(R.string.case_list)
@@ -118,29 +111,7 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
         })
     }
 
-    private fun setAdapter() {
-
-
-        binding!!.rvDefaultersStatus.setHasFixedSize(true)
-        binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
-        val horizontalLayoutManager =
-            LinearLayoutManager(this@CaseListingActivity, LinearLayoutManager.VERTICAL, false)
-        binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
-
-        binding!!.rvDefaultersStatus.adapter = adapter.withLoadStateFooter(
-            footer = ListLoadStateAdapter {
-                caseIdViewModel.getPagingData()
-            })
-
-    }
-
-
-    override fun onResume() {
-        caseIdViewModel.getAllCasesPagingData()
-        super.onResume()
-    }
-
-    private fun setObservers() {
+    override fun setObservers() {
         caseIdViewModel.allCasesPaginatino.observe(this) {
             lifecycleScope.launch {
                 adapter.submitData(it)
@@ -156,11 +127,11 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
                     }
 
                     LoadState.Loading -> {
-                        Utility.showDialog(this@CaseListingActivity, "")
+                        showDialog(this@CaseListingActivity)
                     }
 
                     is LoadState.NotLoading -> {
-                        Utility.hideDialog(this@CaseListingActivity)
+                          hideDialog(this@CaseListingActivity)
                         binding!!.swipeRefresherStock.isRefreshing = false
                     }
                 }
@@ -172,120 +143,37 @@ class CaseListingActivity() : BaseActivity<ActivityListingBinding?>() {
         }
     }
 
-    private fun getAllCases(search: String) {
+    override fun inflateLayout(layoutInflater: LayoutInflater): ActivityListingBinding =
+        ActivityListingBinding.inflate(layoutInflater)
 
+    override fun callApis() {
+        getAllCases("")
+
+    }
+
+    override fun onResume() {
+        caseIdViewModel.getAllCasesPagingData()
+        super.onResume()
+    }
+
+    private fun setAdapter() {
+        binding.rvDefaultersStatus.setHasFixedSize(true)
+        binding.rvDefaultersStatus.isNestedScrollingEnabled = false
+        val horizontalLayoutManager =
+            LinearLayoutManager(this@CaseListingActivity, LinearLayoutManager.VERTICAL, false)
+        binding.rvDefaultersStatus.layoutManager = horizontalLayoutManager
+
+        binding.rvDefaultersStatus.adapter = adapter.withLoadStateFooter(
+            footer = ListLoadStateAdapter {
+                caseIdViewModel.getPagingData()
+            })
+
+    }
+
+    private fun getAllCases(search: String) {
         caseIdViewModel.getAllCasesPagingData()
 
-
-//        caseIdViewModel.getCaseId("15",pageOffset,"1",search)
-//        caseIdViewModel.response.observe(this){
-//            body->
-//            when(body){
-//                is NetworkResult.Success->
-//                {
-//                    binding!!.swipeRefresherStock.isRefreshing = false
-//                    AllCases!!.clear()
-//                    if (body.data!!.getaCase() == null) {
-//                        binding!!.txtemptyMsg.visibility = View.VISIBLE
-//                        binding!!.rvDefaultersStatus.visibility = View.GONE
-//                        binding!!.pageNextPrivious.visibility = View.GONE
-//                    } else {
-//                        AllCases!!.clear()
-//                        totalPage = body.data.getaCase()!!.lastPage!!
-//                        body.data.getaCase()!!.data!!.forEach {
-//                            if (userDetails.terminal==null){
-//                                AllCases!!.add(it)
-//                            }
-//                            else if (it.terminalId.toString() == userDetails.terminal.toString()) {
-//                                AllCases!!.add(it)
-//
-//                            }
-//                        }
-////                        AllCases!!.addAll(body.data.getaCase().data)
-//                        casesTopAdapter = CasesTopAdapter(AllCases!!.reversed(),this,apiService)
-//                        setAdapter()
-//
-//                        //  AllCases=body.getCases();
-//                        // binding.rvDefaultersStatus.setAdapter(new CasesTopAdapter(body.getCases(), CaseListingActivity.this));
-//                    }
-//                    hideDialog()
-//
-//                }
-//
-//                is NetworkResult.Error ->{
-//                    hideDialog()
-//
-//                }
-//                is NetworkResult.Loading -> {}
-//            }
-//
-//
-//        }
-
-
     }
 
-    fun ViewData(position: Int) {
-        val displayRectangle = Rect()
-        val window = this.window
-        window.decorView.getWindowVisibleDisplayFrame(displayRectangle)
-        val builder = AlertDialog.Builder(this@CaseListingActivity, R.style.CustomAlertDialog)
-        val inflater = (this@CaseListingActivity as Activity).layoutInflater
-        val dialogView = inflater.inflate(R.layout.lead_view, null)
-        dialogView.minimumWidth = (displayRectangle.width() * 1f).toInt()
-        dialogView.minimumHeight = (displayRectangle.height() * 1f).toInt()
-        builder.setView(dialogView)
-        val alertDialog = builder.create()
-        val cancel_btn = dialogView.findViewById<View>(R.id.cancel_btn) as ImageView
-        val lead_id = dialogView.findViewById<View>(R.id.lead_id) as TextView
-        val genrated_by = dialogView.findViewById<View>(R.id.genrated_by) as TextView
-        val customer_name = dialogView.findViewById<View>(R.id.customer_name) as TextView
-        val phone_no = dialogView.findViewById<View>(R.id.phone_no) as TextView
-        val location_title = dialogView.findViewById<View>(R.id.location_title) as TextView
-        val commodity_name = dialogView.findViewById<View>(R.id.commodity_name) as TextView
-        val est_quantity_nmae = dialogView.findViewById<View>(R.id.est_quantity_nmae) as TextView
-        val terminal_name = dialogView.findViewById<View>(R.id.terminal_name) as TextView
-        val purpose_name = dialogView.findViewById<View>(R.id.purpose_name) as TextView
-        val commitemate_date = dialogView.findViewById<View>(R.id.commitemate_date) as TextView
-        val create_date = dialogView.findViewById<View>(R.id.create_date) as TextView
-        val case_id = dialogView.findViewById<View>(R.id.a1) as TextView
-        val sub_user = dialogView.findViewById<View>(R.id.a10) as TextView
-        val case_extra = dialogView.findViewById<View>(R.id.case_extra) as LinearLayout
-        case_extra.visibility = View.VISIBLE
-        val converted_by = dialogView.findViewById<View>(R.id.converted_by) as TextView
-        val vehicle_no = dialogView.findViewById<View>(R.id.vehicle_no) as TextView
-        val in_out = dialogView.findViewById<View>(R.id.in_out) as TextView
-        val staclLL = dialogView.findViewById<View>(R.id.staclLL) as LinearLayout
-        val stackView = dialogView.findViewById(R.id.stackView) as View
-        staclLL.visibility = View.VISIBLE
-        stackView.visibility = View.VISIBLE
-        val stack_no = dialogView.findViewById<View>(R.id.stack_no) as TextView
-        converted_by.text = "" + AllCases!!.get(position)!!
-            .leadConvFname + " " + AllCases!!.get(position)!!.leadConvLname
-        vehicle_no.text = "" + AllCases!!.get(position)!!.vehicleNo
-        in_out.text = "" + AllCases!!.get(position)!!.inOut
-        case_id.text = resources.getString(R.string.case_idd)
-        sub_user.text = resources.getString(R.string.sub_user)
-        lead_id.text = "" + AllCases!!.get(position)!!.caseId
-        genrated_by.text = "" + AllCases!!.get(position)!!
-            .leadGenFname + " " + AllCases!!.get(position)!!.leadGenLname
-        customer_name.text = "" + AllCases!!.get(position)!!.custFname
-        location_title.text = "" + AllCases!!.get(position)!!.location
-        phone_no.text = "" + AllCases!!.get(position)!!.phone
-        commodity_name.text =
-            AllCases!!.get(position)!!.cateName + "(" + AllCases!!.get(position)!!.commodityType + ")"
-        est_quantity_nmae.text = "" + AllCases!!.get(position)!!.totalWeight
-        terminal_name.text = "" + AllCases!!.get(position)!!
-            .terminalName + " " + AllCases!!.get(position)!!.warehouseCode
-        purpose_name.text = "" + AllCases!!.get(position)!!.purpose
-        commitemate_date.text = (AllCases!!.get(position)!!.fpoUsers)
-        create_date.text = "" + AllCases!!.get(position)!!.createdAt
-        stack_no.text = "" + AllCases!!.get(position)!!.stack_number
-        cancel_btn.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                alertDialog.dismiss()
-            }
-        })
-        alertDialog.show()
-    }
+
 }

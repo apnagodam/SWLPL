@@ -85,9 +85,10 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     var isFirstUpload = true;
     var lat = 0.0
     var long = 0.0
+    var currentLocation = ""
+
     var file3: String? = null
     lateinit var photoEasy: PhotoEasy
-    var currentLocation = ""
     override fun getLayoutResId(): Int {
         return R.layout.kantha_parchi_upload
     }

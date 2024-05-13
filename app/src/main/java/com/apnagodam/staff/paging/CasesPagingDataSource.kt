@@ -61,8 +61,9 @@ class CasesPagingDataSource(private val apiService: ApiService) :
 
 
             }
+            val list = allCasesList.distinctBy { it.caseId }
             LoadResult.Page(
-                data = allCasesList.reversed(),
+                data = list.reversed().toList(),
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page.minus(1),
                 nextKey = if (response.getaCase()!!.data!!.isEmpty() || page > 5) null else page.plus(
                     1

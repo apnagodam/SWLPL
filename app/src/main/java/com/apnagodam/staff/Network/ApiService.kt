@@ -1,11 +1,13 @@
 package com.apnagodam.staff.Network
 
+import com.apnagodam.staff.Network.Request.AddNeighbourRequest
 import com.apnagodam.staff.Network.Request.ApprovedConveyancePOst
 import com.apnagodam.staff.Network.Request.ApprovedIntantionPOst
 import com.apnagodam.staff.Network.Request.ApprovedRejectConveyancePOst
 import com.apnagodam.staff.Network.Request.ApprovedRejectVendorConveyancePOst
 import com.apnagodam.staff.Network.Request.ApprovedVendorConveyancePOst
 import com.apnagodam.staff.Network.Request.AttendancePostData
+import com.apnagodam.staff.Network.Request.AuditQVRequest
 import com.apnagodam.staff.Network.Request.ClosedCasesPostData
 import com.apnagodam.staff.Network.Request.CreateCaseIDPostData
 import com.apnagodam.staff.Network.Request.CreateConveyancePostData
@@ -31,8 +33,11 @@ import com.apnagodam.staff.Network.Request.UploadReleaseOrderlsPostData
 import com.apnagodam.staff.Network.Request.UploadSecoundQualityPostData
 import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
 import com.apnagodam.staff.Network.Request.UploadTruckDetailsPostData
+import com.apnagodam.staff.Network.Response.AdvancePaymentListModel
 import com.apnagodam.staff.Network.Response.AttendanceResponse
+import com.apnagodam.staff.Network.Response.AuditQVResponse
 import com.apnagodam.staff.Network.Response.BaseResponse
+import com.apnagodam.staff.Network.Response.CmDetailsResponse
 import com.apnagodam.staff.Network.Response.DharamKanta
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
@@ -45,6 +50,7 @@ import com.apnagodam.staff.Network.Response.ResponseStackData
 import com.apnagodam.staff.Network.Response.ResponseUserData
 import com.apnagodam.staff.Network.Response.ResponseWarehouse
 import com.apnagodam.staff.Network.Response.StackRequestResponse
+import com.apnagodam.staff.Network.Response.StacksListResponse
 import com.apnagodam.staff.Network.Response.VerifyOtpFastcase
 import com.apnagodam.staff.Network.Response.VersionCodeResponse
 import com.apnagodam.staff.module.AllCaseIDResponse
@@ -82,11 +88,15 @@ import com.apnagodam.staff.module.VendorExpensionApprovedListPojo
 import com.apnagodam.staff.module.VendorExpensionNamePojo
 import com.apnagodam.staff.module.VendorNamePojo
 import io.reactivex.Observable
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Query
 
 interface ApiService {
@@ -98,8 +108,7 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_vendor_approveBy")
     suspend fun ExpensionApprovedList(
-        @Query("exp_id") str: String?,
-        @Query("charge_amount") str2: String?
+        @Query("exp_id") str: String?, @Query("charge_amount") str2: String?
     ): Response<VendorExpensionApprovedListPojo>
 
     @GET("emp_api/apna_emp_vendor_exp_list")
@@ -172,8 +181,7 @@ interface ApiService {
 
     @POST("emp_api/store_cancelcase_request")
     suspend fun cancelCaseRequest(
-        @Query("case_id") caseId: String,
-        @Query("notes") notes: String
+        @Query("case_id") caseId: String, @Query("notes") notes: String
     ): Response<BaseResponse>
 
     @GET("emp_api/apna_emp_get_caseid")
@@ -210,22 +218,17 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_get_conveyance_req")
     fun getApprovalRequestConvancyList(
-        @Query("limit") str: String?,
-        @Query("page") i: Int,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: Int, @Query("search") str2: String?
     ): Call<AllConvancyList?>?
 
     @GET("emp_api/apna_emp_get_Incasestatus")
     fun getCaseStatusList(
-        @Query("limit") str: String?,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("search") str2: String?
     ): Call<CaseStatusINPojo?>?
 
     @GET("emp_api/apna_emp_get_conveyance")
     suspend fun getConvancyList(
-        @Query("limit") str: String?,
-        @Query("page") i: Int,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: Int, @Query("search") str2: String?
     ): Response<AllConvancyList>
 
     @GET("emp_api/apna_emp_dashboard")
@@ -266,8 +269,7 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_permissions")
     suspend fun getPermission(
-        @Query("designation_id") str: String?,
-        @Query("emp_level_id") str2: String?
+        @Query("designation_id") str: String?, @Query("emp_level_id") str2: String?
     ): Response<AllUserPermissionsResultListResponse>
 
     @GET("emp_api/apna_emp_release_order")
@@ -296,15 +298,12 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_get_spot_deals")
     suspend fun getSpotSellDealTrackList(
-        @Query("limit") str: String?,
-        @Query("page") i: String,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: String, @Query("search") str2: String?
     ): Response<SpotSellDealTrackPojo>
 
     @POST("emp_api/fc_offline_stack_details")
     suspend fun getStack(
-        @Query("terminal_id") str: String?,
-        @Query("commodity_id") str2: String?
+        @Query("terminal_id") str: String?, @Query("commodity_id") str2: String?
     ): Response<ResponseStackData>
 
     @POST("emp_api/apna_emp_get_stack_number")
@@ -329,8 +328,7 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_get_user_data")
     suspend fun getUserList(
-        @Query("terminal_id") terminal_id: String,
-        @Query("in_out") in_out: String
+        @Query("terminal_id") terminal_id: String, @Query("in_out") in_out: String
     ): Response<AllUserListPojo>
 
     @GET("emp_api/apna_emp_get_commodity")
@@ -345,16 +343,12 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_vendor_voucher_requestList")
     fun getVendorApprovalRequestConvancyList(
-        @Query("limit") str: String?,
-        @Query("page") i: Int,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: Int, @Query("search") str2: String?
     ): Call<AllVendorConvancyList?>?
 
     @GET("emp_api/apna_emp_vendor_voucher_list")
     suspend fun getVendorConvancyList(
-        @Query("limit") str: String?,
-        @Query("page") i: Int,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: Int, @Query("search") str2: String?
     ): Response<AllVendorConvancyList>
 
     @GET("emp_api/fc_offline_warehouse_details")
@@ -384,9 +378,7 @@ interface ApiService {
 
     @GET("emp_api/apna_emp_get_intentionToSell_request")
     suspend fun getintentionList(
-        @Query("limit") str: String?,
-        @Query("page") i: Int,
-        @Query("search") str2: String?
+        @Query("limit") str: String?, @Query("page") i: Int, @Query("search") str2: String?
     ): Response<AllIntantionList>
 
     @GET("emp_api/apna_emp_get_levelwiselist")
@@ -476,8 +468,7 @@ interface ApiService {
 
     @POST("emp_api/fc_submit_otp")
     fun verifyOtpFastCase(
-        @Query("spot_token") str: String?,
-        @Query("intention_otp") str2: String?
+        @Query("spot_token") str: String?, @Query("intention_otp") str2: String?
     ): Call<VerifyOtpFastcase?>?
 
     @POST("emp_api/apna_emp_qulaity_paramters")
@@ -492,15 +483,80 @@ interface ApiService {
 
     @POST("emp_api/get_pv")
     suspend fun getPv(
-        @Query("type") type: String? = "Terminal",
-        @Query("terminal_id") terminalId: Int? = null
+        @Query("type") type: String? = "Terminal", @Query("terminal_id") terminalId: Int? = null
     ): Response<PvResponseModel>
 
 
     @POST("emp_api/save_pv_data")
     suspend fun postPV(
         @Body pvUpdate: PvRequestModel,
-    )
-            : Response<BaseResponse>
+    ): Response<BaseResponse>
+
+    @POST("emp_api/store_advance")
+    suspend fun postAdvanceRequest(
+        @Query("requested_amount") requestedAmount: String, @Query("notes") notes: String
+    ): Response<BaseResponse>
+
+    @GET("emp_api/apna_emp_get_advance?limit=20")
+    suspend fun getAdvancesList(): Response<AdvancePaymentListModel>
+
+
+    /*Audit Apis
+    *
+    *
+    *
+    *
+    * made by the last developer
+    * */
+
+    @GET("emp_api/apna_get_Stack")
+    suspend fun getListOfStacks(@Query("terminal_id") terminal_id: String): Response<StacksListResponse>
+
+    @POST("emp_api/auditpv_save")
+    suspend fun postAuditPv(@Body pvUpdateModel: PvRequestModel): Response<BaseResponse>
+
+    @POST("emp_api/auditpv_video")
+    suspend fun postAuditVideo(
+        @Body file: MultipartBody
+    ): Response<BaseResponse>
+
+
+    @POST("emp_api/get_quality")
+    suspend fun getAuditQvParameters(
+        @Query("commodity_id") commodityId: String
+    ): Response<AuditQVResponse>
+
+    @POST("emp_api/save_quality")
+    suspend fun postAuditQv(
+
+        @Body commodityList: AuditQVRequest
+    ): Response<BaseResponse>
+
+    @POST("emp_api/save_cmData")
+    suspend fun postAuditCM(
+        @Query("terminal_id") terminalId: String,
+        @Query("cm_agency_id") cmAgencyId: String,
+        @Query("guard_name") guardName: String,
+        @Query("guard_phone") guardPhone: String,
+        @Query("notes") notes: String,
+        @Query("cm_name") cmName: String,
+        @Query("cm_phone") cmPhone: String
+    ): Response<BaseResponse>
+
+    @GET("emp_api/get_cmData")
+    suspend fun getCmData(): Response<CmDetailsResponse>
+
+    @POST("emp_api/save_neighbour")
+    suspend fun postAuditNeighbour(@Body neighbourRequest: AddNeighbourRequest): Response<BaseResponse>
+
+    @POST("emp_api/save_in_out")
+    suspend fun postAuditInOut(
+        @Query("lat") lat: String,
+        @Query("long") long: String,
+        @Query("terminal_id") terminalId: String,
+        @Query("type") inOutType: String,
+        @Query("notes") notes:String
+    ):Response<BaseResponse>
+
 }
 

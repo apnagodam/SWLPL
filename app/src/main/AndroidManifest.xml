@@ -25,7 +25,10 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
 
     <application
         android:name=".ApnaGodamApp"
@@ -40,6 +43,24 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
+        <activity
+            android:name=".activity.audit.InOutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.CmDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditNeighbourActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditQualityStock"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.VideoRecordingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditPvActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.AdvancesListActivity"
             android:exported="false" />

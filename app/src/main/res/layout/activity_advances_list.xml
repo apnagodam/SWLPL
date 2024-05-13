@@ -24,7 +24,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="@dimen/_4sdp"
-                android:text="Emp. Code"
+                android:text="Date "
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/_10ssp" />
 
@@ -40,7 +40,7 @@
                 android:gravity="center"
 
                 android:padding="@dimen/_4sdp"
-                android:text="Employee Name"
+                android:text="Reason"
                 android:textColor="@color/colorWhite"
                 android:textSize="@dimen/_10ssp" />
 

@@ -37,7 +37,6 @@ class pv : AppCompatActivity() {
 
     fun setUI() {
         pvAdapter = PvAdapter({
-            Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this,UpdatePv::class.java))
         }, apiService)
         setObservers()

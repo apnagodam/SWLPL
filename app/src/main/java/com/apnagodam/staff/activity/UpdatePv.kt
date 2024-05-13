@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -34,10 +35,8 @@ import java.util.TimeZone
 
 
 @AndroidEntryPoint
-class UpdatePv : AppCompatActivity() {
+class UpdatePv : BaseActivity<ActivityUpdatePvBinding>() {
     lateinit var pvRecyclerviewAdapter: UpdatePvRecyclerviewAdapter
-    lateinit var binding: ActivityUpdatePvBinding
-    var listOfLayout = arrayListOf<LinearLayout>()
     var list = arrayListOf<String>()
     var pvModelList = arrayListOf<PvRequestModel.BlockNo>()
     var layoutId = 1
@@ -49,30 +48,22 @@ class UpdatePv : AppCompatActivity() {
     lateinit var stackSearchableSpinner: SearchableSpinner
     var terminalId: Int = 0;
     var stackId: Float = 0.0f;
-    lateinit var pvUploadRequestModel: PvUploadRequestModel
-    var totalBags = 0;
-    var index = 0f
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_update_pv)
+
+    override fun setUI() {
+        showDialog(this)
+        var count = 1
+        var total = 0;
+
         pvRecyclerviewAdapter = UpdatePvRecyclerviewAdapter(list, this, lifecycleScope, this)
         searchableSpinner = SearchableSpinner(this)
         stackSearchableSpinner = SearchableSpinner(this)
-
-        setObservers()
-        Utility.showDialog(this@UpdatePv, "")
-        pvViewModel.getPvTerminal()
-
         binding.rvPv.let {
             it.layoutManager = LinearLayoutManager(this)
             it.adapter = pvRecyclerviewAdapter
             it.setItemViewCacheSize(50)
             it.setDrawingCacheEnabled(true)
         }
-
-        var count = 1
-        var total = 0;
 
         this.lifecycleScope.launch {
 
@@ -178,7 +169,9 @@ class UpdatePv : AppCompatActivity() {
     }
 
 
-    private fun setObservers() {
+    override fun setObservers() {
+        checkForPermission {
+        }
         pvViewModel.postPvResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -321,6 +314,14 @@ class UpdatePv : AppCompatActivity() {
                 }
             }
         }
+
+    }
+
+    override fun inflateLayout(layoutInflater: LayoutInflater): ActivityUpdatePvBinding =
+        ActivityUpdatePvBinding.inflate(layoutInflater)
+
+    override fun callApis() {
+        pvViewModel.getPvTerminal()
 
     }
 

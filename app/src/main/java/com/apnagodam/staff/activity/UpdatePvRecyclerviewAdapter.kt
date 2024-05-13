@@ -246,7 +246,7 @@ class UpdatePvRecyclerviewAdapter @Inject constructor(
                                                     danda.value!!,
                                                     dhang.value!!,
                                                     height.value!!,
-                                                    plusMinus = it.edMinusPlusvalue.text.toString(),
+                                                    plusMinus = "-${it.edMinusPlusvalue.text}",
                                                     total = it.edTotal.text.toString()
 
                                                 )

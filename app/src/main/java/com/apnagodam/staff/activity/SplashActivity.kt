@@ -1,7 +1,5 @@
 package com.apnagodam.staff.activity
 
-import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -9,6 +7,7 @@ import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
+import com.apnagodam.staff.Network.viewmodel.NetworkSpeedViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.LoginActivity.Companion.TAG
 import com.apnagodam.staff.databinding.ActivitySplashBinding
@@ -17,24 +16,18 @@ import com.apnagodam.staff.utils.Utility
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
-import com.google.android.play.core.appupdate.AppUpdateManager
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.install.InstallStateUpdatedListener
-import com.google.android.play.core.install.model.ActivityResult
-import com.google.android.play.core.install.model.AppUpdateType
-import com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE
-import com.google.android.play.core.install.model.InstallStatus
-import com.google.android.play.core.install.model.UpdateAvailability
+
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
-    var market_uri = "https://play.google.com/store/apps/details?id=com.apnagodam.staff&hl=en"
 
     //    private lateinit var inAppUpdate: InAppUpdate
     val homeViewModel by viewModels<HomeViewModel>()
+    val networkSpeedViewModel by viewModels<NetworkSpeedViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_splash
     }
@@ -51,46 +44,46 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }
 
     override fun setUp() {
-
-
+        getappVersion()
         nextMClass()
+//        networkSpeedViewModel.networkSpeedMonitor.observe(this) {
+//            it?.let {
+//                if (it > 5) {
+//                    Toast.makeText(this, "$it Mbps", Toast.LENGTH_LONG).show()
+//
+//                } else {
+//                    Toast.makeText(
+//                        this,
+//                        "Very Poor connection api may fail speed: $it mbps",
+//                        Toast.LENGTH_LONG
+//                    )
+//                        .show()
+//
+//                }
+//            }
+//        }
 
     }
 
-    override fun onDestroy() {
 
-        super.onDestroy()
-    }
+    private fun setObservers() {
+        homeViewModel.appVersionResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    it.data?.let {
+                        if (it.status == "2" || it.status == "3" || it.status == "0") {
+                            startActivity(Intent(this, LoginActivity::class.java))
+                        } else if (it.status == "1") {
+                            getCommodityList()
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 12345) {
-            when (resultCode) {
-                Activity.RESULT_OK -> {
-                    Log.d(TAG, "" + "Result Ok")
-                    //  handle user's approval }
-                }
-                Activity.RESULT_CANCELED -> {
-                    {
-//if you want to request the update again just call checkUpdate()
+                        }
                     }
-                    Log.d(TAG, "" + "Result Cancelled")
-                    //  handle user's rejection  }
-                }
-                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
-                    //if you want to request the update again just call checkUpdate()
-                    Log.d(TAG, "" + "Update Failure")
-                    //  handle update failure
+
                 }
             }
         }
-    }
-    override fun onResume() {
-        super.onResume()
-
-    }
-    private fun setObservers() {
-        getappVersion()
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -107,6 +100,8 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
                         if (it.status == "2" || it.status == "3" || it.status == "0") {
                             startActivity(Intent(this, LoginActivity::class.java))
                         } else if (it.status == "1") {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .setTerminals(it.terminals)
                             SharedPreferencesRepository.getDataManagerInstance()
                                 .setCommdity(it.categories)
                             SharedPreferencesRepository.getDataManagerInstance().employee =
@@ -180,27 +175,10 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }
 
     private fun nextMClass() {
-
-        permissionsBuilder(
-            Manifest.permission.CAMERA,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ).build().send() {
-            if (it.allGranted()) {
-                setObservers()
-            } else {
-                Toast.makeText(
-                    this,
-                    "Location or  Camera Permissions Denied",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-
-        }
-
+        setObservers()
+//        networkSpeedViewModel.getNetworkSpeed(this)
 
     }
-
 
 
     private fun afterpermissionNext() {
@@ -255,23 +233,7 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }*/
     private fun getappVersion() {
         homeViewModel.getAppVersion("Emp")
-        homeViewModel.appVersionResponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {}
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    it.data?.let {
-                        if (it.status == "2" || it.status == "3" || it.status == "0") {
-                            startActivity(Intent(this, LoginActivity::class.java))
-                        } else if (it.status == "1") {
-                            getCommodityList()
 
-                        }
-                    }
-
-                }
-            }
-        }
 
 
     }
@@ -286,6 +248,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     companion object {
         private const val REQUEST_CAMERA_CODE = 120
-        private const val REQUEST_UPDATE=12345
+        private const val REQUEST_UPDATE = 12345
     }
 }

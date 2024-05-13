@@ -10,7 +10,6 @@ public class BaseResponse {
     protected String message;
 
 
-
     @SerializedName("phone")
     @Expose
     protected String phone;
