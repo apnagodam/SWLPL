@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -93,7 +92,6 @@ import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
@@ -104,12 +102,6 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
 import com.thorny.photoeasy.OnPictureReady
@@ -616,7 +608,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
                         }
 
-                        else-> return@OnChildClickListener false
+                        else -> return@OnChildClickListener false
                     }
 
 
@@ -912,20 +904,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         childModelsList = ArrayList()
         childModel = MenuModel(
-            ConstantObjects.AUDIT_PV,
+            ConstantObjects.AUDIT_IN_OUT_LOCATION,
             false,
             false,
             ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.pv
+            R.drawable.location
         )
         childModelsList.add(childModel)
+
         childModel = MenuModel(
-            ConstantObjects.AUDIT_QZ,
+            ConstantObjects.AUDIT_CM,
             false,
             false,
             ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.wheat
+            R.drawable.cm
         )
+        childModelsList.add(childModel)
         childModel = MenuModel(
             ConstantObjects.AUDIT_NEIGHBOUR,
             false,
@@ -935,11 +929,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
-            ConstantObjects.AUDIT_CM,
+            ConstantObjects.AUDIT_PV,
             false,
             false,
             ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.cm
+            R.drawable.pv
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
@@ -951,13 +945,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         )
         childModelsList.add(childModel)
         childModel = MenuModel(
-            ConstantObjects.AUDIT_IN_OUT_LOCATION,
+            ConstantObjects.AUDIT_QZ,
             false,
             false,
             ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.location
+            R.drawable.wheat
         )
-        childModelsList.add(childModel)
+
         childModel = MenuModel(
             ConstantObjects.AUDIT_QZ,
             false,

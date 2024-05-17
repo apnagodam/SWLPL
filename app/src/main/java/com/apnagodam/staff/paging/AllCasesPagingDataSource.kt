@@ -5,7 +5,6 @@ import androidx.paging.PagingState
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.AllCaseIDResponse
-import javax.inject.Inject
 
 class AllCasesPagingDataSource(private val apiService: ApiService, var searchQuery: String = "") :
     PagingSource<Int, AllCaseIDResponse.Datum>() {
@@ -46,6 +45,7 @@ class AllCasesPagingDataSource(private val apiService: ApiService, var searchQue
 
 
             }
+
             val list = allCasesList.distinctBy { it.caseId }
             LoadResult.Page(
                 data = list.reversed().toList(),
