@@ -1,26 +1,22 @@
 package com.apnagodam.staff.activity.out.s_katha_parchi
 
-import android.Manifest
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.location.Geocoder
-import android.location.LocationManager
 import android.net.Uri
-import android.provider.Settings
+import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.core.widget.doOnTextChanged
-import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
+import com.apnagodam.staff.activity.BaseActivity
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
@@ -28,26 +24,19 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
-import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.allGranted
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
-import com.google.android.gms.location.LocationServices
-import com.thorny.photoeasy.OnPictureReady
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.lang.Exception
 import java.text.DecimalFormat
-import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
-class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>(),
+class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
     RadioGroup.OnCheckedChangeListener {
     var UserName: String? = null
     var CaseID: String? = ""
@@ -71,134 +60,11 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
     var kantaName = ""
     var kantaParchiNumber = ""
     var isFirstUpload = true;
-    var lat = 0.0
-    var long = 0.0
+
     val dtime = DecimalFormat("#.##")
 
     lateinit var photoEasy: PhotoEasy
-    var currentLocation = ""
-    override fun getLayoutResId(): Int {
-        return R.layout.kantha_parchi_upload
-    }
 
-    override fun setUp() {
-        binding!!.llTraupline.visibility = View.GONE
-        binding!!.etKantaOldLocation.visibility = View.GONE;
-        photoEasy = PhotoEasy.builder().setActivity(this)
-            .build()
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        binding!!.etNoOfDispleasedBags.setText("0")
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-        } else {
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                lat = it.latitude
-                long = it.longitude
-
-                val geocoder = Geocoder(this, Locale.getDefault())
-                val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null) {
-                    currentLocation =
-                        "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                            addresses.first().adminArea
-                        }"
-
-                }
-            }
-
-        }
-
-        binding!!.tvTitle.setText("Upload Second Kanta Parchi")
-        binding!!.etKantaParchiNum.isEnabled = false
-        binding!!.llOldBags.visibility = View.GONE
-        binding!!.llBags.visibility = View.VISIBLE
-        binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
-            if (binding!!.etWeightKg.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etWeightKg.text!!.isNotEmpty()) {
-                try {
-                    var bagCal = (binding!!.etWeightKg.text.toString().toDouble() / 100)
-                    binding!!.etWeight.setText(
-                        dtime.format(bagCal)
-                    )
-                } catch (e:Exception){
-                    binding!!.etWeight.setText("0")
-
-                }
-
-            }
-            else
-            {
-                binding!!.etWeight.setText("0")
-            }
-
-        }
-        binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
-
-
-            if (binding!!.etWeight.text!!.isNotEmpty() && text!=null && text!="0" &&binding!!.etNoOfBags.text!!.isNotEmpty()) {
-                try {
-                    var bagCal =
-                        (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
-                            .toDouble()
-                    binding!!.etAvgWeight.setText(
-                        dtime.format(bagCal)
-                    )
-                } catch (e: Exception){
-
-                }
-
-            } else
-            {
-            }
-        }
-
-        UserName = intent.getStringExtra("user_name")
-        CaseID = intent.getStringExtra("case_id")
-
-        isFirstUpload = intent.getStringExtra("file3")== null
-
-
-        if (isFirstUpload == true) {
-            binding!!.llKanta.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
-        } else {
-            binding!!.cardTruck2.visibility = View.GONE
-            binding!!.llKanta.visibility = View.VISIBLE
-            binding!!.llBags.visibility = View.VISIBLE
-        }
-
-
-        kantaParchiViewModel.getKantaDetails(CaseID.toString())
-        kantaParchiViewModel.dharamKantaResponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {}
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    if (it.data != null) {
-                        binding!!.tilKantaParchi.setText(it.data.data.kantaName.toString())
-                        binding!!.etKantaParchiNum.setText(it.data.data.kantaParchiNumber.toString())
-
-                        kantaParchiNumber = it.data.data.kantaParchiNumber
-                        kantaName = it.data.data.kantaName
-                        kantaId = it.data.data.kantaId
-
-                    }
-                }
-            }
-        }
-        setSupportActionBar(binding!!.toolbar)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
-        binding!!.customerName.text = UserName
-        binding!!.caseId.text = CaseID
-        clickListner()
-    }
 
     private fun clickListner() {
         binding!!.ivClose.setOnClickListener {
@@ -276,13 +142,11 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
         if (isFirstUpload) {
             if (fileTruck2 != null) {
-                showDialog()
+                showDialog(this)
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
-                        stringFromView(
-                            binding!!.notes
-                        ),
+                        binding!!.notes.text.toString(),
                         KanthaImage,
                         truckImageImage,
                         truck2Image,
@@ -300,44 +164,15 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                     "OUT"
                 )
 
-                kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            hideDialog()
-                        }
 
-                        is NetworkResult.Loading -> {
-
-                        }
-
-                        is NetworkResult.Success -> {
-                            hideDialog()
-                            if (it.data!!.status == "1") {
-                                Toast.makeText(this,it.data.message, Toast.LENGTH_SHORT)
-                                finish()
-                            } else {
-                                Utility.showAlertDialog(
-                                    this,
-                                    getString(R.string.alert),
-                                    it.data!!.getMessage()
-                                ) {
-
-                                }
-                            }
-
-                        }
-                    }
-                }
             }
         } else {
             if (validateFields()) {
-                showDialog()
+                showDialog(this)
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
-                        stringFromView(
-                            binding!!.notes
-                        ),
+                        binding!!.notes.text.toString(),
                         KanthaImage, truckImageImage, truck2Image,
                         binding!!.etNoOfBags.text.toString(),
                         binding!!.etWeight.text.toString(),
@@ -349,34 +184,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
                     "OUT"
                 )
 
-                kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            Toast.makeText(this,it.message,Toast.LENGTH_SHORT)
-                            hideDialog()
-                        }
 
-                        is NetworkResult.Loading -> {
-
-                        }
-
-                        is NetworkResult.Success -> {
-                            hideDialog()
-                            if (it.data!!.status == "1") {
-                                finish()
-                                Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT)
-                            } else {
-                                Utility.showAlertDialog(
-                                    this,
-                                    getString(R.string.alert),
-                                    it.data!!.getMessage()
-                                ) {
-
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
         }
@@ -385,35 +193,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
     }
 
 
-    override fun dispatchTakePictureIntent() {
-        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
-                if(it.allGranted()){
-                    photoEasy.startActivityForResult(this)
-                }
-                else{
-                    Toast.makeText(
-                        this,
-                        "Location or Camera Permissions Denied",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-
-
-            }
-        }
-        else{
-            Toast.makeText(
-                this,
-                "GPS Not Enabled",
-                Toast.LENGTH_SHORT
-            ).show()
-            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-
-        }
-
+    fun dispatchTakePictureIntent() {
+        checkForPermission(ImagePicker.with(this)::start)
 
     }
 
@@ -441,17 +222,148 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
     }
 
+    override fun setUI() {
+        binding!!.llTraupline.visibility = View.GONE
+        binding!!.etKantaOldLocation.visibility = View.GONE;
+        photoEasy = PhotoEasy.builder().setActivity(this)
+            .build()
+        getCurrentLocation()
+        binding!!.genderRadio.setOnCheckedChangeListener(this)
+        binding!!.gender.setOnCheckedChangeListener(
+            this
+        )
+        binding!!.tvTitle.setText("Upload Second Kanta Parchi")
+        binding!!.etKantaParchiNum.isEnabled = false
+        binding!!.llOldBags.visibility = View.GONE
+        binding!!.llBags.visibility = View.VISIBLE
+        binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
+            if (binding!!.etWeightKg.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etWeightKg.text!!.isNotEmpty()) {
+                try {
+                    var bagCal = (binding!!.etWeightKg.text.toString().toDouble() / 100)
+                    binding!!.etWeight.setText(
+                        dtime.format(bagCal)
+                    )
+                } catch (e: Exception) {
+                    binding!!.etWeight.setText("0")
+
+                }
+
+            } else {
+                binding!!.etWeight.setText("0")
+            }
+
+        }
+        binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
+
+
+            if (binding!!.etWeight.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etNoOfBags.text!!.isNotEmpty()) {
+                try {
+                    var bagCal =
+                        (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
+                            .toDouble()
+                    binding!!.etAvgWeight.setText(
+                        dtime.format(bagCal)
+                    )
+                } catch (e: Exception) {
+
+                }
+
+            } else {
+            }
+        }
+
+        UserName = intent.getStringExtra("user_name")
+        CaseID = intent.getStringExtra("case_id")
+
+        isFirstUpload = intent.getStringExtra("file3") == null
+
+
+        if (isFirstUpload == true) {
+            binding!!.llKanta.visibility = View.GONE
+            binding!!.cardTruck2.visibility = View.VISIBLE
+        } else {
+            binding!!.cardTruck2.visibility = View.GONE
+            binding!!.llKanta.visibility = View.VISIBLE
+            binding!!.llBags.visibility = View.VISIBLE
+        }
+
+
+
+        setSupportActionBar(binding!!.toolbar)
+        supportActionBar!!.setDisplayShowTitleEnabled(false)
+        binding!!.customerName.text = UserName
+        binding!!.caseId.text = CaseID
+        clickListner()
+    }
+
+    override fun setObservers() {
+        kantaParchiViewModel.dharamKantaResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        binding!!.tilKantaParchi.setText(it.data.data.kantaName.toString())
+                        binding!!.etKantaParchiNum.setText(it.data.data.kantaParchiNumber.toString())
+
+                        kantaParchiNumber = it.data.data.kantaParchiNumber
+                        kantaName = it.data.data.kantaName
+                        kantaId = it.data.data.kantaId
+
+                    }
+                }
+            }
+        }
+        kantaParchiViewModel.uploadSecondKantaParchiResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog(this)
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    hideDialog(this)
+                    if (it.data!!.status == "1") {
+                        Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT)
+                        finish()
+                    } else {
+                        Utility.showAlertDialog(
+                            this,
+                            getString(R.string.alert),
+                            it.data!!.getMessage()
+                        ) {
+
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    override fun inflateLayout(layoutInflater: LayoutInflater): KanthaParchiUploadBinding =
+        KanthaParchiUploadBinding.inflate(layoutInflater)
+
+    override fun callApis() {
+        kantaParchiViewModel.getKantaDetails(CaseID.toString())
+
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
-            override fun onFinish(thumbnail: Bitmap?) {
+        if (requestCode == 2404) {
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+            val uri: Uri = data?.data!!
 
-                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-
-                var stampMap = mapOf(
-                    "current_location" to "$currentLocation",
-                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
-                )
+            val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+            var stampMap = mapOf(
+                "current_location" to "$currentLocation",
+                "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+            )
+            try {
                 if (thumbnail != null) {
                     if (firstKanthaFile) {
 
@@ -499,9 +411,17 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
 
                     }
                 }
+            } catch (e: Exception) {
+                showToast(this, "Please select an image")
             }
-
-        })
+        }
+//        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+//            override fun onFinish(thumbnail: Bitmap?) {
+//
+//
+//            }
+//
+//        })
 
     }
 
@@ -515,12 +435,12 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?
             return false
         }
         if (fileTruck == null) {
-            Toast.makeText(this,"Please upload truck file",Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Please upload truck file", Toast.LENGTH_SHORT)
 
             return false
         }
         if (fileKantha == null) {
-            Toast.makeText(this,"please upload kanta file",Toast.LENGTH_SHORT)
+            Toast.makeText(this, "please upload kanta file", Toast.LENGTH_SHORT)
 
             return false
         }

@@ -13,7 +13,8 @@ android {
         release {
             keyAlias 'apnagodamemp'
             keyPassword 'apnagodamemp'
-            storeFile file('/Users/anantmann/StudioProjects/SWLPL/app/swlpl_key')
+           // storeFile file('/Users/anantmann/StudioProjects/SWLPL/app/swlpl_key')
+            storeFile file('/Users/apnagodamdeveloper/Downloads/SWLPL-master/app/swlpl_key')
             storePassword 'apnagodamemp'
         }
     }
