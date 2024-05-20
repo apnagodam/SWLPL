@@ -1,8 +1,6 @@
 package com.apnagodam.staff.activity.`in`.first_kantaparchi
 
 import android.Manifest
-import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -12,16 +10,12 @@ import android.location.Geocoder
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
@@ -32,7 +26,6 @@ import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
-import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
@@ -43,9 +36,6 @@ import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -141,7 +131,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
             when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
                 }
 
                 is NetworkResult.Loading -> {}
@@ -153,7 +143,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                             it.data!!.getMessage()
                         ) { }
                     } else {
-                        Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
 
                         finish()
                     }
@@ -162,42 +152,49 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                 }
             }
         }
-       try {
+        try {
 
-           if (ActivityCompat.checkSelfPermission(
-                   this,
-                   Manifest.permission.ACCESS_FINE_LOCATION
-               ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                   this,
-                   Manifest.permission.ACCESS_COARSE_LOCATION
-               ) != PackageManager.PERMISSION_GRANTED
-           ) {
-               Toast.makeText(this@UploadFirstkantaParchiClass,"Location not enabled",Toast.LENGTH_SHORT).show()
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(
+                    this@UploadFirstkantaParchiClass,
+                    "Location not enabled",
+                    Toast.LENGTH_SHORT
+                ).show()
 
-           } else {
-               fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                   it?.let {
-                       lat = it.latitude
-                       long = it.longitude
+            } else {
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                    it?.let {
+                        lat = it.latitude
+                        long = it.longitude
 
-                       val geocoder = Geocoder(this, Locale.getDefault())
-                       val addresses = geocoder.getFromLocation(lat, long, 1)
-                       if (addresses != null) {
-                           currentLocation =
-                               "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                                   addresses.first().adminArea
-                               }"
+                        val geocoder = Geocoder(this, Locale.getDefault())
+                        val addresses = geocoder.getFromLocation(lat, long, 1)
+                        if (addresses != null) {
+                            currentLocation =
+                                "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                    addresses.first().adminArea
+                                }"
 
-                       }
-                   }
+                        }
+                    }
 
 
-               }
-           }
-       }
-       catch (e:Exception){
-           Toast.makeText(this@UploadFirstkantaParchiClass,"Location not enabled",Toast.LENGTH_SHORT).show()
-       }
+                }
+            }
+        } catch (e: Exception) {
+            Toast.makeText(
+                this@UploadFirstkantaParchiClass,
+                "Location not enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         binding!!.tvTitle.setText("Upload First Kanta Parchi")
         UserName = intent?.getStringExtra("user_name")
@@ -253,7 +250,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
 
     private fun getKantaList(search: String) {
         kantaParchiViewModel.getKantaParchiListing("10", "0", "IN", search)
-
 
 
     }
@@ -421,18 +417,17 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                         binding!!.etKantaOldParchiNum.text.toString(),
                         "0",
                         binding!!.etOldNoOfBags.text.toString(),
-                        "", "", "", "", "",binding!!.etKantaOldLocation.text.toString()
+                        "", "", "", "", "", binding!!.etKantaOldLocation.text.toString()
 
                     ), "IN"
                 )
 
-            }
-            else {
-                Toast.makeText(this,"Please select truck image!",Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
             }
         } else {
             if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
-                Toast.makeText(this,"Please select kanta name",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please select kanta name", Toast.LENGTH_SHORT).show();
 
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
                 binding!!.etKantaParchiNum.setError("This field can't be empty")
@@ -461,7 +456,8 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
                         binding!!.etKantaOldName.text.toString(),
                         binding!!.etKantaOldNetWeight.text.toString(),
                         binding!!.etKantaOldTare.text.toString(),
-                        binding!!.etKantaOldGrossWeight.text.toString(),binding!!.etKantaOldLocation.text.toString()
+                        binding!!.etKantaOldGrossWeight.text.toString(),
+                        binding!!.etKantaOldLocation.text.toString()
                     ),
                     "IN"
                 )
@@ -568,45 +564,48 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
     }
 
 
-     override fun dispatchTakePictureIntent() {
-         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    override fun dispatchTakePictureIntent() {
+        val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-         if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-             permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
-                 if(it.allGranted()){
-                     photoEasy.startActivityForResult(this)
-                 }
-                 else{
-                     Toast.makeText(
-                         this,
-                         "Location or Camera Permissions Denied",
-                         Toast.LENGTH_SHORT
-                     ).show()
-                 }
-
-
-             }
-         }
-         else{
-             Toast.makeText(
-                 this,
-                 "GPS Not Enabled",
-                 Toast.LENGTH_SHORT
-             ).show()
-             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-
-         }
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            permissionsBuilder(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).build().send() {
+                if (it.allGranted()) {
+                    photoEasy.startActivityForResult(this)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Location or Camera Permissions Denied",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
 
+            }
+        } else {
+            Toast.makeText(
+                this,
+                "GPS Not Enabled",
+                Toast.LENGTH_SHORT
+            ).show()
+            startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
+        }
 
-     }
-
-    fun takePicture(){
-        photoEasy.startActivityForResult(this)
 
     }
 
+    fun takePicture() {
+        photoEasy.startActivityForResult(this)
+
+    }
+    companion object {
+        const val TAKE_PICTURE = 1
+        const val SELECT_PICTURE = 2
+    }
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
         val wrapper = ContextWrapper(applicationContext)
@@ -628,5 +627,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>() {
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath)
     }
+
 
 }

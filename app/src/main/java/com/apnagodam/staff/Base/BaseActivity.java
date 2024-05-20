@@ -816,5 +816,4 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 //        String value = savedInstanceState.getString("param");
 //        camUri = Uri.parse(value);
 //    }
-
 }

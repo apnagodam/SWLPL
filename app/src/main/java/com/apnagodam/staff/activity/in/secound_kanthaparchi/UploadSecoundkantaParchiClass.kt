@@ -28,7 +28,6 @@ import com.apnagodam.staff.utils.ImageHelper
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
-import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.allGranted
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
@@ -66,7 +65,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     var InTrackID = 0
     val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
     var InBardhanaType: String? = "null"
-    var InBardhanaID = 1
+    var InBardhanaID = 0
     var kantaId = 0;
     var kantaName = ""
     var kantaParchiNumber = ""
@@ -84,7 +83,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
     override fun setUp() {
         binding!!.tilOldWeightQt.visibility = View.VISIBLE
-        binding!!.etKantaOldLocation.visibility= View.GONE
+        binding!!.etKantaOldLocation.visibility = View.GONE
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -97,23 +96,23 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Toast.makeText(this,"Location not enabled",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Location not enabled", Toast.LENGTH_SHORT).show()
         } else {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-               it?.let {
-                   lat = it.latitude
-                   long = it.longitude
+                it?.let {
+                    lat = it.latitude
+                    long = it.longitude
 
-                   val geocoder = Geocoder(this, Locale.getDefault())
-                   val addresses = geocoder.getFromLocation(lat, long, 1)
-                   if (addresses != null) {
-                       currentLocation =
-                           "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                               addresses.first().adminArea
-                           }"
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(lat, long, 1)
+                    if (addresses != null) {
+                        currentLocation =
+                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                addresses.first().adminArea
+                            }"
 
-                   }
-               }
+                    }
+                }
             }
 
         }
@@ -211,7 +210,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 is NetworkResult.Success -> {
                     if (it.data!!.status == "1") {
                         finish()
-                        Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
                     } else {
                         Utility.showAlertDialog(
                             this@UploadSecoundkantaParchiClass,
@@ -333,9 +332,8 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
                 )
 
 
-            }
-            else {
-                Toast.makeText(this,"Please select Kanta/Warehouse Image",Toast.LENGTH_SHORT)
+            } else {
+                Toast.makeText(this, "Please select Kanta/Warehouse Image", Toast.LENGTH_SHORT)
             }
         } else {
             if (validateFields()) {
@@ -367,12 +365,15 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
     override fun dispatchTakePictureIntent() {
         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
-                if(it.allGranted()){
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            permissionsBuilder(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).build().send() {
+                if (it.allGranted()) {
                     photoEasy.startActivityForResult(this)
-                }
-                else{
+                } else {
                     Toast.makeText(
                         this,
                         "Location or Camera Permissions Denied",
@@ -382,8 +383,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
 
 
             }
-        }
-        else{
+        } else {
             Toast.makeText(
                 this,
                 "GPS Not Enabled",
@@ -392,8 +392,6 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
-
-
 
 
     }
@@ -492,11 +490,11 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding?>()
             return false
         }
         if (fileKantha == null) {
-            Toast.makeText(this,"Please upload kanta file",Toast.LENGTH_SHORT);
+            Toast.makeText(this, "Please upload kanta file", Toast.LENGTH_SHORT);
             return false
         }
         if (fileTruck == null) {
-            Toast.makeText(this,"Please upload truck file",Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Please upload truck file", Toast.LENGTH_SHORT)
             return false
         }
 

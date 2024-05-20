@@ -3,22 +3,16 @@ package com.apnagodam.staff.activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.PvRequestModel
-import com.apnagodam.staff.Network.PvUploadRequestModel
 import com.apnagodam.staff.Network.Response.PvResponseModel
 import com.apnagodam.staff.Network.viewmodel.PvViewModel
-import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUpdatePvBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.EventBus
@@ -101,14 +95,20 @@ class UpdatePv : BaseActivity<ActivityUpdatePvBinding>() {
                 } else {
 
                     binding.btAdd.setOnClickListener {
+                        Utility.showDecisionDialog(
+                            this@UpdatePv,
+                            "Are you sure?",
+                            "Are you sure you want to submit",
+                            {
 
-                        pvViewModel.postPvData(
-                            PvRequestModel(
-                                terminal_id = terminalId.toString(),
-                                stack_no = stackId,
-                                block_no = list2
-                            )
-                        )
+                                pvViewModel.postPvData(
+                                    PvRequestModel(
+                                        terminal_id = terminalId.toString(),
+                                        stack_no = stackId,
+                                        block_no = list2
+                                    )
+                                )
+                            })
 
 
                     }
