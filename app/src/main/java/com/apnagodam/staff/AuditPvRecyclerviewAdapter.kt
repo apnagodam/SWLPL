@@ -71,7 +71,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
         ) {
             layoutPvRvBinding.let {
                 val intent = Intent("custom-message")
-
+                it.edDhang.requestFocus()
                 it.dhangLabel.text = "Block ${position + 1}"
                 it.dhangLabel.paint?.isUnderlineText = true
                 var danda = MutableLiveData<String>()
@@ -128,7 +128,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
                 it.edMinusPlusvalue.doOnTextChanged { text, start, before, count ->
 
                     scope.launch {
-                        delay(100).let {
+                        delay(500).let {
 
                         }
                         if (!it.edDanda.text.isNullOrEmpty() && !it.edDhang.text.toString()
@@ -268,7 +268,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
                 }
                 it.edTotalBlocks.doOnTextChanged { text, start, before, count ->
                     scope.launch {
-                        delay(100).let { _ ->
+                        delay(500).let { _ ->
                             if (text.isNullOrEmpty() || text.toString().toInt() == 0) {
                                 it.edTotalBlocks.setError("This cant be zero or empty")
                             } else {
@@ -352,7 +352,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
                 it.edDanda.doOnTextChanged { text, start, before, count ->
 
                     scope.launch {
-                        delay(100).let { _ ->
+                        delay(500).let { _ ->
                             if (text.isNullOrEmpty() || text.toString().toInt() == 0) {
                                 it.edDanda.setError("This cant be zero or empty")
                             } else {
@@ -436,7 +436,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
                 }
                 it.edDhang.doOnTextChanged { text, start, before, count ->
                     scope.launch {
-                        delay(100).let { _ ->
+                        delay(500).let { _ ->
                             if (text.isNullOrEmpty() || text.toString().toInt() == 0) {
                                 it.edDhang.setError("This cant be zero or empty")
                             } else {
@@ -519,7 +519,7 @@ class AuditPvRecyclerviewAdapter @Inject constructor(
                 it.edHeight.doOnTextChanged { text, start, before, count ->
 
                     scope.launch {
-                        delay(100).let { _ ->
+                        delay(500).let { _ ->
                             if (text.isNullOrEmpty() || text.toString().toInt() == 0) {
                                 it.edDhang.setError("This cant be zero or empty")
                             } else {

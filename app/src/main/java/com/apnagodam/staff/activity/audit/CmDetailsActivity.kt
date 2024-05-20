@@ -1,14 +1,10 @@
 package com.apnagodam.staff.activity.audit
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import androidx.activity.viewModels
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Response.CmDetailsResponse
 import com.apnagodam.staff.Network.viewmodel.AuditViewModel
-import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.BaseActivity
 import com.apnagodam.staff.databinding.ActivityCmDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -42,19 +38,7 @@ class CmDetailsActivity : BaseActivity<ActivityCmDetailsBinding>() {
             if (cmId.isEmpty()) {
                 showToast(this, "Please Select CM Agency")
             } else {
-                if (binding.tilCmMobile.editText?.text?.length != 10) {
-                    binding.tilCmMobile.editText?.setError("Invalid mobile number")
-                } else if (binding.tilCmName.editText?.text.isNullOrEmpty()) {
-                    binding.tilCmName.editText?.setError("This field cannot be empty")
-                }
-                if (binding.tilGuardMobile.editText?.text?.length != 10) {
-                    binding.tilGuardMobile.editText?.setError("Invalid mobile number")
-                } else if (binding.tilGuardName.editText?.text.isNullOrEmpty()) {
-                    binding.tilGuardName.editText?.setError("This field cannot be empty")
-                }
-
-                else {
-
+                if (binding.tilCmMobile.editText?.text?.length == 10 && !binding.tilCmName.editText?.text.isNullOrEmpty() && binding.tilGuardMobile.editText?.text?.length == 10 && !binding.tilGuardName.editText?.text.isNullOrEmpty()) {
                     auditViewModel.postAuditCM(
                         terminalId.toString(),
                         cmId,
@@ -64,7 +48,11 @@ class CmDetailsActivity : BaseActivity<ActivityCmDetailsBinding>() {
                         binding.tilCmName.editText?.text.toString(),
                         binding.tilCmMobile.editText?.text.toString()
                     )
+
+                } else {
+                    showToast(this, "Please input valid data")
                 }
+
 
             }
 
