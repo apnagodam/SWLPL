@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.`in`.first_kantaparchi
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -410,7 +411,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
 
         try {
-            if (requestCode == 2404) {
+            if (requestCode == Activity.RESULT_OK || requestCode==2404) {
                 val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
                 val uri: Uri = data?.data!!
 

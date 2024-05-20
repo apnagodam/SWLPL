@@ -44,6 +44,8 @@ android {
         versionCode 39
         versionName "1.0.39"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        archivesBaseName = "$applicationId-v$versionCode($versionName)"
+
     }
 
     buildTypes {

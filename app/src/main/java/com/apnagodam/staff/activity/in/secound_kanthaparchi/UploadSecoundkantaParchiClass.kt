@@ -1,5 +1,6 @@
 package com.apnagodam.staff.activity.`in`.secound_kanthaparchi
 
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -367,7 +368,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
       try {
-          if (requestCode == 2404) {
+          if (requestCode == Activity.RESULT_OK || requestCode==2404) {
 
               val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
               val uri: Uri = data?.data!!
