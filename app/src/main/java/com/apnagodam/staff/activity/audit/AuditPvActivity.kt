@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.AuditPvRecyclerviewAdapter
@@ -24,6 +26,7 @@ import com.apnagodam.staff.module.CommudityResponse
 import com.apnagodam.staff.utils.EventBus
 import com.apnagodam.staff.utils.RecyclerviewCallBack
 import com.apnagodam.staff.utils.Utility
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.leo.searchablespinner.SearchableSpinner
 import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -222,8 +225,10 @@ class AuditPvActivity : BaseActivity<ActivityAuditPvBinding>(), RecyclerviewCall
                                     binding.tvStacks.text = selectedString
                                     binding.btAddPV.visibility = View.VISIBLE
                                     binding.btAddPV.setOnClickListener {
+
                                         list.add("hello")
                                         pvRecyclerviewAdapter.notifyItemInserted(list.size - 1)
+
                                     }
 
                                 }
@@ -314,7 +319,7 @@ class AuditPvActivity : BaseActivity<ActivityAuditPvBinding>(), RecyclerviewCall
     override fun removeItem(position: Int) {
 //        showToast(this, position.toString())
         list.removeAt(position)
-        pvRecyclerviewAdapter.notifyDataSetChanged()
+        pvRecyclerviewAdapter.notifyItemRemoved(position)
     }
 
     override fun getDhang(dhang: String) {

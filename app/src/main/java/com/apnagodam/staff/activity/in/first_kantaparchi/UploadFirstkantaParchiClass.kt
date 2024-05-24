@@ -38,33 +38,33 @@ import java.util.UUID
 @AndroidEntryPoint
 class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
     // role of image
-    var UserName: String? = null
-    var CaseID: String? = ""
-    var fileKantha: File? = null
-    var fileKantaOld: File? = null
-    var fileTruck: File? = null
-    var fileTruck2: File? = null
-    var oldKantaParchiFile: File? = null
-    var firstKanthaFile = false
-    var firstOldKantaFile = false;
+    private var UserName: String? = null
+    private var CaseID: String? = ""
+    private var fileKantha: File? = null
+    private var fileKantaOld: File? = null
+    private var fileTruck: File? = null
+    private var fileTruck2: File? = null
+    private var oldKantaParchiFile: File? = null
+    private var firstKanthaFile = false
+    private var firstOldKantaFile = false;
 
-    var isOldKantaParchiFile = false;
-    var truckImage = false
-    var truckImage2 = false;
+    private var isOldKantaParchiFile = false;
+    private var truckImage = false
+    private var truckImage2 = false;
     private var firstkantaParchiFile: String? = null
     private var firstOldKantaParchiFile: String? = null
     private var TruckImage: String? = null
     private var TruckImage2: String? = null
     private var oldKantaImage: String? = null
-    lateinit var searchableSpinner: SearchableSpinner
-    var options: Options? = null
-    val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
-    lateinit var allCases: FirstkanthaParchiListResponse.Datum
-    lateinit var dharamKantas: ArrayList<FirstkanthaParchiListResponse.DharemKanta>
-    var listOfKantaNames = arrayListOf<String>()
-    var kantaId = 0
-    var kantaName = "";
-    var isFirstUpload = true;
+    private lateinit var searchableSpinner: SearchableSpinner
+    private var options: Options? = null
+    private val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
+    private lateinit var allCases: FirstkanthaParchiListResponse.Datum
+    private lateinit var dharamKantas: ArrayList<FirstkanthaParchiListResponse.DharemKanta>
+    private var listOfKantaNames = arrayListOf<String>()
+    private var kantaId = 0
+    private var kantaName = "";
+    private var isFirstUpload = true;
 
     override fun setUI() {
         photoEasy = PhotoEasy.builder().setActivity(this).build()
@@ -222,8 +222,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             firstKanthaFile = true
             truckImage = false
             truckImage2 = false
-            checkForPermission { ImagePicker.with(this@UploadFirstkantaParchiClass).start(); }
-
+            checkForPermission {
+                ImagePicker.with(this@UploadFirstkantaParchiClass).cameraOnly().start();
+            }
             //  onImageSelected()
             // callImageSelector(REQUEST_CAMERA);
         }
@@ -233,7 +234,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             firstKanthaFile = false
             truckImage = false
             truckImage2 = false
-            checkForPermission { ImagePicker.with(this@UploadFirstkantaParchiClass).start(); }
+            checkForPermission {
+                ImagePicker.with(this@UploadFirstkantaParchiClass).cameraOnly().start();
+            }
 
         }
         binding!!.uploadTruck.setOnClickListener {
@@ -242,7 +245,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             firstKanthaFile = false
             truckImage = true
             truckImage2 = false
-            checkForPermission { ImagePicker.with(this@UploadFirstkantaParchiClass).start(); }
+            checkForPermission {
+                ImagePicker.with(this@UploadFirstkantaParchiClass).cameraOnly().start();
+            }
             // onImageSelected()
             //   callImageSelector(REQUEST_CAMERA);
         }
@@ -253,6 +258,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             truckImage = false
             truckImage2 = true
             checkForPermission { ImagePicker.with(this@UploadFirstkantaParchiClass).start(); }
+
         }
         binding!!.uploadOldKanta.setOnClickListener {
             isOldKantaParchiFile = true
@@ -260,7 +266,9 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             firstOldKantaFile = false
             truckImage = false
             truckImage2 = false
-            checkForPermission { ImagePicker.with(this@UploadFirstkantaParchiClass).start(); }
+            checkForPermission {
+                ImagePicker.with(this@UploadFirstkantaParchiClass).cameraOnly().start();
+            }
         }
         binding!!.oldKantaImage.setOnClickListener {
             PhotoFullPopupWindow(
@@ -411,7 +419,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
         super.onActivityResult(requestCode, resultCode, data)
 
         try {
-            if (requestCode == Activity.RESULT_OK || requestCode==2404) {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
                 val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
                 val uri: Uri = data?.data!!
 

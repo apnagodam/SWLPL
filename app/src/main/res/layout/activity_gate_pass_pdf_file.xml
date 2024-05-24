@@ -82,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="ApnaGodam"
-                    android:textColor="@color/black"
+                    android:textColor="#000000"
                     android:textSize="@dimen/_14ssp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="A unit of Singodwala Warehousing And Logistics Pvt. Ltd."
-                    android:textColor="@color/black"
+                    android:textColor="#000000"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -106,9 +106,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="CIN No. U63030RJ2016PTC055509  * Email : connect@apnagodam.com * www.apnagodam.com"
-                    android:textColor="@color/black"
+                    android:textColor="#000000"
                     android:textSize="@dimen/_7ssp"
-                    android:textStyle="normal"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/case_id" />
@@ -120,9 +120,9 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="Mob : 7733901154"
-                    android:textColor="@color/black"
+                    android:textColor="#000000"
                     android:textSize="@dimen/_10ssp"
-                    android:textStyle="normal"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/case_id" />
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:background="@color/view_color"
+                    android:background="#000000"
                     android:gravity="center"
                     android:padding="@dimen/_3sdp"
                     android:text="Gate Pass"
@@ -162,7 +162,7 @@
                         android:layout_weight="0.5"
                         android:gravity="left"
                         android:text="No-6854"
-                        android:textColor="@color/colorBlackLight"
+                        android:textColor="#000000"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
 
@@ -174,8 +174,9 @@
                         android:layout_gravity="right"
                         android:layout_weight="0.5"
                         android:gravity="right"
+                        android:textStyle="bold"
                         android:text="Date : 2021-01-16 10:39:34"
-                        android:textColor="@color/colorBlackLight"
+                        android:textColor="#000000"
                         android:textSize="@dimen/_8ssp" />
                 </LinearLayout>
 
@@ -486,6 +487,7 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -537,19 +539,19 @@
                 <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/llQuality"
                     style="@style/TextStyleBold"
-                    android:orientation="horizontal"
-                    app:flexWrap="wrap"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="horizontal"
                     android:textColor="@color/colorBlackLight"
-                    ></com.google.android.flexbox.FlexboxLayout>
+                    app:flexWrap="wrap"></com.google.android.flexbox.FlexboxLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/_4sdp"
-                    android:visibility="gone"
                     android:orientation="horizontal"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">
 
@@ -573,185 +575,187 @@
                 </LinearLayout>
 
 
-               <LinearLayout
-                   android:id="@+id/llTraupline"
-                   android:orientation="vertical"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content">
-                   <View
-                       android:layout_width="match_parent"
-                       android:layout_height="@dimen/_1sdp"
-                       android:layout_marginTop="@dimen/_10sdp"
-                       android:background="@color/grey" />
+                <LinearLayout
+                    android:id="@+id/llTraupline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_8sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:background="@color/grey" />
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ? "
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/facility_truck"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text=" No"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ? "
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_4sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                        <TextView
+                            android:id="@+id/facility_truck"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" No"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="2. क्या Inward में, कुछ बोरिया भीगी हुई थी ?"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/facility_bardhna"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text=" No"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2. क्या Inward में, कुछ बोरिया भीगी हुई थी ?"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_4sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                        <TextView
+                            android:id="@+id/facility_bardhna"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" No"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="3. पुराना कांटा पची न. :"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/old_katha_parchi_no"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="00"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3. पुराना कांटा पची न. :"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_4sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                        <TextView
+                            android:id="@+id/old_katha_parchi_no"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="4. पुराना कांटा पची कु ल वजन :"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/old_katha_parchi_total_weight"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text=" 00"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4. पुराना कांटा पची कु ल वजन :"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_4sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                        <TextView
+                            android:id="@+id/old_katha_parchi_total_weight"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" 00"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="5. पुराना कांटा पची औसत वजन : "
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/old_katha_parchi_avg_weight"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text=" 00"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="5. पुराना कांटा पची औसत वजन : "
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
 
-                   <LinearLayout
-                       android:layout_width="match_parent"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:layout_marginTop="@dimen/_4sdp"
-                       android:orientation="horizontal"
-                       app:layout_constraintEnd_toEndOf="parent"
-                       app:layout_constraintStart_toStartOf="parent">
+                        <TextView
+                            android:id="@+id/old_katha_parchi_avg_weight"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=" 00"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
 
-                       <TextView
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="6. कांटे का नाम :"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp"
-                           android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent">
 
-                       <TextView
-                           android:id="@+id/katha_name"
-                           style="@style/TextStyleBold"
-                           android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:text="N/A"
-                           android:textColor="@color/colorBlackLight"
-                           android:textSize="@dimen/_8ssp" />
-                   </LinearLayout>
-               </LinearLayout>
+                        <TextView
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6. कांटे का नाम :"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/katha_name"
+                            style="@style/TextStyleBold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="N/A"
+                            android:textColor="@color/colorBlackLight"
+                            android:textSize="@dimen/_8ssp" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_1sdp"
@@ -778,17 +782,19 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/driver_name"
                         style="@style/TextStyleBold"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:visibility="gone"
                         android:text="चालक का नाम: Siku Kumar"
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/whs_mobile"
                         style="@style/TextStyleBold"
@@ -796,10 +802,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="start"
-                        android:visibility="visible"
                         android:text="वरिष्ठ अधिकारी का मोबाइल न.: 9779529667"
                         android:textColor="@color/colorBlackLight"
-                        android:textSize="@dimen/_8ssp" />
+                        android:textSize="@dimen/_8ssp"
+                        android:visibility="visible" />
 
                 </LinearLayout>
 
@@ -822,6 +828,7 @@
                         android:textColor="@color/colorBlackLight"
                         android:textSize="@dimen/_8ssp"
                         android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/whs_name"
                         style="@style/TextStyleBold"

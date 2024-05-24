@@ -202,7 +202,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
             firstKanthaFile = true
             truckImage = false
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
 
             //  onImageSelected()
             // callImageSelector(REQUEST_CAMERA);
@@ -213,7 +213,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
             firstKanthaFile = false
             truckImage = false
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
 
         }
         binding!!.uploadTruck.setOnClickListener {
@@ -221,7 +221,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
             firstKanthaFile = false
             truckImage = true
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
             // onImageSelected()
             //   callImageSelector(REQUEST_CAMERA);
         }
@@ -230,7 +230,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
             firstOldKantaFile = false
             truckImage = false
             truckImage2 = true
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
         }
         binding!!.KanthaImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -362,7 +362,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
         super.onActivityResult(requestCode, resultCode, data)
 
         try {
-            if (requestCode == Activity.RESULT_OK || requestCode==2404) {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
                 val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
                 val uri: Uri = data?.data!!
 
@@ -447,8 +447,13 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
     }
 
 
-    fun dispatchTakePictureIntent() {
-        checkForPermission(ImagePicker.with(this)::start)
+    fun dispatchTakePictureIntent(isKantaParchi: Boolean) {
+        if (isKantaParchi) {
+            checkForPermission(ImagePicker.with(this)::start)
+
+        } else {
+            checkForPermission(ImagePicker.with(this).cameraOnly()::start)
+        }
 
 
     }

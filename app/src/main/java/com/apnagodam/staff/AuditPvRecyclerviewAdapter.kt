@@ -2,7 +2,6 @@ package com.apnagodam.staff
 
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,13 +15,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.apnagodam.staff.Network.PvRequestModel
 import com.apnagodam.staff.Network.PvUpdateModel
-import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.audit.AuditPvActivity
 import com.apnagodam.staff.databinding.LayoutAuditPvRvBinding
-import com.apnagodam.staff.databinding.LayoutPvRvBinding
 import com.apnagodam.staff.utils.EventBus
 import com.apnagodam.staff.utils.RecyclerviewCallBack
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject

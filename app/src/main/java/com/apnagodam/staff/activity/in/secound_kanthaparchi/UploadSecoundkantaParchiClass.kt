@@ -224,21 +224,21 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
             truckImage2 = false
 
 
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
             // callImageSelector(REQUEST_CAMERA);
         }
         binding!!.uploadTruck.setOnClickListener {
             firstKanthaFile = false
             truckImage = true
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(true)
             //    callImageSelector(REQUEST_CAMERA);
         }
         binding!!.uploadTruck2.setOnClickListener {
             firstKanthaFile = false
             truckImage = false
             truckImage2 = true
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
         }
         binding!!.KanthaImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
@@ -337,8 +337,13 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
 
     }
 
-    fun dispatchTakePictureIntent() {
-        checkForPermission { ImagePicker.with(this).start(); }
+    fun dispatchTakePictureIntent(isKantaParchi: Boolean) {
+        if (isKantaParchi) {
+            checkForPermission { ImagePicker.with(this).start(); }
+
+        } else {
+            checkForPermission { ImagePicker.with(this).cameraOnly().start(); }
+        }
 
 
     }
@@ -367,68 +372,64 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-      try {
-          if (requestCode == Activity.RESULT_OK || requestCode==2404) {
+        try {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                val uri: Uri = data?.data!!
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id,
+                    "emp_name" to userDetails.fname
+                )
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+                if (thumbnail != null) {
+                    if (firstKanthaFile) {
 
-              val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-              val uri: Uri = data?.data!!
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
+                        firstKanthaFile = false
+                        truckImage = false
+                        truckImage2 = false
+                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        val uri = Uri.fromFile(fileKantha)
+                        firstkantaParchiFile = uri.toString()
+                        binding!!.KanthaImage.setImageURI(uri)
 
-              var stampMap = mapOf(
-                  "current_location" to "$currentLocation",
-                  "emp_code" to userDetails.emp_id,
-                  "emp_name" to userDetails.fname
-              )
-              val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
-              if (thumbnail != null) {
-                  if (firstKanthaFile) {
+                    } else if (truckImage) {
 
-                      var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                          File(compressImage(bitmapToFile(thumbnail!!).path)),
-                          stampMap
-                      )
-                      firstKanthaFile = false
-                      truckImage = false
-                      truckImage2 = false
-                      fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                      val uri = Uri.fromFile(fileKantha)
-                      firstkantaParchiFile = uri.toString()
-                      binding!!.KanthaImage.setImageURI(uri)
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
 
-                  } else if (truckImage) {
+                        firstKanthaFile = false
+                        truckImage = false
+                        truckImage2 = false
+                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        val uri = Uri.fromFile(fileTruck)
+                        TruckImage = uri.toString()
+                        binding!!.TruckImage.setImageURI(uri)
+                    } else if (truckImage2) {
 
-                      var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                          File(compressImage(bitmapToFile(thumbnail!!).path)),
-                          stampMap
-                      )
-
-                      firstKanthaFile = false
-                      truckImage = false
-                      truckImage2 = false
-                      fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                      val uri = Uri.fromFile(fileTruck)
-                      TruckImage = uri.toString()
-                      binding!!.TruckImage.setImageURI(uri)
-                  } else if (truckImage2) {
-
-                      var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                          File(compressImage(bitmapToFile(thumbnail!!).path)),
-                          stampMap
-                      )
-                      firstKanthaFile = false
-                      truckImage = false
-                      truckImage2 = false
-                      fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                      val uri = Uri.fromFile(fileTruck2)
-                      TruckImage2 = uri.toString()
-                      binding!!.truckImage2.setImageURI(uri)
-                  }
-              }
-          }
-      }
-      catch (e:Exception){
-          showToast(this,"Please Select an image")
-      }
-
+                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                            File(compressImage(bitmapToFile(thumbnail!!).path)),
+                            stampMap
+                        )
+                        firstKanthaFile = false
+                        truckImage = false
+                        truckImage2 = false
+                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        val uri = Uri.fromFile(fileTruck2)
+                        TruckImage2 = uri.toString()
+                        binding!!.truckImage2.setImageURI(uri)
+                    }
+                }
+            }
+        } catch (e: NullPointerException) {
+            showToast(this, "Please Select an image")
+        }
 
 
     }

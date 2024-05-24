@@ -39,64 +39,64 @@ import java.util.UUID
 @AndroidEntryPoint
 class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
     RadioGroup.OnCheckedChangeListener {
-    var UserName: String? = null
-    var CaseID: String? = ""
-    var fileKantha: File? = null
-    var fileTruck: File? = null
-    var fileTruck2: File? = null
-    var firstKanthaFile = false
-    var truckImage = false
-    var truckImage2 = false;
+   private var UserName: String? = null
+    private   var CaseID: String? = ""
+    private  var fileKantha: File? = null
+    private  var fileTruck: File? = null
+    private  var fileTruck2: File? = null
+    private  var firstKanthaFile = false
+    private  var truckImage = false
+    private   var truckImage2 = false;
     private var firstkantaParchiFile: String? = null
     private var TruckImage: String? = null
     private var TruckImage2: String? = null
-    var options: Options? = null
-    lateinit var allCases: SecoundkanthaParchiListResponse.Datum
-    var InTrackType: String? = "null"
-    var InTrackID = 0
-    val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
-    var InBardhanaType: String? = "null"
-    var InBardhanaID = 1
-    var kantaId = 0;
-    var kantaName = ""
-    var kantaParchiNumber = ""
-    var isFirstUpload = true;
+    private   var options: Options? = null
+    private  lateinit var allCases: SecoundkanthaParchiListResponse.Datum
+    private  var InTrackType: String? = "null"
+    private   var InTrackID = 0
+    private   val kantaParchiViewModel by viewModels<KantaParchiViewModel>()
+    private  var InBardhanaType: String? = "null"
+    private  var InBardhanaID = 1
+    private var kantaId = 0;
+    private var kantaName = ""
+    private  var kantaParchiNumber = ""
+    private  var isFirstUpload = true;
 
-    val dtime = DecimalFormat("#.##")
+    private val dtime = DecimalFormat("#.##")
 
-    lateinit var photoEasy: PhotoEasy
+    private  lateinit var photoEasy: PhotoEasy
 
 
     private fun clickListner() {
-        binding!!.ivClose.setOnClickListener {
+        binding.ivClose.setOnClickListener {
             finish()
 
         }
-        binding!!.btnLogin.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             onNext()
 
         }
-        binding!!.uploadKantha.setOnClickListener {
+        binding.uploadKantha.setOnClickListener {
             firstKanthaFile = true
             truckImage = false
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
             // callImageSelector(REQUEST_CAMERA);
         }
-        binding!!.uploadTruck.setOnClickListener {
+        binding.uploadTruck.setOnClickListener {
             firstKanthaFile = false
             truckImage = true
             truckImage2 = false
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
             //    callImageSelector(REQUEST_CAMERA);
         }
-        binding!!.uploadTruck2.setOnClickListener {
+        binding.uploadTruck2.setOnClickListener {
             firstKanthaFile = false
             truckImage = false
             truckImage2 = true
-            dispatchTakePictureIntent()
+            dispatchTakePictureIntent(false)
         }
-        binding!!.KanthaImage.setOnClickListener { view ->
+        binding.KanthaImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
                 this,
                 R.layout.popup_photo_full,
@@ -105,7 +105,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
                 null
             )
         }
-        binding!!.TruckImage.setOnClickListener { view ->
+        binding.TruckImage.setOnClickListener { view ->
             PhotoFullPopupWindow(
                 this,
                 R.layout.popup_photo_full,
@@ -114,7 +114,7 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
                 null
             )
         }
-        binding!!.truckImage2.setOnClickListener {
+        binding.truckImage2.setOnClickListener {
             PhotoFullPopupWindow(
                 this,
                 R.layout.popup_photo_full,
@@ -147,15 +147,15 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
-                        binding!!.notes.text.toString(),
+                        binding.notes.text.toString(),
                         KanthaImage,
                         truckImageImage,
                         truck2Image,
-                        binding!!.etNoOfBags.text.toString(),
-                        binding!!.etWeight.text.toString(),
-                        binding!!.etAvgWeight.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etNoOfDispleasedBags.text.toString(),
+                        binding.etNoOfBags.text.toString(),
+                        binding.etWeight.text.toString(),
+                        binding.etAvgWeight.text.toString(),
+                        binding.etOldWeightQt.text.toString(),
+                        binding.etNoOfDispleasedBags.text.toString(),
                         kantaId,
                         kantaName,
                         kantaParchiNumber,
@@ -173,13 +173,13 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
                 kantaParchiViewModel.uploadSecondKantaParchi(
                     UploadSecoundkantaParchiPostData(
                         CaseID,
-                        binding!!.notes.text.toString(),
+                        binding.notes.text.toString(),
                         KanthaImage, truckImageImage, truck2Image,
-                        binding!!.etNoOfBags.text.toString(),
-                        binding!!.etWeight.text.toString(),
-                        binding!!.etAvgWeight.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etNoOfDispleasedBags.text.toString(),
+                        binding.etNoOfBags.text.toString(),
+                        binding.etWeight.text.toString(),
+                        binding.etAvgWeight.text.toString(),
+                        binding.etOldWeightQt.text.toString(),
+                        binding.etNoOfDispleasedBags.text.toString(),
                         kantaId, kantaName, kantaParchiNumber, InTrackID, InBardhanaID
                     ),
                     "OUT"
@@ -194,8 +194,13 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
     }
 
 
-    fun dispatchTakePictureIntent() {
-        checkForPermission(ImagePicker.with(this)::start)
+    fun dispatchTakePictureIntent(isKantaParchi: Boolean) {
+        if (isKantaParchi) {
+            checkForPermission(ImagePicker.with(this)::start)
+        } else {
+            checkForPermission(ImagePicker.with(this).cameraOnly()::start)
+
+        }
 
     }
 
@@ -224,45 +229,45 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
     }
 
     override fun setUI() {
-        binding!!.llTraupline.visibility = View.GONE
-        binding!!.etKantaOldLocation.visibility = View.GONE;
+        binding.llTraupline.visibility = View.GONE
+        binding.etKantaOldLocation.visibility = View.GONE;
         photoEasy = PhotoEasy.builder().setActivity(this)
             .build()
         getCurrentLocation()
-        binding!!.genderRadio.setOnCheckedChangeListener(this)
-        binding!!.gender.setOnCheckedChangeListener(
+        binding.genderRadio.setOnCheckedChangeListener(this)
+        binding.gender.setOnCheckedChangeListener(
             this
         )
-        binding!!.tvTitle.setText("Upload Second Kanta Parchi")
-        binding!!.etKantaParchiNum.isEnabled = false
-        binding!!.llOldBags.visibility = View.GONE
-        binding!!.llBags.visibility = View.VISIBLE
-        binding!!.etWeightKg.doOnTextChanged { text, start, before, count ->
-            if (binding!!.etWeightKg.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etWeightKg.text!!.isNotEmpty()) {
+        binding.tvTitle.setText("Upload Second Kanta Parchi")
+        binding.etKantaParchiNum.isEnabled = false
+        binding.llOldBags.visibility = View.GONE
+        binding.llBags.visibility = View.VISIBLE
+        binding.etWeightKg.doOnTextChanged { text, start, before, count ->
+            if (binding.etWeightKg.text!!.isNotEmpty() && text != null && text != "0" && binding.etWeightKg.text!!.isNotEmpty()) {
                 try {
-                    var bagCal = (binding!!.etWeightKg.text.toString().toDouble() / 100)
-                    binding!!.etWeight.setText(
+                    var bagCal = (binding.etWeightKg.text.toString().toDouble() / 100)
+                    binding.etWeight.setText(
                         dtime.format(bagCal)
                     )
                 } catch (e: Exception) {
-                    binding!!.etWeight.setText("0")
+                    binding.etWeight.setText("0")
 
                 }
 
             } else {
-                binding!!.etWeight.setText("0")
+                binding.etWeight.setText("0")
             }
 
         }
-        binding!!.etNoOfBags.doOnTextChanged { text, start, before, count ->
+        binding.etNoOfBags.doOnTextChanged { text, start, before, count ->
 
 
-            if (binding!!.etWeight.text!!.isNotEmpty() && text != null && text != "0" && binding!!.etNoOfBags.text!!.isNotEmpty()) {
+            if (binding.etWeight.text!!.isNotEmpty() && text != null && text != "0" && binding.etNoOfBags.text!!.isNotEmpty()) {
                 try {
                     var bagCal =
-                        (binding!!.etWeight.text.toString().toDouble() * 100) / text.toString()
+                        (binding.etWeight.text.toString().toDouble() * 100) / text.toString()
                             .toDouble()
-                    binding!!.etAvgWeight.setText(
+                    binding.etAvgWeight.setText(
                         dtime.format(bagCal)
                     )
                 } catch (e: Exception) {
@@ -280,20 +285,20 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
 
 
         if (isFirstUpload == true) {
-            binding!!.llKanta.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
+            binding.llKanta.visibility = View.GONE
+            binding.cardTruck2.visibility = View.VISIBLE
         } else {
-            binding!!.cardTruck2.visibility = View.GONE
-            binding!!.llKanta.visibility = View.VISIBLE
-            binding!!.llBags.visibility = View.VISIBLE
+            binding.cardTruck2.visibility = View.GONE
+            binding.llKanta.visibility = View.VISIBLE
+            binding.llBags.visibility = View.VISIBLE
         }
 
 
 
-        setSupportActionBar(binding!!.toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar!!.setDisplayShowTitleEnabled(false)
-        binding!!.customerName.text = UserName
-        binding!!.caseId.text = CaseID
+        binding.customerName.text = UserName
+        binding.caseId.text = CaseID
         clickListner()
     }
 
@@ -304,8 +309,8 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
                 is NetworkResult.Loading -> {}
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        binding!!.tilKantaParchi.setText(it.data.data.kantaName.toString())
-                        binding!!.etKantaParchiNum.setText(it.data.data.kantaParchiNumber.toString())
+                        binding.tilKantaParchi.setText(it.data.data.kantaName.toString())
+                        binding.etKantaParchiNum.setText(it.data.data.kantaParchiNumber.toString())
 
                         kantaParchiNumber = it.data.data.kantaParchiNumber
                         kantaName = it.data.data.kantaName
@@ -355,66 +360,71 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == Activity.RESULT_OK || requestCode==2404) {
-            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-            val uri: Uri = data?.data!!
+        try {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                val uri: Uri = data?.data!!
 
-            val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
-            var stampMap = mapOf(
-                "current_location" to "$currentLocation",
-                "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
-            )
-            try {
-                if (thumbnail != null) {
-                    if (firstKanthaFile) {
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id, "emp_name" to userDetails.fname
+                )
+                try {
+                    if (thumbnail != null) {
+                        if (firstKanthaFile) {
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail).path)),
-                            stampMap
-                        )
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileKantha)
-                        firstkantaParchiFile = uri.toString()
-                        binding!!.KanthaImage.setImageURI(uri)
-
-
-                    } else if (truckImage) {
+                            var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                File(compressImage(bitmapToFile(thumbnail).path)),
+                                stampMap
+                            )
+                            firstKanthaFile = false
+                            truckImage = false
+                            truckImage2 = false
+                            fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                            val uri = Uri.fromFile(fileKantha)
+                            firstkantaParchiFile = uri.toString()
+                            binding.KanthaImage.setImageURI(uri)
 
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail).path)),
-                            stampMap
-                        )
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileTruck)
-                        TruckImage = uri.toString()
-                        binding!!.TruckImage.setImageURI(uri)
-                    } else if (truckImage2) {
+                        } else if (truckImage) {
 
 
-                        var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                            File(compressImage(bitmapToFile(thumbnail).path)),
-                            stampMap
-                        )
-                        firstKanthaFile = false
-                        truckImage = false
-                        truckImage2 = false
-                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
-                        val uri = Uri.fromFile(fileTruck2)
-                        TruckImage2 = uri.toString()
-                        binding!!.truckImage2.setImageURI(uri)
+                            var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                File(compressImage(bitmapToFile(thumbnail).path)),
+                                stampMap
+                            )
+                            firstKanthaFile = false
+                            truckImage = false
+                            truckImage2 = false
+                            fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                            val uri = Uri.fromFile(fileTruck)
+                            TruckImage = uri.toString()
+                            binding.TruckImage.setImageURI(uri)
+                        } else if (truckImage2) {
 
+
+                            var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                File(compressImage(bitmapToFile(thumbnail).path)),
+                                stampMap
+                            )
+                            firstKanthaFile = false
+                            truckImage = false
+                            truckImage2 = false
+                            fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                            val uri = Uri.fromFile(fileTruck2)
+                            TruckImage2 = uri.toString()
+                            binding.truckImage2.setImageURI(uri)
+
+                        }
                     }
+                } catch (e: Exception) {
+                    showToast(this, "Please select an image")
                 }
-            } catch (e: Exception) {
-                showToast(this, "Please select an image")
             }
+        } catch (e: NullPointerException) {
+            showToast(this, "Please select an image")
+
         }
 //        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
 //            override fun onFinish(thumbnail: Bitmap?) {
@@ -427,12 +437,12 @@ class OutUploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>
     }
 
     fun validateFields(): Boolean {
-        if (Validationhelper().fieldEmpty(binding!!.tilWeight)) {
-            binding!!.tilWeight.error = "This Field cannot be empty"
+        if (Validationhelper().fieldEmpty(binding.tilWeight)) {
+            binding.tilWeight.error = "This Field cannot be empty"
             return false
         }
-        if (Validationhelper().fieldEmpty(binding!!.tilNoOfBags)) {
-            binding!!.tilNoOfBags.error = "This Field cannot be empty"
+        if (Validationhelper().fieldEmpty(binding.tilNoOfBags)) {
+            binding.tilNoOfBags.error = "This Field cannot be empty"
             return false
         }
         if (fileTruck == null) {
