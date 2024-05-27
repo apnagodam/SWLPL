@@ -328,7 +328,7 @@
             android:foregroundTint="@color/white"
             android:src="@drawable/baseline_close_24"
             android:tint="@android:color/white"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_anchor="@id/cardPv"
             app:layout_anchorGravity="top|right"
             app:tint="@android:color/white" />
