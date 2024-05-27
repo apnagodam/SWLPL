@@ -50,14 +50,14 @@
                     android:id="@+id/userProfileImage"
                     android:layout_width="@dimen/_55sdp"
                     android:layout_height="@dimen/_55sdp"
-                    android:src="@drawable/flag_dominica" />
+                    />
 
                 <TextView
                     android:id="@+id/userNameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/_5sdp"
-                    android:text="Raju SIr"
+                    android:text=""
                     android:textColor="@color/black"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="bold" />

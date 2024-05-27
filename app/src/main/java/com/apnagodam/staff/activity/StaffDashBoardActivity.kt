@@ -323,17 +323,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
 
-    private fun checkPermission(): Boolean {
-        return if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // Permission is not granted
-            false
-        } else true
-    }
-
     private fun requestPermission() {
         ActivityCompat.requestPermissions(
             this, arrayOf(
@@ -383,12 +372,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     private fun setAdapter() {
-//        binding!!.mainContent.rvDefaultersStatus.addItemDecoration(
-//            DividerItemDecoration(
-//                this,
-//                LinearLayoutManager.VERTICAL
-//            )
-//        )
+
+
         binding!!.mainContent.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding!!.mainContent.rvDefaultersStatus.layoutManager = horizontalLayoutManager
@@ -1017,12 +1002,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         lifecycleScope.launch {
             userAdapter.loadStateFlow.collect {
-                // to determine if we are done with the loading state,
-                // you should have already  shown your loading view elsewhere when the entering your fragment
-//                binding!!.mainContent.rvDefaultersStatus.isVisible =
-//                    it.source.refresh is LoadState.Loading && !it.append.endOfPaginationReached && userAdapter.itemCount > 1
-//                binding!!.mainContent.emptyData.isVisible =
-//                    it.source.refresh is LoadState.NotLoading && it.append.endOfPaginationReached && userAdapter.itemCount < 1
 
 
                 when (it.refresh) {
@@ -1288,23 +1267,20 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //            }
 //        }
         userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-        if (userDetails != null) {
-            if (userDetails!!.getProfileImage() != null) {
-                Glide.with(binding!!.userProfileImage.context)
-                    .load(Constants.IMAGE_BASE_URL + userDetails!!.getProfileImage())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.user_shape)
-                    .circleCrop().into(binding!!.userProfileImage)
-            }
+        userDetails?.let {
+            Glide.with(this)
+                .load(Constants.IMAGE_BASE_URL + it.aadharImage)
+                .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.user_shape)
+                .circleCrop().into(binding!!.userProfileImage)
             binding!!.userNameText.text =
-                userDetails!!.getFname() + " " + userDetails!!.getLname() + "(" + userDetails!!.getEmp_id() + ")"
+                it.getFname() + " " + it.getLname() + "(" + it.getEmp_id() + ")"
 
             val navigationVLCAdapter = NavigationAdapter(
                 menuList, userDetails, this
             )
             navigationVLCAdapter.setOnProfileClickInterface(this)
-
-
         }
+
 
     }
 

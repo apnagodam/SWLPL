@@ -56,25 +56,11 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
         apiService: ApiService
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(Leads: AllCaseIDResponse.Datum, context: Activity, apiService: ApiService) {
-            //  binding.moreView.setVisibility(View.GONE);
 
-
-            //  binding.moreView.setVisibility(View.GONE);
             binding.tvId.text = Leads.stack_number
 
             binding.moreCase.visibility = View.VISIBLE
-            /* if (position==0){
 
-                }else {*/ ////stack pv new module for pv assurance \
-            // outward request stock approval
-            /* if (position==0){
-
-                }else {*/
-//        if (position % 2 == 0) {
-//            binding.root.setBackgroundColor(Color.parseColor("#EBEBEB"))
-//        } else {
-//            binding.root.setBackgroundColor(Color.WHITE)
-//        }
 
             binding.llCaseId.visibility = View.VISIBLE
             binding.tvCaseId.text = Leads.caseId

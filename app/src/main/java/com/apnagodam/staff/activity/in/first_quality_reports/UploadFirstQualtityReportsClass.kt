@@ -52,7 +52,7 @@ import java.util.Locale
 import java.util.UUID
 
 @AndroidEntryPoint
-class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding?>() {
+class UploadFirstQualtityReportsClass : BaseActivity<ActivityUpdateQualityReportBinding>() {
     var packagingTypeID: String? = null
 
     // role of image
