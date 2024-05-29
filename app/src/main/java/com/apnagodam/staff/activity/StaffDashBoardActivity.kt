@@ -881,77 +881,81 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        headerList.add(menuModel7)
 //        headerList.add(menuModel8)
 //        headerList.add(menuModel9)
+        userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        userDetails?.let {
+            if (it.terminal == null) {
+                menuModel = MenuModel(
+                    ConstantObjects.AUDIT,
+                    true,
+                    true,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.audit
+                )
+                headerList.add(menuModel)
 
-        menuModel = MenuModel(
-            ConstantObjects.AUDIT,
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.audit
-        )
-        headerList.add(menuModel)
+                childModelsList = ArrayList()
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_IN_OUT_LOCATION,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.location
+                )
+                childModelsList.add(childModel)
 
-        childModelsList = ArrayList()
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_IN_OUT_LOCATION,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.location
-        )
-        childModelsList.add(childModel)
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_CM,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.cm
+                )
+                childModelsList.add(childModel)
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_NEIGHBOUR,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.neighbour
+                )
+                childModelsList.add(childModel)
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_PV,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.pv
+                )
+                childModelsList.add(childModel)
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_VIDEO,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.camera
+                )
+                childModelsList.add(childModel)
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_QZ,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.wheat
+                )
 
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_CM,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.cm
-        )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_NEIGHBOUR,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.neighbour
-        )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_PV,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.pv
-        )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_VIDEO,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.camera
-        )
-        childModelsList.add(childModel)
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_QZ,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.wheat
-        )
-
-        childModel = MenuModel(
-            ConstantObjects.AUDIT_QZ,
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.quaility
-        )
-        childModelsList.add(childModel)
-        if (menuModel.hasChildren) {
-            Log.d("API123", "here")
-            childList[menuModel] = childModelsList
+                childModel = MenuModel(
+                    ConstantObjects.AUDIT_QZ,
+                    false,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.quaility
+                )
+                childModelsList.add(childModel)
+                if (menuModel.hasChildren) {
+                    Log.d("API123", "here")
+                    childList[menuModel] = childModelsList
+                }
+            }
         }
 
         headerList.add(menuModel25)
