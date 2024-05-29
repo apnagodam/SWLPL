@@ -93,10 +93,7 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Query
 
 interface ApiService {
@@ -555,8 +552,8 @@ interface ApiService {
         @Query("long") long: String,
         @Query("terminal_id") terminalId: String,
         @Query("type") inOutType: String,
-        @Query("notes") notes:String
-    ):Response<BaseResponse>
+        @Query("notes") notes: String
+    ): Response<BaseResponse>
 
 }
 

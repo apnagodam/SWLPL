@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.viewbinding.ViewBinding
+import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.utils.CustomProgressDialog
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
@@ -44,6 +45,7 @@ abstract class BaseActivity<VB : ViewBinding> :
     protected var lat: Double? = null
     protected var long: Double? = null
     protected var currentLocation = ""
+    protected lateinit var apiService: ApiService
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
 
@@ -58,6 +60,10 @@ abstract class BaseActivity<VB : ViewBinding> :
         callApis()
     }
 
+    protected fun startActivity(activity: Activity){
+        val intent = Intent(this,activity::class.java);
+        startActivity(intent)
+    }
     abstract fun setUI();
     abstract fun setObservers();
     abstract fun inflateLayout(layoutInflater: LayoutInflater): VB

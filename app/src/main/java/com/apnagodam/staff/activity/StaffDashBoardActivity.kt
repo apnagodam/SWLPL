@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
@@ -14,12 +15,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ExpandableListView.OnChildClickListener
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -95,6 +96,7 @@ import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
@@ -104,7 +106,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.button.MaterialButton
 import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
-import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -132,14 +133,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     private var longitude: String? = null
     var OnOfffAttendance = false
     var attendanceINOUTStatus = "2"
-    var fileSelfie: File? = null
-
+    var fileSelfie = MutableLiveData<File?>()
     var labFile = MutableLiveData<File>()
     var userDetails: UserDetails? = null
     var selfieImage: ImageView? = null
     var options: Options? = null
     var inCasesList = arrayListOf<AllCaseIDResponse.Datum>()
     var outCasesList = arrayListOf<AllCaseIDResponse.Datum>()
+    private lateinit var dialog: BottomSheetDialog
 
     // for location
     private val locationUtils: LocationUtils? = null
@@ -214,6 +215,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         prepareMenuData()
         populateExpandableList()
 
+        dialog = BottomSheetDialog(this@StaffDashBoardActivity)
+        dialog.setContentView(R.layout.dilog_attedance_bottom)
+        binding!!.mainContent.mainHeader.attendenceSwitch.let {
+            it.setOnCheckedChangeListener { buttonView, isChecked ->
+                TakeAttendance(isChecked)
+            }
+        }
         binding!!.drawerLayout.addDrawerListener(this)
         binding!!.profileId.setOnClickListener {
             val intent = Intent(this@StaffDashBoardActivity, StaffProfileActivity::class.java)
@@ -303,21 +311,17 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         toggle!!.syncState()
         //        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
 //        binding.menuList.addOnItemTouchListener(new RecyclerItemClickListener(StaffDashBoardActivity.this, this));
-        binding!!.mainContent.mainHeader.attendanceOnOff.setOnClickListener { v: View? ->
-            TakeAttendance(
-                OnOfffAttendance
-            )
-        }
+
         binding!!.mainContent.close.setOnClickListener {
             try {
-                fileSelfie = null
+                fileSelfie.value = null
                 binding!!.mainContent.selfieImage.setImageBitmap(null)
                 binding!!.mainContent.cardAttandance.visibility = View.GONE
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        binding!!.mainContent.UploadImage.setOnClickListener { onImageSelected() }
+        binding!!.mainContent.UploadImage.setOnClickListener { dispatchTakePictureIntent() }
         binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
         photoEasy = PhotoEasy.builder().setActivity(this).enableRequestPermission(true).build()
     }
@@ -1295,26 +1299,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     private fun callServer() {
         var EmployeeImage = ""
-        if (fileSelfie != null) {
+        fileSelfie.value?.let {
             if (lat != 0.0 && long != 0.0) {
-                EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie)
+                EmployeeImage = "" + Utility.transferImageToBase64(it)
                 homeViewModel.attendence(
                     AttendancePostData(
                         "" + latitude, "" + longitude, "" + attendanceINOUTStatus, EmployeeImage
                     )
                 )
-
-
             } else {
                 Toast.makeText(
                     this@StaffDashBoardActivity, "Enable Your Location Please!!", Toast.LENGTH_LONG
                 ).show()
             }
-        } else {
-            Toast.makeText(
-                this@StaffDashBoardActivity, "Take your selfie please!", Toast.LENGTH_LONG
-            ).show()
         }
+
     }
 
     private fun TakeAttendance(OnOfffAttendance: Boolean) {
@@ -1324,39 +1323,35 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     private fun setFunctional(flag: Boolean) {
-        val dialog = BottomSheetDialog(this@StaffDashBoardActivity)
-        dialog.setContentView(R.layout.dilog_attedance_bottom)
+
         val clockInOut: MaterialButton =
             dialog.findViewById<View>(R.id.clock_in_out) as MaterialButton
-        val close: MaterialButton = dialog.findViewById<View>(R.id.close) as MaterialButton
-        val clockIn: TextView = dialog.findViewById<View>(R.id.clockIn) as TextView
-        val UploadImage: LinearLayout = dialog.findViewById<View>(R.id.UploadImage) as LinearLayout
         selfieImage = dialog.findViewById<View>(R.id.selfieImage) as ImageView?
         dialog.setCancelable(true)
         dialog.show()
-        close.setOnClickListener(View.OnClickListener {
-            try {
-                fileSelfie = null
-                selfieImage!!.setImageBitmap(null)
-                dialog.cancel()
-                dialog.dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
+//        clockInOut.setOnClickListener(View.OnClickListener {
+//            try {
+//                fileSelfie.value = null
+//                selfieImage!!.setImageBitmap(null)
+//                dialog.cancel()
+//                dialog.dismiss()
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        })
+        selfieImage?.let {
+            it.setOnClickListener {
+                dispatchTakePictureIntent()
+
             }
-        })
-        UploadImage.setOnClickListener(View.OnClickListener {
-            dispatchTakePictureIntent()
+        }
 
-
-            // callProfileImageSelector(REQUEST_CAMERA);
-        })
         clockInOut.setOnClickListener(View.OnClickListener { v: View? -> callServer() })
         if (!OnOfffAttendance) {
             attendanceINOUTStatus = "1"
 
         } else {
 
-            clockIn.setText(resources.getString(R.string.clock_out))
             clockInOut.setText(resources.getString(R.string.clock_out))
             attendanceINOUTStatus = "2"
 
@@ -1365,22 +1360,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+        ImagePicker.with(this).cameraOnly().start();
 
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
-                }
-            }
-
-        }
 
     }
 
@@ -1620,36 +1601,53 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
-            override fun onFinish(thumbnail: Bitmap?) {
+        try {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                val uri: Uri = data?.data!!
 
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id,
+                    "emp_name" to userDetails.fname
+                )
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
                 if (thumbnail != null) {
-                    val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-
-                    var stampMap = mapOf(
-                        "current_location" to "$currentLocation",
-                        "emp_code" to userDetails.emp_id,
-                        "emp_name" to userDetails.fname
-                    )
                     var stampedBitmap = ImageHelper().createTimeStampinBitmap(
                         File(compressImage(bitmapToFile(thumbnail!!).path)), stampMap
                     )
 
+                    selfieImage?.let {
+                        it.setImageBitmap(stampedBitmap)
+
+                    }
+                    fileSelfie.value =
+                        File(compressImage(bitmapToFile(stampedBitmap).path.toString()))
                     labFile.value =
                         File(compressImage(bitmapToFile(stampedBitmap).path.toString()));
 
-//                    fileSelfie = File(compressImage(bitmapToFile(stampedBitmap).path.toString()))
-//                    val uri = Uri.fromFile(fileSelfie)
-//                    selfieImage!!.setImageURI(uri)
-
-
+                    Toast.makeText(
+                        this,
+                        compressImage(bitmapToFile(stampedBitmap).path.toString()),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                    Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
                 }
-            }
 
-        })
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Please select Image", Toast.LENGTH_SHORT).show()
+        }
+
 
     }
 
+    private fun showUploadDialog() {
+
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults: IntArray

@@ -65,10 +65,10 @@
     <string name="case_status_out">Cases Status OUT</string>
     <string name="in">IN</string>
     <string name="out">OUT</string>
-    <string name="clock_in">Clock In</string>
+    <string name="clock_in">Mark Attendance</string>
     <string name="clock_out">Clock OUT</string>
     <string name="upload_selfi">Upload Selfie</string>
-    <string name="chosen_selfi_image">Chosen Selfie Image</string>
+    <string name="chosen_selfi_image">Take Picture</string>
     <string name="close">Close</string>
     <string name="status_title">Status</string>
     <string name="commudity_name">Select Commodity Name</string>
