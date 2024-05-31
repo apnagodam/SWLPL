@@ -8,9 +8,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Typeface
 import android.location.Geocoder
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,8 +17,9 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.ExpandableListView.OnChildClickListener
-import android.widget.ImageView
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -41,6 +40,7 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.AttendancePostData
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestDatum
+import com.apnagodam.staff.Network.viewmodel.AttendenceViewModel
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
@@ -57,6 +57,8 @@ import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
 import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.FirstkanthaParchiListingActivity
 import com.apnagodam.staff.activity.`in`.first_quality_reports.FirstQualityReportListingActivity
+import com.apnagodam.staff.activity.`in`.ivr.QualityTaggingActivity
+import com.apnagodam.staff.activity.`in`.ivr.ivr_tagging.IvrTaggingActivity
 import com.apnagodam.staff.activity.`in`.labourbook.LabourBookListingActivity
 import com.apnagodam.staff.activity.`in`.pricing.InPricingListingActivity
 import com.apnagodam.staff.activity.`in`.secound_kanthaparchi.SecoundkanthaParchiListingActivity
@@ -71,7 +73,6 @@ import com.apnagodam.staff.activity.out.s_katha_parchi.OutSecoundkanthaParchiLis
 import com.apnagodam.staff.activity.out.s_quaility_report.OutSecoundQualityReportListingActivity
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckBookListingActivity
 import com.apnagodam.staff.activity.vendorPanel.MyVendorVoacherListClass
-import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.adapter.ExpandableListAdapter
 import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.adapter.OnBindCallback
@@ -87,7 +88,7 @@ import com.apnagodam.staff.paging.state.ListLoadStateAdapter
 import com.apnagodam.staff.utils.ConstantObjects
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.ImageHelper
-import com.apnagodam.staff.utils.LocationUtils
+import com.apnagodam.staff.utils.LocationHelper
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
@@ -98,12 +99,9 @@ import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
 import com.thorny.photoeasy.PhotoEasy
@@ -124,52 +122,50 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     AdapterView.OnItemSelectedListener, DrawerListener, ConnectionCallbacks, OnBindCallback,
     OnConnectionFailedListener {
     private var toggle: ActionBarDrawerToggle? = null
-    private var casesTopAdapter: CasesTopAdapter? = null
     val audit = "Audit";
     private val toolbar: Toolbar? = null
     var doubleBackToExitPressedOnce = false
-    var locationManager: LocationManager? = null
-    private var latitude: String? = null
-    private var longitude: String? = null
-    var OnOfffAttendance = false
-    var attendanceINOUTStatus = "2"
+
+
     var fileSelfie = MutableLiveData<File?>()
     var labFile = MutableLiveData<File>()
     var userDetails: UserDetails? = null
-    var selfieImage: ImageView? = null
+    var selfieImage: ImageButton? = null
     var options: Options? = null
-    var inCasesList = arrayListOf<AllCaseIDResponse.Datum>()
-    var outCasesList = arrayListOf<AllCaseIDResponse.Datum>()
     private lateinit var dialog: BottomSheetDialog
 
     // for location
-    private val locationUtils: LocationUtils? = null
-    private val REQUEST_CODE = 1000
-    var mGoogleApiClient: GoogleApiClient? = null
+
     var expandableListAdapter: ExpandableListAdapter? = null
     var headerList: MutableList<MenuModel> = ArrayList()
     var childList = HashMap<MenuModel, List<MenuModel>?>()
-    var font: Typeface? = null
     val homeViewModel by viewModels<HomeViewModel>()
     val loginViewModel by viewModels<LoginViewModel>()
-    var lat = 0.0
-    var long = 0.0
     private var AllCases = arrayListOf<AllCaseIDResponse.Datum>()
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
     private var pageOffset = MutableLiveData<Int>();
-    private var totalPage = 0
     lateinit var photoEasy: PhotoEasy
-    var currentLocation = ""
+
+    var lattitude: Double = 0.0
+    var longitude: Double = 0.0
     var inwardsList = arrayListOf<StackRequestResponse.InwardRequestDatum>()
     var outwardsList = arrayListOf<OutwardRequestDatum>()
 
     var lastPage = MutableLiveData<Int>();
+    var currentLocation = ""
+
+    private var clockStatus = "2"
 
     @Inject
     lateinit var userAdapter: CasesAdapter
+
+    private val attendanceViewModel by viewModels<AttendenceViewModel>()
+
+    private var locationHelper: LocationHelper = LocationHelper()
     override fun getLayoutResId(): Int {
         return R.layout.staff_dashboard
     }
+
 
     override fun setUp() {
         userAdapter = CasesAdapter(this, apiService)
@@ -216,11 +212,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         populateExpandableList()
 
         dialog = BottomSheetDialog(this@StaffDashBoardActivity)
-        dialog.setContentView(R.layout.dilog_attedance_bottom)
+        dialog.setContentView(R.layout.layout_attendance)
         binding!!.mainContent.mainHeader.attendenceSwitch.let {
-            it.setOnCheckedChangeListener { buttonView, isChecked ->
-                TakeAttendance(isChecked)
+            it.setOnClickListener {
+                TakeAttendance()
+
             }
+
         }
         binding!!.drawerLayout.addDrawerListener(this)
         binding!!.profileId.setOnClickListener {
@@ -228,40 +226,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             startActivity(intent)
         }
         AllCases = arrayListOf()
-        // requestPermission()
 
-//        homeViewModel.homeDataResponse.observe(this) {
-//            when (it) {
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                }
-//
-//                is NetworkResult.Loading -> showDialog()
-//                is NetworkResult.Success -> {
-//                    hideDialog()
-//
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                    attendanceINOUTStatus = "" + it.data!!.getClock_status()
-//                    if (attendanceINOUTStatus.equals("1", ignoreCase = true)) {
-//                        OnOfffAttendance = true
-//                        binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.out)
-//                    } else {
-//                        binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.`in`)
-//                        OnOfffAttendance = false
-//                    }
-//
-//
-//                    binding!!.mainContent.trotalAttend.text = "" + it.data.getAtten_month_data()
-//
-//                    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-//                    val date = Date()
-//                    binding!!.mainContent.date.text = "" + formatter.format(date)
-//
-//                }
-//
-//            }
-//        }
 
         binding!!.mainContent.tvCreateCase.setOnClickListener {
             startActivity(CaseIDGenerateClass::class.java)
@@ -321,47 +286,38 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 e.printStackTrace()
             }
         }
-        binding!!.mainContent.UploadImage.setOnClickListener { dispatchTakePictureIntent() }
-        binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
+        binding!!.mainContent.UploadImage.setOnClickListener {
+            locationHelper.checkForPermission(this) {
+                locationHelper.locationProvider(this) {
+                    lattitude = it.latitude
+                    longitude = it.longitude
+                    val geocoder = Geocoder(activity, Locale.getDefault())
+                    val addresses = geocoder.getFromLocation(lattitude ?: 0.0, longitude ?: 0.0, 1)
+                    if (addresses != null) {
+                        currentLocation =
+                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                addresses.first().adminArea
+                            }"
+
+                        userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                        userDetails?.let {
+
+                            if (it.latitude == null && it.longitude == null) {
+                                Toast.makeText(this, "You are not at location!", Toast.LENGTH_LONG)
+                            } else {
+                                dispatchTakePictureIntent()
+
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+//        binding!!.mainContent.clockInOut.setOnClickListener { v: View? ->  }
         photoEasy = PhotoEasy.builder().setActivity(this).enableRequestPermission(true).build()
     }
 
-
-    private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            this, arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-            ), PERMISSION_REQUEST_CODE
-        )
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            //requestPermission()
-            return
-        }
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-            if (it != null) {
-                lat = it.latitude
-                long = it.longitude
-            }
-
-
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val addresses = geocoder.getFromLocation(lat, long, 1)
-            if (addresses != null && addresses.isNotEmpty()) {
-                currentLocation =
-                    "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                        addresses.first().adminArea
-                    }"
-
-            }
-        }
-
-    }
 
     override fun onResume() {
         getAllCases("")
@@ -371,6 +327,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     fun getAllCases(search: String) {
         caseIdViewModel.getPagingData();
+        attendanceViewModel.checkClockStatus()
         caseIdViewModel.getStackRequest()
 
     }
@@ -481,6 +438,16 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
                         resources.getString(R.string.truck_book) -> {
                             startActivity(TruckBookListingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        ConstantObjects.IVR_TAGGING -> {
+                            startActivity(IvrTaggingActivity::class.java)
+                            return@OnChildClickListener true
+                        }
+
+                        ConstantObjects.IVR_QUALITY_TAGGING -> {
+                            startActivity(QualityTaggingActivity::class.java)
                             return@OnChildClickListener true
                         }
 
@@ -654,15 +621,30 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         var childModelsList: MutableList<MenuModel> = ArrayList()
         var childModel: MenuModel
         menuModel = MenuModel(
-            "IN",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.internal
+            "IN", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.internal
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModel = MenuModel(
             resources.getString(R.string.truck_book),
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.truck_option
+        )
+        childModelsList.add(childModel)
+
+
+        childModel = MenuModel(
+            ConstantObjects.IVR_TAGGING,
+            false,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.truck_option
+        )
+        childModelsList.add(childModel)
+
+        childModel = MenuModel(
+            ConstantObjects.IVR_QUALITY_TAGGING,
             false,
             false,
             ConstantObjects.EXPANDABLE_LIST_URL,
@@ -716,11 +698,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         childModelsList = ArrayList()
         menuModel = MenuModel(
-            "OUT",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.external
+            "OUT", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.external
         ) //Menu of Python Tutorials
         headerList.add(menuModel)
 
@@ -777,11 +755,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             childList[menuModel] = childModelsList
         }
         menuModel = MenuModel(
-            "Voucher",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.voucher
+            "Voucher", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.voucher
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModelsList = ArrayList()
@@ -855,19 +829,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             R.drawable.create_case_id
         ) // Android Tutorial. No sub menus
         val menuModel24 = MenuModel(
-            "PV",
-            true,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.create_case_id
+            "PV", true, false, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.create_case_id
         ) // And
 
         val menuModel25 = MenuModel(
-            "Advances",
-            true,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.earn
+            "Advances", true, false, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.earn
         ) // // roid
         val menuMode20 = MenuModel(
             resources.getString(R.string.logout),
@@ -1055,91 +1021,57 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
             }
         }
-//        caseIdViewModel.response.observe(this) { body ->
-//            when (body) {
-//                is NetworkResult.Success -> {
-//                    hideDialog();
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                    if (body.data != null) {
-//                        AllCases.clear()
-//                        if (body.data.status == "1") {
-//                            SharedPreferencesRepository.getDataManagerInstance().user.let {userDetails->
-//                                body.data.getaCase().let {
-//                                    totalPage = it?.lastPage!!
-//                                    if(it.data!=null){
-//                                        it.data.let { data->
-//                                            if(data!=null){
-//                                                for (i in data.indices) {
-//
-//                                                    if ((data[i].cctvReport == null
-//                                                                || data[i].ivrReport == null
-//                                                                || data[i].secondQualityReport == null
-//                                                                || data[i].sendToLab == null
-//                                                                || data[i].firstKantaParchi == null
-//                                                                || data[i].secondKantaParchi == null
-//                                                                || data[i].labourBook == null
-//                                                                || data[i].truckbook == null
-//                                                                || data[i].gatepassReport == null)
-//                                                    ) {
-//                                                        if (userDetails.terminal != null) {
-//                                                            if (data[i].terminalId.toString() == userDetails.terminal.toString()) {
-//                                                                AllCases.add(data[i])
-//                                                            }
-//                                                        } else {
-//                                                            AllCases.add(data[i])
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                        }
-//                                    }
-//
-//                                }
-//
-//
-//                                binding!!.mainContent.tvNext.isEnabled = AllCases.isNotEmpty()
-//
-//                                casesTopAdapter =
-//                                    CasesTopAdapter(AllCases.reversed(), this, apiService)
-//                                casesTopAdapter!!.notifyDataSetChanged()
-//                                hideDialog()
-//                                if (AllCases.isEmpty()) {
-//                                    binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                                    binding!!.mainContent!!.rvDefaultersStatus.visibility =
-//                                        View.GONE
-//                                }
-//                            }
-//                        } else {
-//                            hideDialog()
-//
-//                            Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
-//                            binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                            binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//                        }
-//                        lastPage.value = body.data.getaCase()!!.lastPage
-//
-//                    } else {
-//                        hideDialog()
-//                        binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                        binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//                    }
-//
-//                }
-//
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
-//                    binding!!.mainContent.emptyData.visibility = View.GONE
-//                    binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//
-//                }
-//
-//                is NetworkResult.Loading -> {
-//                    showDialog()
-//                }
-//            }
-//        }
+
+        attendanceViewModel.setAttandanceResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    it.data?.let { data ->
+                        data.status?.let {
+                            if (it == "1") {
+
+                                attendanceViewModel.checkClockStatus()
+                            }
+                            data.message?.let {
+                                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        attendanceViewModel.attendenceRespons.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    it.data?.let {
+                        if (it.clock_status.equals("1")) {
+                            clockStatus = "2"
+                        } else {
+                            clockStatus = "1"
+                        }
+                        binding!!.mainContent.mainHeader.attendenceSwitch.isChecked =
+                            it.clock_status.equals("1")
+
+                        Toast.makeText(
+                            this,
+                            it.message.toString(),
+                            Toast.LENGTH_LONG
+                        )
+
+                    }
+                }
+            }
+        }
+
         caseIdViewModel.stackRequestResponse.observe(this) { it ->
             when (it) {
                 is NetworkResult.Error -> {
@@ -1219,61 +1151,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             }
         }
 
-
-//        homeViewModel.attendenceResponse.observe(this) {
-//            when (it) {
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//
-//                }
-//
-//                is NetworkResult.Loading -> {
-//                    showDialog()
-//                }
-//
-//                is NetworkResult.Success -> {
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//
-//                    hideDialog()
-//                    if (it.data != null) {
-//                        if (it.data.status == "1") {
-//                            fileSelfie = null
-//                            OnOfffAttendance =
-//                                if (it.data.getClock_status()
-//                                        .equals("1", ignoreCase = true)
-//                                ) {
-//                                    binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
-//                                        R.drawable.out
-//                                    )
-//                                    true
-//                                } else {
-//                                    binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
-//                                        R.drawable.`in`
-//                                    )
-//                                    false
-//                                }
-//                            Toast.makeText(
-//                                this@StaffDashBoardActivity,
-//                                it.data.message,
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        } else {
-//                            Toast.makeText(
-//                                this@StaffDashBoardActivity,
-//                                it.data.message,
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-//                    }
-//                }
-//            }
-//        }
         userDetails = SharedPreferencesRepository.getDataManagerInstance().user
         userDetails?.let {
-            Glide.with(this)
-                .load(Constants.IMAGE_BASE_URL + it.aadharImage)
+            Glide.with(this).load(Constants.IMAGE_BASE_URL + it.aadharImage)
                 .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.user_shape)
                 .circleCrop().into(binding!!.userProfileImage)
             binding!!.userNameText.text =
@@ -1301,38 +1181,17 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
     }
 
-    private fun callServer() {
-        var EmployeeImage = ""
-        fileSelfie.value?.let {
-            if (lat != 0.0 && long != 0.0) {
-                EmployeeImage = "" + Utility.transferImageToBase64(it)
-                homeViewModel.attendence(
-                    AttendancePostData(
-                        "" + latitude, "" + longitude, "" + attendanceINOUTStatus, EmployeeImage
-                    )
-                )
-            } else {
-                Toast.makeText(
-                    this@StaffDashBoardActivity, "Enable Your Location Please!!", Toast.LENGTH_LONG
-                ).show()
-            }
-        }
 
+    private fun TakeAttendance() {
+        setFunctional()
     }
 
-    private fun TakeAttendance(OnOfffAttendance: Boolean) {
-        var OnOfffAttendance = OnOfffAttendance
-        OnOfffAttendance = !OnOfffAttendance
-        setFunctional(OnOfffAttendance)
-    }
+    private fun setFunctional() {
 
-    private fun setFunctional(flag: Boolean) {
+        val clockInOut: Button =
+            dialog.findViewById<View>(R.id.btClockIn) as Button
+        selfieImage = dialog.findViewById<View>(R.id.tvImage) as ImageButton?
 
-        val clockInOut: MaterialButton =
-            dialog.findViewById<View>(R.id.clock_in_out) as MaterialButton
-        selfieImage = dialog.findViewById<View>(R.id.selfieImage) as ImageView?
-        dialog.setCancelable(true)
-        dialog.show()
 //        clockInOut.setOnClickListener(View.OnClickListener {
 //            try {
 //                fileSelfie.value = null
@@ -1343,30 +1202,57 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //                e.printStackTrace()
 //            }
 //        })
-        selfieImage?.let {
-            it.setOnClickListener {
-                dispatchTakePictureIntent()
+        userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+        userDetails?.let { user ->
+            dialog.findViewById<TextView>(R.id.tvUserName)?.setText(user.fname)
+            dialog.findViewById<TextView>(R.id.tvEmpCode)?.setText(user.emp_id)
+            dialog.findViewById<TextView>(R.id.tvWarehouse)?.setText(user.terminal)
+            dialog.findViewById<TextView>(R.id.tvMobileNumber)?.setText(user.phone)
 
+
+            selfieImage?.let {
+                dialog.setCancelable(true)
+                dialog.show()
+                it.setOnClickListener {
+                    locationHelper.locationProvider(this) {
+                        lattitude = it.latitude
+                        longitude = it.longitude
+                        val geocoder = Geocoder(activity, Locale.getDefault())
+                        val addresses =
+                            geocoder.getFromLocation(lattitude ?: 0.0, longitude ?: 0.0, 1)
+                        if (addresses != null) {
+                            currentLocation =
+                                "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                    addresses.first().adminArea
+                                }"
+
+                            dispatchTakePictureIntent()
+
+
+                        }
+                    }
+
+                }
             }
+
+//                            if (it.latitude == null && it.longitude == null) {
+//                                Toast.makeText(this, "You are not at location!", Toast.LENGTH_LONG)
+//                            } else {
+//
+//                            }
         }
 
-        clockInOut.setOnClickListener(View.OnClickListener { v: View? -> callServer() })
-        if (!OnOfffAttendance) {
-            attendanceINOUTStatus = "1"
 
-        } else {
+        clockInOut.setOnClickListener(View.OnClickListener { v: View? ->
 
-            clockInOut.setText(resources.getString(R.string.clock_out))
-            attendanceINOUTStatus = "2"
 
-        }
+        })
+
     }
 
 
     override fun dispatchTakePictureIntent() {
         ImagePicker.with(this).cameraOnly().start();
-
-
     }
 
     private fun bitmapToFile(bitmap: Bitmap): Uri {
@@ -1618,23 +1504,43 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
                 if (thumbnail != null) {
                     var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                        File(compressImage(bitmapToFile(thumbnail!!).path)), stampMap
+                        File(compressImage(bitmapToFile(thumbnail).path)), stampMap
                     )
 
                     selfieImage?.let {
                         it.setImageBitmap(stampedBitmap)
-
                     }
                     fileSelfie.value =
                         File(compressImage(bitmapToFile(stampedBitmap).path.toString()))
                     labFile.value =
                         File(compressImage(bitmapToFile(stampedBitmap).path.toString()));
+                    if (lattitude != 0.0 && longitude != 0.0) {
+                        attendanceViewModel.setAttandance(
+                            AttendancePostData(
+                                "" + lattitude,
+                                "" + longitude,
+                                clockStatus,
+                                Utility.transferImageToBase64(
+                                    File(
+                                        compressImage(
+                                            bitmapToFile(
+                                                stampedBitmap
+                                            ).path.toString()
+                                        )
+                                    )
+                                )
+                            )
+                        )
 
-                    Toast.makeText(
-                        this,
-                        compressImage(bitmapToFile(stampedBitmap).path.toString()),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    } else {
+                        Toast.makeText(
+                            this@StaffDashBoardActivity,
+                            "Enable Your Location Please!!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+
                 } else if (resultCode == ImagePicker.RESULT_ERROR) {
                     Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
                 } else {
@@ -1663,11 +1569,9 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.CAMERA
+                            this, Manifest.permission.CAMERA
                         ) != PackageManager.PERMISSION_GRANTED
                     ) {
-                        requestPermission()
                     }
                 }
             }

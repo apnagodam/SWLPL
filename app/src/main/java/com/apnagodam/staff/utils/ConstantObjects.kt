@@ -9,5 +9,9 @@ object ConstantObjects {
     const val AUDIT_CM = "Audit CM Details"
     const val AUDIT_IN_OUT_LOCATION = "Audit IN and OUT Location"
     const val EXPANDABLE_LIST_URL = "https://www.journaldev.com/19226/python-fractions"
+    const val IVR_TAGGING = "Ivr Tagging"
+
+    const val IVR_QUALITY_TAGGING = "Ivr Quality Tagging"
+
 
 }

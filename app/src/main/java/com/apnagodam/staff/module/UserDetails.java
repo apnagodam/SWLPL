@@ -216,6 +216,32 @@ public class UserDetails {
     @Expose
     private String terminal;
 
+
+    @SerializedName("warehouse_latitude")
+    @Expose
+    private String warehouseLattitude;
+
+
+    public String getWarehouseLattitude() {
+        return warehouseLattitude;
+    }
+
+    public void setWarehouseLattitude(String warehouseLattitude) {
+        this.warehouseLattitude = warehouseLattitude;
+    }
+
+    public String getWarehouseLongitude() {
+        return warehouseLongitude;
+    }
+
+    public void setWarehouseLongitude(String warehouseLongitude) {
+        this.warehouseLongitude = warehouseLongitude;
+    }
+
+    @SerializedName("warehouse_longitude")
+    @Expose
+    private String warehouseLongitude;
+
     public String getTerminal() {
         return terminal;
     }

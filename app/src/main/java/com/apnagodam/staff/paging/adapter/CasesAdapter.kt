@@ -26,6 +26,8 @@ import com.apnagodam.staff.activity.GatePassPDFPrieviewClass
 import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.UploadFirstkantaParchiClass
 import com.apnagodam.staff.activity.`in`.first_quality_reports.UploadFirstQualtityReportsClass
+import com.apnagodam.staff.activity.`in`.ivr.QualityTaggingActivity
+import com.apnagodam.staff.activity.`in`.ivr.ivr_tagging.IvrTaggingActivity
 import com.apnagodam.staff.activity.`in`.labourbook.LabourBookUploadClass
 import com.apnagodam.staff.activity.`in`.secound_kanthaparchi.UploadSecoundkantaParchiClass
 import com.apnagodam.staff.activity.`in`.secound_quality_reports.UploadSecoundQualtityReportsClass
@@ -38,6 +40,7 @@ import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass
 import com.apnagodam.staff.activity.toDate
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.utils.StringConstants
 import com.apnagodam.staff.utils.Utility
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -156,7 +159,19 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                         }"
                                     )
+                                    binding.tvStatus.setOnClickListener {
+                                        val intent =
+                                            Intent(
+                                                context,
+                                                QualityTaggingActivity::class.java
+                                            )
 
+                                        intent.putExtra(StringConstants.USER_NAME, Leads.custFname)
+                                        intent.putExtra(StringConstants.CASE_ID, Leads.caseId)
+                                        intent.putExtra(StringConstants.VEHICLE_NO, Leads.vehicleNo)
+                                        intent.putExtra(StringConstants.IN_OUT, StringConstants.IN)
+                                        context.startActivity(intent)
+                                    }
                                 } else {
                                     if (Leads.secondKantaParchi == null || Leads.secondKantaDharamkanta == null
                                     ) {
@@ -220,13 +235,15 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                     dialog.findViewById<TextView>(R.id.btYes)
                                                 val ivLabImage =
                                                     dialog.findViewById<ImageView>(R.id.ivLabImage)
-                                                val btNo = dialog.findViewById<TextView>(R.id.btNo)
+                                                val btNo =
+                                                    dialog.findViewById<TextView>(R.id.btNo)
                                                 dialog.show()
                                                 btNo.setOnClickListener { dialog.dismiss() }
                                                 btYes.isEnabled = false
                                                 btYes.setBackgroundResource(R.drawable.btn_green_background_disabled)
                                                 btYes.setBackgroundColor(
-                                                    context.getResources().getColor(R.color.grey)
+                                                    context.getResources()
+                                                        .getColor(R.color.grey)
                                                 )
                                                 ivLabImage.setOnClickListener {
                                                     if (context is StaffDashBoardActivity) {
@@ -262,10 +279,13 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                                             "0",
                                                                             "1",
                                                                             labReportBase64
-                                                                        ), "OUT"
+                                                                        ),
+                                                                        "OUT"
                                                                     )
                                                                         .subscribeOn(Schedulers.io())
-                                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                                        .observeOn(
+                                                                            AndroidSchedulers.mainThread()
+                                                                        )
                                                                         .subscribe(object :
                                                                             io.reactivex.Observer<LoginResponse> {
                                                                             override fun onSubscribe(
@@ -286,7 +306,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                                                 dialog.dismiss()
                                                                             }
 
-                                                                            override fun onError(e: Throwable) {
+                                                                            override fun onError(
+                                                                                e: Throwable
+                                                                            ) {
                                                                                 Toast.makeText(
                                                                                     context,
                                                                                     e.localizedMessage,
@@ -359,6 +381,32 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                                     )
                                                     binding.tvStatus.text = "IVR Pending"
+                                                    binding.tvStatus.setOnClickListener {
+                                                        val intent =
+                                                            Intent(
+                                                                context,
+                                                                IvrTaggingActivity::class.java
+                                                            )
+
+                                                        intent.putExtra(
+                                                            StringConstants.USER_NAME,
+                                                            Leads.custFname
+                                                        )
+                                                        intent.putExtra(
+                                                            StringConstants.CASE_ID,
+                                                            Leads.caseId
+                                                        )
+                                                        intent.putExtra(
+                                                            StringConstants.VEHICLE_NO,
+                                                            Leads.vehicleNo
+                                                        )
+                                                        intent.putExtra(
+                                                            StringConstants.IN_OUT,
+                                                            StringConstants.IN
+                                                        )
+                                                        context.startActivity(intent)
+                                                    }
+
                                                 } else {
                                                     if (Leads.gatepassReport == null
                                                     ) {
@@ -368,7 +416,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                                             )
                                                         }
 
-                                                        binding.tvStatus.text = "Gate Pass Pending"
+                                                        binding.tvStatus.text =
+                                                            "Gate Pass Pending"
                                                     } else {
                                                         Leads.ivrReportDate?.let {
                                                             formatDate(
@@ -455,7 +504,11 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             binding.tvStatus.text = "Add Out First Kanta Parchi"
                             binding.tvDate.setText(
                                 "${
-                                    Leads.labourBookDate?.let { formatDate(it.toDate().toString()) }
+                                    Leads.labourBookDate?.let {
+                                        formatDate(
+                                            it.toDate().toString()
+                                        )
+                                    }
                                 }"
                             )
                             binding.tvStatus.setOnClickListener {
@@ -565,6 +618,31 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                                 }"
                                             )
+                                            binding.tvStatus.setOnClickListener {
+                                                val intent =
+                                                    Intent(
+                                                        context,
+                                                        IvrTaggingActivity::class.java
+                                                    )
+
+                                                intent.putExtra(
+                                                    StringConstants.USER_NAME,
+                                                    Leads.custFname
+                                                )
+                                                intent.putExtra(
+                                                    StringConstants.CASE_ID,
+                                                    Leads.caseId
+                                                )
+                                                intent.putExtra(
+                                                    StringConstants.VEHICLE_NO,
+                                                    Leads.vehicleNo
+                                                )
+                                                intent.putExtra(
+                                                    StringConstants.IN_OUT,
+                                                    StringConstants.OUT
+                                                )
+                                                context.startActivity(intent)
+                                            }
                                         } else {
                                             if (Leads.gatepassReport == null) {
                                                 binding.tvStatus.text = "Gate Pass Pending"
@@ -654,7 +732,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 fun formatDate(dateString: String): String {
     TimeZone.setDefault(TimeZone.getTimeZone("Asia/India")) // (GMT+11:00)
     val locale = Locale.ENGLISH
-    val time = SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", locale).parse(dateString)?.time
+    val time =
+        SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", locale).parse(dateString)?.time
 
     return SimpleDateFormat("dd/MM/yyyy hh:mm a", locale).format(time)
 }

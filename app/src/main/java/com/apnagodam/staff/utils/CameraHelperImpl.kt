@@ -1,101 +1,81 @@
-package com.apnagodam.staff.activity
+package com.apnagodam.staff.utils
 
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.Intent.ACTION_GET_CONTENT
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.location.Geocoder
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
-import androidx.lifecycle.MutableLiveData
-import androidx.viewbinding.ViewBinding
-import com.apnagodam.staff.Network.ApiService
+import androidx.fragment.app.FragmentActivity
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.utils.CustomProgressDialog
-import com.apnagodam.staff.utils.FileHelper
-import com.apnagodam.staff.utils.ImageHelper
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fondesa.kpermissions.isDenied
 import com.github.dhaval2404.imagepicker.ImagePicker
-import com.google.android.gms.location.LocationServices
-import com.yalantis.ucrop.util.BitmapLoadUtils.calculateInSampleSize
+import com.yalantis.ucrop.util.BitmapLoadUtils
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import java.util.UUID
 
-abstract class BaseActivity<VB : ViewBinding> :
-    AppCompatActivity() {
-    protected lateinit var binding: VB
-    protected var mCustomProgressDialog: CustomProgressDialog? = null
-    protected var lat: Double? = null
-    protected var long: Double? = null
-    protected var currentLocation = ""
-    protected lateinit var apiService: ApiService
-    protected var imageFile = MutableLiveData<File?>()
-    protected var fileHelper = FileHelper(this)
-    protected var pickedFile = MutableLiveData<File?>()
+class CameraHelperImpl(
+    private var activity: FragmentActivity,
+    private var currentLocation: String
+) : CameraHelper() {
 
+    private val fileHelper = FileHelper(activity);
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = inflateLayout(layoutInflater)
-        setContentView(binding.root)
-        setUI()
-        setObservers()
-        callApis()
+    private val FILE_REQUEST_CODE = 50
+
+    init {
+        checkForPermission(activity)
     }
 
-    protected fun startActivity(activity: Activity) {
-        val intent = Intent(this, activity::class.java);
-        startActivity(intent)
+    override fun capturePic() {
+        ImagePicker.with(activity).cameraOnly().start();
     }
 
-    abstract fun setUI();
-    abstract fun setObservers();
-    abstract fun inflateLayout(layoutInflater: LayoutInflater): VB
-    abstract fun callApis();
+    override fun selectPic() {
+        ImagePicker.with(activity).galleryOnly().start();
 
-    protected fun showToast(activity: Activity, messageLString: String) =
-        Toast.makeText(activity, messageLString, Toast.LENGTH_LONG).show()
+    }
 
-    protected fun checkForPermission(action: () -> Unit) =
+    override fun selectFile() {
+        fileHelper.chooseMedia()
+    }
+
+    override fun checkForPermission(activity: FragmentActivity): Boolean {
+        var isPermissionDenied = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionsBuilder(
+            activity.permissionsBuilder(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_MEDIA_IMAGES,
 
                 ).build().send() {
-                var isPermissionDenied = false;
 
                 it.forEach {
                     if (it.isDenied()) {
-                        showToast(this, "please grant ${it.permission} from settings")
+                        Toast.makeText(
+                            activity,
+                            "please grant ${it.permission} from settings",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         isPermissionDenied = true;
                     } else {
                         isPermissionDenied = false;
@@ -103,30 +83,35 @@ abstract class BaseActivity<VB : ViewBinding> :
                     }
                 }
                 if (!isPermissionDenied) {
-                    action.invoke()
+                    //action.invoke()
                 } else {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri = Uri.fromParts("package", packageName, null)
+                    val uri: Uri = Uri.fromParts("package", activity.packageName, null)
                     intent.data = uri
 // This will take the user to a page where they have to click twice to drill down to grant the permission
-                    startActivity(intent)
+                    activity.startActivity(intent)
 
                 }
 
             }
         } else {
-            permissionsBuilder(
+            activity.permissionsBuilder(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
 
                 ).build().send() {
-                var isPermissionDenied = false;
+                isPermissionDenied = false;
 
                 it.forEach {
                     if (it.isDenied()) {
-                        showToast(this, "please grant ${it.permission} from settings")
+                        Toast.makeText(
+                            activity,
+                            "please grant ${it.permission} from settings",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
                         isPermissionDenied = true;
                     } else {
                         isPermissionDenied = false;
@@ -134,91 +119,43 @@ abstract class BaseActivity<VB : ViewBinding> :
                     }
                 }
                 if (!isPermissionDenied) {
-                    action.invoke()
+                    //action.invoke()
                 } else {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri = Uri.fromParts("package", packageName, null)
+                    val uri: Uri = Uri.fromParts("package", activity.packageName, null)
                     intent.data = uri
 // This will take the user to a page where they have to click twice to drill down to grant the permission
-                    startActivity(intent)
+                    activity.startActivity(intent)
                 }
 
             }
         }
-
-
-    protected fun showDialog(activity: Activity) {
-        mCustomProgressDialog = CustomProgressDialog(activity)
-        mCustomProgressDialog?.let {
-            it.show()
-        }
+        return isPermissionDenied
     }
 
+    override fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(activity.applicationContext)
 
-    protected fun takePicture() {
-        ImagePicker.with(this).cameraOnly().start();
-    }
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
 
-    protected fun pickPicture() {
-        ImagePicker.with(this).start()
-    }
-
-
-    protected fun getCurrentLocation() {
-        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(this, "Location not enabled", Toast.LENGTH_SHORT).show()
-
-            } else {
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                    it?.let {
-                        lat = it.latitude
-                        long = it.longitude
-
-                        val geocoder = Geocoder(this, Locale.getDefault())
-                        val addresses = geocoder.getFromLocation(lat ?: 0.0, long ?: 0.0, 1)
-                        if (addresses != null) {
-                            currentLocation =
-                                "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                                    addresses.first().adminArea
-                                }"
-
-                        }
-                    }
-
-
-                }
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Location not enabled", Toast.LENGTH_SHORT).show()
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
 
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
     }
 
-    /**
-     * Hide Progress Dialog
-     */
-    protected fun hideDialog(activity: Activity) {
-        mCustomProgressDialog = CustomProgressDialog(activity)
-        mCustomProgressDialog?.let {
-            it.dismiss()
-        }
-    }
-
-    private fun getCurrentDate() =
-        SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-
-    private fun getCurrentTime() = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
-
-    open fun compressImage(imageUri: String?): String? {
+    override fun compressImage(imageUri: String?): String {
         val filePath: String? = getRealPathFromURI(imageUri ?: "")
         var scaledBitmap: Bitmap? = null
         val options = BitmapFactory.Options()
@@ -253,7 +190,8 @@ abstract class BaseActivity<VB : ViewBinding> :
         }
 
 //      setting inSampleSize value allows to load a scaled down version of the original image
-        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight)
+        options.inSampleSize =
+            BitmapLoadUtils.calculateInSampleSize(options, actualWidth, actualHeight)
 
 //      inJustDecodeBounds set to false to load the actual bitmap
         options.inJustDecodeBounds = false
@@ -327,44 +265,47 @@ abstract class BaseActivity<VB : ViewBinding> :
         return filename
     }
 
-    //    public String getFilename() {
-    //        File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
-    //        if (!file.exists()) {
-    //            file.mkdirs();
-    //        }
-    //        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-    //        return uriSting;
-    //    }
-    private fun getFilename(): String? {
+    override fun getRealPathFromURI(contentURI: String): String? {
+        val contentUri = Uri.parse(contentURI)
+        val cursor = activity.contentResolver.query(contentUri, null, null, null, null)
+        return if (cursor == null) {
+            contentUri.path
+        } else {
+            cursor.moveToFirst()
+            val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            cursor.getString(index)
+        }
+    }
+
+    override fun getFilename(): String? {
         //    File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
-        val finalPath: String = this.filesDir
+        val finalPath: String = activity.filesDir
             .toString() + File.separator + System.currentTimeMillis() + ".jpg"
         val file = File(finalPath)
         if (!file.exists()) {
             //        file.mkdirs();
-            file.parentFile.mkdirs()
+            file.parentFile?.mkdirs()
         }
         //    String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
         return file.absolutePath
     }
 
-    @Deprecated("Deprecated in Java")
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == fileHelper.FILE_REQUEST_CODE && resultCode == RESULT_OK && data != null && data.data != null) {
+        if (requestCode == FILE_REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK && data != null && data.data != null) {
             //Get URI pointing to the file that was selected from the user
             data.data?.let { uri ->
 
                 //Get file extension e.g mp4, flv, pdf...
-                val fileType = fileHelper.getFileType(uri)
+                val fileType = FileHelper(activity).getFileType(uri)
 
                 //Temporary file to hold content of actual file
-                val file = File.createTempFile("vid", ".${fileType}")
+                val file = File.createTempFile("vid", fileType)
 
-                pickedFile.value = file
+                // pickedFile.value = file
                 //Copy content from actual file to Temporary file using Input Stream
                 fileHelper.copyInputStreamToFile(
-                    inputStream = contentResolver.openInputStream(uri)!!,
+                    inputStream = activity.contentResolver.openInputStream(uri)!!,
                     file = file
                 )
                 //At this point the Temporary file object is ready, you can upload or use as needed
@@ -381,77 +322,25 @@ abstract class BaseActivity<VB : ViewBinding> :
                     "emp_code" to userDetails.emp_id,
                     "emp_name" to userDetails.fname
                 )
-                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+                val thumbnail = MediaStore.Images.Media.getBitmap(activity.contentResolver, uri)
                 if (thumbnail != null) {
                     var stampedBitmap = ImageHelper().createTimeStampinBitmap(
                         File(compressImage(bitmapToFile(thumbnail).path)), stampMap
                     )
 
-                    imageFile.value = File(compressImage(bitmapToFile(stampedBitmap).path))
+                    //imageFile.value = File(compressImage(bitmapToFile(stampedBitmap).path))
 
 
                 } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                    Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, "Task Cancelled", Toast.LENGTH_SHORT).show()
                 }
 
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Please select Image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Please select Image", Toast.LENGTH_SHORT).show()
         }
-
-
-    }
-
-    protected fun bitmapToFile(bitmap: Bitmap): Uri {
-        // Get the context wrapper
-        val wrapper = ContextWrapper(applicationContext)
-
-        // Initialize a new file instance to save bitmap object
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
-
-        try {
-            // Compress the bitmap and save in jpg format
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        // Return the saved bitmap uri
-        return Uri.parse(file.absolutePath)
-    }
-
-    protected fun getRealPathFromURI(contentURI: String): String? {
-        val contentUri = Uri.parse(contentURI)
-        val cursor = contentResolver.query(contentUri, null, null, null, null)
-        return if (cursor == null) {
-            contentUri.path
-        } else {
-            cursor.moveToFirst()
-            val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-            cursor.getString(index)
-        }
-    }
-
-    protected fun chooseMedia() {
-        val intent = Intent()
-        intent.type = "*/*"
-        intent.action = ACTION_GET_CONTENT
-        //launch picker screen
-        startActivityForResult(intent, REQUEST_CODE)
-    }
-
-    protected fun pickFile() {
-        fileHelper.chooseMedia()
-    }
-
-    companion object {
-        const val REQUEST_CODE = 50
 
 
     }

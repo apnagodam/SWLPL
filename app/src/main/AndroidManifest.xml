@@ -44,6 +44,14 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
         <activity
+            android:name=".activity.in.ivr.QualityTaggingActivity"
+            android:exported="false" />
+
+
+        <activity
+            android:name=".activity.in.ivr.ivr_tagging.IvrTaggingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.audit.InOutActivity"
             android:exported="false" />
         <activity

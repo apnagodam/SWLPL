@@ -59,14 +59,50 @@
             <!--                android:textSize="@dimen/_14sdp"-->
             <!--                android:textStyle="bold"-->
             <!--                android:visibility="visible" />-->
-
-            <Switch
-                android:id="@+id/attendenceSwitch"
+            <TextView
+                android:id="@+id/tvOut"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:text="Out"
+                android:textSize="@dimen/_12sdp"
+
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/attendenceSwitch"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvIn"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                android:text="In"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/attendenceSwitch"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/attendenceSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_gravity="center"
+                android:textSize="@dimen/_12ssp"
+                android:thumb="@drawable/custom_thumb"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/tvOut"
+                app:layout_constraintTop_toTopOf="parent"
+                app:showText="false"
+                app:track="@drawable/custom_track" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
