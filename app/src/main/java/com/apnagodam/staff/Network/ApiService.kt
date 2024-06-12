@@ -358,7 +358,7 @@ interface ApiService {
     suspend fun getWareHouseData(): Response<ResponseWarehouse>
 
     @GET("emp_api/apna_emp_clock_status")
-    fun getattendanceStatus(): Call<AttendanceResponse>
+    suspend fun getattendanceStatus(): Response<AttendanceResponse>
 
     @GET("api/apna_default_list")
     suspend fun getcommuydity_terminal_user_emp_listing(@Query("app_type") str: String?): Response<CommudityResponse>
