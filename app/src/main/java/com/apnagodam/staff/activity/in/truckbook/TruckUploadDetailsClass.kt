@@ -417,12 +417,15 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
     override fun dispatchTakePictureIntent() {
         val mLocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        if(mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            permissionsBuilder(Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION).build().send() {
-                if(it.allGranted()){
+        if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            permissionsBuilder(
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).build().send() {
+                if (it.allGranted()) {
                     photoEasy.startActivityForResult(this)
-                }
-                else{
+                } else {
                     Toast.makeText(
                         this,
                         "Location or Camera Permissions Denied",
@@ -432,8 +435,7 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
 
 
             }
-        }
-        else{
+        } else {
             Toast.makeText(
                 this,
                 "GPS Not Enabled",
@@ -442,7 +444,6 @@ class TruckUploadDetailsClass() : BaseActivity<ActivityUploadDetailsBinding?>(),
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
         }
-
 
 
     }

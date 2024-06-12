@@ -28,7 +28,7 @@
             android:orientation="horizontal"
             android:layout_height="wrap_content">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_name"
                     style="@style/TextStyleBold"
                     android:ellipsize="end"
@@ -63,7 +63,7 @@
                     android:text="@string/coustomer_name1"
                     android:textColor="@color/colorPrimary"
                     android:textSize="@dimen/_10ssp" />
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_phone"
                     style="@style/TextStyleBold"
                     android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content">
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvVehicle"
                     style="@style/TextStyleBold"
                     android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
                     android:textStyle="bold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_10ssp" />
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tvDriverNum"
                     style="@style/TextStyleBold"
                     android:layout_width="wrap_content"
@@ -124,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:orientation="vertical"
                     android:layout_height="wrap_content">
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                         android:layout_width="match_parent"
                         app:dividerColor="@color/colorPrimary"
                         android:layout_height="wrap_content"/>
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tvLab"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
 
                 </LinearLayout>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_done"
                     android:layout_width="match_parent"
                     android:padding="@dimen/_10sdp"
@@ -208,19 +208,41 @@
             <!--                />-->
             <!--        </LinearLayout>-->
         </LinearLayout>
-        <TextView
-            android:id="@+id/tvDate"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_weight="1"
-            android:layout_margin="@dimen/_5sdp"
-            android:textStyle="bold"
-            android:scrollHorizontally="true"
-            android:ellipsize="end"
-            android:maxLines="4"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_10ssp" />
+            android:layout_height="wrap_content"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvTimeDifference"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:layout_margin="@dimen/_5sdp"
+                style="@style/TextStyleBold"
+                android:scrollHorizontally="true"
+
+                android:text="2 hours"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:textColor="@color/red"
+                android:textSize="@dimen/_10sdp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:layout_margin="@dimen/_5sdp"
+                style="@style/TextStyleBold"
+                android:scrollHorizontally="true"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:text="2 hours"
+                android:textColor="@color/red"
+                android:textSize="@dimen/_10sdp" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/llCaseId"
             android:layout_width="match_parent"
@@ -229,7 +251,7 @@
             android:gravity="center"
 
             >
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight=".8"
@@ -241,7 +263,7 @@
                 android:visibility="gone"
                 android:textStyle="bold"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_case_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

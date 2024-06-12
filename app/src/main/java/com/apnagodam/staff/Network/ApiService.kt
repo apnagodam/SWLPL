@@ -15,6 +15,7 @@ import com.apnagodam.staff.Network.Request.CreateLeadsPostData
 import com.apnagodam.staff.Network.Request.CreatePricingSetPostData
 import com.apnagodam.staff.Network.Request.CreateVendorConveyancePostData
 import com.apnagodam.staff.Network.Request.DharmaKanthaPostData
+import com.apnagodam.staff.Network.Request.DispleasedRequestModel
 import com.apnagodam.staff.Network.Request.LoginPostData
 import com.apnagodam.staff.Network.Request.OTPData
 import com.apnagodam.staff.Network.Request.OTPGatePassData
@@ -42,6 +43,10 @@ import com.apnagodam.staff.Network.Response.DharamKanta
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
+import com.apnagodam.staff.Network.Response.PleasedApproverResponse
+import com.apnagodam.staff.Network.Response.PleasedCommodityResponse
+import com.apnagodam.staff.Network.Response.PleasedStackResponse
+import com.apnagodam.staff.Network.Response.PleasedUsersResponse
 import com.apnagodam.staff.Network.Response.PvResponseModel
 import com.apnagodam.staff.Network.Response.QualityParamsResponse
 import com.apnagodam.staff.Network.Response.ResponseFastcaseList
@@ -93,10 +98,7 @@ import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.PartMap
 import retrofit2.http.Query
 
 interface ApiService {
@@ -555,8 +557,31 @@ interface ApiService {
         @Query("long") long: String,
         @Query("terminal_id") terminalId: String,
         @Query("type") inOutType: String,
-        @Query("notes") notes:String
-    ):Response<BaseResponse>
+        @Query("notes") notes: String
+    ): Response<BaseResponse>
 
+    @GET("emp_api/user_terminalewise_users")
+    suspend fun getPleasedUsers(@Query("terminal_id") terminalId: String): Response<PleasedUsersResponse>
+
+    @GET("emp_api/user_terminalewise_commodity")
+    suspend fun getPleasedCommodity(
+        @Query("terminal_id") terminalId: String, @Query("user_id") userId: String
+    ): Response<PleasedCommodityResponse>
+
+    @GET("emp_api/user_terminalewise_stack")
+    suspend fun getPleasedStacks(
+        @Query("terminal_id") terminalId: String,
+        @Query("user_id") userId: String,
+        @Query("commodity_id") commodityId: String
+    ): Response<PleasedStackResponse>
+
+
+    @GET("emp_api/displedge_request_employee")
+    suspend fun getPleasedApprovar(): Response<PleasedApproverResponse>
+
+    @POST("emp_api/add_displedge")
+    suspend fun postDisplegedRequest(
+      @Body displeasedRequestModel: DispleasedRequestModel
+    ): Response<BaseResponse>
 }
 

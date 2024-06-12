@@ -55,11 +55,7 @@ class ImageHelper {
         cs.drawBitmap(src, 0f, 0f, null)
         val height = tPaint.measureText("yY")
         cs.drawText(
-            "Date: ${calendar.get(Calendar.DAY_OF_MONTH)}/${(calendar.get(Calendar.MONTH) + 1)}/${
-                calendar.get(
-                    Calendar.YEAR
-                )
-            } Time: ${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}",
+            "${DateTimeHelper.getCurrentDateTime()}",
             0f,
             dest.height.toFloat() - 5f,
             tPaint

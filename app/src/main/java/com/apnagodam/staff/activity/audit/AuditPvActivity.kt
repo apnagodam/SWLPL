@@ -322,22 +322,5 @@ class AuditPvActivity : BaseActivity<ActivityAuditPvBinding>(), RecyclerviewCall
         pvRecyclerviewAdapter.notifyItemRemoved(position)
     }
 
-    override fun getDhang(dhang: String) {
-        super.getDhang(dhang)
-    }
 
-    override fun getDanda(danda: String) {
-
-        super.getDanda(danda)
-    }
-
-    override fun getTotal(total: String) {
-
-        super.getTotal(total)
-    }
-
-    override fun getHeight(height: String) {
-
-        super.getHeight(height)
-    }
 }

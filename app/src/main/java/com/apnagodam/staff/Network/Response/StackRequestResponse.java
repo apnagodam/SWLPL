@@ -1,15 +1,13 @@
 package com.apnagodam.staff.Network.Response;
 
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
-public class StackRequestResponse implements Serializable
-{
+public class StackRequestResponse implements Serializable {
 
     @SerializedName("status")
     @Expose
@@ -29,6 +27,8 @@ public class StackRequestResponse implements Serializable
     @SerializedName("outward_count")
     @Expose
     private Integer outwardCount;
+
+
     private final static long serialVersionUID = 4503894588630732652L;
 
     public String getStatus() {
@@ -79,8 +79,7 @@ public class StackRequestResponse implements Serializable
         this.outwardCount = outwardCount;
     }
 
-    public class InwardRequestDatum implements Serializable
-    {
+    public class InwardRequestDatum implements Serializable {
 
         @SerializedName("terminal_name")
         @Expose
@@ -254,8 +253,7 @@ public class StackRequestResponse implements Serializable
 
     }
 
-    public class OutwardRequestDatum implements Serializable
-    {
+    public class OutwardRequestDatum implements Serializable {
 
         @SerializedName("terminal_name")
         @Expose
@@ -304,6 +302,31 @@ public class StackRequestResponse implements Serializable
         @Expose
         private String userNumber;
 
+
+//        @SerializedName("release_bags")
+//        @Expose
+//        private Integer releaseBags;
+//
+//        @SerializedName("release_weight")
+//        @Expose
+//        private String releaseWeight;
+
+//        public Integer getReleaseBags() {
+//            return releaseBags;
+//        }
+//
+//        public void setReleaseBags(Integer releaseBags) {
+//            this.releaseBags = releaseBags;
+//        }
+//
+//        public String getReleaseWeight() {
+//            return releaseWeight;
+//        }
+//
+//        public void setReleaseWeight(String releaseWeight) {
+//            this.releaseWeight = releaseWeight;
+//        }
+
         public String getUserNumber() {
             return userNumber;
         }
@@ -311,6 +334,7 @@ public class StackRequestResponse implements Serializable
         public void setUserNumber(String userNumber) {
             this.userNumber = userNumber;
         }
+
         private final static long serialVersionUID = -506955537973854362L;
 
         public String getTerminalName() {

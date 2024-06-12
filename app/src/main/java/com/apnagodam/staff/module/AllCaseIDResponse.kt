@@ -305,7 +305,7 @@ class AllCaseIDResponse : BaseResponse() {
         var secondQualityReport: String? = null
 
         @JvmField
-        @SerializedName("s_quality_report_date")
+        @SerializedName("s_quality_date")
         @Expose
         var secondQualityReportDate: String? = null
 

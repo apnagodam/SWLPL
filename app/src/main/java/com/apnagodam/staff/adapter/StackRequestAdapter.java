@@ -9,36 +9,21 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
 
-import com.apnagodam.staff.Base.BaseActivity;
 import com.apnagodam.staff.Base.BaseRecyclerViewAdapter;
 import com.apnagodam.staff.Base.BaseViewHolder;
 import com.apnagodam.staff.Network.Response.StackRequestResponse;
 import com.apnagodam.staff.R;
+import com.apnagodam.staff.activity.InwardListActivity;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
-import com.apnagodam.staff.activity.in.first_kantaparchi.UploadFirstkantaParchiClass;
-import com.apnagodam.staff.activity.in.first_quality_reports.UploadFirstQualtityReportsClass;
-import com.apnagodam.staff.activity.in.labourbook.LabourBookUploadClass;
-import com.apnagodam.staff.activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass;
-import com.apnagodam.staff.activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass;
-import com.apnagodam.staff.activity.in.truckbook.TruckUploadDetailsClass;
-import com.apnagodam.staff.activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass;
-import com.apnagodam.staff.activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass;
-import com.apnagodam.staff.activity.out.labourbook.OUTLabourBookUploadClass;
-import com.apnagodam.staff.activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass;
-import com.apnagodam.staff.activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass;
-import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass;
 import com.apnagodam.staff.databinding.LayoutStackRequestBinding;
-import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding;
-import com.apnagodam.staff.module.AllCaseIDResponse;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class StackRequestAdapter extends BaseRecyclerViewAdapter {
     private List<StackRequestResponse.InwardRequestDatum> Leads;
     private Context context;
-    private BaseActivity activity;
+    private Activity activity;
 
     public StackRequestAdapter(List<StackRequestResponse.InwardRequestDatum> leads, Activity caseListingActivity) {
         this.Leads = leads;
@@ -93,6 +78,11 @@ public class StackRequestAdapter extends BaseRecyclerViewAdapter {
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
             }
+            if ((context instanceof InwardListActivity)) {
+                binding.tvReleaseWeight.setVisibility(View.GONE);
+                binding.tvReleaseBags.setVisibility(View.GONE);
+            }
+
             binding.tvId.setText("" + Leads.get(position).getStackId());
             binding.tvName.setText(Leads.get(position).getUserName());
             binding.tvPhone.setText(Leads.get(position).getUserNumber());

@@ -1,7 +1,7 @@
 package com.apnagodam.staff.activity
 
+
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
@@ -9,15 +9,9 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.NetworkSpeedViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.LoginActivity.Companion.TAG
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.Utility
-import com.fondesa.kpermissions.allGranted
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.extension.send
-
-
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -233,7 +227,6 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
     }*/
     private fun getappVersion() {
         homeViewModel.getAppVersion("Emp")
-
 
 
     }

@@ -7,6 +7,7 @@ import dagger.hilt.android.HiltAndroidApp
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+import java.util.Date
 
 
 @HiltAndroidApp
@@ -29,6 +30,9 @@ class ApnaGodamApp : Application() {
     }
 
     companion object {
+        @JvmField
+        var date = Date()
+
         @JvmField
         var app: ApnaGodamApp? = null
 

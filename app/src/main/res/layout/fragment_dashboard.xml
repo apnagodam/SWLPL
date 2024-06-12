@@ -23,9 +23,7 @@
                         android:layout_height="wrap_content"
                         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                        <include
-                            android:id="@+id/mainHeader"
-                            layout="@layout/header_dashboard" />
+
                     </com.google.android.material.appbar.AppBarLayout>
 
                     <ScrollView

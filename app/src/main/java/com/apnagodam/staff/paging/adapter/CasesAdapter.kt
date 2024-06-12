@@ -38,12 +38,15 @@ import com.apnagodam.staff.activity.out.truckbook.OUTTruckUploadDetailsClass
 import com.apnagodam.staff.activity.toDate
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.module.AllCaseIDResponse
+import com.apnagodam.staff.utils.DateTimeHelper
 import com.apnagodam.staff.utils.Utility
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.io.File
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import javax.inject.Inject
@@ -72,6 +75,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
             if (Leads.inOut == "IN") {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Truck"
+
+                    binding.tvTimeDifference.text = DateTimeHelper.compareDate(Leads.createdAt)
                     binding.tvDate.setText(
                         "${
                             Leads.createdAt?.let { formatDate(it.toDate().toString()) }
@@ -88,6 +93,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                 } else {
                     if (Leads.labourBook == null) {
                         binding.tvStatus.text = "Add Labour"
+                        binding.tvTimeDifference.text =
+                            DateTimeHelper.compareDate(Leads.truckbookDate)
                         binding.tvDate.setText(
                             "${
                                 Leads.truckbookDate?.let { formatDate(it.toDate().toString()) }
@@ -106,6 +113,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         if (Leads.firstKantaParchi == null || Leads.firstKantaDharamkanta == null
                         ) {
                             binding.tvStatus.text = "Add First Kanta Parchi"
+                            binding.tvTimeDifference.text =
+                                DateTimeHelper.compareDate(Leads.labourBookDate)
+
                             binding.tvDate.setText(
                                 "${
                                     Leads.labourBookDate?.let { formatDate(it.toDate().toString()) }
@@ -134,6 +144,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                     }"
                                 )
+                                binding.tvTimeDifference.text =
+                                    DateTimeHelper.compareDate(Leads.firstKantaParchiDate)
 
                                 binding.tvStatus.setOnClickListener {
                                     val intent =
@@ -156,11 +168,20 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
 
                                         }"
                                     )
+                                    binding.tvTimeDifference.text =
+                                        DateTimeHelper.compareDate(Leads.firstQualityDate)
 
                                 } else {
                                     if (Leads.secondKantaParchi == null || Leads.secondKantaDharamkanta == null
                                     ) {
                                         binding.tvStatus.text = "Add Second Kanta Parchi"
+
+                                        Leads.firstQualityTaggingDate?.let {
+                                            binding.tvTimeDifference.text =
+                                                DateTimeHelper.compareDate(it)
+                                        }
+
+
                                         binding.tvDate.setText(
                                             "${
                                                 Leads.firstQualityTaggingDate?.let {
@@ -196,6 +217,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                         if (Leads.secondQualityReport == null || Leads.sendToLab == null
                                         ) {
                                             binding.tvStatus.text = "Add Second Quality Report"
+                                            binding.tvTimeDifference.text =
+                                                DateTimeHelper.compareDate(Leads.secondKantaParchiDate)
+
                                             binding.tvDate.setText(
                                                 "${
                                                     Leads.secondKantaParchiDate?.let {
@@ -339,43 +363,61 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                             }
                                         } else {
                                             if (Leads.cctvReport == null) {
-                                                binding.tvDate.setText(
-                                                    Leads.secondQualityReportDate?.let {
+                                                Leads.secondQualityReportDate?.let {
+                                                    binding.tvTimeDifference.text =
+                                                        DateTimeHelper.compareDate(it)
+
+                                                    binding.tvDate.setText(
                                                         formatDate(
                                                             it.toDate().toString()
                                                         )
-                                                    }
 
-                                                )
+                                                    )
+                                                }
                                                 binding.tvStatus.text = "CCTV Pending"
                                             } else {
                                                 if (Leads.ivrReport == null) {
-                                                    binding.tvDate.setText(
-                                                        Leads.cctvReportDate?.let {
+                                                    Leads.cctvReportDate?.let {
+                                                        binding.tvTimeDifference.text =
+                                                            DateTimeHelper.compareDate(it)
+
+                                                        binding.tvDate.setText(
                                                             formatDate(
                                                                 it.toDate().toString()
                                                             )
-                                                        }
 
-                                                    )
+                                                        )
+                                                    }
+
                                                     binding.tvStatus.text = "IVR Pending"
                                                 } else {
                                                     if (Leads.gatepassReport == null
                                                     ) {
+
+
                                                         Leads.ivrReportDate?.let {
-                                                            formatDate(
-                                                                it.toDate().toString()
-                                                            )
+                                                            binding.tvTimeDifference.text =
+                                                                DateTimeHelper.compareDate(it)
+
+                                                            binding.tvDate.text =   formatDate(
+                                                                    it.toDate().toString()
+                                                                    )
                                                         }
+
 
                                                         binding.tvStatus.text = "Gate Pass Pending"
                                                     } else {
+
+
+
                                                         Leads.ivrReportDate?.let {
-                                                            formatDate(
+                                                            binding.tvTimeDifference.text =
+                                                                DateTimeHelper.compareDate(it)
+
+                                                            binding.tvDate.text =   formatDate(
                                                                 it.toDate().toString()
                                                             )
                                                         }
-
                                                         binding.tvStatus.text = "View"
                                                         binding.tvStatus.setOnClickListener {
                                                             val intent = Intent(
@@ -401,6 +443,8 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
             } else {
                 if (Leads.truckbook == null) {
                     binding.tvStatus.text = "Add Out Truck"
+                    binding.tvTimeDifference.text = DateTimeHelper.compareDate(Leads.createdAt)
+
                     binding.tvDate.setText(
                         "${
                             Leads.createdAt?.let { formatDate(it.toDate().toString()) }
@@ -417,6 +461,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                 } else {
                     if (Leads.labourBook == null) {
                         binding.tvStatus.text = "Add Out Labour"
+                        binding.tvTimeDifference.text =
+                            DateTimeHelper.compareDate(Leads.truckbookDate)
+
                         binding.tvDate.setText(
                             "${
                                 Leads.truckbookDate?.let { formatDate(it.toDate().toString()) }
@@ -453,6 +500,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                         if (Leads.firstKantaParchi == null || Leads.firstKantaDharamkanta == null
                         ) {
                             binding.tvStatus.text = "Add Out First Kanta Parchi"
+                            binding.tvTimeDifference.text =
+                                DateTimeHelper.compareDate(Leads.labourBookDate)
+
                             binding.tvDate.setText(
                                 "${
                                     Leads.labourBookDate?.let { formatDate(it.toDate().toString()) }
@@ -469,6 +519,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             }
                         } else {
                             if (Leads.secondQualityReport == null) {
+                                binding.tvTimeDifference.text =
+                                    DateTimeHelper.compareDate(Leads.firstKantaParchiDate)
+
                                 binding.tvStatus.text = "Add Out Quality Report"
                                 binding.tvDate.setText(
                                     "${
@@ -497,27 +550,47 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 ) {
                                     binding.tvStatus.text = "Add Out Second Kanta Parchi"
                                     if (Leads.secondKantaParchiDate == null) {
-                                        binding.tvDate.setText(
-                                            "${
-                                                Leads.secondQualityReportDate?.let {
+                                        Leads.firstQualityDate?.let {
+                                            binding.tvTimeDifference.text =
+                                                DateTimeHelper.compareDate(it)
+
+                                            binding.tvDate.setText(
+                                                "${
                                                     formatDate(
                                                         it.toDate().toString()
                                                     )
-                                                }
+                                                }"
+                                            )
+                                        }
 
-                                            }"
-                                        )
-                                    } else
-                                        binding.tvDate.setText(
-                                            "${
-                                                Leads.secondQualityReportDate?.let {
+                                    } else {
+                                        Leads.secondKantaParchiDate?.let {
+                                            binding.tvTimeDifference.text =
+                                                DateTimeHelper.compareDate(it)
+
+                                            binding.tvDate.setText(
+                                                "${
                                                     formatDate(
                                                         it.toDate().toString()
                                                     )
-                                                }
+                                                }"
+                                            )
+                                        }
+//                                        binding.tvTimeDifference.text =
+//                                            compareDate(Leads.secondQualityReportDate)
+//
+//                                        binding.tvDate.setText(
+//                                            "${
+//                                                Leads.secondQualityReportDate?.let {
+//                                                    formatDate(
+//                                                        it.toDate().toString()
+//                                                    )
+//                                                }
+//
+//                                            }"
+//                                        )
+                                    }
 
-                                            }"
-                                        )
 
                                     binding.tvStatus.setOnClickListener {
                                         val intent = Intent(
@@ -540,44 +613,82 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                     if (Leads.cctvReport == null || Leads.cctvReport.toString()
                                             .isEmpty()
                                     ) {
-                                        binding.tvDate.setText(
-                                            "${
-                                                Leads.secondKantaParchiDate?.let {
+                                        Leads.secondQualityReportDate?.let {
+                                            binding.tvTimeDifference.text =
+                                                DateTimeHelper.compareDate(it)
+
+                                            binding.tvDate.setText(
+                                                "${
                                                     formatDate(
                                                         it.toDate().toString()
                                                     )
-                                                }
-
-                                            }"
-                                        )
+                                                }"
+                                            )
+                                        }
+//                                        binding.tvDate.setText(
+//                                            "${
+//                                                Leads.secondKantaParchiDate?.let {
+//                                                    formatDate(
+//                                                        it.toDate().toString()
+//                                                    )
+//                                                }
+//
+//                                            }"
+//                                        )
 
                                         binding.tvStatus.text = "CCTV Pending"
                                     } else {
                                         if (Leads.ivrReport == null) {
                                             binding.tvStatus.text = "IVR Pending"
-                                            binding.tvDate.setText(
-                                                "${
-                                                    Leads.cctvReportDate?.let {
+
+                                            Leads.cctvReportDate?.let {
+                                                binding.tvTimeDifference.text =
+                                                    DateTimeHelper.compareDate(it)
+
+                                                binding.tvDate.setText(
+                                                    "${
                                                         formatDate(
                                                             it.toDate().toString()
                                                         )
-                                                    }
-
-                                                }"
-                                            )
+                                                    }"
+                                                )
+                                            }
+//                                            binding.tvDate.setText(
+//                                                "${
+//                                                    Leads.cctvReportDate?.let {
+//                                                        formatDate(
+//                                                            it.toDate().toString()
+//                                                        )
+//                                                    }
+//
+//                                                }"
+//                                            )
                                         } else {
                                             if (Leads.gatepassReport == null) {
                                                 binding.tvStatus.text = "Gate Pass Pending"
-                                                binding.tvDate.setText(
-                                                    "${
-                                                        Leads.cctvReportDate?.let {
+
+                                                Leads.cctvReportDate?.let {
+                                                    binding.tvTimeDifference.text =
+                                                        DateTimeHelper.compareDate(it)
+
+                                                    binding.tvDate.setText(
+                                                        "${
                                                             formatDate(
                                                                 it.toDate().toString()
                                                             )
-                                                        }
-
-                                                    }"
-                                                )
+                                                        }"
+                                                    )
+                                                }
+//                                                binding.tvDate.setText(
+//                                                    "${
+//                                                        Leads.cctvReportDate?.let {
+//                                                            formatDate(
+//                                                                it.toDate().toString()
+//                                                            )
+//                                                        }
+//
+//                                                    }"
+//                                                )
                                             } else {
                                                 binding.tvStatus.text = "View"
                                                 binding.tvStatus.setOnClickListener {
@@ -649,6 +760,38 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
         }
     }
 
+}
+
+fun compareDate(createdDate: String?): String {
+    var compareDate = ""
+    val dateFormat = SimpleDateFormat(
+        "yyyy-MM-dd HH:mm:ss"
+    )
+    try {
+        val oldDate: Date = dateFormat.parse(createdDate)
+        println(oldDate)
+        val diff = Date().time - oldDate.time
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+
+        if (minutes > 60 && hours == 1L) {
+            compareDate =
+                "$hours hours and ${minutes - 60} minutes have passed since last update"
+
+        } else {
+            compareDate =
+                "$hours hours and ${minutes - (60 * hours)} minutes have passed since last update"
+
+        }
+
+        // Log.e("toyBornTime", "" + toyBornTime);
+    } catch (e: ParseException) {
+        e.printStackTrace()
+    }
+
+    return compareDate;
 }
 
 fun formatDate(dateString: String): String {

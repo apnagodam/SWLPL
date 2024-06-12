@@ -1,25 +1,18 @@
 package com.apnagodam.staff.activity
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.adapter.CasesTopAdapter
-import com.apnagodam.staff.adapter.StackRequestAdapter
 import com.apnagodam.staff.adapter.StackRequestAdapterOutwards
-import com.apnagodam.staff.databinding.ActivityInwardList2Binding
 import com.apnagodam.staff.databinding.ActivityOutwardsListBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -56,7 +49,7 @@ class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
         caseIdViewModel.stackRequestResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
 
                     hideDialog()
                 }
@@ -71,13 +64,13 @@ class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
                         null -> {}
                         else -> {
                             if (it.data.status == "1") {
-                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                                var userDetails =
+                                    SharedPreferencesRepository.getDataManagerInstance().user
                                 allCasesList.clear()
-                                it.data.outwardRequestData.forEach {outwards->
-                                    if(userDetails.terminal==null){
+                                it.data.outwardRequestData.forEach { outwards ->
+                                    if (userDetails.terminal == null) {
                                         allCasesList.add(outwards)
-                                    }
-                                    else if(outwards.terminalId.toString() == userDetails!!.terminal){
+                                    } else if (outwards.terminalId.toString() == userDetails!!.terminal) {
                                         allCasesList.add(outwards)
                                     }
                                 }

@@ -1,6 +1,6 @@
 package com.apnagodam.staff.activity
 
-import android.content.Intent
+import android.app.Activity
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
@@ -12,19 +12,17 @@ import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.adapter.StackRequestAdapter
 import com.apnagodam.staff.databinding.ActivityInwardList2Binding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.interfaces.OnProfileClickListener
-import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnClickListener,
     OnProfileClickListener, RecyclerItemClickListener.OnItemClickListener,
-    AdapterView.OnItemSelectedListener{
+    AdapterView.OnItemSelectedListener {
     var allCasesList = arrayListOf<StackRequestResponse.InwardRequestDatum>()
     private var casesTopAdapter: StackRequestAdapter? = null
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
@@ -36,6 +34,10 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
         return R.layout.activity_inward_list_2
     }
 
+    fun getInstance(): Activity {
+        return this@InwardListActivity
+    }
+
     override fun setUp() {
         setSupportActionBar(binding!!.tlInwards)
         binding!!.tlInwards.setNavigationOnClickListener {
@@ -44,7 +46,7 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
         caseIdViewModel.stackRequestResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
                     hideDialog()
                 }
 
@@ -58,13 +60,13 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
                         null -> {}
                         else -> {
                             if (it.data.status == "1") {
-                                var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                                var userDetails =
+                                    SharedPreferencesRepository.getDataManagerInstance().user
                                 allCasesList.clear()
-                                it.data.inwardRequestData.forEach {inwards->
-                                    if(userDetails.terminal==null){
+                                it.data.inwardRequestData.forEach { inwards ->
+                                    if (userDetails.terminal == null) {
                                         allCasesList.add(inwards)
-                                    }
-                                    else if(inwards.terminalId.toString() == userDetails!!.terminal){
+                                    } else if (inwards.terminalId.toString() == userDetails!!.terminal) {
                                         allCasesList.add(inwards)
                                     }
                                 }
@@ -89,8 +91,6 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
         caseIdViewModel.getStackRequest()
 
 
-
-
     }
 
     override fun onResume() {
@@ -98,6 +98,7 @@ class InwardListActivity : BaseActivity<ActivityInwardList2Binding?>(), View.OnC
         getAllCases("")
 
     }
+
     private fun setAdapter() {
         casesTopAdapter = StackRequestAdapter(allCasesList.reversed(), this)
 

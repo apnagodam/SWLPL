@@ -2,6 +2,8 @@ package com.apnagodam.staff.activity
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -23,27 +25,34 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
 import androidx.viewbinding.ViewBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.CustomProgressDialog
+import com.apnagodam.staff.utils.ImageHelper
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fondesa.kpermissions.isDenied
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.location.LocationServices
 import com.yalantis.ucrop.util.BitmapLoadUtils.calculateInSampleSize
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
-abstract class BaseActivity<VB : ViewBinding> :
-    AppCompatActivity() {
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
     protected var mCustomProgressDialog: CustomProgressDialog? = null
     protected var lat: Double? = null
     protected var long: Double? = null
     protected var currentLocation = ""
+    protected var imageFile: File? = null
+
+    protected var fileUri: Uri? = null
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
 
@@ -81,7 +90,7 @@ abstract class BaseActivity<VB : ViewBinding> :
                     if (it.isDenied()) {
                         showToast(this, "please grant ${it.permission} from settings")
                         isPermissionDenied = true;
-                    }else {
+                    } else {
                         isPermissionDenied = false;
 
                     }
@@ -112,7 +121,7 @@ abstract class BaseActivity<VB : ViewBinding> :
                     if (it.isDenied()) {
                         showToast(this, "please grant ${it.permission} from settings")
                         isPermissionDenied = true;
-                    }else {
+                    } else {
                         isPermissionDenied = false;
 
                     }
@@ -142,11 +151,9 @@ abstract class BaseActivity<VB : ViewBinding> :
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         try {
             if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    this, Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    this, Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
                 Toast.makeText(this, "Location not enabled", Toast.LENGTH_SHORT).show()
@@ -256,10 +263,7 @@ abstract class BaseActivity<VB : ViewBinding> :
         val canvas = Canvas(scaledBitmap!!)
         canvas.setMatrix(scaleMatrix)
         canvas.drawBitmap(
-            bmp,
-            middleX - bmp.width / 2,
-            middleY - bmp.height / 2,
-            Paint(Paint.FILTER_BITMAP_FLAG)
+            bmp, middleX - bmp.width / 2, middleY - bmp.height / 2, Paint(Paint.FILTER_BITMAP_FLAG)
         )
 
 //      check the rotation of the image and display it properly
@@ -282,9 +286,7 @@ abstract class BaseActivity<VB : ViewBinding> :
                 Log.d("EXIF", "Exif: $orientation")
             }
             scaledBitmap = Bitmap.createBitmap(
-                scaledBitmap!!, 0, 0,
-                scaledBitmap!!.width, scaledBitmap!!.height, matrix,
-                true
+                scaledBitmap!!, 0, 0, scaledBitmap!!.width, scaledBitmap!!.height, matrix, true
             )
         } catch (e: IOException) {
             e.printStackTrace()
@@ -301,6 +303,90 @@ abstract class BaseActivity<VB : ViewBinding> :
         return filename
     }
 
+    protected fun captureImage() {
+        ImagePicker.with(this).cameraOnly().start();
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        try {
+            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                val uri: Uri = data?.data!!
+
+                var stampMap = mapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id,
+                    "emp_name" to userDetails.fname
+                )
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
+                thumbnail?.let {
+                    bitmapToFile(it)?.let { bitmapFile ->
+                        compressImage(bitmapFile.path)?.let { compressedImage ->
+                            var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                                File(compressedImage), stampMap
+                            )
+                            bitmapToFile(stampedBitmap)?.let { finalUri ->
+                                finalUri?.let { finalImage ->
+                                    finalImage.path?.let {
+                                        imageFile = File(it)
+                                        fileUri = Uri.fromFile(imageFile)
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+//                if (thumbnail != null) {
+//
+//
+//                } else if (resultCode == ImagePicker.RESULT_ERROR) {
+//                    Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+//                } else {
+//                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+//                }
+
+            }
+        } catch (e: Exception) {
+            showToast(this, "Please Select an Image")
+        }
+//        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+//            override fun onFinish(thumbnail: Bitmap?) {
+//
+//            }
+//
+//        })
+
+    }
+
+    protected fun bitmapToFile(bitmap: Bitmap): Uri {
+        // Get the context wrapper
+        val wrapper = ContextWrapper(applicationContext)
+
+        // Initialize a new file instance to save bitmap object
+        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+        try {
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        // Return the saved bitmap uri
+        return Uri.parse(file.absolutePath)
+    }
+
     //    public String getFilename() {
     //        File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
     //        if (!file.exists()) {
@@ -309,10 +395,10 @@ abstract class BaseActivity<VB : ViewBinding> :
     //        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
     //        return uriSting;
     //    }
-    private fun getFilename(): String? {
+    protected fun getFilename(): String? {
         //    File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
-        val finalPath: String = this.filesDir
-            .toString() + File.separator + System.currentTimeMillis() + ".jpg"
+        val finalPath: String =
+            this.filesDir.toString() + File.separator + System.currentTimeMillis() + ".jpg"
         val file = File(finalPath)
         if (!file.exists()) {
             //        file.mkdirs();
@@ -322,7 +408,7 @@ abstract class BaseActivity<VB : ViewBinding> :
         return file.absolutePath
     }
 
-    private fun getRealPathFromURI(contentURI: String): String? {
+    protected fun getRealPathFromURI(contentURI: String): String? {
         val contentUri = Uri.parse(contentURI)
         val cursor = contentResolver.query(contentUri, null, null, null, null)
         return if (cursor == null) {

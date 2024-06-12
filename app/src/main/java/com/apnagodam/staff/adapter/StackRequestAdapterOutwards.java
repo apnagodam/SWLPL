@@ -1,14 +1,10 @@
 package com.apnagodam.staff.adapter;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.ViewDataBinding;
@@ -20,8 +16,6 @@ import com.apnagodam.staff.Network.Response.StackRequestResponse;
 import com.apnagodam.staff.R;
 import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass;
 import com.apnagodam.staff.databinding.LayoutStackRequestBinding;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Collection;
 import java.util.List;
@@ -84,7 +78,9 @@ public class StackRequestAdapterOutwards extends BaseRecyclerViewAdapter {
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
             }
-            binding.tvId.setText("" + Leads.get(position).getStackId());
+//            binding.tvReleaseBags.setText("Release Bags:" + Leads.get(position).getReleaseBags());
+//            binding.tvReleaseWeight.setText("Release Weight:" + Leads.get(position).getReleaseWeight());
+            binding.tvId.setText("Stack Id:" + Leads.get(position).getStackId());
             binding.tvName.setText(Leads.get(position).getUserName());
             binding.tvPhone.setText(Leads.get(position).getUserNumber());
             binding.tvCommodity.setText(Leads.get(position).getCommodity());

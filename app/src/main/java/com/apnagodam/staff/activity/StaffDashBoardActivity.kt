@@ -54,6 +54,7 @@ import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
 import com.apnagodam.staff.activity.caseid.CaseListingActivity
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
 import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass
+import com.apnagodam.staff.activity.displedged.DispledgedBags
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.FirstkanthaParchiListingActivity
 import com.apnagodam.staff.activity.`in`.first_quality_reports.FirstQualityReportListingActivity
 import com.apnagodam.staff.activity.`in`.labourbook.LabourBookListingActivity
@@ -171,7 +172,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     }
 
     override fun setUp() {
-        userAdapter = CasesAdapter(this, apiService)
+        //  userAdapter = CasesAdapter(this, apiService)
 
         pageOffset.value = 1;
         lastPage.value = 0;
@@ -207,7 +208,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     fun setUI() {
-        setSupportActionBar(binding!!.mainContent.mainHeader.toolbar)
+        setSupportActionBar(binding!!.toolbar)
         getdashboardData()
 
         getAllCases("")
@@ -255,22 +256,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //            }
 //        }
 
-        binding!!.mainContent.tvCreateCase.setOnClickListener {
+        binding!!.tvCreateCase.setOnClickListener {
             startActivity(CaseIDGenerateClass::class.java)
 
         }
-        binding!!.mainContent.tvNext.setOnClickListener {
+        binding!!.tvNext.setOnClickListener {
             pageOffset.value = pageOffset.value!! + 1
             caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
         };
         pageOffset.observe(this) {
 
             if (it == 1) {
-                binding!!.mainContent.tvPrevious.isEnabled = false
+                binding!!.tvPrevious.isEnabled = false
             } else {
-                binding!!.mainContent.tvPrevious.isEnabled = true
+                binding!!.tvPrevious.isEnabled = true
 
-                binding!!.mainContent.tvPrevious.setOnClickListener { _ ->
+                binding!!.tvPrevious.setOnClickListener { _ ->
                     pageOffset.value = it - 1;
                     caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
                 }
@@ -279,12 +280,12 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         lastPage.observe(this) { page ->
             if (page == pageOffset.value) {
-                binding!!.mainContent.tvNext.isEnabled = false
+                binding!!.tvNext.isEnabled = false
 
             } else {
-                binding!!.mainContent.tvNext.isEnabled = true
+                binding!!.tvNext.isEnabled = true
 
-                binding!!.mainContent.tvNext.setOnClickListener { _ ->
+                binding!!.tvNext.setOnClickListener { _ ->
                     pageOffset.value = pageOffset.value!! + 1;
                     caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
                 }
@@ -294,7 +295,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
 
-        binding!!.mainContent.mainHeader.toogleIcon.setOnClickListener(this)
+        binding!!.toogleIcon.setOnClickListener(this)
         toggle = ActionBarDrawerToggle(
             this@StaffDashBoardActivity, binding!!.drawerLayout, toolbar, 0, 0
         )
@@ -303,22 +304,22 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         toggle!!.syncState()
         //        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
 //        binding.menuList.addOnItemTouchListener(new RecyclerItemClickListener(StaffDashBoardActivity.this, this));
-        binding!!.mainContent.mainHeader.attendanceOnOff.setOnClickListener { v: View? ->
+        binding!!.attendanceOnOff.setOnClickListener { v: View? ->
             TakeAttendance(
                 OnOfffAttendance
             )
         }
-        binding!!.mainContent.close.setOnClickListener {
+        binding!!.close.setOnClickListener {
             try {
                 fileSelfie = null
-                binding!!.mainContent.selfieImage.setImageBitmap(null)
-                binding!!.mainContent.cardAttandance.visibility = View.GONE
+                binding!!.selfieImage.setImageBitmap(null)
+                binding!!.cardAttandance.visibility = View.GONE
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        binding!!.mainContent.UploadImage.setOnClickListener { onImageSelected() }
-        binding!!.mainContent.clockInOut.setOnClickListener { v: View? -> callServer() }
+        binding!!.UploadImage.setOnClickListener { onImageSelected() }
+        binding!!.clockInOut.setOnClickListener { v: View? -> callServer() }
         photoEasy = PhotoEasy.builder().setActivity(this).enableRequestPermission(true).build()
     }
 
@@ -374,11 +375,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     private fun setAdapter() {
 
 
-        binding!!.mainContent.rvDefaultersStatus.isNestedScrollingEnabled = false
+        binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
         val horizontalLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding!!.mainContent.rvDefaultersStatus.layoutManager = horizontalLayoutManager
+        binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
 
-        binding!!.mainContent.rvDefaultersStatus.adapter = userAdapter.withLoadStateFooter(
+        binding!!.rvDefaultersStatus.adapter = userAdapter.withLoadStateFooter(
 
             footer = ListLoadStateAdapter {
                 caseIdViewModel.getPagingData()
@@ -436,7 +437,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(CaseListingActivity::class.java)
                     } /*else if (headerList.get(groupPosition).menuName.equals(getResources().getString(R.string.vendor))) {
                             startActivity(MyVendorVoacherListClass.class);
-                        }*/ else if (headerList[groupPosition].menuName == resources.getString(R.string.spot_sell)) {
+                        }*/
+                    else if (headerList[groupPosition].menuName == resources.getString(R.string.spot_sell)) {
                         startActivity(SpotDealTrackListActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.intantion_title)) {
                         startActivity(IntantionApprovalListClass::class.java)
@@ -452,9 +454,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(CancelCaseId::class.java)
                     } else if (headerList.get(groupPosition).menuName.equals("PV")) {
                         startActivity(UpdatePv::class.java)
+                    } else if (headerList[groupPosition].menuName.equals(ConstantObjects.DISPLEASED_BAGS)) {
+                        startActivity(DispledgedBags::class.java)
                     } else if (headerList[groupPosition].menuName == "Advances") {
-                        Toast.makeText(this, "Coming Soon", Toast.LENGTH_SHORT).show()
-                        // startActivity(AdvancesActivity::class.java)
+
+                         startActivity(AdvancesActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         loginViewModel.doLogout()
 
@@ -581,6 +585,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                             return@OnChildClickListener true
 
                         }
+
 
                         ConstantObjects.AUDIT_IN_OUT_LOCATION -> {
                             startActivity(InOutActivity::class.java)
@@ -872,6 +877,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.out_icon
         ) //Menu of Android Tutorial. No sub menus
+
+        val menuMode26 = MenuModel(
+            ConstantObjects.DISPLEASED_BAGS,
+            true,
+            false,
+            ConstantObjects.EXPANDABLE_LIST_URL,
+            R.drawable.pv
+        )
         //  headerList.add(menuModel5);
 //        headerList.add(menuModel6)
 //        headerList.add(menuModel7)
@@ -923,6 +936,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     R.drawable.pv
                 )
                 childModelsList.add(childModel)
+
                 childModel = MenuModel(
                     ConstantObjects.AUDIT_VIDEO,
                     false,
@@ -953,7 +967,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
             }
         }
-
+        headerList.add(menuMode26)
         headerList.add(menuModel25)
         headerList.add(menuModel23)
         headerList.add(menuModel24)
@@ -989,7 +1003,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     fun setObservers() {
 
         caseIdViewModel.getPagingData()
-        userAdapter = CasesAdapter(this, apiService);
+        //   userAdapter = CasesAdapter(this, apiService);
         caseIdViewModel.userCasesPagination.observe(this) {
             lifecycleScope.launch {
                 userAdapter.submitData(it)
@@ -1177,15 +1191,15 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                     }
 
 
-                                    binding!!.mainContent!!.incase.setText(inwardsList.size.toString())
-                                    binding!!.mainContent!!.outcase.setText(outwardsList.size.toString())
+                                    binding!!.incase.setText(inwardsList.size.toString())
+                                    binding!!.outcase.setText(outwardsList.size.toString())
                                     when (it.inwardRequestData.size) {
                                         0 -> {
 
                                         }
 
                                         else -> {
-                                            binding!!.mainContent!!.cardIncase.setOnClickListener {
+                                            binding!!.cardIncase.setOnClickListener {
                                                 val intent =
                                                     Intent(this, InwardListActivity::class.java)
                                                 startActivity(intent)
@@ -1199,7 +1213,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                                         }
 
                                         else -> {
-                                            binding!!.mainContent!!.cardOutCase.setOnClickListener {
+                                            binding!!.cardOutCase.setOnClickListener {
                                                 val intent =
                                                     Intent(this, OutwardsListActivity::class.java)
                                                 startActivity(intent)

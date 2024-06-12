@@ -29,8 +29,11 @@ class CasesPagingDataSource(private val apiService: ApiService) :
                 response.getaCase().let {
                     if (it!!.data != null) {
                         it.data.let { data ->
+
                             if (data != null) {
+
                                 for (i in data.indices) {
+
 
                                     if ((data[i].cctvReport == null
                                                 || data[i].ivrReport == null
@@ -45,6 +48,8 @@ class CasesPagingDataSource(private val apiService: ApiService) :
                                         if (userDetails.terminal != null) {
                                             if (data[i].terminalId.toString() == userDetails.terminal.toString()) {
                                                 allCasesList.add(data[i])
+
+
                                             }
                                         } else {
                                             allCasesList.add(data[i])
