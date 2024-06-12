@@ -12,11 +12,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.LoginPostData
 import com.apnagodam.staff.Network.Request.OTPData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
@@ -29,11 +27,6 @@ import com.apnagodam.staff.reciever.SMSReceiver.OTPReceiveListener
 import com.apnagodam.staff.utils.Utility
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 
 @AndroidEntryPoint
 class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
@@ -136,9 +129,9 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }
 
                 is NetworkResult.Success -> {
-                   if(it.data!=null){
-                       Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
-                   }
+                    if (it.data != null) {
+                        Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
+                    }
 
                 }
             }
@@ -157,40 +150,41 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
-                   if(it.data!=null){
-                       if(it.data.status=="1"){
-                           userInfo = it.data
-                           SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
-                           SharedPreferencesRepository.getDataManagerInstance().bankNameList = it.data.banks
-                           SharedPreferencesRepository.getDataManagerInstance().saveUserData(it.data.userDetails)
-                           SharedPreferencesRepository.setIsUserName(true)
-                           afterpermissionNext()
-                           Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG).show()
-                           SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
-                           if (setting.equals("changeMobileNumber", ignoreCase = true)) {
-                               startActivityAndClear(SettingActivity::class.java)
-                           } else {
-                               // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
-                               startActivityAndClear(StaffDashBoardActivity::class.java)
-                           }
-                       }
-                       else{
-                           Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT);
-                       }
-                   }
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            userInfo = it.data
+                            SharedPreferencesRepository.saveSessionToken(it.data!!.accessToken)
+                            SharedPreferencesRepository.getDataManagerInstance().bankNameList =
+                                it.data.banks
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .saveUserData(it.data.userDetails)
+                            SharedPreferencesRepository.setIsUserName(true)
+                            afterpermissionNext()
+                            Toast.makeText(this@OtpActivity, it.data.message, Toast.LENGTH_LONG)
+                                .show()
+                            SharedPreferencesRepository.getDataManagerInstance().setIsLoggedIn(true)
+                            if (setting.equals("changeMobileNumber", ignoreCase = true)) {
+                                startActivityAndClear(SettingActivity::class.java)
+                            } else {
+                                // Toast.makeText(OtpActivity.this, "Coming Soon....", Toast.LENGTH_LONG).show();
+                                startActivityAndClear(StaffDashBoardActivity::class.java)
+                            }
+                        } else {
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT);
+                        }
+                    }
                 }
             }
         }
 
     }
 
+
     private fun afterpermissionNext() {
 
-        if(SharedPreferencesRepository.getDataManagerInstance().userPermission!=null&&SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()){
+        if (SharedPreferencesRepository.getDataManagerInstance().userPermission != null && SharedPreferencesRepository.getDataManagerInstance().userPermission.isNotEmpty()) {
             startActivityAndClear(StaffDashBoardActivity::class.java)
-        }
-
-        else{
+        } else {
             val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
             if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
                 homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
@@ -199,23 +193,23 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                         is NetworkResult.Error -> {
                             hideDialog()
                         }
+
                         is NetworkResult.Loading -> {
-                            Toast.makeText(this,"loading",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
                         }
 
                         is NetworkResult.Success -> {
                             hideDialog()
                             if (it.data != null) {
-                                if (it.data.status=="1"){
+                                if (it.data.status == "1") {
                                     SharedPreferencesRepository.getDataManagerInstance()
                                         .saveUserPermissionData(it.data.userPermissionsResult)
                                     startActivityAndClear(StaffDashBoardActivity::class.java)
-                                }
-                                else{
-                                    Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT)
+                                        .show();
 
                                 }
-
 
 
                             }

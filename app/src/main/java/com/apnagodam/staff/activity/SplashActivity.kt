@@ -1,8 +1,11 @@
 package com.apnagodam.staff.activity
 
 
+import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
@@ -11,6 +14,7 @@ import com.apnagodam.staff.Network.viewmodel.NetworkSpeedViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.utils.UpdateHelper
 import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -21,41 +25,25 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
     //    private lateinit var inAppUpdate: InAppUpdate
     val homeViewModel by viewModels<HomeViewModel>()
-    val networkSpeedViewModel by viewModels<NetworkSpeedViewModel>()
     override fun getLayoutResId(): Int {
         return R.layout.activity_splash
     }
 
-    suspend fun changeLanguage(): Flow<Unit> {
-        return flow {
-            emit(
-                Utility.changeLanguage(
-                    this@SplashActivity,
-                    SharedPreferencesRepository.getDataManagerInstance().selectedLanguage
-                )
-            )
+
+
+    val result =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            // handle callback
+            if (result.resultCode != Activity.RESULT_OK) {
+                UpdateHelper.checkForUpdate(this)
+            }
         }
-    }
 
     override fun setUp() {
+        UpdateHelper.checkForUpdate(this)
         getappVersion()
         nextMClass()
-//        networkSpeedViewModel.networkSpeedMonitor.observe(this) {
-//            it?.let {
-//                if (it > 5) {
-//                    Toast.makeText(this, "$it Mbps", Toast.LENGTH_LONG).show()
-//
-//                } else {
-//                    Toast.makeText(
-//                        this,
-//                        "Very Poor connection api may fail speed: $it mbps",
-//                        Toast.LENGTH_LONG
-//                    )
-//                        .show()
-//
-//                }
-//            }
-//        }
+
 
     }
 

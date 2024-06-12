@@ -24,19 +24,21 @@ class DispleasedRepo @Inject constructor(private val apiService: ApiService) : B
         emit(safeApiCall { apiService.getPleasedStacks(terminalId, userId, commodityId) })
     }.flowOn(Dispatchers.IO)
 
-
     suspend fun getPleasedApprovar() = flow {
         emit(safeApiCall { apiService.getPleasedApprovar() })
     }.flowOn(Dispatchers.IO)
-
 
     suspend fun postDispleasedRequest(
         displeasedRequestModel: DispleasedRequestModel
     ) = flow {
         emit(safeApiCall {
             apiService.postDisplegedRequest(
-              displeasedRequestModel
+                displeasedRequestModel
             )
         })
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getDispleasedList() = flow {
+        emit(safeApiCall { apiService.getDispleasedList() })
+    }
 }

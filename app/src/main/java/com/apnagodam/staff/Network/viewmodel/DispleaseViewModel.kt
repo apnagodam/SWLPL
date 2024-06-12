@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.DispleasedRequestModel
 import com.apnagodam.staff.Network.Response.BaseResponse
+import com.apnagodam.staff.Network.Response.DispleasedListResponse
 import com.apnagodam.staff.Network.Response.PleasedApproverResponse
 import com.apnagodam.staff.Network.Response.PleasedCommodityResponse
 import com.apnagodam.staff.Network.Response.PleasedStackResponse
@@ -25,6 +26,7 @@ class DispleaseViewModel @Inject constructor(
     val pleasedStackResponse = MutableLiveData<NetworkResult<PleasedStackResponse>>()
     val pleasedApproverResponse = MutableLiveData<NetworkResult<PleasedApproverResponse>>()
     val postDispleasedResponse = MutableLiveData<NetworkResult<BaseResponse>>()
+    val displeasedListingResponse = MutableLiveData<NetworkResult<DispleasedListResponse>>()
     fun getPleasedUser(terminalId: String) = viewModelScope.launch {
         repo.getPleasedUsers(terminalId).collect {
             pleasedUsersResponse.value = it
@@ -58,6 +60,12 @@ class DispleaseViewModel @Inject constructor(
             displeasedRequestModel
         ).collect {
             postDispleasedResponse.value = it
+        }
+    }
+
+    fun getDispleasedList() = viewModelScope.launch {
+        repo.getDispleasedList().collect {
+            displeasedListingResponse.value = it
         }
     }
 }

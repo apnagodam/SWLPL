@@ -3,6 +3,7 @@ package com.apnagodam.staff.activity.displedged
 import android.content.Intent
 import android.view.LayoutInflater
 import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.viewModels
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.DispleasedRequestModel
@@ -255,7 +256,6 @@ class DispledgedBags : BaseActivity<ActivityDispledgedBagsBinding>() {
                 }
             }
         }
-
         displeaseViewModel.pleasedCommodityResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {}
@@ -360,7 +360,6 @@ class DispledgedBags : BaseActivity<ActivityDispledgedBagsBinding>() {
                 }
             }
         }
-
         displeaseViewModel.pleasedApproverResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {}

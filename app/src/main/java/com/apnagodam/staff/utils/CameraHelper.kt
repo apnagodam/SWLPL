@@ -25,7 +25,6 @@ import java.util.UUID
 
 object CameraHelper {
     var imageFile: File? = null
-
     var fileUri: Uri? = null
     fun captureImage(activity: Activity) {
         ImagePicker.with(activity).cameraOnly().start();

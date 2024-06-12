@@ -54,6 +54,7 @@ import com.apnagodam.staff.activity.caseid.CaseIDGenerateClass
 import com.apnagodam.staff.activity.caseid.CaseListingActivity
 import com.apnagodam.staff.activity.casestatus.CaseStatusINListClass
 import com.apnagodam.staff.activity.convancy_voachar.MyConveyanceListClass
+import com.apnagodam.staff.activity.displedged.DispleasedListingActivity
 import com.apnagodam.staff.activity.displedged.DispledgedBags
 import com.apnagodam.staff.activity.`in`.first_kantaparchi.FirstkanthaParchiListingActivity
 import com.apnagodam.staff.activity.`in`.first_quality_reports.FirstQualityReportListingActivity
@@ -456,9 +457,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                         startActivity(UpdatePv::class.java)
                     } else if (headerList[groupPosition].menuName.equals(ConstantObjects.DISPLEASED_BAGS)) {
                         startActivity(DispledgedBags::class.java)
+                    } else if (headerList[groupPosition].menuName.equals(ConstantObjects.APPROVE_DISPLEASED_BAGS)) {
+                        startActivity(DispleasedListingActivity::class.java)
                     } else if (headerList[groupPosition].menuName == "Advances") {
 
-                         startActivity(AdvancesActivity::class.java)
+                        startActivity(AdvancesActivity::class.java)
                     } else if (headerList[groupPosition].menuName == resources.getString(R.string.logout)) {
                         loginViewModel.doLogout()
 
@@ -885,6 +888,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             ConstantObjects.EXPANDABLE_LIST_URL,
             R.drawable.pv
         )
+
+
         //  headerList.add(menuModel5);
 //        headerList.add(menuModel6)
 //        headerList.add(menuModel7)
@@ -965,6 +970,16 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                     Log.d("API123", "here")
                     childList[menuModel] = childModelsList
                 }
+
+                val menuMode27 = MenuModel(
+                    ConstantObjects.APPROVE_DISPLEASED_BAGS,
+                    true,
+                    false,
+                    ConstantObjects.EXPANDABLE_LIST_URL,
+                    R.drawable.pv
+                )
+                headerList.add(menuMode27)
+
             }
         }
         headerList.add(menuMode26)

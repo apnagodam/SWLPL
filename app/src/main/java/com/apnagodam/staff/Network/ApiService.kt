@@ -40,6 +40,7 @@ import com.apnagodam.staff.Network.Response.AuditQVResponse
 import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.CmDetailsResponse
 import com.apnagodam.staff.Network.Response.DharamKanta
+import com.apnagodam.staff.Network.Response.DispleasedListResponse
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
@@ -583,5 +584,8 @@ interface ApiService {
     suspend fun postDisplegedRequest(
       @Body displeasedRequestModel: DispleasedRequestModel
     ): Response<BaseResponse>
+
+    @GET("emp_api/get_emp_displedge_req")
+    suspend fun getDispleasedList():Response<DispleasedListResponse>
 }
 

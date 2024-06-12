@@ -44,6 +44,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
         <activity
+            android:name=".activity.displedged.DispleasedListingActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.displedged.DispledgedBags"
             android:exported="false" />
         <activity
