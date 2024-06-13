@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cell_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="4">
+
+        <TextView
+            android:id="@+id/tv_id"
+            style="@style/TextStyleBold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:text="@string/lead_id"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_10ssp" />
+
+        <include layout="@layout/layout_divider_horizontal" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/TextStyleBold"
+            android:layout_width="0dp"
+            android:layout_gravity="center"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:text="@string/coustomer_name1"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_10ssp" />
+
+        <include layout="@layout/layout_divider_horizontal" />
+
+        <TextView
+            android:id="@+id/tv_phone"
+            style="@style/TextStyleBold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/btn_green_background"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:text="@string/set_pricing"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_phone_done"
+            style="@style/TextStyleBold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:paddingLeft="@dimen/_5sdp"
+            android:paddingRight="@dimen/_5sdp"
+            android:text="@string/done"
+            android:textStyle="bold"
+            android:textColor="@color/lead_btn"
+            android:textSize="@dimen/_10ssp"
+            android:visibility="gone" />
+
+        <include layout="@layout/layout_divider_horizontal" />
+
+        <LinearLayout
+            android:id="@+id/more_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/view"
+                android:layout_width="@dimen/_20ssp"
+                android:layout_height="@dimen/_20ssp"
+                android:rotation="270"
+                android:src="@drawable/ic_arrow_down" />
+
+            <TextView
+                android:id="@+id/tv_action"
+                style="@style/TextStyleBold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_background"
+                android:gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="@string/close"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/_10ssp" />
+
+            <TextView
+                android:id="@+id/tv_action_done"
+                style="@style/TextStyleBold"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:text="-----"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_10ssp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

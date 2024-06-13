@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature android:name="android.hardware.usb.host" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+
+    <application
+        android:name=".ApnaGodamApp"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/user_logo"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/user_logo"
+        android:sharedUserId="android.uid.system"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
+        <activity
+            android:name=".activity.displedged.DispleasedListingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.displedged.DispledgedBags"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.InOutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.CmDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditNeighbourActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditQualityStock"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.VideoRecordingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.audit.AuditPvActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdvancesListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.AdvancesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UpdatePv"
+            android:exported="false" />
+        <activity
+            android:name=".activity.pv"
+            android:exported="false" />
+        <activity
+            android:name=".activity.CancelCaseId"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OutwardsListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.InwardListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FastCaseListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.FastCaseActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".activity.SplashActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashAppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OtpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.LanguageActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.StaffDashBoardActivity" />
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".activity.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.BrowserPage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.StaffProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.lead.LeadGenerateClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.caseid.CaseIDGenerateClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.lead.LeadListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.caseid.CaseListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.pricing.InPricingListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.pricing.SetPricingClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.truckbook.TruckBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.truckbook.TruckUploadDetailsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.labourbook.LabourBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.labourbook.LabourBookUploadClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.first_kantaparchi.FirstkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.first_kantaparchi.UploadFirstkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.secound_kanthaparchi.SecoundkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.secound_kanthaparchi.UploadSecoundkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.first_quality_reports.FirstQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.secound_quality_reports.SecoundQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.first_quality_reports.UploadFirstQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.secound_quality_reports.UploadSecoundQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.gatepass.GatePassListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.in.gatepass.UploadGatePassClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.SpotDealTrackListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ContractFormBillPrintClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.convancy_voachar.UploadConveyanceVoacharClass"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.convancy_voachar.MyConveyanceListClass" />
+        <activity
+            android:name=".activity.convancy_voachar.ApprovalRequestConveyanceListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.ApprovalRequestVendorVoacherListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.MyVendorVoacherListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.vendorPanel.UploadVendorVoacherClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.IntantionApprovalListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.StateMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_katha_parchi.OutFirstkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_katha_parchi.OutUploadFirrstkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_quailty_report.UploadOutFirstQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.f_quailty_report.OutFirstQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.gatepass.OutGatePassListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.gatepass.OutUploadGatePassClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_katha_parchi.OutSecoundkanthaParchiListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_katha_parchi.OutUploadSecoundkantaParchiClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_quaility_report.OutSecoundQualityReportListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.s_quaility_report.OutUploadSecoundQualtityReportsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.GatePassPDFPrieviewClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.truckbook.OUTTruckBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.truckbook.OUTTruckUploadDetailsClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.labourbook.OUTLabourBookListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.labourbook.OUTLabourBookUploadClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.casestatus.CaseStatusINListClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.releaseorder.OUTRelaseOrderListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.releaseorder.OUTReleaseOrderClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.deliveryorder.OUTDeliverdUpoladOrderClass"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.out.deliveryorder.OUTDeliverdOrderListingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MobileNumberMapActivity"
+            android:screenOrientation="portrait" />
+
+        <receiver
+            android:name=".reciever.SMSReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+        <!--
+ <meta-data
+             android:name="com.google.android.geo.API_KEY"
+             android:value="@string/map_key" />
+        -->
+        <!--
+                   The API key for Google Maps-based APIs is defined as a string resource.
+                   (See the file "res/values/google_maps_api.xml").
+                   Note that the API key is linked to the encryption key used to sign the APK.
+                   You need a different API key for each encryption key, including the release key that is used to
+                   sign the APK for publishing.
+                   You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/map_key" />
+    </application>
+
+</manifest>

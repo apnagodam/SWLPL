@@ -1,0 +1,81 @@
+package com.apnagodam.staff.helper
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.TimeZone
+
+class ImageHelper {
+
+
+    fun createTimeStampinBitmap(file: File, map: Map<String, String>): Bitmap {
+
+
+        var options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        options.inDither = false
+        val src = BitmapFactory.decodeFile(
+            file!!.path,
+            options
+
+        ) // the original file is cuty.jpg i added in resources
+
+        val mutableBitmap: Bitmap = Bitmap.createScaledBitmap(src, src.width, src.height, false)
+
+
+        val dest = mutableBitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/India")) // (GMT+11:00)
+        val locale = Locale.ENGLISH
+        val dateTime =
+            sdf.format(
+                Calendar.getInstance(
+                    TimeZone.getTimeZone("Asia/India"),
+                    Locale.ENGLISH
+                ).time
+            ) // reading local time in the system
+        val time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", locale).parse(dateTime)?.time
+        val timeZone: TimeZone = TimeZone.getTimeZone("Asia/Kolkata") // India Standard Time
+
+        val calendar = Calendar.getInstance(timeZone)
+        val cs = Canvas(dest)
+        val tPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        tPaint.textSize = 32f
+        tPaint.color = Color.WHITE
+        tPaint.style = Paint.Style.FILL
+        cs.drawBitmap(src, 0f, 0f, null)
+        val height = tPaint.measureText("yY")
+        cs.drawText(
+            "${DateTimeHelper.getCurrentDateTime()}",
+            0f,
+            dest.height.toFloat() - 5f,
+            tPaint
+        )
+        cs.drawText(map.get("current_location").toString(), 0f, dest.height.toFloat() - 60f, tPaint)
+        cs.drawText(map.get("emp_name").toString(), 0f, dest.height.toFloat() - 120f, tPaint)
+
+        cs.drawText(map.get("emp_code").toString(), 0f, dest.height.toFloat() - 150f, tPaint)
+
+
+        try {
+            dest.compress(
+                Bitmap.CompressFormat.PNG,
+                100,
+                FileOutputStream(File("/sdcard/timeStampedImage.jpg"))
+            )
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        }
+
+        return dest
+    }
+}

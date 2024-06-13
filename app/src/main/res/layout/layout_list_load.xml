@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/loader"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/colorPrimary"
+                android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="match_parent"
+            android:text="Something Went Wrong"
+            android:gravity="center"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btRetry"
+            android:layout_width="match_parent"
+            android:text="retry"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</layout>

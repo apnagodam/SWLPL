@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".activity.audit.InOutActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbInOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:title="In Out"
+            app:titleTextColor="@color/white" />
+        <TextView
+            android:id="@+id/tvTerminal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="@dimen/_10sdp"
+            android:text="Select Terminal"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_12sdp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tvSelectInOut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"
+            android:text="Select In Out"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvSelectTime"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="@dimen/_10sdp"-->
+<!--            android:background="@drawable/btn_borders"-->
+<!--            android:gravity="center"-->
+<!--            android:padding="@dimen/_10sdp"-->
+<!--            android:text="Select Time"-->
+<!--            android:textColor="@color/colorPrimary"-->
+<!--            android:textStyle="bold" />-->
+
+        <TextView
+            android:id="@+id/tvSelectLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:gravity="center"
+            android:padding="@dimen/_10sdp"
+            android:text="Select Location"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edNotes"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/btn_borders"
+            android:gravity="top|left"
+            android:hint="Notes"
+            android:inputType="text|textImeMultiLine"
+            android:maxLines="10"
+            android:padding="@dimen/_10sdp" />
+
+        <Button
+            android:id="@+id/btSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="@dimen/_10sdp"
+            android:text="Submit" />
+    </LinearLayout>
+</layout>

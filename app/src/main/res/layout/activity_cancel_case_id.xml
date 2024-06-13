@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+   <androidx.core.widget.NestedScrollView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           tools:context=".activity.CancelCaseId">
+
+           <LinearLayout
+               android:id="@+id/cell_container"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/color_top100"
+               android:weightSum="4"
+               app:layout_constraintBottom_toTopOf="@id/rvCancelCaseId"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintTop_toTopOf="parent">
+
+               <TextView
+                   android:id="@+id/tv_id"
+                   style="@style/TextStyleBold"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_weight="1"
+                   android:gravity="center"
+                   android:padding="@dimen/_4sdp"
+                   android:text="Stack No."
+                   android:textColor="@color/colorWhite"
+                   android:textSize="@dimen/_10ssp" />
+
+               <include layout="@layout/layout_divider_horizontal" />
+
+               <TextView
+                   android:id="@+id/tv_name"
+                   style="@style/TextStyleBold"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_weight="1"
+                   android:gravity="center"
+
+                   android:padding="@dimen/_4sdp"
+                   android:text="@string/coustomer_name1"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="@dimen/_10ssp" />
+
+               <include layout="@layout/layout_divider_horizontal" />
+
+               <TextView
+                   android:id="@+id/tv_phone"
+                   style="@style/TextStyleBold"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_weight="1"
+                   android:gravity="center"
+                   android:padding="@dimen/_4sdp"
+                   android:text="Vehicle No."
+                   android:textColor="@color/colorWhite"
+                   android:textSize="@dimen/_10ssp" />
+
+               <include layout="@layout/layout_divider_horizontal" />
+
+               <TextView
+                   android:id="@+id/tv_more_view"
+                   style="@style/TextStyleBold"
+                   android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_weight="1"
+                   android:gravity="center"
+                   android:padding="@dimen/_4sdp"
+                   android:text="Status"
+                   android:textColor="@color/colorWhite"
+                   android:textSize="@dimen/_10ssp" />
+           </LinearLayout>
+
+           <androidx.recyclerview.widget.RecyclerView
+               android:id="@+id/rvCancelCaseId"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/cell_container"
+               tools:listitem="@layout/layout_top_case_generate" />
+       </androidx.constraintlayout.widget.ConstraintLayout>
+   </androidx.core.widget.NestedScrollView>
+</layout>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical"
+           tools:context=".activity.audit.AuditQualityStock">
+
+           <androidx.appcompat.widget.Toolbar
+               android:id="@+id/tbQV"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/colorPrimary"
+               app:layout_constraintBottom_toTopOf="@id/tvSelectTerminal"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               app:title="Upload Quality"
+               app:titleTextColor="@color/white" />
+
+           <TextView
+               android:id="@+id/tvSelectTerminal"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+               android:layout_marginTop="128dp"
+               android:background="@drawable/btn_borders"
+               android:gravity="center"
+               android:padding="@dimen/_10sdp"
+
+               android:text="Select Terminal"
+               android:textColor="@color/colorPrimary"
+               android:textStyle="bold"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintHorizontal_bias="0.461"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/tbQV" />
+
+           <TextView
+               android:id="@+id/tvSelectStack"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+               android:background="@drawable/btn_borders"
+               android:gravity="center"
+               android:padding="@dimen/_10sdp"
+               android:text="Select Stack"
+
+               android:textColor="@color/colorPrimary"
+               android:textStyle="bold"
+               app:layout_constraintEnd_toEndOf="parent"
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/tvSelectTerminal" />
+
+
+           <TextView
+               android:id="@+id/tvTitleQV"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+               android:text="Select QV"
+               android:textColor="@color/colorPrimary"
+               android:textStyle="bold"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/tvSelectStack" />
+
+           <LinearLayout
+               android:id="@+id/llQuality"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical"
+               android:padding="@dimen/_10sdp"
+               app:layout_constraintBottom_toTopOf="@id/btSubmit"
+               app:layout_constraintLeft_toRightOf="parent"
+               app:layout_constraintRight_toLeftOf="parent"
+               app:layout_constraintTop_toBottomOf="@id/tvTitleQV"/>
+
+
+           <Button
+               android:id="@+id/btSubmit"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_10sdp"
+               android:background="@drawable/btn_background"
+               android:padding="@dimen/_10sdp"
+               android:text="Submit"
+               app:layout_constraintBottom_toBottomOf="parent"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent" />
+       </LinearLayout>
+   </ScrollView>
+</layout>

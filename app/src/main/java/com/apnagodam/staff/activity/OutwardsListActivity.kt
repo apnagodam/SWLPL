@@ -1,0 +1,116 @@
+package com.apnagodam.staff.activity
+
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.apnagodam.staff.Base.BaseActivity
+import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Response.StackRequestResponse
+import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
+import com.apnagodam.staff.R
+import com.apnagodam.staff.adapter.StackRequestAdapterOutwards
+import com.apnagodam.staff.databinding.ActivityOutwardsListBinding
+import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.utils.RecyclerItemClickListener
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
+class OutwardsListActivity : BaseActivity<ActivityOutwardsListBinding?>(),
+    RecyclerItemClickListener.OnItemClickListener,
+    AdapterView.OnItemSelectedListener {
+    var allCasesList = arrayListOf<StackRequestResponse.OutwardRequestDatum>()
+    private var casesTopAdapter: StackRequestAdapterOutwards? = null
+    val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
+    private var pageOffset = 1
+    private var totalPage = 0
+
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_outwards_list
+    }
+
+    override fun setUp() {
+        setSupportActionBar(binding!!.tlOutwards)
+        binding!!.tlOutwards.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        setView()
+    }
+
+
+    fun setView() {
+        getAllCases("")
+    }
+
+    private fun getAllCases(search: String) {
+        showDialog()
+        caseIdViewModel.getStackRequest()
+        caseIdViewModel.stackRequestResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show();
+
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    hideDialog()
+                    when (it.data) {
+                        null -> {}
+                        else -> {
+                            if (it.data.status == "1") {
+                                var userDetails =
+                                    SharedPreferencesRepository.getDataManagerInstance().user
+                                allCasesList.clear()
+                                it.data.outwardRequestData.forEach { outwards ->
+                                    if (userDetails.terminal == null) {
+                                        allCasesList.add(outwards)
+                                    } else if (outwards.terminalId.toString() == userDetails!!.terminal) {
+                                        allCasesList.add(outwards)
+                                    }
+                                }
+                                setAdapter()
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllCases("")
+    }
+
+    private fun setAdapter() {
+        casesTopAdapter = StackRequestAdapterOutwards(allCasesList, this)
+
+
+        binding!!.rvDefaultersStatus.setHasFixedSize(true)
+        binding!!.rvDefaultersStatus.isNestedScrollingEnabled = false
+        val horizontalLayoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding!!.rvDefaultersStatus.layoutManager = horizontalLayoutManager
+
+        binding!!.rvDefaultersStatus.adapter = casesTopAdapter
+
+    }
+
+    override fun onItemClick(view: View?, position: Int) {
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+    }
+}

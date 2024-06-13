@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:orientation="vertical"
+           tools:context=".activity.audit.CmDetailsActivity">
+
+           <androidx.appcompat.widget.Toolbar
+               android:id="@+id/tbQV"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/colorPrimary"
+               app:layout_constraintBottom_toTopOf="@id/tvSelectTerminal"
+               app:layout_constraintLeft_toLeftOf="parent"
+               app:layout_constraintRight_toRightOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               app:title="Upload CM Details"
+               app:titleTextColor="@color/white" />
+
+           <TextView
+               android:id="@+id/tvTerminal"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginHorizontal="@dimen/_10sdp"
+               android:layout_marginTop="@dimen/_10sdp"
+               android:background="@drawable/btn_borders"
+               android:gravity="center"
+               android:maxLines="1"
+               android:padding="@dimen/_10sdp"
+               android:text="Select Terminal"
+               android:textColor="@color/colorPrimary"
+               android:textSize="@dimen/_12sdp"
+               android:textStyle="bold" />
+
+           <TextView
+               android:id="@+id/tvCM"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginHorizontal="@dimen/_10sdp"
+               android:layout_marginTop="@dimen/_10sdp"
+               android:background="@drawable/btn_borders"
+               android:gravity="center"
+               android:maxLines="1"
+               android:padding="@dimen/_10sdp"
+               android:text="Select CM Agency"
+               android:textColor="@color/colorPrimary"
+               android:textSize="@dimen/_12sdp"
+               android:textStyle="bold" />
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+               android:text="CM Details"
+               android:textColor="@color/colorPrimary"
+               android:textStyle="bold" />
+
+           <LinearLayout
+               android:id="@+id/llNeighbour1"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+
+               android:orientation="vertical">
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/tilCmName"
+                   style="@style/TextInputStyle"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:hint="CM Name">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/tilCmMobile"
+                   style="@style/TextInputStyle"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:hint="CM Mobile">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="number"
+                       android:maxLength="10" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+
+           </LinearLayout>
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+               android:text="Guard Details"
+               android:textColor="@color/colorPrimary"
+               android:textStyle="bold" />
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin="@dimen/_5sdp"
+
+               android:orientation="vertical">
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/tilGuardName"
+                   style="@style/TextInputStyle"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:hint="Guard Name">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+               <com.google.android.material.textfield.TextInputLayout
+                   android:id="@+id/tilGuardMobile"
+                   style="@style/TextInputStyle"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_marginTop="@dimen/_10sdp"
+                   android:hint="Guard Mobile">
+
+                   <com.google.android.material.textfield.TextInputEditText
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:inputType="number"
+                       android:maxLength="10" />
+               </com.google.android.material.textfield.TextInputLayout>
+
+
+           </LinearLayout>
+           <EditText
+               android:id="@+id/edNotes"
+               android:layout_width="match_parent"
+               android:layout_height="@dimen/_150sdp"
+               android:layout_marginHorizontal="@dimen/_10sdp"
+               android:layout_marginTop="@dimen/_10sdp"
+               android:background="@drawable/btn_borders"
+               android:gravity="top|left"
+               android:hint="Notes"
+               android:inputType="text|textImeMultiLine"
+               android:maxLines="10"
+               android:padding="@dimen/_10sdp" />
+           <Button
+               android:id="@+id/btSubmit"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_margin='@dimen/_10sdp'
+               android:background="@drawable/btn_background"
+               android:padding="@dimen/_10sdp"
+               android:text="Submit"
+               app:layout_constraintBottom_toBottomOf="parent" />
+       </LinearLayout>
+
+   </ScrollView>
+</layout>

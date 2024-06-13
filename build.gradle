@@ -1,0 +1,44 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        kotlin_version = '1.9.0'
+        agp_version = '8.2.1'
+        agp_version1 = '7.4.2'
+        agp_version2 = '7.2.0'
+        agp_version3 = '7.4.2'
+        agp_version4 = '8.2.2'
+        agp_version5 = agp_version1
+        agp_version6 = agp_version
+    }
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+    //    classpath 'com.android.tools.build:gradle:4.1.1'
+    //    classpath 'com.google.gms:google-services:4.3.3'
+
+        classpath "com.android.tools.build:gradle:$agp_version6"
+        classpath 'com.google.gms:google-services:4.4.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.50'
+        classpath 'com.google.firebase:firebase-appdistribution-gradle:4.2.0'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+        classpath 'com.google.firebase:perf-plugin:1.4.2'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://jitpack.io" }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

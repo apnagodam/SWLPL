@@ -1,0 +1,99 @@
+<resources>
+    <string name="app_name">SWLPL</string>
+    <string name="need_permission">अनुमतियाँ चाहिए</string>
+    <string name="msg_permission">इस ऐप को इस सुविधा का उपयोग करने के लिए अनुमति की आवश्यकता है। आप उन्हें ऐप सेटिंग में अनुदान दे सकते हैं.</string>
+    <string name="permission_alert">सेटिंग्स में जाओ</string>
+    <string name="cancel">रद्द करना</string>
+    <string name="ok">ठीक है</string>
+    <string name="logout_alert">क्या आप लॉगआउट करना चाहते हैं?</string>
+    <string name="alert">चेतावनी</string>
+    <string name="taupline_radio">1. क्या Inward में, ट्रक रस्सा एवं त्रिपाल होकर आया ? </string>
+    <string name="wet_radio">2. क्या Inward में, कुछ बोरिया भीगी हुई थी ? </string>
+    <string name="cancel_case_id">केस आईडी रद्द करें</string>
+
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="otp_number">अपना OTP दर्ज करें</string>
+    <string name="otp">OTP भेजें</string>
+    <string name="verify">OTP को सत्यापित करें</string>
+    <string name="resend">ओटीपी पुनः भेजें</string>
+    <string name="error_validateotp">अपना ओटीपी नंबर डालें</string>
+    <string name="select_language">भाषा का चयन करें</string>
+    <string name="done">किया हुआ</string>
+    <string name="select_any_one" translatable="false">किसी एक का चयन करें</string>
+    <string name="account_number">अपना खाता नंबर दर्ज करें</string>
+    <string name="passbook_photo">बैंक पासबुक फोटो</string>
+    <string name="upload_picture">अपना पासबुक चित्र अपलोड करें</string>
+    <string name="home">कर्मचारी डैशबोर्ड</string>
+    <string name="logout">लॉग आउट</string>
+    <string name="referral_code">देखें और कमाएँ</string>
+    <string name="exist_app">Apna Godam एप्लिकेशन को बंद करने के लिए फिर से दबाएं</string>
+    <string name="ivr">आईवीआर</string>
+    <string name="suggestion_email">सुझाव ईमेल</string>
+    <string name="activity_notification">गतिविधि अधिसूचना ईमेल</string>
+    <string name="change_language">भाषा बदलो</string>
+    <string name="change_mobile_no">मोबाइल नंबर बदलें</string>
+    <string name="welcome_msgf">आपका स्वागत है\n\nअपना गोधाम स्टाफ।\n\nनई सुविधाएँ \n\nजल्द ही शुरू हो रहा है ....</string>
+    <string name="commodity_price">वस्तु की कीमत</string>
+    <string name="commodity_name">वस्तु का नाम</string>
+    <string name="upload_aadhar_picture">अपना आधार कार्ड चित्र अपलोड करें</string>
+    <string name="hint_otp">कृपया वेरिफ़िकेशन कोड भेजे </string>
+    <string name="Profile_Screen">प्रोफाइल स्क्रीन</string>
+    <string name="submit">भेजने</string>
+    <string name="blank_msg">डेटा नहीं मिला !!! !!!</string>
+    <string name="setting_title">स्क्रीन सेट करना</string>
+    <string name="no_internet_connection" >No Internet Connection.</string>
+    // employee login
+    <string name="emp_id">अपनी कर्मचारी आईडी दर्ज करें</string>
+    <string name="error_validateempChar">कर्मचारी आईडी में न्यूनतम 6 अंक होने चाहिए.</string>
+    <string name="my_profile">मेरी प्रोफाइल</string>
+    <string name="update_now">अभी Update करें</string>
+    <string name="msg_update_app">नया वर्जन एप्लिकेशन अब उपलब्ध है। बेहतर अनुभव के लिए कृपया! अपडेट करें.</string>
+    <string name="current_month_present">इस महीने की उपस्थिति</string>
+    <string name="reports">रिपोर्ट</string>
+    <string name="inventory">इन्वेंटरी</string>
+    <string name="labour_payment">मजदूर भुगतान</string>
+    <string name="case_status">केस स्टेटस</string>
+    <string name="case_status_in">Cases Status IN</string>
+    <string name="case_status_out">Cases Status OUT</string>
+    <string name="in">अंदर(IN)</string>
+    <string name="out">बाहर(OUT)</string>
+    <string name="upload_selfi">सेल्फी अपलोड करें</string>
+    <string name="close">बंद करे</string>
+    <string name="spot_sell">स्पॉट डील</string>
+    <string name="fast_case_list">फास्ट केस लिस्ट</string>
+    <string name="approved">स्वीकृत</string>
+    <string name="rejected">अस्वीकृत</string>
+    <string-array name="state">
+        <item>Select</item>
+        <item>Bihar</item>
+        <item>Punjab</item>
+        <item>Haryana</item>
+        <item>Uttar pradesh</item>
+    </string-array>
+
+
+    <string name="farmer">किसान</string>
+    <string name="Trtader">व्यापारी</string>
+    <string name="general">सामान्य</string>
+    <string name="user_number">अपना नाम दर्ज करें</string>
+    <string name="KYC">केवाईसी अपडेट करें</string>
+    <string name="bank_name">बैंक का नाम चुनें</string>
+    <string name="branch_name">अपना शाखा का नाम दर्ज करें</string>
+    <string name="ifsc_code">अपना IFSC कोड डालें</string>
+    <string name="document">दस्तावेज़</string>
+    <string name="aadhar_number">आधार नंबर दर्ज करे</string>
+    <string name="pancard_number">पैनकार्ड नंबर</string>
+    <string name="rc_number">पंजीकरण प्रमाण पत्र (आरसी) फोटो डाले </string>
+    <string name="upload_rc_picture">अपनी RC फोटो डाले</string>
+    <string name="dl_number">ड्राइविंग लाइसेंस फोटो डाले </string>
+    <string name="upload_dl_picture">अपना DL फोटो डाले</string>
+    <string name="home_vlc">VLC डैशबोर्ड</string>
+    <string name="commodity_quinity">क्वांटिटी (in QTL.)</string>
+    <string name="booking">बेचे</string>
+    <string name="seller">विक्रेता</string>
+    <string name="buyer">क्रेता</string>
+    <string name="token">Token No.</string>
+    <string name="kanta_name">Dharam Kanta Name</string>
+
+</resources>
