@@ -17,8 +17,8 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.BaseActivity
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.helper.ImageHelper
+import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
@@ -130,15 +130,18 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
         }
 
 
-        if (isFirstUpload == true) {
-            binding!!.llKanta.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
-        } else {
-            binding!!.cardTruck2.visibility = View.GONE
-            binding!!.llKanta.visibility = View.VISIBLE
-            binding!!.llBags.visibility = View.VISIBLE
-        }
+//        if (isFirstUpload == true) {
+//            binding!!.llKanta.visibility = View.VISIBLE
+//            binding!!.cardTruck2.visibility = View.GONE
+//        } else {
+//            binding!!.cardTruck2.visibility = View.GONE
+//            binding!!.llKanta.visibility = View.VISIBLE
+//            binding!!.llBags.visibility = View.VISIBLE
+//        }
 
+        binding!!.llKanta.visibility = View.VISIBLE
+        binding!!.cardTruck2.visibility = View.GONE
+        binding!!.llBags.visibility = View.VISIBLE
 
     }
 
@@ -277,70 +280,94 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
             truck2Image = "" + Utility.transferImageToBase64(fileTruck2)
         }
 
+        if (validateFields()) {
+            showDialog(this)
+            kantaParchiViewModel.uploadSecondKantaParchi(
+                UploadSecoundkantaParchiPostData(
+                    CaseID,
+                    binding!!.notes.text.toString(),
+                    KanthaImage, truckImageImage, truck2Image,
+                    binding!!.etNoOfBags.text.toString(),
+                    binding!!.etWeight.text.toString(),
+                    binding!!.etAvgWeight.text.toString(),
+                    binding!!.etOldWeightQt.text.toString(),
+                    binding!!.etNoOfDispleasedBags.text.toString(),
+                    kantaId, kantaName, kantaParchiNumber, truckFacilityId, bagsFacilityID
+                ), "IN"
+            )
 
-        if (isFirstUpload) {
-            if (fileTruck2 != null && fileTruck2!!.path.isNotEmpty()) {
-                showDialog(this)
-                kantaParchiViewModel.uploadSecondKantaParchi(
-                    UploadSecoundkantaParchiPostData(
-                        CaseID,
-                        binding!!.notes.text.toString(),
-                        KanthaImage,
-                        truckImageImage,
-                        truck2Image,
-                        binding!!.etNoOfBags.text.toString(),
-                        binding!!.etWeight.text.toString(),
-                        binding!!.etAvgWeight.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etNoOfDispleasedBags.text.toString(),
-                        kantaId,
-                        kantaName,
-                        kantaParchiNumber,
-                        truckFacilityId,
-                        bagsFacilityID
-                    ), "IN"
-                )
-
-
-            } else {
-                Toast.makeText(this, "Please select Kanta/Warehouse Image", Toast.LENGTH_SHORT)
-            }
-        } else {
-            if (validateFields()) {
-                showDialog(this)
-                kantaParchiViewModel.uploadSecondKantaParchi(
-                    UploadSecoundkantaParchiPostData(
-                        CaseID,
-                        binding!!.notes.text.toString(),
-                        KanthaImage, truckImageImage, truck2Image,
-                        binding!!.etNoOfBags.text.toString(),
-                        binding!!.etWeight.text.toString(),
-                        binding!!.etAvgWeight.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etNoOfDispleasedBags.text.toString(),
-                        kantaId, kantaName, kantaParchiNumber, truckFacilityId, bagsFacilityID
-                    ), "IN"
-                )
-
-
-            }
 
         }
+//        if (isFirstUpload) {
+//            if (fileTruck2 != null && fileTruck2!!.path.isNotEmpty()) {
+//                showDialog(this)
+//                kantaParchiViewModel.uploadSecondKantaParchi(
+//                    UploadSecoundkantaParchiPostData(
+//                        CaseID,
+//                        binding!!.notes.text.toString(),
+//                        KanthaImage,
+//                        truckImageImage,
+//                        truck2Image,
+//                        binding!!.etNoOfBags.text.toString(),
+//                        binding!!.etWeight.text.toString(),
+//                        binding!!.etAvgWeight.text.toString(),
+//                        binding!!.etOldWeightQt.text.toString(),
+//                        binding!!.etNoOfDispleasedBags.text.toString(),
+//                        kantaId,
+//                        kantaName,
+//                        kantaParchiNumber,
+//                        truckFacilityId,
+//                        bagsFacilityID
+//                    ), "IN"
+//                )
+//
+//
+//            } else {
+//                Toast.makeText(this, "Please select Kanta/Warehouse Image", Toast.LENGTH_SHORT)
+//            }
+//        } else {
+//            if (validateFields()) {
+//                showDialog(this)
+//                kantaParchiViewModel.uploadSecondKantaParchi(
+//                    UploadSecoundkantaParchiPostData(
+//                        CaseID,
+//                        binding!!.notes.text.toString(),
+//                        KanthaImage, truckImageImage, truck2Image,
+//                        binding!!.etNoOfBags.text.toString(),
+//                        binding!!.etWeight.text.toString(),
+//                        binding!!.etAvgWeight.text.toString(),
+//                        binding!!.etOldWeightQt.text.toString(),
+//                        binding!!.etNoOfDispleasedBags.text.toString(),
+//                        kantaId, kantaName, kantaParchiNumber, truckFacilityId, bagsFacilityID
+//                    ), "IN"
+//                )
+//
+//
+//            }
+//
+//        }
 
 
     }
 
     fun dispatchTakePictureIntent(isKantaParchi: Boolean) {
         if (isKantaParchi) {
-            checkForPermission { ImagePicker.with(this).start(); }
+            checkForPermission {
+                ImagePicker.with(this)
+
+                    .start();
+            }
 
         } else {
-            checkForPermission { ImagePicker.with(this).cameraOnly().start(); }
+            checkForPermission {
+                ImagePicker.with(this)
+
+                    .cameraOnly().start();
+            }
         }
 
 
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -365,7 +392,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileKantha = File(bitmapToFile(stampedBitmap!!).path)
                         val uri = Uri.fromFile(fileKantha)
                         firstkantaParchiFile = uri.toString()
                         binding!!.KanthaImage.setImageURI(uri)
@@ -380,7 +407,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileTruck = File(bitmapToFile(stampedBitmap!!).path)
                         val uri = Uri.fromFile(fileTruck)
                         TruckImage = uri.toString()
                         binding!!.TruckImage.setImageURI(uri)
@@ -393,7 +420,7 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileTruck2 = File(bitmapToFile(stampedBitmap!!).path)
                         val uri = Uri.fromFile(fileTruck2)
                         TruckImage2 = uri.toString()
                         binding!!.truckImage2.setImageURI(uri)

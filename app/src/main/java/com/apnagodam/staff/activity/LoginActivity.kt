@@ -92,7 +92,7 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
             when (it) {
                 is NetworkResult.Error -> {
                     hideDialog()
-                    Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "${it.message}", Toast.LENGTH_SHORT).show()
                 }
 
                 is NetworkResult.Loading -> {
@@ -102,12 +102,16 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                     hideDialog()
                     if (it.data != null) {
                         if (it.data.status == "1") {
-                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT)
+                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT).show()
 
                             // SMS Listener for listing auto read message lsitner
-                            startSMSListener(it.data.phone)
+                            val bundle = Bundle()
+                            bundle.putString("mobile", it.data.phone)
+                            bundle.putString("empID", stringFromView(binding!!.etPhoneNumber))
+                            bundle.putString("setting", settingScreen)
+                            startActivity(OtpActivity::class.java, bundle)
                         } else {
-                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT)
+                            Toast.makeText(this, "${it.data.message}", Toast.LENGTH_SHORT).show()
 
 
                         }

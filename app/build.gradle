@@ -13,8 +13,8 @@ android {
         release {
             keyAlias 'apnagodamemp'
             keyPassword 'apnagodamemp'
-            storeFile file('/Users/anantmann/StudioProjects/SWLPL/app/swlpl_key')
-//            storeFile file('/Users/apnagodamdeveloper/Downloads/SWLPL-master/app/swlpl_key')
+//            storeFile file('/Users/anantmann/StudioProjects/SWLPL/app/swlpl_key')
+            storeFile file('/Users/apnagodamdeveloper/Downloads/SWLPL-master/app/swlpl_key')
             storePassword 'apnagodamemp'
         }
     }
@@ -41,8 +41,8 @@ android {
         minSdkVersion 21
         //noinspection EditedTargetSdkVersion
         targetSdkVersion 34
-        versionCode 46
-        versionName "1.0.46"
+        versionCode 53
+        versionName "1.0.53"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "$applicationId-v$versionCode($versionName)"
 

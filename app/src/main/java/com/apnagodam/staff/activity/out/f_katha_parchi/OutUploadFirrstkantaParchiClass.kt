@@ -15,8 +15,8 @@ import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.BaseActivity
 import com.apnagodam.staff.databinding.KanthaParchiUploadBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.helper.ImageHelper
+import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import com.apnagodam.staff.utils.Utility
 import com.fxn.pix.Options
@@ -64,8 +64,6 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
         getCurrentLocation()
 
 
-
-
         binding!!.tvTitle.setText("Upload First Kanta Parchi")
         UserName = intent.getStringExtra("user_name")
         CaseID = intent.getStringExtra("case_id")
@@ -81,19 +79,21 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
         binding!!.llBags.visibility = View.GONE
 
         isFirstUpload = intent.getStringExtra("file3") == null
-        binding!!.llOldBags.visibility = View.GONE
-
-
-        if (isFirstUpload) {
-            binding!!.llKanta.visibility = View.GONE
+        binding!!.llOldBags.visibility = View.VISIBLE
+        binding!!.llKanta.visibility = View.VISIBLE
 //                       binding!!.llOldBags.visibility = View.GONE
-            binding!!.cardTruck2.visibility = View.VISIBLE
+        binding!!.cardTruck2.visibility = View.GONE
 
-        } else {
-            binding!!.llKanta.visibility = View.VISIBLE
+//        if (isFirstUpload) {
+//            binding!!.llKanta.visibility = View.VISIBLE
+//                      binding!!.llOldBags.visibility = View.GONE
+//            binding!!.cardTruck2.visibility = View.gone
+//
+//        } else {
+//            binding!!.llKanta.visibility = View.VISIBLE
 //            binding!!.llOldBags.visibility = View.VISIBLE
-            binding!!.cardTruck2.visibility = View.GONE
-        }
+//            binding!!.cardTruck2.visibility = View.GONE
+//        }
 
         binding!!.cardOldKantaParchi.visibility = View.GONE
 
@@ -102,6 +102,40 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
     }
 
     override fun setObservers() {
+        kantaParchiViewModel.dharmaKantaNameResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> hideDialog(
+                    this
+                )
+
+                is NetworkResult.Loading -> showDialog(this)
+                is NetworkResult.Success -> {
+
+                    if (it.data != null) {
+                        it.data?.let { dKR ->
+                            dKR.data?.let { data ->
+                                data.id?.let {
+                                    kantaId = it
+                                }
+                                data.name?.let { name ->
+                                    binding.tilKantaParchi.text = name
+                                }
+                            }
+
+                        }
+
+
+//            //Setting Visibility for views in SearchableSpinner
+//            searchableSpinner.searchViewVisibility = SearchableSpinner.SpinnerView.GONE
+//            searchableSpinner.negativeButtonVisibility = SearchableSpinner.SpinnerView.GONE
+//            searchableSpinner.windowTitleVisibility = SearchableSpinner.SpinnerView.GONE
+                        //Setting up list items for spinner
+
+                    }
+                }
+            }
+        }
+
         kantaParchiViewModel.kantaParchiResponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> hideDialog(this)
@@ -113,8 +147,8 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                             searchableSpinner.windowTitle = "Select Kanta"
 
                             dharamKantas.clear()
-                            for (i in it.data.dharemKantas) {
-                                listOfKantaNames.add(i.name)
+                            for (i in it.data!!.dharemKantas!!) {
+                                listOfKantaNames.add(i.name!!)
                             }
                             searchableSpinner.setSpinnerListItems(listOfKantaNames)
 
@@ -124,7 +158,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                                     selectedString: String
                                 ) {
                                     binding!!.tilKantaParchi.setText(selectedString)
-                                    kantaId = it.data.dharemKantas[position].id
+                                    kantaId = it.data.dharemKantas!![position].id
                                 }
                             }
                         }
@@ -176,7 +210,11 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
     private fun getKantaList(search: String) {
         kantaParchiViewModel.getKantaParchiListing("10", "0", "OUT", search)
 
-
+        intent?.let {
+            it.getStringExtra("warehouse_id")?.let {
+                kantaParchiViewModel.getDharmaKantasName(it)
+            }
+        }
     }
 
 
@@ -283,70 +321,104 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
             oldKanthaImage = "" + Utility.transferImageToBase64(fileKantaOld)
         }
         //else {
-        if (isFirstUpload) {
-            if (fileTruck2 != null) {
-                showDialog(this)
-                kantaParchiViewModel.uploadFirstKantaParchi(
-                    UploadFirstkantaParchiPostData(
-                        CaseID,
-                        binding!!.notes.text.toString(),
-                        KanthaImage,
-                        truckImageImage,
-                        truck2Image,
-                        kantaId.toString(),
-                        binding!!.etKantaParchiNum.text.toString(),
-                        oldKanthaImage,
-                        binding!!.etKantaOldParchiNum.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etOldNoOfBags.text.toString(),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        binding!!.etKantaOldLocation.text.toString()
-                    ), "OUT"
-                )
+        if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
+            Toast.makeText(this, "please select Kanta Name", Toast.LENGTH_SHORT)
 
-            } else {
-                Toast.makeText(this, "Please upload Kanta/Warehouse image!", Toast.LENGTH_SHORT)
-                    .show()
-            }
+        } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
+            binding!!.etKantaParchiNum.setError("This field can't be empty")
+        } else if (fileKantha == null) {
+            Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
+        } else if (fileTruck == null) {
+            Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
         } else {
-            if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
-                Toast.makeText(this, "please select Kanta Name", Toast.LENGTH_SHORT)
+            kantaParchiViewModel.uploadFirstKantaParchi(
+                UploadFirstkantaParchiPostData(
+                    CaseID,
+                    binding!!.notes.text.toString(),
+                    KanthaImage,
+                    truckImageImage,
+                    truck2Image,
+                    kantaId.toString(),
+                    binding!!.etKantaParchiNum.text.toString(),
+                    oldKanthaImage,
+                    binding!!.etKantaOldParchiNum.text.toString(),
+                    binding!!.etOldWeightQt.text.toString(),
+                    binding!!.etOldNoOfBags.text.toString(),
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    binding!!.etKantaOldLocation.text.toString()
+                ), "OUT"
+            )
 
-            } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
-                binding!!.etKantaParchiNum.setError("This field can't be empty")
-            } else if (fileKantha == null) {
-                Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
-            } else if (fileTruck == null) {
-                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
-            } else {
-                kantaParchiViewModel.uploadFirstKantaParchi(
-                    UploadFirstkantaParchiPostData(
-                        CaseID,
-                        binding!!.notes.text.toString(),
-                        KanthaImage,
-                        truckImageImage,
-                        truck2Image,
-                        kantaId.toString(),
-                        binding!!.etKantaParchiNum.text.toString(),
-                        oldKanthaImage,
-                        binding!!.etKantaOldParchiNum.text.toString(),
-                        binding!!.etOldWeightQt.text.toString(),
-                        binding!!.etOldNoOfBags.text.toString(),
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        binding!!.etKantaOldLocation.text.toString()
-                    ), "OUT"
-                )
-
-            }
         }
+
+//        if (isFirstUpload) {
+//            if (fileTruck2 != null) {
+//                showDialog(this)
+//                kantaParchiViewModel.uploadFirstKantaParchi(
+//                    UploadFirstkantaParchiPostData(
+//                        CaseID,
+//                        binding!!.notes.text.toString(),
+//                        KanthaImage,
+//                        truckImageImage,
+//                        truck2Image,
+//                        kantaId.toString(),
+//                        binding!!.etKantaParchiNum.text.toString(),
+//                        oldKanthaImage,
+//                        binding!!.etKantaOldParchiNum.text.toString(),
+//                        binding!!.etOldWeightQt.text.toString(),
+//                        binding!!.etOldNoOfBags.text.toString(),
+//                        "",
+//                        "",
+//                        "",
+//                        "",
+//                        "",
+//                        binding!!.etKantaOldLocation.text.toString()
+//                    ), "OUT"
+//                )
+//
+//            } else {
+//                Toast.makeText(this, "Please upload Kanta/Warehouse image!", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//        } else {
+//            if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
+//                Toast.makeText(this, "please select Kanta Name", Toast.LENGTH_SHORT)
+//
+//            } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
+//                binding!!.etKantaParchiNum.setError("This field can't be empty")
+//            } else if (fileKantha == null) {
+//                Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
+//            } else if (fileTruck == null) {
+//                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
+//            } else {
+//                kantaParchiViewModel.uploadFirstKantaParchi(
+//                    UploadFirstkantaParchiPostData(
+//                        CaseID,
+//                        binding!!.notes.text.toString(),
+//                        KanthaImage,
+//                        truckImageImage,
+//                        truck2Image,
+//                        kantaId.toString(),
+//                        binding!!.etKantaParchiNum.text.toString(),
+//                        oldKanthaImage,
+//                        binding!!.etKantaOldParchiNum.text.toString(),
+//                        binding!!.etOldWeightQt.text.toString(),
+//                        binding!!.etOldNoOfBags.text.toString(),
+//                        "",
+//                        "",
+//                        "",
+//                        "",
+//                        "",
+//                        binding!!.etKantaOldLocation.text.toString()
+//                    ), "OUT"
+//                )
+//
+//            }
+//        }
 
 
     }
@@ -376,7 +448,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileKantha = File(bitmapToFile(stampedBitmap).path)
                         val uri = Uri.fromFile(fileKantha)
                         firstkantaParchiFile = uri.toString()
                         binding!!.KanthaImage.setImageURI(uri)
@@ -391,7 +463,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileKantha = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileKantha = File(bitmapToFile(stampedBitmap).path)
                         val uri = Uri.fromFile(fileKantha)
                         firstOldKantaParchiFile = uri.toString()
                         binding!!.KanthaImageOld.setImageURI(uri)
@@ -405,7 +477,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                         firstKanthaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileTruck = File(bitmapToFile(stampedBitmap).path)
                         val uri = Uri.fromFile(fileTruck)
                         TruckImage = uri.toString()
                         binding!!.TruckImage.setImageURI(uri)
@@ -419,7 +491,7 @@ class OutUploadFirrstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(
                         firstOldKantaFile = false
                         truckImage = false
                         truckImage2 = false
-                        fileTruck2 = File(compressImage(bitmapToFile(stampedBitmap).toString()))
+                        fileTruck2 = File(bitmapToFile(stampedBitmap).path)
                         val uri = Uri.fromFile(fileTruck2)
                         TruckImage2 = uri.toString()
                         binding!!.truckImage2.setImageURI(uri)

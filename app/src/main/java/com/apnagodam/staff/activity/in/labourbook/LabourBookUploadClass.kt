@@ -1,34 +1,24 @@
 package com.apnagodam.staff.activity.`in`.labourbook
 
 import android.app.DatePickerDialog
-import android.graphics.Color
-import android.text.TextUtils
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.DatePicker
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.BuildConfig
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
 import com.leo.searchablespinner.SearchableSpinner
 import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -74,11 +64,52 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
 
 
     }
-    private fun setObservers(){
+
+    private fun setObservers() {
+        labourViewModel.labourContractorNameResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    it.message?.let {
+                        Toast.makeText(this, it.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    if (labourType.type == LabourType.COMPANY.type) {
+                        it.data?.let { data ->
+                            data.data?.let { labourData ->
+                                labourData.labourRate?.let { labourRate ->
+                                    binding!!.etLabourRate.setText(labourRate)
+
+                                }
+                                labourData.contractorName?.let { contractorName ->
+                                    contractorsID = contractorName
+                                    binding!!.etContractor.setText(contractorName)
+
+//                                binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+                                }
+                                labourData.id?.let {
+                                    contractorNameId = it.toString()
+
+                                }
+                                labourData.contractorPhone?.let { contractorPhone ->
+                                    binding!!.etContractorPhone.setText(contractorPhone)
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
         labourViewModel.labourDetailsUploadResponse.observe(this@LabourBookUploadClass) {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     hideDialog()
                 }
 
@@ -89,11 +120,11 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                     if (it.data != null) {
                         if (it.data.status == "1") {
                             hideDialog()
-                            Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
                             finish()
 
                         } else {
-                            Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
 
                         }
                     }
@@ -105,7 +136,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         homeViewModel.commoditiesReponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
-                    Toast.makeText(this,it.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     hideDialog()
                 }
 
@@ -116,8 +147,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                 is NetworkResult.Success -> {
                     SharedPreferencesRepository.getDataManagerInstance()
                         .setCommdity(it.data!!.categories)
-                    SharedPreferencesRepository.getDataManagerInstance().employee =
-                        it.data.employee
+                    SharedPreferencesRepository.getDataManagerInstance().employee = it.data.employee
                     SharedPreferencesRepository.getDataManagerInstance()
                         .setContractor(it.data.labourList)
                     if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
@@ -128,6 +158,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             }
         }
     }
+
     private fun setValueOnSpinner() {
 
         for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
@@ -146,8 +177,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
 
         searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
             override fun setOnItemSelectListener(
-                position: Int,
-                selectedString: String
+                position: Int, selectedString: String
             ) {
                 binding!!.etContractor.setText(selectedString)
                 contractorsID = contractorName.get(position)
@@ -157,10 +187,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
                             ignoreCase = true
                         )
                     ) {
-                        contractorNameId =
-                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].id.toString()
-                        binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
-                        binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+
                     }
                 }
             }
@@ -170,50 +197,37 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         itemList.add(LabourType.DEFAULT.type)
         itemList.add(LabourType.CLIENT.type)
         itemList.add(LabourType.COMPANY.type)
-        SpinnerControactorAdapter =
-            ArrayAdapter(this, R.layout.multiline_spinner_item, itemList!!)
+        SpinnerControactorAdapter = ArrayAdapter(this, R.layout.multiline_spinner_item, itemList!!)
 
 
-//            object :
-//            ArrayAdapter<String?>(this, R.layout.multiline_spinner_item, contractorName!!) {
-//            //By using this method we will define how
-//            // the text appears before clicking a spinner
-//            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-//                val v = super.getView(position, convertView, parent)
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//
-//            //By using this method we will define
-//            //how the listview appears after clicking a spinner
-//            override fun getDropDownView(
-//                position: Int,
-//                convertView: View,
-//                parent: ViewGroup
-//            ): View {
-//                val v = super.getDropDownView(position, convertView, parent)
-//                v.setBackgroundColor(Color.parseColor("#05000000"))
-//                (v as TextView).setTextColor(Color.parseColor("#000000"))
-//                return v
-//            }
-//        }
+
         SpinnerControactorAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown_item)
         // Set Adapter in the spinner
         binding!!.spinnerContractor.adapter = SpinnerControactorAdapter
         binding!!.spinnerContractor.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    parentView: AdapterView<*>,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
+                    parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long
                 ) {
                     labourType.type = itemList[position]
                     // selected item in the list
                     if (position == 0 || position == 1) {
                         binding!!.layoutLabour.visibility = View.GONE
+                        contractorsID = ""
+                        binding!!.etContractorPhone.setText("")
+                        binding!!.etLabourRate.setText("")
                     } else {
+
                         binding!!.layoutLabour.visibility = View.VISIBLE
+                        intent?.let {
+                            it.getStringExtra("warehouse_id")?.let { warehouse ->
+                                it.getStringExtra("commodity_id")?.let { commodity ->
+                                    labourViewModel.getLabourContractorName(warehouse, commodity);
+
+                                }
+
+                            }
+                        }
                     }
 
                 }
@@ -228,7 +242,15 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
     private fun getCommodityList() {
         showDialog()
         homeViewModel.getCommodities("Emp")
+        intent?.let {
+            it.getStringExtra("warehouse_id")?.let { warehouse ->
+                it.getStringExtra("commodity_id")?.let { commodity ->
+                    labourViewModel.getLabourContractorName(warehouse, commodity);
 
+                }
+
+            }
+        }
 
 
     }
@@ -239,9 +261,9 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
         binding!!.etStartDateTime.setOnClickListener(this)
         binding!!.lpCommiteDate.setOnClickListener(this)
 
-        binding!!.etContractor.setOnClickListener {
-            searchableSpinner.show()
-        }
+//        binding!!.etContractor.setOnClickListener {
+//            searchableSpinner.show()
+//        }
 
     }
 
@@ -255,6 +277,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             R.id.lp_commite_date -> popUpDatePicker()
             R.id.btn_login -> if (isValid) {
                 showDialog()
+//
                 labourViewModel.uploadLabourDetails(
                     UploadLabourDetailsPostData(
                         CaseID,
@@ -286,11 +309,9 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
 
     val isValid: Boolean
         get() {
-
             if (labourType.type != LabourType.CLIENT.type) {
                 if (Validationhelper().fieldEmpty(binding!!.tilContractor)) {
-                    binding!!.tilContractor.error =
-                        "This Field cannot be empty"
+                    binding!!.tilContractor.error = "This Field cannot be empty"
                     return false
 
                 }
@@ -300,10 +321,12 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
             return true
         }
 
-    fun popUpDatePicker() { 
+    fun popUpDatePicker() {
         val dateDialog = DatePickerDialog(
-            this, date, calender
-            !!.get(Calendar.YEAR), calender!![Calendar.MONTH],
+            this,
+            date,
+            calender!!.get(Calendar.YEAR),
+            calender!![Calendar.MONTH],
             calender!![Calendar.DAY_OF_MONTH]
         )
         dateDialog.getDatePicker().setMinDate(System.currentTimeMillis())
@@ -312,6 +335,7 @@ class LabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding?>(
 
     var date: DatePickerDialog.OnDateSetListener = object : DatePickerDialog.OnDateSetListener {
         override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+
             calender!![Calendar.YEAR] = year
             calender!![Calendar.MONTH] = monthOfYear
             calender!![Calendar.DAY_OF_MONTH] = dayOfMonth

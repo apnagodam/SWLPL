@@ -1,6 +1,7 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
@@ -22,6 +23,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -78,6 +81,7 @@ import com.apnagodam.staff.adapter.OnBindCallback
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.databinding.StaffDashboardBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
+import com.apnagodam.staff.helper.ImageHelper
 import com.apnagodam.staff.interfaces.OnProfileClickListener
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.MenuModel
@@ -86,9 +90,9 @@ import com.apnagodam.staff.paging.adapter.CasesAdapter
 import com.apnagodam.staff.paging.state.ListLoadStateAdapter
 import com.apnagodam.staff.utils.ConstantObjects
 import com.apnagodam.staff.utils.Constants
-import com.apnagodam.staff.helper.ImageHelper
 import com.apnagodam.staff.utils.LocationUtils
 import com.apnagodam.staff.utils.RecyclerItemClickListener
+import com.apnagodam.staff.utils.UpdateHelper
 import com.apnagodam.staff.utils.Utility
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -206,8 +210,17 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     }
 
+    val result =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+            // handle callback
+            if (result.resultCode != Activity.RESULT_OK) {
+                UpdateHelper.checkForUpdate(this)
+            }
+        }
 
     fun setUI() {
+        UpdateHelper.checkForUpdate(this)
+
         setSupportActionBar(binding!!.toolbar)
         getdashboardData()
 

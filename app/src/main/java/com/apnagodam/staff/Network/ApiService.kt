@@ -40,8 +40,10 @@ import com.apnagodam.staff.Network.Response.AuditQVResponse
 import com.apnagodam.staff.Network.Response.BaseResponse
 import com.apnagodam.staff.Network.Response.CmDetailsResponse
 import com.apnagodam.staff.Network.Response.DharamKanta
+import com.apnagodam.staff.Network.Response.DharmaKantaNameResponse
 import com.apnagodam.staff.Network.Response.DispleasedListResponse
 import com.apnagodam.staff.Network.Response.DriverOtpResponse
+import com.apnagodam.staff.Network.Response.LabourContractorNameResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.Response.OTPvarifedResponse
 import com.apnagodam.staff.Network.Response.PleasedApproverResponse
@@ -371,6 +373,12 @@ interface ApiService {
         @Query("search") str4: String?
     ): Response<FirstkanthaParchiListResponse>
 
+    @GET("emp_api/apna_emp_term_d_kanta")
+    suspend fun getDharmaKantas(
+        @Query("warehouse_id") str: String?,
+
+        ): Response<DharmaKantaNameResponse>
+
     @GET("emp_api/apna_emp_get_quality")
     suspend fun getf_qualityReportsList(
         @Query("limit") str: String?,
@@ -435,6 +443,12 @@ interface ApiService {
 
     @POST("emp_api/apna_emp_update_labour")
     suspend fun uploadLabourDetails(@Body uploadLabourDetailsPostData: UploadLabourDetailsPostData): Response<LoginResponse>
+
+    @GET("emp_api/apna_emp_term_l_contractor")
+    suspend fun getLabourContractorName(
+        @Query("warehouse_id") warehouseId: String,
+        @Query("commodity_id") commodityId: String
+    ): Response<LabourContractorNameResponse>
 
     @POST("emp_api/apna_emp_update_releaseorder")
     suspend fun uploadRleaseOrder(@Body uploadReleaseOrderlsPostData: UploadReleaseOrderlsPostData): Response<LoginResponse>

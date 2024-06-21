@@ -1,824 +1,312 @@
-package com.apnagodam.staff.module;
+package com.apnagodam.staff.module
 
-import com.apnagodam.staff.Network.Response.BaseResponse;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.apnagodam.staff.Network.Response.BaseResponse
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-import java.io.Serializable;
-import java.util.List;
+class FirstkanthaParchiListResponse : BaseResponse(), Serializable {
 
-public class FirstkanthaParchiListResponse extends BaseResponse implements Serializable {
-
-
-    public FirstKataParchiDatum getFirstKataParchiData() {
-        return firstKataParchiData;
-    }
-
-    public void setFirstKataParchiData(FirstKataParchiDatum firstKataParchiData) {
-        this.firstKataParchiData = firstKataParchiData;
-    }
-    public List<DharemKanta> getDharemKantas() {
-        return dharemKantas;
-    }
-
-    public void setDharemKanta(List<DharemKanta> dharemKanta) {
-        this.dharemKantas = dharemKanta;
-    }
     @SerializedName("data")
     @Expose
-    private FirstKataParchiDatum firstKataParchiData;
+    var firstKataParchiData: FirstKataParchiDatum? = null
 
     @SerializedName("dharem_kanta")
     @Expose
-    private List<DharemKanta> dharemKantas;
-    public class FirstKataParchiDatum {
+    var dharemKantas: List<DharemKanta>? = null
+        private set
+
+    inner class FirstKataParchiDatum {
         @SerializedName("current_page")
         @Expose
-        private Integer currentPage;
+        var currentPage: Int? = null
+
         @SerializedName("data")
         @Expose
-        private List<Datum> data = null;
-
+        var data: List<Datum>? = null
 
         @SerializedName("first_page_url")
         @Expose
-        private String firstPageUrl;
+        var firstPageUrl: String? = null
+
         @SerializedName("from")
         @Expose
-        private Integer from;
+        var from: Int? = null
+
         @SerializedName("last_page")
         @Expose
-        private Integer lastPage;
+        var lastPage: Int? = null
+
         @SerializedName("last_page_url")
         @Expose
-        private String lastPageUrl;
+        var lastPageUrl: String? = null
+
         @SerializedName("next_page_url")
         @Expose
-        private String nextPageUrl;
+        var nextPageUrl: String? = null
+
         @SerializedName("path")
         @Expose
-        private String path;
+        var path: String? = null
+
         @SerializedName("per_page")
         @Expose
-        private String perPage;
+        var perPage: String? = null
+
         @SerializedName("prev_page_url")
         @Expose
-        private String prevPageUrl;
+        var prevPageUrl: String? = null
+
         @SerializedName("to")
         @Expose
-        private Integer to;
+        var to: Int? = null
+
         @SerializedName("total")
         @Expose
-        private Integer total;
-
-
-        public Integer getCurrentPage() {
-            return currentPage;
-        }
-
-        public void setCurrentPage(Integer currentPage) {
-            this.currentPage = currentPage;
-        }
-
-        public List<Datum> getData() {
-            return data;
-        }
-
-        public void setData(List<Datum> data) {
-            this.data = data;
-        }
-
-
-
-        public String getFirstPageUrl() {
-            return firstPageUrl;
-        }
-
-        public void setFirstPageUrl(String firstPageUrl) {
-            this.firstPageUrl = firstPageUrl;
-        }
-
-        public Integer getFrom() {
-            return from;
-        }
-
-        public void setFrom(Integer from) {
-            this.from = from;
-        }
-
-        public Integer getLastPage() {
-            return lastPage;
-        }
-
-        public void setLastPage(Integer lastPage) {
-            this.lastPage = lastPage;
-        }
-
-        public String getLastPageUrl() {
-            return lastPageUrl;
-        }
-
-        public void setLastPageUrl(String lastPageUrl) {
-            this.lastPageUrl = lastPageUrl;
-        }
-
-        public String getNextPageUrl() {
-            return nextPageUrl;
-        }
-
-        public void setNextPageUrl(String nextPageUrl) {
-            this.nextPageUrl = nextPageUrl;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getPerPage() {
-            return perPage;
-        }
-
-        public void setPerPage(String perPage) {
-            this.perPage = perPage;
-        }
-
-        public String getPrevPageUrl() {
-            return prevPageUrl;
-        }
-
-        public void setPrevPageUrl(String prevPageUrl) {
-            this.prevPageUrl = prevPageUrl;
-        }
-
-        public Integer getTo() {
-            return to;
-        }
-
-        public void setTo(Integer to) {
-            this.to = to;
-        }
-
-        public Integer getTotal() {
-            return total;
-        }
-
-        public void setTotal(Integer total) {
-            this.total = total;
-        }
-
+        var total: Int? = null
     }
 
-    public class DharemKanta {
-
+    inner class DharemKanta {
         @SerializedName("id")
-        int id;
+        var id = 0
 
         @SerializedName("name")
-        String name;
+        var name: String? = null
 
         @SerializedName("operator_name")
-        String operatorName;
+        var operatorName: String? = null
 
         @SerializedName("phone")
-        String phone;
+        var phone: String? = null
 
         @SerializedName("location")
-        String location;
+        var location: String? = null
 
         @SerializedName("length")
-        String length;
+        var length: String? = null
 
         @SerializedName("capicity")
-        String capicity;
+        var capicity: String? = null
 
         @SerializedName("created_at")
-        String createdAt;
+        var createdAt: String? = null
 
         @SerializedName("updated_at")
-        String updatedAt;
+        var updatedAt: String? = null
 
         @SerializedName("status")
-        int status;
-
-
-        public void setId(int id) {
-            this.id = id;
-        }
-        public int getId() {
-            return id;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-        public String getName() {
-            return name;
-        }
-
-        public void setOperatorName(String operatorName) {
-            this.operatorName = operatorName;
-        }
-        public String getOperatorName() {
-            return operatorName;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLength(String length) {
-            this.length = length;
-        }
-        public String getLength() {
-            return length;
-        }
-
-        public void setCapicity(String capicity) {
-            this.capicity = capicity;
-        }
-        public String getCapicity() {
-            return capicity;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-        public int getStatus() {
-            return status;
-        }
-
+        var status = 0
     }
-    public class Datum  implements Serializable{
 
+    inner class Datum : Serializable {
         @SerializedName("id")
         @Expose
-        private Integer id;
+        var id: Int? = null
+
+        @JvmField
         @SerializedName("case_id")
         @Expose
-        private String caseId;
+        var caseId: String? = null
+
         @SerializedName("gate_pass")
         @Expose
-        private String gatePass;
+        var gatePass: String? = null
+
         @SerializedName("in_out")
         @Expose
-        private String inOut;
+        var inOut: String? = null
+
         @SerializedName("customer_uid")
         @Expose
-        private Integer customerUid;
+        var customerUid: Int? = null
+
         @SerializedName("location")
         @Expose
-        private String location;
+        var location: String? = null
+
         @SerializedName("commodity_id")
         @Expose
-        private Integer commodityId;
+        var commodityId: Int? = null
+
         @SerializedName("terminal_id")
         @Expose
-        private Integer terminalId;
+        var terminalId: Int? = null
+
         @SerializedName("total_weight")
         @Expose
-        private String totalWeight;
+        var totalWeight: String? = null
+
         @SerializedName("vehicle_no")
         @Expose
-        private String vehicleNo;
+        var vehicleNo: String? = null
+
         @SerializedName("lead_gen_uid")
         @Expose
-        private Integer leadGenUid;
+        var leadGenUid: Int? = null
+
         @SerializedName("lead_conv_uid")
         @Expose
-        private Integer leadConvUid;
+        var leadConvUid: Int? = null
+
         @SerializedName("purpose")
         @Expose
-        private String purpose;
+        var purpose: String? = null
+
         @SerializedName("fpo_users")
         @Expose
-        private String fpoUsers;
+        var fpoUsers: String? = null
+
         @SerializedName("fpo_user_id")
         @Expose
-        private String fpoUserId;
+        var fpoUserId: String? = null
+
         @SerializedName("gate_pass_cdf_user_name")
         @Expose
-        private String gatePassCdfUserName;
+        var gatePassCdfUserName: String? = null
+
         @SerializedName("coldwin_name")
         @Expose
-        private String coldwinName;
+        var coldwinName: String? = null
+
         @SerializedName("purchase_name")
         @Expose
-        private String purchaseName;
+        var purchaseName: String? = null
+
         @SerializedName("loan_name")
         @Expose
-        private String loanName;
+        var loanName: String? = null
+
         @SerializedName("sale_name")
         @Expose
-        private String saleName;
+        var saleName: String? = null
+
         @SerializedName("no_of_bags")
         @Expose
-        private String noOfBags;
+        var noOfBags: String? = null
+
         @SerializedName("cancel_notes")
         @Expose
-        private String cancelNotes;
+        var cancelNotes: String? = null
+
         @SerializedName("approved_remark")
         @Expose
-        private String approvedRemark;
+        var approvedRemark: String? = null
+
         @SerializedName("status")
         @Expose
-        private Integer status;
+        var status: Int? = null
+
         @SerializedName("created_at")
         @Expose
-        private String createdAt;
+        var createdAt: String? = null
+
         @SerializedName("updated_at")
         @Expose
-        private String updatedAt;
+        var updatedAt: String? = null
+
         @SerializedName("phone")
         @Expose
-        private String phone;
+        var phone: String? = null
+
+        @JvmField
         @SerializedName("cust_fname")
         @Expose
-        private String custFname;
+        var custFname: String? = null
+
         @SerializedName("cust_lname")
         @Expose
-        private String custLname;
+        var custLname: String? = null
+
         @SerializedName("k_p_case_id")
         @Expose
-        private String kPCaseId;
+        var kPCaseId: String? = null
+
         @SerializedName("rst_no")
         @Expose
-        private String rstNo;
+        var rstNo: String? = null
+
         @SerializedName("bags")
         @Expose
-        private String bags;
+        var bags: String? = null
+
         @SerializedName("gross_weight")
         @Expose
-        private String grossWeight;
+        var grossWeight: String? = null
+
         @SerializedName("tare_weight")
         @Expose
-        private String tareWeight;
+        var tareWeight: String? = null
+
         @SerializedName("net_weight")
         @Expose
-        private String netWeight;
+        var netWeight: String? = null
+
         @SerializedName("gross_date_time")
         @Expose
-        private String grossDateTime;
+        var grossDateTime: String? = null
+
         @SerializedName("tare_date_time")
         @Expose
-        private String tareDateTime;
+        var tareDateTime: String? = null
+
         @SerializedName("charges")
         @Expose
-        private String charges;
+        var charges: String? = null
+
         @SerializedName("kanta_name")
         @Expose
-        private String kantaName;
+        var kantaName: String? = null
+
         @SerializedName("kanta_place")
         @Expose
-        private String kantaPlace;
+        var kantaPlace: String? = null
+
         @SerializedName("file")
         @Expose
-        private String file;
+        var file: String? = null
+
         @SerializedName("file_2")
         @Expose
-        private String file2;
+        var file2: String? = null
 
+        @JvmField
         @SerializedName("file_3")
         @Expose
-        private String file3;
+        var file3: String? = null
+
         @SerializedName("notes")
         @Expose
-        private String notes;
+        var notes: String? = null
+
         @SerializedName("user_price_fname")
         @Expose
-        private String userPriceFname;
+        var userPriceFname: String? = null
+
         @SerializedName("user_price_lname")
         @Expose
-        private String userPriceLname;
+        var userPriceLname: String? = null
+
+        @JvmField
         @SerializedName("l_b_case_id")
         @Expose
-        private String lBCaseId;
+        var lBCaseId: String? = null
+
+        @JvmField
         @SerializedName("dharam_kanta")
         @Expose
-        private String dharamKanta;
+        var dharamKanta: String? = null
 
-        public String getF_q_case_id() {
-            return f_q_case_id;
-        }
+        @SerializedName("dharam_kanta_id")
+        @Expose
+        var dharamKantaId: String? = null
 
-        public void setF_q_case_id(String f_q_case_id) {
-            this.f_q_case_id = f_q_case_id;
-        }
+        @SerializedName("dharam_kanta_name")
+        @Expose
+        var dharamKantaName: String? = null
 
+        @JvmField
         @SerializedName("f_q_case_id")
         @Expose
-        private String f_q_case_id;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getCaseId() {
-            return caseId;
-        }
-
-        public void setCaseId(String caseId) {
-            this.caseId = caseId;
-        }
-
-        public String getGatePass() {
-            return gatePass;
-        }
-
-        public void setGatePass(String gatePass) {
-            this.gatePass = gatePass;
-        }
-
-        public String getInOut() {
-            return inOut;
-        }
-
-        public void setInOut(String inOut) {
-            this.inOut = inOut;
-        }
-
-        public Integer getCustomerUid() {
-            return customerUid;
-        }
-
-        public void setCustomerUid(Integer customerUid) {
-            this.customerUid = customerUid;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-        public Integer getCommodityId() {
-            return commodityId;
-        }
-
-        public void setCommodityId(Integer commodityId) {
-            this.commodityId = commodityId;
-        }
-
-        public Integer getTerminalId() {
-            return terminalId;
-        }
-
-        public void setTerminalId(Integer terminalId) {
-            this.terminalId = terminalId;
-        }
-
-        public String getTotalWeight() {
-            return totalWeight;
-        }
-
-        public void setTotalWeight(String totalWeight) {
-            this.totalWeight = totalWeight;
-        }
-
-        public String getVehicleNo() {
-            return vehicleNo;
-        }
-
-        public void setVehicleNo(String vehicleNo) {
-            this.vehicleNo = vehicleNo;
-        }
-
-        public Integer getLeadGenUid() {
-            return leadGenUid;
-        }
-
-        public void setLeadGenUid(Integer leadGenUid) {
-            this.leadGenUid = leadGenUid;
-        }
-
-        public Integer getLeadConvUid() {
-            return leadConvUid;
-        }
-
-        public void setLeadConvUid(Integer leadConvUid) {
-            this.leadConvUid = leadConvUid;
-        }
-
-        public String getPurpose() {
-            return purpose;
-        }
-
-        public void setPurpose(String purpose) {
-            this.purpose = purpose;
-        }
-
-        public String getFpoUsers() {
-            return fpoUsers;
-        }
-
-        public void setFpoUsers(String fpoUsers) {
-            this.fpoUsers = fpoUsers;
-        }
-
-        public String getFpoUserId() {
-            return fpoUserId;
-        }
-
-        public void setFpoUserId(String fpoUserId) {
-            this.fpoUserId = fpoUserId;
-        }
-
-        public String getGatePassCdfUserName() {
-            return gatePassCdfUserName;
-        }
-
-        public void setGatePassCdfUserName(String gatePassCdfUserName) {
-            this.gatePassCdfUserName = gatePassCdfUserName;
-        }
-
-        public String getColdwinName() {
-            return coldwinName;
-        }
-
-        public void setColdwinName(String coldwinName) {
-            this.coldwinName = coldwinName;
-        }
-
-        public String getPurchaseName() {
-            return purchaseName;
-        }
-
-        public void setPurchaseName(String purchaseName) {
-            this.purchaseName = purchaseName;
-        }
-
-        public String getLoanName() {
-            return loanName;
-        }
-
-        public void setLoanName(String loanName) {
-            this.loanName = loanName;
-        }
-
-        public String getSaleName() {
-            return saleName;
-        }
-
-        public void setSaleName(String saleName) {
-            this.saleName = saleName;
-        }
-
-        public String getNoOfBags() {
-            return noOfBags;
-        }
-
-        public void setNoOfBags(String noOfBags) {
-            this.noOfBags = noOfBags;
-        }
-
-        public String getCancelNotes() {
-            return cancelNotes;
-        }
-
-        public void setCancelNotes(String cancelNotes) {
-            this.cancelNotes = cancelNotes;
-        }
-
-        public String getApprovedRemark() {
-            return approvedRemark;
-        }
-
-        public void setApprovedRemark(String approvedRemark) {
-            this.approvedRemark = approvedRemark;
-        }
-
-        public Integer getStatus() {
-            return status;
-        }
-
-        public void setStatus(Integer status) {
-            this.status = status;
-        }
-
-        public String getCreatedAt() {
-            return createdAt;
-        }
-
-        public void setCreatedAt(String createdAt) {
-            this.createdAt = createdAt;
-        }
-
-        public String getUpdatedAt() {
-            return updatedAt;
-        }
-
-        public void setUpdatedAt(String updatedAt) {
-            this.updatedAt = updatedAt;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-
-        public String getCustFname() {
-            return custFname;
-        }
-
-        public void setCustFname(String custFname) {
-            this.custFname = custFname;
-        }
-
-        public String getCustLname() {
-            return custLname;
-        }
-
-        public void setCustLname(String custLname) {
-            this.custLname = custLname;
-        }
-
-        public String getKPCaseId() {
-            return kPCaseId;
-        }
-
-        public void setKPCaseId(String kPCaseId) {
-            this.kPCaseId = kPCaseId;
-        }
-
-        public String getRstNo() {
-            return rstNo;
-        }
-
-        public void setRstNo(String rstNo) {
-            this.rstNo = rstNo;
-        }
-
-        public String getBags() {
-            return bags;
-        }
-
-        public void setBags(String bags) {
-            this.bags = bags;
-        }
-
-        public String getGrossWeight() {
-            return grossWeight;
-        }
-
-        public void setGrossWeight(String grossWeight) {
-            this.grossWeight = grossWeight;
-        }
-
-        public String getTareWeight() {
-            return tareWeight;
-        }
-
-        public void setTareWeight(String tareWeight) {
-            this.tareWeight = tareWeight;
-        }
-
-        public String getNetWeight() {
-            return netWeight;
-        }
-
-        public void setNetWeight(String netWeight) {
-            this.netWeight = netWeight;
-        }
-
-        public String getGrossDateTime() {
-            return grossDateTime;
-        }
-
-        public void setGrossDateTime(String grossDateTime) {
-            this.grossDateTime = grossDateTime;
-        }
-
-        public String getTareDateTime() {
-            return tareDateTime;
-        }
-
-        public void setTareDateTime(String tareDateTime) {
-            this.tareDateTime = tareDateTime;
-        }
-
-        public String getCharges() {
-            return charges;
-        }
-
-        public void setCharges(String charges) {
-            this.charges = charges;
-        }
-
-        public String getKantaName() {
-            return kantaName;
-        }
-
-        public void setKantaName(String kantaName) {
-            this.kantaName = kantaName;
-        }
-
-        public String getKantaPlace() {
-            return kantaPlace;
-        }
-
-        public void setKantaPlace(String kantaPlace) {
-            this.kantaPlace = kantaPlace;
-        }
-
-        public String getFile() {
-            return file;
-        }
-
-        public void setFile(String file) {
-            this.file = file;
-        }
-
-        public String getFile2() {
-            return file2;
-        }
-
-        public void setFile2(String file2) {
-            this.file2 = file2;
-        }
-
-        public String getFile3() {
-            return file3;
-        }
-
-        public void setFile3(String file3) {
-            this.file3 = file3;
-        }
-
-        public String getNotes() {
-            return notes;
-        }
-
-        public void setNotes(String notes) {
-            this.notes = notes;
-        }
-
-        public String getUserPriceFname() {
-            return userPriceFname;
-        }
-
-        public void setUserPriceFname(String userPriceFname) {
-            this.userPriceFname = userPriceFname;
-        }
-
-        public String getUserPriceLname() {
-            return userPriceLname;
-        }
-
-        public void setUserPriceLname(String userPriceLname) {
-            this.userPriceLname = userPriceLname;
-        }
-
-        public String getLBCaseId() {
-            return lBCaseId;
-        }
-
-        public void setLBCaseId(String lBCaseId) {
-            this.lBCaseId = lBCaseId;
-        }
-
-        public String getDharamKanta() {
-            return dharamKanta;
-        }
-
-        public void setDharamKanta(String dharamKanta) {
-            this.dharamKanta = dharamKanta;
-        }
-
+        var f_q_case_id: String? = null
     }
 }

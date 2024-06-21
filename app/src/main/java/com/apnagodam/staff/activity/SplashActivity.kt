@@ -10,15 +10,11 @@ import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
-import com.apnagodam.staff.Network.viewmodel.NetworkSpeedViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.databinding.ActivitySplashBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.utils.UpdateHelper
-import com.apnagodam.staff.utils.Utility
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 @AndroidEntryPoint
 class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
@@ -31,20 +27,10 @@ class SplashActivity() : BaseActivity<ActivitySplashBinding?>() {
 
 
 
-    val result =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
-            // handle callback
-            if (result.resultCode != Activity.RESULT_OK) {
-                UpdateHelper.checkForUpdate(this)
-            }
-        }
 
     override fun setUp() {
-        UpdateHelper.checkForUpdate(this)
         getappVersion()
         nextMClass()
-
-
     }
 
 

@@ -16,11 +16,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.viewmodel.KantaParchiViewModel
 import com.apnagodam.staff.R
-import com.apnagodam.staff.activity.StaffDashBoardActivity
 import com.apnagodam.staff.adapter.OutFirstkanthaparchiAdapter
 import com.apnagodam.staff.databinding.ActivityListingBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -28,8 +26,6 @@ import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.utils.Constants
 import com.apnagodam.staff.utils.PhotoFullPopupWindow
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 @AndroidEntryPoint
 class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>() {
@@ -132,6 +128,7 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         super.onResume()
         getAllCases("")
     }
+
     private fun setAdapter() {
 
         binding!!.rvDefaultersStatus.setHasFixedSize(true)
@@ -148,8 +145,8 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
 
     private fun getAllCases(search: String) {
         kantaParchiViewModel.getKantaParchiListing("10", "" + pageOffset, "OUT", search)
-        kantaParchiViewModel.kantaParchiResponse.observe(this){
-            when(it){
+        kantaParchiViewModel.kantaParchiResponse.observe(this) {
+            when (it) {
                 is NetworkResult.Error -> hideDialog()
                 is NetworkResult.Loading -> showDialog()
                 is NetworkResult.Success -> {
@@ -161,20 +158,36 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
                         AllCases!!.clear()
-                        totalPage = it.data.firstKataParchiData.lastPage
-                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                        it.data?.let { data ->
+                            data.firstKataParchiData?.let { fKp ->
+                                fKp.lastPage?.let { lastPage ->
+                                    totalPage = lastPage
 
-                        for (i in it.data!!.firstKataParchiData.data.indices) {
+                                }
 
-                            if (userDetails.terminal == null) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
-                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+                                fKp.data?.let { fkpData ->
+                                    var userDetails =
+                                        SharedPreferencesRepository.getDataManagerInstance().user
+
+                                    for (i in fkpData.indices) {
+
+                                        if (userDetails.terminal == null) {
+                                            AllCases.add(fkpData[i])
+                                        } else if (fkpData[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                            AllCases.add(fkpData[i])
+
+                                        }
+
+
+                                    }
+                                }
 
                             }
+                            data.dharemKantas?.let { kantas ->
 
-
+                            }
                         }
+
                         outFirstkanthaparchiAdapter = OutFirstkanthaparchiAdapter(
                             AllCases,
                             this@OutFirstkanthaParchiListingActivity,
@@ -217,40 +230,52 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
         val loan_details = dialogView.findViewById<TextView>(R.id.loan_details)
         val selas_details = dialogView.findViewById<TextView>(R.id.selas_details)
         ////
-        if (AllCases!![position]!!.file == null || AllCases!![position]!!.file.isEmpty()) {
-            kanta_parchi_file.visibility = View.GONE
+        AllCases[position]?.let {
+            allCases->
+            allCases.file?.let {
+                file->
+                if (file.isEmpty()) {
+                    kanta_parchi_file.visibility = View.GONE
+                }
+            }
+
+            allCases.file2?.let {
+                file2->
+                if (file2.isEmpty()) {
+                    truck_file.visibility = View.GONE
+                }
+            }
+
+            case_id.text = resources.getString(R.string.case_idd)
+            lead_id.text = "" + allCases.caseId
+            customer_name.text = "" +allCases.custFname
+            notes.text = "" + (if ((allCases
+                    .notes) != null
+            ) allCases.notes else "N/A")
+            gate_pass.text = "Gaatepass/CDF Name : " + (if ((allCases
+                    .gatePassCdfUserName) != null
+            ) allCases.gatePassCdfUserName else "N/A")
+            coldwin.text = "ColdWin Name: " + (if ((allCases
+                    .coldwinName) != null
+            ) allCases.coldwinName else "N/A")
+            user.text = "User : " + (if ((allCases
+                    .fpoUserId) != null
+            ) allCases.fpoUserId else "N/A")
+            purchase_details.text = "purchase Details : " + (if ((allCases
+                    .purchaseName) != null
+            ) allCases.purchaseName else "N/A")
+            loan_details.text = "Loan Details : " + (if ((allCases
+                    .loanName) != null
+            ) allCases.loanName else "N/A")
+            selas_details.text = "Sale Details : " + (if ((allCases
+                    .saleName) != null
+            ) allCases.saleName else "N/A")
+            /////
+            firstkantaParchiFile = Constants.First_kata +allCases
+                .file
+            TruckImage = Constants.First_kata + allCases.file2
         }
-        if (AllCases!![position]!!.file2 == null || AllCases!![position]!!.file2.isEmpty()) {
-            truck_file.visibility = View.GONE
-        }
-        case_id.text = resources.getString(R.string.case_idd)
-        lead_id.text = "" + AllCases!!.get(position)!!.caseId
-        customer_name.text = "" + AllCases!!.get(position)!!.custFname
-        notes.text = "" + (if ((AllCases!!.get(position)!!
-                .notes) != null
-        ) AllCases!!.get(position)!!.notes else "N/A")
-        gate_pass.text = "Gaatepass/CDF Name : " + (if ((AllCases!!.get(position)!!
-                .gatePassCdfUserName) != null
-        ) AllCases!!.get(position)!!.gatePassCdfUserName else "N/A")
-        coldwin.text = "ColdWin Name: " + (if ((AllCases!!.get(position)!!
-                .coldwinName) != null
-        ) AllCases!!.get(position)!!.coldwinName else "N/A")
-        user.text = "User : " + (if ((AllCases!!.get(position)!!
-                .fpoUserId) != null
-        ) AllCases!!.get(position)!!.fpoUserId else "N/A")
-        purchase_details.text = "purchase Details : " + (if ((AllCases!!.get(position)!!
-                .purchaseName) != null
-        ) AllCases!!.get(position)!!.purchaseName else "N/A")
-        loan_details.text = "Loan Details : " + (if ((AllCases!!.get(position)!!
-                .loanName) != null
-        ) AllCases!!.get(position)!!.loanName else "N/A")
-        selas_details.text = "Sale Details : " + (if ((AllCases!!.get(position)!!
-                .saleName) != null
-        ) AllCases!!.get(position)!!.saleName else "N/A")
-        /////
-        firstkantaParchiFile = Constants.First_kata + AllCases!![position]!!
-            .file
-        TruckImage = Constants.First_kata + AllCases!![position]!!.file2
+
         kanta_parchi_file.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 PhotoFullPopupWindow(
@@ -283,9 +308,9 @@ class OutFirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBindin
 
     fun checkVeehicleNo(postion: Int) {
         val bundle = Bundle()
-        var intent = Intent(this,OutUploadFirrstkantaParchiClass::class.java)
+        var intent = Intent(this, OutUploadFirrstkantaParchiClass::class.java)
         intent.putExtra("user_name", AllCases!![postion]!!.custFname)
-        intent.putExtra("case_id",AllCases!![postion]!!.caseId)
+        intent.putExtra("case_id", AllCases!![postion]!!.caseId)
         intent.putExtra("vehicle_no", AllCases!![postion]!!.vehicleNo)
 
         startActivity(intent)

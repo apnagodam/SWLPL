@@ -2,34 +2,23 @@ package com.apnagodam.staff.activity.out.labourbook
 
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
-import android.graphics.Color
-import android.text.TextUtils
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.apnagodam.staff.Base.BaseActivity
-import com.apnagodam.staff.BuildConfig
-import com.apnagodam.staff.Network.NetworkCallback
 import com.apnagodam.staff.Network.NetworkResult
 import com.apnagodam.staff.Network.Request.UploadLabourDetailsPostData
-import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LabourViewModel
 import com.apnagodam.staff.R
 import com.apnagodam.staff.activity.`in`.labourbook.LabourType
 import com.apnagodam.staff.databinding.ActivityUploadLabourDetailsBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.utils.Utility
 import com.apnagodam.staff.utils.Validationhelper
 import com.leo.searchablespinner.SearchableSpinner
-import com.leo.searchablespinner.interfaces.OnItemSelectListener
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -70,8 +59,80 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
         binding!!.customerName.text = UserName
         binding!!.caseId.text = CaseID
         contractorName = ArrayList()
-
+        setObservers()
         getCommodityList()
+    }
+
+    fun setObservers() {
+        labourViewModel.labourContractorNameResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    it.message?.let {
+                        Toast.makeText(this, it.toString(), Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                is NetworkResult.Loading -> {
+
+                }
+
+                is NetworkResult.Success -> {
+                    if (labourType == LabourType.COMPANY.type) {
+                        it.data?.let { data ->
+                            data.data?.let { labourData ->
+                                labourData.labourRate?.let { labourRate ->
+                                    binding!!.etLabourRate.setText(labourRate)
+
+                                }
+                                labourData.contractorName?.let { contractorName ->
+                                    contractorsID = contractorName
+                                    binding!!.etContractor.setText(contractorName)
+
+//                                binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+                                }
+                                labourData.id?.let {
+                                    contractorNameID = it.toString()
+
+                                }
+                                labourData.contractorPhone?.let { contractorPhone ->
+                                    binding!!.etContractorPhone.setText(contractorPhone)
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+                }
+
+                is NetworkResult.Success -> {
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            hideDialog()
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
+                            finish()
+
+                        } else {
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+
+
+                }
+            }
+        }
+
     }
 
     private fun setValueOnSpinner() {
@@ -90,27 +151,27 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
         searchableSpinner.setSpinnerListItems(contractorName)
 
-        searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
-            override fun setOnItemSelectListener(
-                position: Int,
-                selectedString: String
-            ) {
-                binding!!.etContractor.setText(selectedString)
-                contractorsID = contractorName.get(position)
-                for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
-                    if (contractorsID.equals(
-                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
-                            ignoreCase = true
-                        )
-                    ) {
-                        contractorNameID =
-                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].id.toString()
-                        binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
-                        binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
-                    }
-                }
-            }
-        }
+//        searchableSpinner.onItemSelectListener = object : OnItemSelectListener {
+//            override fun setOnItemSelectListener(
+//                position: Int,
+//                selectedString: String
+//            ) {
+//                binding!!.etContractor.setText(selectedString)
+//                contractorsID = contractorName.get(position)
+//                for (i in SharedPreferencesRepository.getDataManagerInstance().contractorList.indices) {
+//                    if (contractorsID.equals(
+//                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorName,
+//                            ignoreCase = true
+//                        )
+//                    ) {
+//                        contractorNameID =
+//                            SharedPreferencesRepository.getDataManagerInstance().contractorList[i].id.toString()
+//                        binding!!.etContractorPhone.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].contractorPhone.toString())
+//                        binding!!.etLabourRate.setText(SharedPreferencesRepository.getDataManagerInstance().contractorList[i].rate.toString())
+//                    }
+//                }
+//            }
+//        }
 
         var itemList = arrayListOf<String>()
         itemList.add(LabourType.DEFAULT.type)
@@ -127,21 +188,30 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
         binding!!.spinnerContractor.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
-                    parentView: AdapterView<*>,
-                    selectedItemView: View,
-                    position: Int,
-                    id: Long
+                    parentView: AdapterView<*>, selectedItemView: View, position: Int, id: Long
                 ) {
-                    labourType = itemList.get(position)
+                    labourType = itemList[position]
                     // selected item in the list
-                    if (labourType == LabourType.CLIENT.type) {
-                        isClientLabour = true;
+                    if (position == 0 || position == 1) {
                         binding!!.layoutLabour.visibility = View.GONE
-                    } else if (labourType == LabourType.COMPANY.type) {
-                        isClientLabour = false;
-                        binding!!.layoutLabour.visibility = View.VISIBLE
-                    }
+                        contractorsID = ""
+                        binding!!.etContractorPhone.setText("")
+                        binding!!.etLabourRate.setText("")
+                    } else {
 
+                        binding!!.layoutLabour.visibility = View.VISIBLE
+                        intent?.let {
+                            it.getStringExtra("warehouse_id")?.let { warehouse ->
+                                it.getStringExtra("commodity_id")?.let { commodity ->
+                                    labourViewModel.getLabourContractorName(warehouse, commodity);
+
+                                }
+
+                            }
+                        }
+
+
+                    }
 
                 }
 
@@ -166,14 +236,12 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
 
                 is NetworkResult.Success -> {
                     if (it.data != null) {
-                        if (BuildConfig.APPLICATION_ID != null) {
-                            SharedPreferencesRepository.getDataManagerInstance()
-                                .setCommdity(it.data.categories)
-                            SharedPreferencesRepository.getDataManagerInstance().employee =
-                                it.data.employee
-                            SharedPreferencesRepository.getDataManagerInstance()
-                                .setContractor(it.data.labourList)
-                        }
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setCommdity(it.data.categories)
+                        SharedPreferencesRepository.getDataManagerInstance().employee =
+                            it.data.employee
+                        SharedPreferencesRepository.getDataManagerInstance()
+                            .setContractor(it.data.labourList)
                         if (SharedPreferencesRepository.getDataManagerInstance().contractorList != null) {
                             setValueOnSpinner()
                         }
@@ -182,6 +250,15 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
             }
         }
 
+        intent?.let {
+            it.getStringExtra("warehouse_id")?.let { warehouse ->
+                it.getStringExtra("commodity_id")?.let { commodity ->
+                    labourViewModel.getLabourContractorName(warehouse, commodity);
+
+                }
+
+            }
+        }
 
     }
 
@@ -209,6 +286,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
             R.id.btn_login -> if (isValid) {
 
                 showDialog()
+
                 labourViewModel.uploadLabourDetails(
                     UploadLabourDetailsPostData(
                         CaseID,
@@ -223,34 +301,6 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                         "0000-00-00"
                     )
                 )
-
-                labourViewModel.labourDetailsUploadResponse.observe(this@OUTLabourBookUploadClass) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            Toast.makeText(this,it.message,Toast.LENGTH_SHORT)
-                            hideDialog()
-                        }
-
-                        is NetworkResult.Loading -> {
-                        }
-
-                        is NetworkResult.Success -> {
-                            if (it.data != null) {
-                                if (it.data.status == "1") {
-                                    hideDialog()
-                                    Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT)
-                                    finish()
-
-                                } else {
-                                    Toast.makeText(this,it.data.message,Toast.LENGTH_SHORT)
-
-                                }
-                            }
-
-
-                        }
-                    }
-                }
 
 
 //                if (contractorsID == null) {
@@ -273,8 +323,7 @@ class OUTLabourBookUploadClass : BaseActivity<ActivityUploadLabourDetailsBinding
                     binding!!.tilContractor.error =
                         "This Field cannot be empty"
                 }
-            }
-            else if (labourType == LabourType.CLIENT.type){
+            } else if (labourType == LabourType.CLIENT.type) {
                 contractorNameID = "1"
 
             }

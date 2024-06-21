@@ -18,12 +18,11 @@ class ImageHelper {
 
     fun createTimeStampinBitmap(file: File, map: Map<String, String>): Bitmap {
 
-
         var options = BitmapFactory.Options()
         options.inPreferredConfig = Bitmap.Config.ARGB_8888
         options.inDither = false
         val src = BitmapFactory.decodeFile(
-            file!!.path,
+            file.path,
             options
 
         ) // the original file is cuty.jpg i added in resources

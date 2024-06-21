@@ -3,10 +3,10 @@ package com.apnagodam.staff.Network.repository
 import com.apnagodam.staff.Network.ApiService
 import com.apnagodam.staff.Network.BaseApiResponse
 import com.apnagodam.staff.Network.NetworkResult
-import com.apnagodam.staff.Network.Request.UploadFirstQualityPostData
 import com.apnagodam.staff.Network.Request.UploadFirstkantaParchiPostData
 import com.apnagodam.staff.Network.Request.UploadSecoundkantaParchiPostData
 import com.apnagodam.staff.Network.Response.DharamKanta
+import com.apnagodam.staff.Network.Response.DharmaKantaNameResponse
 import com.apnagodam.staff.Network.Response.LoginResponse
 import com.apnagodam.staff.module.FirstkanthaParchiListResponse
 import com.apnagodam.staff.module.SecoundkanthaParchiListResponse
@@ -14,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import retrofit2.http.Query
 import javax.inject.Inject
 
 class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiResponse() {
@@ -33,10 +32,25 @@ class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiR
             .flowOn(Dispatchers.IO)
     }
 
-    suspend fun uploadFirstKantaParchi(uploadFirstQualityPostData: UploadFirstkantaParchiPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
+    suspend fun getDharmaKantasName(
+        warehouseId: String,
+
+        ): Flow<NetworkResult<DharmaKantaNameResponse>> {
         return flow {
             emit(safeApiCall {
-                apiService.uploadFirstkantaParchi(uploadFirstQualityPostData,inOut)
+                apiService.getDharmaKantas(warehouseId)
+            })
+        }
+            .flowOn(Dispatchers.IO)
+    }
+
+    suspend fun uploadFirstKantaParchi(
+        uploadFirstQualityPostData: UploadFirstkantaParchiPostData,
+        inOut: String
+    ): Flow<NetworkResult<LoginResponse>> {
+        return flow {
+            emit(safeApiCall {
+                apiService.uploadFirstkantaParchi(uploadFirstQualityPostData, inOut)
             })
         }.flowOn(Dispatchers.IO)
     }
@@ -54,10 +68,13 @@ class KantaParchiRepo @Inject constructor(val apiService: ApiService) : BaseApiR
         }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun uploadSecondKantaParchi(uploadFirstQualityPostData: UploadSecoundkantaParchiPostData,inOut:String): Flow<NetworkResult<LoginResponse>> {
+    suspend fun uploadSecondKantaParchi(
+        uploadFirstQualityPostData: UploadSecoundkantaParchiPostData,
+        inOut: String
+    ): Flow<NetworkResult<LoginResponse>> {
         return flow {
             emit(safeApiCall {
-                apiService.uploadSecoundkantaParchi(uploadFirstQualityPostData,inOut)
+                apiService.uploadSecoundkantaParchi(uploadFirstQualityPostData, inOut)
             })
         }
     }

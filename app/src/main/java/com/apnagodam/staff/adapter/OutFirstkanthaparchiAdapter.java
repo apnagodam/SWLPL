@@ -77,9 +77,9 @@ public class OutFirstkanthaparchiAdapter extends BaseRecyclerViewAdapter {
             } else {
                 binding.getRoot().setBackgroundColor(Color.WHITE);
             }
-            binding.tvId.setText("" + Leads.get(position).getCaseId());
-            binding.tvName.setText(Leads.get(position).getCustFname());
-            if (Leads.get(position).getFile3()!=null && Leads.get(position).getDharamKanta()!=null){
+            binding.tvId.setText("" + Leads.get(position).caseId);
+            binding.tvName.setText(Leads.get(position).custFname);
+            if (Leads.get(position).file3 !=null && Leads.get(position).dharamKanta !=null){
                 binding.tvAction.setVisibility(View.GONE);
                 binding.tvActionDone.setVisibility(View.GONE);
                 binding.tvPhone.setVisibility(View.GONE);
@@ -117,7 +117,7 @@ public class OutFirstkanthaparchiAdapter extends BaseRecyclerViewAdapter {
          for (int i = 0; i < SharedPreferencesRepository.getDataManagerInstance().getUserPermission().size(); i++) {
              if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getPermissionId().equalsIgnoreCase("20")) {
                  if (SharedPreferencesRepository.getDataManagerInstance().getUserPermission().get(i).getEdit() == 1) {
-                     if (Leads.get(position).getF_q_case_id()!=null){
+                     if (Leads.get(position).f_q_case_id !=null){
                          tvPhone.setVisibility(View.VISIBLE);
                      }else {
                          tvPhone.setVisibility(View.GONE);

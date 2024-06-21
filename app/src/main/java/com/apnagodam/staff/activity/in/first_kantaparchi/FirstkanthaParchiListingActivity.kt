@@ -65,21 +65,31 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
                         binding!!.pageNextPrivious.visibility = View.GONE
                     } else {
                         AllCases!!.clear()
+                        it.data?.let { kantaData ->
+                            kantaData.firstKataParchiData?.let {
+                                it.lastPage?.let { lastPage ->
+                                    totalPage = lastPage
+                                }
+                                var userDetails =
+                                    SharedPreferencesRepository.getDataManagerInstance().user
+                                it.data?.let { datum ->
+                                    for (i in datum.indices) {
 
-                        totalPage = it.data!!.firstKataParchiData.lastPage
-                        var userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                                        if (userDetails.terminal == null) {
+                                            AllCases.add(datum[i])
+                                        } else if (datum[i].terminalId.toString() == userDetails.terminal.toString()) {
+                                            AllCases.add(datum[i])
 
-                        for (i in it.data!!.firstKataParchiData.data.indices) {
+                                        }
 
-                            if (userDetails.terminal == null) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
-                            } else if (it.data!!.firstKataParchiData.data[i].terminalId.toString() == userDetails.terminal.toString()) {
-                                AllCases!!.add(it.data!!.firstKataParchiData.data[i])
+
+                                    }
+                                }
 
                             }
 
-
                         }
+
                         firstkanthaparchiAdapter =
                             FirstkanthaparchiAdapter(
                                 AllCases,
@@ -221,40 +231,52 @@ class FirstkanthaParchiListingActivity() : BaseActivity<ActivityListingBinding?>
         val loan_details = dialogView.findViewById<View>(R.id.loan_details) as TextView
         val selas_details = dialogView.findViewById<View>(R.id.selas_details) as TextView
         ////
-        if (AllCases!![position]!!.file == null || AllCases!![position]!!.file.isEmpty()) {
-            kanta_parchi_file.visibility = View.GONE
+
+        AllCases[position]?.let { allcases ->
+
+            allcases.file?.let {
+                if (it.isEmpty()) {
+                    kanta_parchi_file.visibility = View.GONE
+                }
+
+            }
+
+            allcases.file2?.let {
+                if (it.isEmpty()) {
+                    truck_file.visibility = View.GONE
+                }
+            }
+
+            case_id.text = resources.getString(R.string.case_idd)
+            lead_id.text = "" + allcases.caseId
+            customer_name.text = "" + allcases.custFname
+            notes.text = "" + (if ((allcases
+                    .notes) != null
+            ) allcases.notes else "N/A")
+            gate_pass.text = "Gaatepass/CDF Name : " + (if ((allcases
+                    .gatePassCdfUserName) != null
+            ) allcases.gatePassCdfUserName else "N/A")
+            coldwin.text = "ColdWin Name: " + (if ((allcases
+                    .coldwinName) != null
+            ) allcases.coldwinName else "N/A")
+            user.text = "User : " + (if ((allcases
+                    .fpoUserId) != null
+            ) allcases.fpoUserId else "N/A")
+            purchase_details.text = "purchase Details : " + (if ((allcases
+                    .purchaseName) != null
+            ) allcases.purchaseName else "N/A")
+            loan_details.text = "Loan Details : " + (if ((allcases
+                    .loanName) != null
+            ) allcases.loanName else "N/A")
+            selas_details.text = "Sale Details : " + (if ((allcases
+                    .saleName) != null
+            ) allcases.saleName else "N/A")
+            /////
+            firstkantaParchiFile = Constants.First_kata + allcases
+                .file
+            TruckImage = Constants.First_kata + allcases.file2
         }
-        if (AllCases!![position]!!.file2 == null || AllCases!![position]!!.file2.isEmpty()) {
-            truck_file.visibility = View.GONE
-        }
-        case_id.text = resources.getString(R.string.case_idd)
-        lead_id.text = "" + AllCases!!.get(position)!!.caseId
-        customer_name.text = "" + AllCases!!.get(position)!!.custFname
-        notes.text = "" + (if ((AllCases!!.get(position)!!
-                .notes) != null
-        ) AllCases!!.get(position)!!.notes else "N/A")
-        gate_pass.text = "Gaatepass/CDF Name : " + (if ((AllCases!!.get(position)!!
-                .gatePassCdfUserName) != null
-        ) AllCases!!.get(position)!!.gatePassCdfUserName else "N/A")
-        coldwin.text = "ColdWin Name: " + (if ((AllCases!!.get(position)!!
-                .coldwinName) != null
-        ) AllCases!!.get(position)!!.coldwinName else "N/A")
-        user.text = "User : " + (if ((AllCases!!.get(position)!!
-                .fpoUserId) != null
-        ) AllCases!!.get(position)!!.fpoUserId else "N/A")
-        purchase_details.text = "purchase Details : " + (if ((AllCases!!.get(position)!!
-                .purchaseName) != null
-        ) AllCases!!.get(position)!!.purchaseName else "N/A")
-        loan_details.text = "Loan Details : " + (if ((AllCases!!.get(position)!!
-                .loanName) != null
-        ) AllCases!!.get(position)!!.loanName else "N/A")
-        selas_details.text = "Sale Details : " + (if ((AllCases!!.get(position)!!
-                .saleName) != null
-        ) AllCases!!.get(position)!!.saleName else "N/A")
-        /////
-        firstkantaParchiFile = Constants.First_kata + AllCases!![position]!!
-            .file
-        TruckImage = Constants.First_kata + AllCases!![position]!!.file2
+
         kanta_parchi_file.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 PhotoFullPopupWindow(

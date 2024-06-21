@@ -10,10 +10,6 @@ class AllCaseIDResponse : BaseResponse() {
         return aCase
     }
 
-    fun setaCase(aCase: Case?) {
-        this.aCase = aCase
-    }
-
     @SerializedName("data")
     @Expose
     private var aCase: Case? = null
@@ -85,7 +81,7 @@ class AllCaseIDResponse : BaseResponse() {
         @JvmField
         @SerializedName("driver_phone")
         @Expose
-        var drivePhone:String?=null
+        var drivePhone: String? = null
 
         @JvmField
         @SerializedName("in_out")
@@ -206,29 +202,6 @@ class AllCaseIDResponse : BaseResponse() {
         @Expose
         var custLname: String? = null
 
-        @SerializedName("lead_gen_fname")
-        @Expose
-        var leadGenFname: String? = null
-
-        @SerializedName("lead_gen_lname")
-        @Expose
-        var leadGenLname: String? = null
-
-        @SerializedName("lead_conv_fname")
-        @Expose
-        var leadConvFname: String? = null
-
-        @SerializedName("lead_conv_lname")
-        @Expose
-        var leadConvLname: String? = null
-
-        @SerializedName("cate_name")
-        @Expose
-        var cateName: String? = null
-
-        @SerializedName("commodity_type")
-        @Expose
-        var commodityType: String? = null
 
         @SerializedName("warehouse_code")
         @Expose
@@ -313,6 +286,7 @@ class AllCaseIDResponse : BaseResponse() {
         @SerializedName("cctv_report")
         @Expose
         var cctvReport: String? = null
+
         @JvmField
         @SerializedName("cctv_date")
         @Expose
@@ -322,10 +296,12 @@ class AllCaseIDResponse : BaseResponse() {
         @SerializedName("ivr_report")
         @Expose
         var ivrReport: String? = null
+
         @JvmField
         @SerializedName("ivr_date")
         @Expose
         var ivrReportDate: String? = null
+
         @JvmField
         @SerializedName("gatepass_report")
         @Expose

@@ -107,6 +107,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             intent.putExtra("case_id", Leads.caseId)
                             intent.putExtra("vehicle_no", Leads.vehicleNo)
                             intent.putExtra("file3", Leads.firstKantaFile3)
+                            intent.putExtra("warehouse_id", Leads.terminalId)
+                            intent.putExtra("commodity_id",Leads.commodityId)
+
                             context.startActivity(intent)
                         }
                     } else {
@@ -129,6 +132,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 intent.putExtra("case_id", Leads.caseId)
                                 intent.putExtra("vehicle_no", Leads.vehicleNo)
                                 intent.putExtra("file3", Leads.firstKantaFile3)
+                                intent.putExtra("warehouse_id", Leads.terminalId)
                                 context.startActivity(intent)
                             }
                         } else {
@@ -475,6 +479,9 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             intent.putExtra("case_id", Leads.caseId)
                             intent.putExtra("vehicle_no", Leads.vehicleNo)
                             intent.putExtra("file3", Leads.firstKantaFile3)
+                            intent.putExtra("warehouse_id", Leads.terminalId)
+                            intent.putExtra("commodity_id",Leads.commodityId)
+
                             context.startActivity(intent)
                         }
                     } else {
@@ -514,6 +521,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                                 intent.putExtra("case_id", Leads.caseId)
                                 intent.putExtra("vehicle_no", Leads.vehicleNo)
                                 intent.putExtra("file3", Leads.firstKantaFile3)
+                                intent.putExtra("warehouse_id", Leads.terminalId)
                                 context.startActivity(intent)
                             }
                         } else {

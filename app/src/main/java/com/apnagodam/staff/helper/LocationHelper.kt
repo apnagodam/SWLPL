@@ -25,7 +25,7 @@ class LocationHelper(var activity: FragmentActivity) : LocationInterface {
     var long: Double? = null
 
     init {
-       checkForPermissions()
+        checkForPermissions()
     }
 
     val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
@@ -37,20 +37,17 @@ class LocationHelper(var activity: FragmentActivity) : LocationInterface {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
             ).build().send() {
                 var isPermissionDenied = false;
-
                 it.forEach {
                     if (it.isDenied()) {
                         showToast(activity, "please grant ${it.permission} from settings")
                         isPermissionDenied = true;
                     } else {
                         isPermissionDenied = false;
-
                     }
                 }
                 if (!isPermissionDenied) {
                     getLocation()
                 } else {
-
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     val uri: Uri = Uri.fromParts("package", activity.packageName, null)
                     intent.data = uri
@@ -64,9 +61,7 @@ class LocationHelper(var activity: FragmentActivity) : LocationInterface {
             activity.permissionsBuilder(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-
-
-                ).build().send() {
+            ).build().send() {
                 var isPermissionDenied = false;
 
                 it.forEach {

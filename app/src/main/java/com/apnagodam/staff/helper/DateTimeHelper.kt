@@ -35,6 +35,9 @@ object DateTimeHelper {
                 compareDate =
                     "$hours hours and ${minutes - (60 * hours)} minutes"
 
+            } else if (hours > 24) {
+                compareDate =
+                    "$days and $hours hours and ${minutes - (60 * hours)} minutes"
             } else {
                 compareDate =
                     "${minutes} minutes"

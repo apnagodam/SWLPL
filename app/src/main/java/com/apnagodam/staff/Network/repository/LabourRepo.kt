@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import retrofit2.http.Query
 import javax.inject.Inject
 
 class LabourRepo @Inject constructor(val apiService: ApiService) : BaseApiResponse() {
@@ -33,4 +32,10 @@ class LabourRepo @Inject constructor(val apiService: ApiService) : BaseApiRespon
         }.flowOn(Dispatchers.IO)
 
     }
+
+    suspend fun getLabourContractorName(warehouseId: String,commodityId:String) = flow {
+        emit(safeApiCall {
+            apiService.getLabourContractorName(warehouseId,commodityId)
+        })
+    }.flowOn(Dispatchers.IO)
 }

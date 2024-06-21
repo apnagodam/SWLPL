@@ -2,7 +2,6 @@ package com.apnagodam.staff.activity
 
 import android.annotation.TargetApi
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.CountDownTimer
 import android.text.Editable
@@ -25,7 +24,6 @@ import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.reciever.SMSReceiver
 import com.apnagodam.staff.reciever.SMSReceiver.OTPReceiveListener
 import com.apnagodam.staff.utils.Utility
-import com.google.android.gms.auth.api.phone.SmsRetriever
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,11 +51,8 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
             setting = bundle.getString("setting")
             empID = bundle.getString("empID")
         }
-        smsReceiver = SMSReceiver()
-        smsReceiver!!.setOTPListener(this as OTPReceiveListener)
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(SmsRetriever.SMS_RETRIEVED_ACTION)
-        this.registerReceiver(smsReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
+
+
         binding!!.txtHead.text = this.getString(R.string.hint_otp) + " :- " + mobileNumbewr
 
         binding!!.btnVerfyOtp.setOnClickListener { v: View? -> getvarifedOtp() }
@@ -66,15 +61,15 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 binding!!.etOtpNumber.setText(null)
                 rersendOTP
                 binding!!.timer.visibility = View.VISIBLE
-                countDownTime()
+                //  countDownTime()
             }
         })
-        countDownTime()
+        // countDownTime()
         binding!!.etOtpNumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
-                if (s.length > 5) getvarifedOtp()
+                if (s.length == 6) getvarifedOtp()
                 /* if (getvarifedOtp()){
 
                 }
@@ -86,37 +81,6 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }*/
             }
         })
-    }
-
-    private fun countDownTime() {
-        object : CountDownTimer(30000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                binding!!.timer.text = "0.$counter sec"
-                counter++
-            }
-
-            override fun onFinish() {
-                binding!!.btnResendOtp.visibility = View.VISIBLE
-                binding!!.timer.visibility = View.GONE
-            }
-        }.start()
-    }
-
-    private fun getvarifedOtp() {
-        if (isValid) {
-            /// apply otp varifed api here
-            varifedOTP()
-        }
-    }
-
-    private val rersendOTP: Unit
-        private get() {
-            /// apply resend otp api here
-            ResendOTP()
-        }
-
-    private fun ResendOTP() {
-        loginViewModel.doLogin(LoginPostData(empID, "Emp"))
         loginViewModel.response.observe(this) {
             when (it) {
                 is NetworkResult.Error -> {
@@ -136,15 +100,6 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }
             }
         }
-    }
-
-    val isValid: Boolean
-        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etOtpNumber))) {
-            Utility.showEditTextError(binding!!.tilOtpNumber, R.string.error_validateotp)
-        } else true
-
-    fun varifedOTP() {
-        loginViewModel.dpVerifyOtp(OTPData(stringFromView(binding!!.etOtpNumber), mobileNumbewr))
         loginViewModel.Otpresponse.observe(this) {
             when (it) {
                 is NetworkResult.Error -> hideDialog()
@@ -176,6 +131,79 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
                 }
             }
         }
+        homeViewModel.response.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    hideDialog()
+                }
+
+                is NetworkResult.Loading -> {
+                    Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
+                }
+
+                is NetworkResult.Success -> {
+                    hideDialog()
+                    if (it.data != null) {
+                        if (it.data.status == "1") {
+                            SharedPreferencesRepository.getDataManagerInstance()
+                                .saveUserPermissionData(it.data.userPermissionsResult)
+                            startActivityAndClear(StaffDashBoardActivity::class.java)
+                        } else {
+                            Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT)
+                                .show();
+
+                        }
+
+
+                    }
+
+
+                }
+
+            }
+        }
+    }
+
+    private fun countDownTime() {
+        object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                binding!!.timer.text = "0.$counter sec"
+                counter++
+            }
+
+            override fun onFinish() {
+                binding!!.btnResendOtp.visibility = View.VISIBLE
+                binding!!.timer.visibility = View.GONE
+            }
+        }.start()
+    }
+
+    private fun getvarifedOtp() {
+        if (isValid) {
+            /// apply otp varifed api here
+            varifedOTP()
+        }
+    }
+
+    private val rersendOTP: Unit
+        private get() {
+            /// apply resend otp api here
+            ResendOTP()
+        }
+
+    private fun ResendOTP() {
+        loginViewModel.doLogin(LoginPostData(empID, "Emp"))
+
+    }
+
+    val isValid: Boolean
+        get() = if (TextUtils.isEmpty(stringFromView(binding!!.etOtpNumber))) {
+            Utility.showEditTextError(binding!!.tilOtpNumber, R.string.error_validateotp)
+        } else true
+
+    fun varifedOTP() {
+        loginViewModel.dpVerifyOtp(OTPData(stringFromView(binding!!.etOtpNumber), mobileNumbewr))
+
 
     }
 
@@ -188,37 +216,7 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
             val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
             if (userDetails != null && userDetails.fname != null && !userDetails.fname.isEmpty()) {
                 homeViewModel.getPermissions(userDetails!!.role_id, userDetails!!.level_id)
-                homeViewModel.response.observe(this) {
-                    when (it) {
-                        is NetworkResult.Error -> {
-                            hideDialog()
-                        }
 
-                        is NetworkResult.Loading -> {
-                            Toast.makeText(this, "loading", Toast.LENGTH_SHORT).show();
-                        }
-
-                        is NetworkResult.Success -> {
-                            hideDialog()
-                            if (it.data != null) {
-                                if (it.data.status == "1") {
-                                    SharedPreferencesRepository.getDataManagerInstance()
-                                        .saveUserPermissionData(it.data.userPermissionsResult)
-                                    startActivityAndClear(StaffDashBoardActivity::class.java)
-                                } else {
-                                    Toast.makeText(this, it.data.message, Toast.LENGTH_SHORT)
-                                        .show();
-
-                                }
-
-
-                            }
-
-
-                        }
-
-                    }
-                }
 
             } else {
                 val intent = Intent(this, LoginActivity::class.java)

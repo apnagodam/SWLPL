@@ -21,6 +21,9 @@ object UpdateHelper {
                 )
             }
         }
+        appUpdateInfoTask(activity).addOnCanceledListener {
+            activity.finish()
+        }
 
     }
 
