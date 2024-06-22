@@ -15,20 +15,20 @@ public class Constants {
 //    public static final String API_BASE_URL = "http://192.168.0.59/apna_godamWeb/trunk/";
 
     //    // for demo server
-//    public static final String API_BASE_URL_LOCAL = "http://192.168.0.54/trunk/";
-//    public static final String IMAGE_BASE_URL = "https://apnagodam.com/test/resources/assets/upload/employees/";
-//    public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.com/test/resources/frontend_assets/uploads/";
-//
-//    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/test/resources/assets/upload/";
-//    public static final String API_BASE_URL = "https://apnagodam.com/test/";
-//    public static final String DISPLEGED_IMAGE_URL = "https://apnagodam.com/test/resources/assets/upload/displedge/";
+    public static final String API_BASE_URL_LOCAL = "http://192.168.0.54/trunk/";
+    public static final String IMAGE_BASE_URL = "https://apnagodam.com/test/resources/assets/upload/employees/";
+    public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.com/test/resources/frontend_assets/uploads/";
+
+    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/test/resources/assets/upload/";
+    public static final String API_BASE_URL = "https://apnagodam.com/test/";
+    public static final String DISPLEGED_IMAGE_URL = "https://apnagodam.com/test/resources/assets/upload/displedge/";
 
     // for live server
-    public static final String IMAGE_BASE_URL = "https://apnagodam.com/resources/assets/upload/employyes/";
-    public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.com/resources/frontend_assets/uploads/";
-    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/resources/assets/upload/";
-    public static final String API_BASE_URL = "https://apnagodam.com/";
-    public static final String DISPLEGED_IMAGE_URL = "https://apnagodam.com/resources/assets/upload/displedge/";
+//    public static final String IMAGE_BASE_URL = "https://apnagodam.com/resources/assets/upload/employyes/";
+//    public static final String IMAGE_BASE_URL_user_photo = "https://apnagodam.com/resources/frontend_assets/uploads/";
+//    public static final String IMAGE_BASE_URL_kanta_photo = "https://apnagodam.com/resources/assets/upload/";
+//    public static final String API_BASE_URL = "https://apnagodam.com/";
+//    public static final String DISPLEGED_IMAGE_URL = "https://apnagodam.com/resources/assets/upload/displedge/";
 
     public static final String ENDPOINT = API_BASE_URL;
     public static final String First_kata = IMAGE_BASE_URL_kanta_photo + "kanta_parchi/";

@@ -56,7 +56,7 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
     private var listOfKantaNames = arrayListOf<String>()
     private var kantaId = 0
     private var kantaName = "";
-    private var isFirstUpload = true;
+    private var isFirstUpload = false;
 
     override fun setUI() {
         photoEasy = PhotoEasy.builder().setActivity(this).build()
@@ -82,13 +82,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
         binding.llOldBags.visibility = View.VISIBLE
         binding.llBags.visibility = View.GONE
 
-        if (file3 == null) {
-            isFirstUpload = true
-
-        } else {
-            isFirstUpload = false;
-
-        }
 
         binding.llKanta.visibility = View.VISIBLE
         binding.llOldBags.visibility = View.VISIBLE
@@ -381,7 +374,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
         else {
             if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
                 Toast.makeText(this, "Please select kanta name", Toast.LENGTH_SHORT).show();
-
             } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
                 binding!!.etKantaParchiNum.setError("This field can't be empty")
             } else if (fileKantha == null) {
