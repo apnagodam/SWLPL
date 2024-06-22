@@ -262,7 +262,6 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
             truckImage2 = false
             checkForPermission {
                 ImagePicker.with(this@UploadFirstkantaParchiClass)
-
                     .cameraOnly().start();
             }
         }
@@ -371,41 +370,39 @@ class UploadFirstkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>() {
 //                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
 //            }
 //        }
-        else {
-            if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
-                Toast.makeText(this, "Please select kanta name", Toast.LENGTH_SHORT).show();
-            } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
-                binding!!.etKantaParchiNum.setError("This field can't be empty")
-            } else if (fileKantha == null) {
-                Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
-            } else if (fileTruck == null) {
-                Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
-            } else {
-                showDialog(this)
-                kantaParchiViewModel.uploadFirstKantaParchi(
-                    UploadFirstkantaParchiPostData(
-                        CaseID,
-                        binding!!.notes.text.toString(),
-                        KanthaImage,
-                        truckImageImage,
-                        truck2Image,
-                        kantaId.toString(),
-                        binding!!.etKantaParchiNum.text.toString(),
-                        oldKantaImage,
-                        binding!!.etKantaOldParchiNum.text.toString(),
-                        "0",
-                        binding!!.etOldNoOfBags.text.toString(),
-                        binding!!.etKantaOldParchiNum.text.toString(),
-                        binding!!.etKantaOldName.text.toString(),
-                        binding!!.etKantaOldNetWeight.text.toString(),
-                        binding!!.etKantaOldTare.text.toString(),
-                        binding!!.etKantaOldGrossWeight.text.toString(),
-                        binding!!.etKantaOldLocation.text.toString()
-                    ), "IN"
-                )
+        if (binding!!.tilKantaParchi.text!!.equals("Select Dharam Kanta")) {
+            Toast.makeText(this, "Please select kanta name", Toast.LENGTH_SHORT).show();
+        } else if (binding!!.etKantaParchiNum.text!!.isEmpty()) {
+            binding!!.etKantaParchiNum.setError("This field can't be empty")
+        } else if (fileKantha == null) {
+            Toast.makeText(this, "please select kanta parchi image!", Toast.LENGTH_SHORT).show()
+        } else if (fileTruck == null) {
+            Toast.makeText(this, "Please select truck image!", Toast.LENGTH_SHORT).show()
+        } else {
+            showDialog(this)
+            kantaParchiViewModel.uploadFirstKantaParchi(
+                UploadFirstkantaParchiPostData(
+                    CaseID,
+                    binding!!.notes.text.toString(),
+                    KanthaImage,
+                    truckImageImage,
+                    truck2Image,
+                    kantaId.toString(),
+                    binding!!.etKantaParchiNum.text.toString(),
+                    oldKantaImage,
+                    binding!!.etKantaOldParchiNum.text.toString(),
+                    "0",
+                    binding!!.etOldNoOfBags.text.toString(),
+                    binding!!.etKantaOldParchiNum.text.toString(),
+                    binding!!.etKantaOldName.text.toString(),
+                    binding!!.etKantaOldNetWeight.text.toString(),
+                    binding!!.etKantaOldTare.text.toString(),
+                    binding!!.etKantaOldGrossWeight.text.toString(),
+                    binding!!.etKantaOldLocation.text.toString()
+                ), "IN"
+            )
 
 
-            }
         }
 
 
