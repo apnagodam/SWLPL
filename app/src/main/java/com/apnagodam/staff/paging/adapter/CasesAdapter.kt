@@ -108,7 +108,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             intent.putExtra("vehicle_no", Leads.vehicleNo)
                             intent.putExtra("file3", Leads.firstKantaFile3)
                             intent.putExtra("warehouse_id", Leads.terminalId)
-                            intent.putExtra("commodity_id",Leads.commodityId)
+                            intent.putExtra("commodity_id", Leads.commodityId)
 
                             context.startActivity(intent)
                         }
@@ -480,7 +480,7 @@ class CasesAdapter @Inject constructor(var context: Activity, var apiService: Ap
                             intent.putExtra("vehicle_no", Leads.vehicleNo)
                             intent.putExtra("file3", Leads.firstKantaFile3)
                             intent.putExtra("warehouse_id", Leads.terminalId)
-                            intent.putExtra("commodity_id",Leads.commodityId)
+                            intent.putExtra("commodity_id", Leads.commodityId)
 
                             context.startActivity(intent)
                         }

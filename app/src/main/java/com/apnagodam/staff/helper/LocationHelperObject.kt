@@ -97,7 +97,7 @@ object LocationHelperObject {
     fun getLocation(activity: Activity): Location? {
         var location: Location? = null
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
-        fusedLocationProviderClient.getCurrentLocation(LocationRequest.QUALITY_LOW_POWER,
+        fusedLocationProviderClient.getCurrentLocation(LocationRequest.QUALITY_HIGH_ACCURACY,
             object :
                 CancellationToken() {
                 override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {

@@ -1,13 +1,16 @@
 package com.apnagodam.staff.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.location.Geocoder
 import android.location.LocationManager
@@ -15,12 +18,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ExpandableListView.OnChildClickListener
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -33,6 +37,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
+import androidx.drawerlayout.widget.DrawerLayout.LayoutParams
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -40,8 +45,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Base.BaseViewHolder
 import com.apnagodam.staff.Network.NetworkResult
+import com.apnagodam.staff.Network.Request.AttendancePostData
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestDatum
+import com.apnagodam.staff.Network.viewmodel.AttendenceViewModel
 import com.apnagodam.staff.Network.viewmodel.CaseIdViewModel
 import com.apnagodam.staff.Network.viewmodel.HomeViewModel
 import com.apnagodam.staff.Network.viewmodel.LoginViewModel
@@ -82,6 +89,7 @@ import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.databinding.StaffDashboardBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
 import com.apnagodam.staff.helper.ImageHelper
+import com.apnagodam.staff.helper.LocationHelperObject
 import com.apnagodam.staff.interfaces.OnProfileClickListener
 import com.apnagodam.staff.module.AllCaseIDResponse
 import com.apnagodam.staff.module.MenuModel
@@ -100,16 +108,14 @@ import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
 import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
-import com.thorny.photoeasy.OnPictureReady
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -129,6 +135,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     OnConnectionFailedListener {
     private var toggle: ActionBarDrawerToggle? = null
     private var casesTopAdapter: CasesTopAdapter? = null
+    val attandanceViewModel by viewModels<AttendenceViewModel>()
     val audit = "Audit";
     private val toolbar: Toolbar? = null
     var doubleBackToExitPressedOnce = false
@@ -168,6 +175,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     var outwardsList = arrayListOf<OutwardRequestDatum>()
 
     var lastPage = MutableLiveData<Int>();
+    var attandanceImage = MutableLiveData<File?>();
 
     @Inject
     lateinit var userAdapter: CasesAdapter
@@ -175,11 +183,167 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         return R.layout.staff_dashboard
     }
 
+    @SuppressLint("MissingPermission")
     override fun setUp() {
         //  userAdapter = CasesAdapter(this, apiService)
 
         pageOffset.value = 1;
         lastPage.value = 0;
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_attendance)
+        val window: Window = dialog.window!!
+        window.setLayout(
+            LayoutParams.MATCH_PARENT,
+            LayoutParams.WRAP_CONTENT
+        )
+        val btClockIn = dialog.findViewById<TextView>(R.id.btClockIn)
+        val ivAttendanceImage =
+            dialog.findViewById<ImageView>(R.id.ivAttendanceImage)
+        val btClockOut = dialog.findViewById<TextView>(R.id.btClockOut)
+        attandanceViewModel.checkClockStatus()
+        attandanceViewModel.attendenceRespons.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {}
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+
+                    it.data?.let { data ->
+                        data?.clock_status?.let {
+
+                            if (it == 2) {
+                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.`in`);
+
+                                btClockOut.isEnabled = false
+                                btClockOut.setBackgroundResource(R.drawable.btn_green_background_disabled)
+                                btClockOut.setBackgroundColor(
+                                    getResources().getColor(R.color.grey)
+                                )
+
+                            } else {
+                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.out);
+
+                                btClockIn.isEnabled = false
+                                btClockIn.setBackgroundResource(R.drawable.btn_green_background_disabled)
+                                btClockIn.setBackgroundColor(
+                                    getResources().getColor(R.color.grey)
+                                )
+                            }
+                            binding!!.attendanceOnOff.setOnClickListener { v: View? ->
+                                dialog.show()
+                            }
+                            attandanceImage.observe(this) { image ->
+                                image?.let {
+                                    val bitmap = BitmapFactory.decodeFile(it.path)
+                                    ivAttendanceImage.setImageBitmap(bitmap);
+                                }
+
+
+                            }
+
+
+                            ivAttendanceImage.setOnClickListener {
+                                ImagePicker.with(this)
+                                    .cameraOnly()
+                                    .compress(1024)         //Final image size will be less than 1 MB(Optional)
+                                    .maxResultSize(
+                                        1080, 1080
+                                    )  //Final image resolution will be less than 1080 x 1080(Optional)
+                                    .createIntent { intent ->
+                                        pictureResult.launch(intent)
+                                    }
+                            }
+                        }
+                    }
+
+                    LocationHelperObject.checkForLocationPermissions(this) { hasPermissions ->
+                        if (hasPermissions) {
+                            val fusedLocationProviderClient =
+                                LocationServices.getFusedLocationProviderClient(this)
+                            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+                                it?.let {
+                                    lat = it.latitude
+                                    long = it.longitude
+
+                                    val geocoder = Geocoder(this, Locale.getDefault())
+                                    val addresses =
+                                        geocoder.getFromLocation(lat ?: 0.0, long ?: 0.0, 1)
+                                    if (addresses != null) {
+                                        currentLocation =
+                                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
+                                                addresses.first().adminArea
+                                            }"
+
+                                    }
+                                    btClockOut.setOnClickListener {
+                                        if (attandanceImage.value == null) {
+                                            showToast("Please select an image!")
+                                        } else {
+                                            attandanceViewModel.setAttandance(
+                                                AttendancePostData(
+                                                    lat.toString(),
+                                                    long.toString(),
+                                                    Utility.transferImageToBase64(attandanceImage.value),
+                                                    "2",
+                                                )
+                                            )
+                                        }
+                                    }
+
+
+                                    btClockIn.setOnClickListener {
+                                        if (attandanceImage.value == null) {
+                                            showToast("Please select an image!")
+                                        } else {
+                                            attandanceViewModel.setAttandance(
+                                                AttendancePostData(
+                                                    lat.toString(),
+                                                    long.toString(),
+                                                    Utility.transferImageToBase64(attandanceImage.value),
+                                                    "1",
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+
+
+                            }
+
+                        } else {
+                            showToast("Please grant location permission")
+                        }
+                    }
+
+
+                }
+            }
+        }
+        attandanceViewModel.setAttandanceResponse.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+
+                    showToast("${it.message}")
+                }
+
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+                    it.data?.let { data ->
+
+                        data.message?.let {
+                            showToast(it)
+                        }
+                        data?.status?.let {
+                            if (it == "1") {
+                                dialog.dismiss()
+                                attandanceViewModel.checkClockStatus()
+                            }
+                        }
+                    }
+                }
+            }
+        }
         var permissionHelper = PermissionHelper(
             this, arrayOf(
                 Manifest.permission.CAMERA,
@@ -234,78 +398,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             startActivity(intent)
         }
         AllCases = arrayListOf()
-        // requestPermission()
 
-//        homeViewModel.homeDataResponse.observe(this) {
-//            when (it) {
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                }
-//
-//                is NetworkResult.Loading -> showDialog()
-//                is NetworkResult.Success -> {
-//                    hideDialog()
-//
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                    attendanceINOUTStatus = "" + it.data!!.getClock_status()
-//                    if (attendanceINOUTStatus.equals("1", ignoreCase = true)) {
-//                        OnOfffAttendance = true
-//                        binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.out)
-//                    } else {
-//                        binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(R.drawable.`in`)
-//                        OnOfffAttendance = false
-//                    }
-//
-//
-//                    binding!!.mainContent.trotalAttend.text = "" + it.data.getAtten_month_data()
-//
-//                    val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
-//                    val date = Date()
-//                    binding!!.mainContent.date.text = "" + formatter.format(date)
-//
-//                }
-//
-//            }
-//        }
+
 
         binding!!.tvCreateCase.setOnClickListener {
             startActivity(CaseIDGenerateClass::class.java)
 
         }
-        binding!!.tvNext.setOnClickListener {
-            pageOffset.value = pageOffset.value!! + 1
-            caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
-        };
-        pageOffset.observe(this) {
-
-            if (it == 1) {
-                binding!!.tvPrevious.isEnabled = false
-            } else {
-                binding!!.tvPrevious.isEnabled = true
-
-                binding!!.tvPrevious.setOnClickListener { _ ->
-                    pageOffset.value = it - 1;
-                    caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
-                }
-            }
-        }
-
-        lastPage.observe(this) { page ->
-            if (page == pageOffset.value) {
-                binding!!.tvNext.isEnabled = false
-
-            } else {
-                binding!!.tvNext.isEnabled = true
-
-                binding!!.tvNext.setOnClickListener { _ ->
-                    pageOffset.value = pageOffset.value!! + 1;
-                    caseIdViewModel.getCaseId("50", pageOffset.value!!, "1", "");
-                }
-            }
-        }
-
-
 
 
         binding!!.toogleIcon.setOnClickListener(this)
@@ -315,13 +414,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         toggle!!.isDrawerIndicatorEnabled = false
         binding!!.drawerLayout.addDrawerListener(toggle!!)
         toggle!!.syncState()
-        //        binding.menuList.setLayoutManager(new LinearLayoutManager(this));
-//        binding.menuList.addOnItemTouchListener(new RecyclerItemClickListener(StaffDashBoardActivity.this, this));
-        binding!!.attendanceOnOff.setOnClickListener { v: View? ->
-            TakeAttendance(
-                OnOfffAttendance
-            )
-        }
+
         binding!!.close.setOnClickListener {
             try {
                 fileSelfie = null
@@ -385,6 +478,74 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
     }
 
+    private val pictureResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { uri ->
+            val resultCode = uri.resultCode
+            val data = uri.data
+
+            if (resultCode == Activity.RESULT_OK) {
+                //Image Uri will not be null for RESULT_OK
+                val fileUri = data?.data!!
+
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                LocationHelperObject.getLocation(this)?.let {
+                    currentLocation = "${it.latitude},${it.longitude}"
+                }
+                var stampMap = hashMapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id,
+                    "emp_name" to userDetails.fname
+                )
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, fileUri)
+                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                    File(compressImage(bitmapToFile(thumbnail!!).path)), stampMap
+                )
+                attandanceImage.value = File(bitmapToFile(stampedBitmap!!).path)
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
+    private val labReportResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { uri ->
+            val resultCode = uri.resultCode
+            val data = uri.data
+
+            if (resultCode == Activity.RESULT_OK) {
+                //Image Uri will not be null for RESULT_OK
+                val fileUri = data?.data!!
+
+                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+                LocationHelperObject.getLocation(this)?.let { location ->
+                    LocationHelperObject.getAddress(this, location.latitude, location.longitude)
+                        ?.let {
+                            currentLocation = it
+                        }
+
+                }
+                var stampMap = hashMapOf(
+                    "current_location" to "$currentLocation",
+                    "emp_code" to userDetails.emp_id,
+                    "emp_name" to userDetails.fname
+                )
+                val thumbnail = MediaStore.Images.Media.getBitmap(this.contentResolver, fileUri)
+                var stampedBitmap = ImageHelper().createTimeStampinBitmap(
+                    File(compressImage(bitmapToFile(thumbnail!!).path)), stampMap
+                )
+
+                labFile.value =
+                    File(compressImage(bitmapToFile(stampedBitmap).path.toString()));
+            } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
     private fun setAdapter() {
 
 
@@ -411,13 +572,29 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 is PermissionStatus.Denied.Permanently -> {}
                 is PermissionStatus.Denied.ShouldShowRationale -> {}
                 is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
+                    ImagePicker.with(this)
+                        .cameraOnly()
+                        .compress(1024)         //Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(
+                            1080, 1080
+                        )  //Final image resolution will be less than 1080 x 1080(Optional)
+                        .createIntent { intent ->
+                            labReportResult.launch(intent)
+                        }
+
 
                 }
 
                 is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
+                    ImagePicker.with(this)
+                        .cameraOnly()
+                        .compress(1024)         //Final image size will be less than 1 MB(Optional)
+                        .maxResultSize(
+                            1080, 1080
+                        )  //Final image resolution will be less than 1080 x 1080(Optional)
+                        .createIntent { intent ->
+                            labReportResult.launch(intent)
+                        }
                 }
             }
 
@@ -670,11 +847,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         var childModelsList: MutableList<MenuModel> = ArrayList()
         var childModel: MenuModel
         menuModel = MenuModel(
-            "IN",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.internal
+            "IN", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.internal
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModel = MenuModel(
@@ -732,11 +905,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         childModelsList = ArrayList()
         menuModel = MenuModel(
-            "OUT",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.external
+            "OUT", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.external
         ) //Menu of Python Tutorials
         headerList.add(menuModel)
 
@@ -793,11 +962,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             childList[menuModel] = childModelsList
         }
         menuModel = MenuModel(
-            "Voucher",
-            true,
-            true,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.voucher
+            "Voucher", true, true, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.voucher
         ) //Menu of Java Tutorials
         headerList.add(menuModel)
         childModelsList = ArrayList()
@@ -871,19 +1036,11 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             R.drawable.create_case_id
         ) // Android Tutorial. No sub menus
         val menuModel24 = MenuModel(
-            "PV",
-            true,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.create_case_id
+            "PV", true, false, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.create_case_id
         ) // And
 
         val menuModel25 = MenuModel(
-            "Advances",
-            true,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.earn
+            "Advances", true, false, ConstantObjects.EXPANDABLE_LIST_URL, R.drawable.earn
         ) // // roid
         val menuMode20 = MenuModel(
             resources.getString(R.string.logout),
@@ -1309,8 +1466,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }
         userDetails = SharedPreferencesRepository.getDataManagerInstance().user
         userDetails?.let {
-            Glide.with(this)
-                .load(Constants.IMAGE_BASE_URL + it.aadharImage)
+            Glide.with(this).load(Constants.IMAGE_BASE_URL + it.aadharImage)
                 .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(R.drawable.user_shape)
                 .circleCrop().into(binding!!.userProfileImage)
             binding!!.userNameText.text =
@@ -1359,52 +1515,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             Toast.makeText(
                 this@StaffDashBoardActivity, "Take your selfie please!", Toast.LENGTH_LONG
             ).show()
-        }
-    }
-
-    private fun TakeAttendance(OnOfffAttendance: Boolean) {
-        var OnOfffAttendance = OnOfffAttendance
-        OnOfffAttendance = !OnOfffAttendance
-        setFunctional(OnOfffAttendance)
-    }
-
-    private fun setFunctional(flag: Boolean) {
-        val dialog = BottomSheetDialog(this@StaffDashBoardActivity)
-        dialog.setContentView(R.layout.dilog_attedance_bottom)
-        val clockInOut: MaterialButton =
-            dialog.findViewById<View>(R.id.clock_in_out) as MaterialButton
-        val close: MaterialButton = dialog.findViewById<View>(R.id.close) as MaterialButton
-        val clockIn: TextView = dialog.findViewById<View>(R.id.clockIn) as TextView
-        val UploadImage: LinearLayout = dialog.findViewById<View>(R.id.UploadImage) as LinearLayout
-        selfieImage = dialog.findViewById<View>(R.id.selfieImage) as ImageView?
-        dialog.setCancelable(true)
-        dialog.show()
-        close.setOnClickListener(View.OnClickListener {
-            try {
-                fileSelfie = null
-                selfieImage!!.setImageBitmap(null)
-                dialog.cancel()
-                dialog.dismiss()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        })
-        UploadImage.setOnClickListener(View.OnClickListener {
-            dispatchTakePictureIntent()
-
-
-            // callProfileImageSelector(REQUEST_CAMERA);
-        })
-        clockInOut.setOnClickListener(View.OnClickListener { v: View? -> callServer() })
-        if (!OnOfffAttendance) {
-            attendanceINOUTStatus = "1"
-
-        } else {
-
-            clockIn.setText(resources.getString(R.string.clock_out))
-            clockInOut.setText(resources.getString(R.string.clock_out))
-            attendanceINOUTStatus = "2"
-
         }
     }
 
@@ -1663,37 +1773,19 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 //        }, 10)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
-            override fun onFinish(thumbnail: Bitmap?) {
-
-                if (thumbnail != null) {
-                    val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-
-                    var stampMap = mapOf(
-                        "current_location" to "$currentLocation",
-                        "emp_code" to userDetails.emp_id,
-                        "emp_name" to userDetails.fname
-                    )
-                    var stampedBitmap = ImageHelper().createTimeStampinBitmap(
-                        File(compressImage(bitmapToFile(thumbnail!!).path)), stampMap
-                    )
-
-                    labFile.value =
-                        File(compressImage(bitmapToFile(stampedBitmap).path.toString()));
-
-//                    fileSelfie = File(compressImage(bitmapToFile(stampedBitmap).path.toString()))
-//                    val uri = Uri.fromFile(fileSelfie)
-//                    selfieImage!!.setImageURI(uri)
-
-
-                }
-            }
-
-        })
-
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//       if(resultCode== RESULT_OK){
+//           photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
+//               override fun onFinish(thumbnail: Bitmap?) {
+//
+//
+//               }
+//
+//           })
+//
+//       }
+//    }
 
 
     override fun onRequestPermissionsResult(
@@ -1706,8 +1798,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.CAMERA
+                            this, Manifest.permission.CAMERA
                         ) != PackageManager.PERMISSION_GRANTED
                     ) {
                         requestPermission()

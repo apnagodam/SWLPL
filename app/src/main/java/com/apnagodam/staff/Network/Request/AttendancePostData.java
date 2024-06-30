@@ -17,12 +17,13 @@ public class AttendancePostData {
 
     @SerializedName("lat")
     @Expose
-    private String lat ;
-    public AttendancePostData(String lat, String Long,String clock_status, String image) {
-        this.lat = lat ;
+    private String lat;
+
+    public AttendancePostData(String lat, String Long, String clock_status, String image) {
+        this.lat = lat;
         this.Long = Long;
         this.clock_status = clock_status;
-        this.image = image ;
+        this.image = image;
     }
 }
 

@@ -143,7 +143,6 @@ interface ApiService {
     @POST("emp_api/apna_emp_create_caseid")
     suspend fun doCreateCaseID(
         @Body createCaseIDPostData: CreateCaseIDPostData
-
     ): Response<LoginResponse>
 
     @POST("emp_api/apna_emp_conveyance_create")

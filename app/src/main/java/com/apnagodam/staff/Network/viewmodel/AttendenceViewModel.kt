@@ -22,7 +22,7 @@ class AttendenceViewModel @Inject constructor(
 
     fun checkClockStatus() = viewModelScope.launch {
         attendanceRepo.checkClockStatus().collect {
-            attendenceRespons.value = it;
+            attendenceRespons.value = it
         }
     }
 

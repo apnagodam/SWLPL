@@ -12,14 +12,14 @@ import javax.inject.Inject
 
 class AttendanceRepo @Inject constructor(private val apiService: ApiService) : BaseApiResponse() {
 
-    suspend fun checkClockStatus() = flow<NetworkResult<AttendanceResponse>> {
+    suspend fun checkClockStatus() = flow{
         emit(safeApiCall {
             apiService.getattendanceStatus()
         })
     }.flowOn(Dispatchers.IO)
 
     suspend fun setAttandance(attendancePostData: AttendancePostData) =
-        flow<NetworkResult<AttendanceResponse>> {
+        flow{
             emit(safeApiCall {
                 apiService.attendance(attendancePostData)
             })

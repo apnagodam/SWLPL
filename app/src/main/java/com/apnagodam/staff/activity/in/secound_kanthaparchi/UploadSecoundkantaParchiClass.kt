@@ -286,13 +286,19 @@ class UploadSecoundkantaParchiClass : BaseActivity<KanthaParchiUploadBinding>(),
                 UploadSecoundkantaParchiPostData(
                     CaseID,
                     binding!!.notes.text.toString(),
-                    KanthaImage, truckImageImage, truck2Image,
+                    KanthaImage,
+                    truckImageImage,
+                    truck2Image,
                     binding!!.etNoOfBags.text.toString(),
                     binding!!.etWeight.text.toString(),
                     binding!!.etAvgWeight.text.toString(),
                     binding!!.etOldWeightQt.text.toString(),
                     binding!!.etNoOfDispleasedBags.text.toString(),
-                    kantaId, kantaName, kantaParchiNumber, truckFacilityId, bagsFacilityID
+                    kantaId,
+                    kantaName,
+                    kantaParchiNumber,
+                    truckFacilityId,
+                    bagsFacilityID
                 ), "IN"
             )
 

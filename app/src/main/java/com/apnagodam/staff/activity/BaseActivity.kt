@@ -21,6 +21,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
@@ -305,16 +306,13 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     protected fun captureImage() {
         ImagePicker.with(this).cameraOnly().start();
+
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
+    var photResult = registerForActivityResult(ActivityResultContracts.GetContent()){
         try {
-            if (requestCode == Activity.RESULT_OK || requestCode == 2404) {
-                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-                val uri: Uri = data?.data!!
-
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
+            it?.let {uri->
                 var stampMap = mapOf(
                     "current_location" to "$currentLocation",
                     "emp_code" to userDetails.emp_id,
@@ -343,6 +341,9 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
                     }
 
                 }
+            }
+
+
 //                if (thumbnail != null) {
 //
 //
@@ -351,11 +352,14 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 //                } else {
 //                    Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
 //                }
-
-            }
         } catch (e: Exception) {
             showToast(this, "Please Select an Image")
         }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+
 //        photoEasy.onActivityResult(1566, -1, object : OnPictureReady {
 //            override fun onFinish(thumbnail: Bitmap?) {
 //
