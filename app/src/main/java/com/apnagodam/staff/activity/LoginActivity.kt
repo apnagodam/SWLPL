@@ -58,35 +58,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
     }
 
     override fun setUp() {
-        binding!!.btnLogin.setOnClickListener { v -> login }
-    }
-
-    private fun fofrlang() {
-        startActivityForResult(
-            Intent(this@LoginActivity, LanguageActivity::class.java)
-                .putExtra(
-                    LanguageActivity::class.java.simpleName,
-                    LanguageActivity.CALLED_FROM.FROM_SPLASH
-                ), LANGUAGE_SELECT
-        )
-    }
-
-
-    val login: Unit
-        get() {
-            if (isValid) {
-                login()
-            }
-        }
-
-    fun login() {
-        showDialog()
-        loginViewModel.doLogin(
-            LoginPostData(
-                stringFromView(binding!!.etPhoneNumber).toString(),
-                "Emp"
-            )
-        )
         loginViewModel.response.observe(this)
         {
             when (it) {
@@ -122,48 +93,25 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
                 }
             }
         }
-        if (Utility.isNetworkAvailable(this)) {
-//            var sharedPrefences = SharedPreferencesRepository.getDataManagerInstance();
-//            sharedPrefences.savelat(lat)
-//            sharedPrefences.savelong(Long)
-
-
-        } else {
-            Utility.showAlertDialog(
-                this,
-                this.getString(R.string.alert),
-                this.getString(R.string.no_internet_connection)
-            )
-        }
+        binding!!.btnLogin.setOnClickListener { v -> login }
     }
 
-    fun startSMSListener(phone: String?) {
-        try {
-            val client: SmsRetrieverClient = SmsRetriever.getClient(this)
-            val task: Task<Void> = client.startSmsRetriever()
-
-            task.addOnSuccessListener {
-                val bundle = Bundle()
-                bundle.putString("mobile", phone)
-                bundle.putString("empID", stringFromView(binding!!.etPhoneNumber))
-                bundle.putString("setting", settingScreen)
-                startActivity(OtpActivity::class.java, bundle)
-            }.addOnFailureListener {
-                Toast.makeText(this, "${it.message}${it.cause}", Toast.LENGTH_SHORT)
-
-                it.printStackTrace()
-                val bundle = Bundle()
-                bundle.putString("mobile", phone)
-                bundle.putString("empID", stringFromView(binding!!.etPhoneNumber))
-                bundle.putString("setting", settingScreen)
-                startActivity(OtpActivity::class.java, bundle)
-            }
 
 
-        } catch (e: Exception) {
-            e.printStackTrace()
+    val login: Unit
+        get() {
+            if (isValid) {
+                loginViewModel.doLogin(
+                    LoginPostData(
+                        stringFromView(binding!!.etPhoneNumber).toString(),
+                        "Emp"
+                    )
+                )            }
         }
-    }
+
+
+
+
 
     val isValid: Boolean
         get() {
@@ -177,12 +125,6 @@ class LoginActivity() : BaseActivity<ActivityLoginBinding?>() {
             }
             return true
         }
-
-    internal enum class ACTIVITY_STATE {
-        INITIAL,
-        VERIFY_OTP,
-        LOGIN_WITH_PASSWORD
-    }
 
     companion object {
         private const val LANGUAGE_SELECT = 977

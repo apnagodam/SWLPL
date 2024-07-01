@@ -44,6 +44,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning,HardcodedDebugMode">
         <activity
+            android:name=".attendance.AttendanceActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.displedged.DispleasedListingActivity"
             android:exported="false" />
         <activity

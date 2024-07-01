@@ -69,7 +69,9 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable) {
-                if (s.length == 6) getvarifedOtp()
+                if (s.length == 6) {
+                    getvarifedOtp()
+                }
                 /* if (getvarifedOtp()){
 
                 }
@@ -203,7 +205,6 @@ class OtpActivity : BaseActivity<ActivityOtpBinding?>(), OTPReceiveListener {
 
     fun varifedOTP() {
         loginViewModel.dpVerifyOtp(OTPData(stringFromView(binding!!.etOtpNumber), mobileNumbewr))
-
 
     }
 

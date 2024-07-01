@@ -25,10 +25,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.exifinterface.media.ExifInterface
+import androidx.lifecycle.MutableLiveData
 import androidx.viewbinding.ViewBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
-import com.apnagodam.staff.utils.CustomProgressDialog
 import com.apnagodam.staff.helper.ImageHelper
+import com.apnagodam.staff.utils.CustomProgressDialog
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.extension.send
 import com.fondesa.kpermissions.isDenied
@@ -54,6 +55,8 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
     protected var imageFile: File? = null
 
     protected var fileUri: Uri? = null
+
+    protected var attendanceFile = MutableLiveData<File?>()
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
 
@@ -309,10 +312,10 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
 
     }
 
-    var photResult = registerForActivityResult(ActivityResultContracts.GetContent()){
+    var photResult = registerForActivityResult(ActivityResultContracts.GetContent()) {
         try {
             val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-            it?.let {uri->
+            it?.let { uri ->
                 var stampMap = mapOf(
                     "current_location" to "$currentLocation",
                     "emp_code" to userDetails.emp_id,
@@ -356,6 +359,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity() {
             showToast(this, "Please Select an Image")
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

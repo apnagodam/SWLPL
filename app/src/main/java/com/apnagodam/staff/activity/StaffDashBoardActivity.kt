@@ -3,28 +3,21 @@ package com.apnagodam.staff.activity
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Typeface
 import android.location.Geocoder
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.widget.AdapterView
 import android.widget.ExpandableListView.OnChildClickListener
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -37,7 +30,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
-import androidx.drawerlayout.widget.DrawerLayout.LayoutParams
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -45,7 +37,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.apnagodam.staff.Base.BaseActivity
 import com.apnagodam.staff.Base.BaseViewHolder
 import com.apnagodam.staff.Network.NetworkResult
-import com.apnagodam.staff.Network.Request.AttendancePostData
 import com.apnagodam.staff.Network.Response.StackRequestResponse
 import com.apnagodam.staff.Network.Response.StackRequestResponse.OutwardRequestDatum
 import com.apnagodam.staff.Network.viewmodel.AttendenceViewModel
@@ -81,10 +72,10 @@ import com.apnagodam.staff.activity.out.s_katha_parchi.OutSecoundkanthaParchiLis
 import com.apnagodam.staff.activity.out.s_quaility_report.OutSecoundQualityReportListingActivity
 import com.apnagodam.staff.activity.out.truckbook.OUTTruckBookListingActivity
 import com.apnagodam.staff.activity.vendorPanel.MyVendorVoacherListClass
-import com.apnagodam.staff.adapter.CasesTopAdapter
 import com.apnagodam.staff.adapter.ExpandableListAdapter
 import com.apnagodam.staff.adapter.NavigationAdapter
 import com.apnagodam.staff.adapter.OnBindCallback
+import com.apnagodam.staff.attendance.AttendanceActivity
 import com.apnagodam.staff.databinding.LayoutTopCaseGenerateBinding
 import com.apnagodam.staff.databinding.StaffDashboardBinding
 import com.apnagodam.staff.db.SharedPreferencesRepository
@@ -98,7 +89,6 @@ import com.apnagodam.staff.paging.adapter.CasesAdapter
 import com.apnagodam.staff.paging.state.ListLoadStateAdapter
 import com.apnagodam.staff.utils.ConstantObjects
 import com.apnagodam.staff.utils.Constants
-import com.apnagodam.staff.utils.LocationUtils
 import com.apnagodam.staff.utils.RecyclerItemClickListener
 import com.apnagodam.staff.utils.UpdateHelper
 import com.apnagodam.staff.utils.Utility
@@ -110,11 +100,9 @@ import com.fondesa.kpermissions.extension.send
 import com.fxn.pix.Options
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener
 import com.google.android.gms.location.LocationServices
-import com.master.permissionhelper.PermissionHelper
 import com.otaliastudios.cameraview.CameraView.PERMISSION_REQUEST_CODE
 import com.thorny.photoeasy.PhotoEasy
 import dagger.hilt.android.AndroidEntryPoint
@@ -134,33 +122,21 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     AdapterView.OnItemSelectedListener, DrawerListener, ConnectionCallbacks, OnBindCallback,
     OnConnectionFailedListener {
     private var toggle: ActionBarDrawerToggle? = null
-    private var casesTopAdapter: CasesTopAdapter? = null
     val attandanceViewModel by viewModels<AttendenceViewModel>()
     val audit = "Audit";
     private val toolbar: Toolbar? = null
-    var doubleBackToExitPressedOnce = false
-    var locationManager: LocationManager? = null
-    private var latitude: String? = null
-    private var longitude: String? = null
-    var OnOfffAttendance = false
-    var attendanceINOUTStatus = "2"
-    var fileSelfie: File? = null
+
 
     var labFile = MutableLiveData<File>()
     var userDetails: UserDetails? = null
-    var selfieImage: ImageView? = null
     var options: Options? = null
-    var inCasesList = arrayListOf<AllCaseIDResponse.Datum>()
-    var outCasesList = arrayListOf<AllCaseIDResponse.Datum>()
+
 
     // for location
-    private val locationUtils: LocationUtils? = null
-    private val REQUEST_CODE = 1000
-    var mGoogleApiClient: GoogleApiClient? = null
+//
     var expandableListAdapter: ExpandableListAdapter? = null
     var headerList: MutableList<MenuModel> = ArrayList()
     var childList = HashMap<MenuModel, List<MenuModel>?>()
-    var font: Typeface? = null
     val homeViewModel by viewModels<HomeViewModel>()
     val loginViewModel by viewModels<LoginViewModel>()
     var lat = 0.0
@@ -168,7 +144,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
     private var AllCases = arrayListOf<AllCaseIDResponse.Datum>()
     val caseIdViewModel: CaseIdViewModel by viewModels<CaseIdViewModel>()
     private var pageOffset = MutableLiveData<Int>();
-    private var totalPage = 0
     lateinit var photoEasy: PhotoEasy
     var currentLocation = ""
     var inwardsList = arrayListOf<StackRequestResponse.InwardRequestDatum>()
@@ -189,178 +164,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         pageOffset.value = 1;
         lastPage.value = 0;
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(true)
-        dialog.setContentView(R.layout.dialog_attendance)
-        val window: Window = dialog.window!!
-        window.setLayout(
-            LayoutParams.MATCH_PARENT,
-            LayoutParams.WRAP_CONTENT
-        )
-        val btClockIn = dialog.findViewById<TextView>(R.id.btClockIn)
-        val ivAttendanceImage =
-            dialog.findViewById<ImageView>(R.id.ivAttendanceImage)
-        val btClockOut = dialog.findViewById<TextView>(R.id.btClockOut)
-        attandanceViewModel.checkClockStatus()
-        attandanceViewModel.attendenceRespons.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {}
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-
-                    it.data?.let { data ->
-                        data?.clock_status?.let {
-
-                            if (it == 2) {
-                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.`in`);
-
-                                btClockOut.isEnabled = false
-                                btClockOut.setBackgroundResource(R.drawable.btn_green_background_disabled)
-                                btClockOut.setBackgroundColor(
-                                    getResources().getColor(R.color.grey)
-                                )
-
-                            } else {
-                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.out);
-
-                                btClockIn.isEnabled = false
-                                btClockIn.setBackgroundResource(R.drawable.btn_green_background_disabled)
-                                btClockIn.setBackgroundColor(
-                                    getResources().getColor(R.color.grey)
-                                )
-                            }
-                            binding!!.attendanceOnOff.setOnClickListener { v: View? ->
-                                dialog.show()
-                            }
-                            attandanceImage.observe(this) { image ->
-                                image?.let {
-                                    val bitmap = BitmapFactory.decodeFile(it.path)
-                                    ivAttendanceImage.setImageBitmap(bitmap);
-                                }
-
-
-                            }
-
-
-                            ivAttendanceImage.setOnClickListener {
-                                ImagePicker.with(this)
-                                    .cameraOnly()
-                                    .compress(1024)         //Final image size will be less than 1 MB(Optional)
-                                    .maxResultSize(
-                                        1080, 1080
-                                    )  //Final image resolution will be less than 1080 x 1080(Optional)
-                                    .createIntent { intent ->
-                                        pictureResult.launch(intent)
-                                    }
-                            }
-                        }
-                    }
-
-                    LocationHelperObject.checkForLocationPermissions(this) { hasPermissions ->
-                        if (hasPermissions) {
-                            val fusedLocationProviderClient =
-                                LocationServices.getFusedLocationProviderClient(this)
-                            fusedLocationProviderClient.lastLocation.addOnSuccessListener {
-                                it?.let {
-                                    lat = it.latitude
-                                    long = it.longitude
-
-                                    val geocoder = Geocoder(this, Locale.getDefault())
-                                    val addresses =
-                                        geocoder.getFromLocation(lat ?: 0.0, long ?: 0.0, 1)
-                                    if (addresses != null) {
-                                        currentLocation =
-                                            "${addresses.first().featureName},${addresses.first().subAdminArea}, ${addresses.first().locality}, ${
-                                                addresses.first().adminArea
-                                            }"
-
-                                    }
-                                    btClockOut.setOnClickListener {
-                                        if (attandanceImage.value == null) {
-                                            showToast("Please select an image!")
-                                        } else {
-                                            attandanceViewModel.setAttandance(
-                                                AttendancePostData(
-                                                    lat.toString(),
-                                                    long.toString(),
-                                                    Utility.transferImageToBase64(attandanceImage.value),
-                                                    "2",
-                                                )
-                                            )
-                                        }
-                                    }
-
-
-                                    btClockIn.setOnClickListener {
-                                        if (attandanceImage.value == null) {
-                                            showToast("Please select an image!")
-                                        } else {
-                                            attandanceViewModel.setAttandance(
-                                                AttendancePostData(
-                                                    lat.toString(),
-                                                    long.toString(),
-                                                    Utility.transferImageToBase64(attandanceImage.value),
-                                                    "1",
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-
-
-                            }
-
-                        } else {
-                            showToast("Please grant location permission")
-                        }
-                    }
-
-
-                }
-            }
-        }
-        attandanceViewModel.setAttandanceResponse.observe(this) {
-            when (it) {
-                is NetworkResult.Error -> {
-
-                    showToast("${it.message}")
-                }
-
-                is NetworkResult.Loading -> {}
-                is NetworkResult.Success -> {
-                    it.data?.let { data ->
-
-                        data.message?.let {
-                            showToast(it)
-                        }
-                        data?.status?.let {
-                            if (it == "1") {
-                                dialog.dismiss()
-                                attandanceViewModel.checkClockStatus()
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        var permissionHelper = PermissionHelper(
-            this, arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ), 100
-        )
-
-        if (!permissionHelper.hasPermission()) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION,
-            )
-            permissionHelper.requestAll {}
-
-        }
 
 
 
@@ -415,18 +218,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         binding!!.drawerLayout.addDrawerListener(toggle!!)
         toggle!!.syncState()
 
-        binding!!.close.setOnClickListener {
-            try {
-                fileSelfie = null
-                binding!!.selfieImage.setImageBitmap(null)
-                binding!!.cardAttandance.visibility = View.GONE
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        binding!!.UploadImage.setOnClickListener { onImageSelected() }
-        binding!!.clockInOut.setOnClickListener { v: View? -> callServer() }
-        photoEasy = PhotoEasy.builder().setActivity(this).enableRequestPermission(true).build()
+
     }
 
 
@@ -473,7 +265,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
 
     fun getAllCases(search: String) {
-        caseIdViewModel.getPagingData();
+        attandanceViewModel.checkClockStatus()
+        caseIdViewModel.getPagingData()
         caseIdViewModel.getStackRequest()
 
     }
@@ -482,15 +275,13 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { uri ->
             val resultCode = uri.resultCode
             val data = uri.data
+            val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
 
             if (resultCode == Activity.RESULT_OK) {
                 //Image Uri will not be null for RESULT_OK
                 val fileUri = data?.data!!
 
-                val userDetails = SharedPreferencesRepository.getDataManagerInstance().user
-                LocationHelperObject.getLocation(this)?.let {
-                    currentLocation = "${it.latitude},${it.longitude}"
-                }
+
                 var stampMap = hashMapOf(
                     "current_location" to "$currentLocation",
                     "emp_code" to userDetails.emp_id,
@@ -925,14 +716,14 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
             R.drawable.labour_option
         )
         childModelsList.add(childModel)
-        childModel = MenuModel(
-            resources.getString(R.string.out_f_quality_book),
-            false,
-            false,
-            ConstantObjects.EXPANDABLE_LIST_URL,
-            R.drawable.first_quality_report
-        )
-        childModelsList.add(childModel)
+//        childModel = MenuModel(
+//            resources.getString(R.string.out_f_quality_book),
+//            false,
+//            false,
+//            ConstantObjects.EXPANDABLE_LIST_URL,
+//            R.drawable.first_quality_report
+//        )
+//        childModelsList.add(childModel)
         childModel = MenuModel(
             resources.getString(R.string.out_f_katha_book),
             false,
@@ -1188,6 +979,40 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
 
         caseIdViewModel.getPagingData()
         //   userAdapter = CasesAdapter(this, apiService);
+        attandanceViewModel.attendenceRespons.observe(this) {
+            when (it) {
+                is NetworkResult.Error -> {
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+
+                }
+
+                is NetworkResult.Loading -> {}
+                is NetworkResult.Success -> {
+
+                    it.data?.let { data ->
+                        data.clock_status?.let {
+
+                            if (it.toString() == "2") {
+                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.`in`);
+
+
+                            } else {
+                                binding!!.attendanceOnOff.setBackgroundResource(R.drawable.out);
+
+
+                            }
+                            binding!!.attendanceOnOff.setOnClickListener { v: View? ->
+                                startActivity(Intent(this, AttendanceActivity::class.java))
+                            }
+
+
+                        }
+                    }
+
+
+                }
+            }
+        }
         caseIdViewModel.userCasesPagination.observe(this) {
             lifecycleScope.launch {
                 userAdapter.submitData(it)
@@ -1200,7 +1025,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
         lifecycleScope.launch {
             userAdapter.loadStateFlow.collect {
-
 
                 when (it.refresh) {
 
@@ -1249,91 +1073,8 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
                 }
             }
         }
-//        caseIdViewModel.response.observe(this) { body ->
-//            when (body) {
-//                is NetworkResult.Success -> {
-//                    hideDialog();
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//                    if (body.data != null) {
-//                        AllCases.clear()
-//                        if (body.data.status == "1") {
-//                            SharedPreferencesRepository.getDataManagerInstance().user.let {userDetails->
-//                                body.data.getaCase().let {
-//                                    totalPage = it?.lastPage!!
-//                                    if(it.data!=null){
-//                                        it.data.let { data->
-//                                            if(data!=null){
-//                                                for (i in data.indices) {
-//
-//                                                    if ((data[i].cctvReport == null
-//                                                                || data[i].ivrReport == null
-//                                                                || data[i].secondQualityReport == null
-//                                                                || data[i].sendToLab == null
-//                                                                || data[i].firstKantaParchi == null
-//                                                                || data[i].secondKantaParchi == null
-//                                                                || data[i].labourBook == null
-//                                                                || data[i].truckbook == null
-//                                                                || data[i].gatepassReport == null)
-//                                                    ) {
-//                                                        if (userDetails.terminal != null) {
-//                                                            if (data[i].terminalId.toString() == userDetails.terminal.toString()) {
-//                                                                AllCases.add(data[i])
-//                                                            }
-//                                                        } else {
-//                                                            AllCases.add(data[i])
-//                                                        }
-//                                                    }
-//                                                }
-//                                            }
-//
-//                                        }
-//                                    }
-//
-//                                }
-//
-//
-//                                binding!!.mainContent.tvNext.isEnabled = AllCases.isNotEmpty()
-//
-//                                casesTopAdapter =
-//                                    CasesTopAdapter(AllCases.reversed(), this, apiService)
-//                                casesTopAdapter!!.notifyDataSetChanged()
-//                                hideDialog()
-//                                if (AllCases.isEmpty()) {
-//                                    binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                                    binding!!.mainContent!!.rvDefaultersStatus.visibility =
-//                                        View.GONE
-//                                }
-//                            }
-//                        } else {
-//                            hideDialog()
-//
-//                            Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
-//                            binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                            binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//                        }
-//                        lastPage.value = body.data.getaCase()!!.lastPage
-//
-//                    } else {
-//                        hideDialog()
-//                        binding!!.mainContent.emptyData.visibility = View.VISIBLE
-//                        binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//                    }
-//
-//                }
-//
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    Toast.makeText(this, body.message, Toast.LENGTH_SHORT)
-//                    binding!!.mainContent.emptyData.visibility = View.GONE
-//                    binding!!.mainContent!!.rvDefaultersStatus.visibility = View.GONE
-//
-//                }
-//
-//                is NetworkResult.Loading -> {
-//                    showDialog()
-//                }
-//            }
-//        }
+
+
         caseIdViewModel.stackRequestResponse.observe(this) { it ->
             when (it) {
                 is NetworkResult.Error -> {
@@ -1414,56 +1155,7 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
 
 
-//        homeViewModel.attendenceResponse.observe(this) {
-//            when (it) {
-//                is NetworkResult.Error -> {
-//                    hideDialog()
-//                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//
-//                }
-//
-//                is NetworkResult.Loading -> {
-//                    showDialog()
-//                }
-//
-//                is NetworkResult.Success -> {
-//                    binding!!.swipeRefresherHome.isRefreshing = false;
-//
-//                    hideDialog()
-//                    if (it.data != null) {
-//                        if (it.data.status == "1") {
-//                            fileSelfie = null
-//                            OnOfffAttendance =
-//                                if (it.data.getClock_status()
-//                                        .equals("1", ignoreCase = true)
-//                                ) {
-//                                    binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
-//                                        R.drawable.out
-//                                    )
-//                                    true
-//                                } else {
-//                                    binding!!.mainContent.mainHeader.attendanceOnOff.setImageResource(
-//                                        R.drawable.`in`
-//                                    )
-//                                    false
-//                                }
-//                            Toast.makeText(
-//                                this@StaffDashBoardActivity,
-//                                it.data.message,
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        } else {
-//                            Toast.makeText(
-//                                this@StaffDashBoardActivity,
-//                                it.data.message,
-//                                Toast.LENGTH_LONG
-//                            ).show()
-//                        }
-//                    }
-//                }
-//            }
-//        }
+
         userDetails = SharedPreferencesRepository.getDataManagerInstance().user
         userDetails?.let {
             Glide.with(this).load(Constants.IMAGE_BASE_URL + it.aadharImage)
@@ -1494,50 +1186,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
     }
 
-    private fun callServer() {
-        var EmployeeImage = ""
-        if (fileSelfie != null) {
-            if (lat != 0.0 && long != 0.0) {
-                EmployeeImage = "" + Utility.transferImageToBase64(fileSelfie)
-//                homeViewModel.attendence(
-//                    AttendancePostData(
-//                        "" + latitude, "" + longitude, "" + attendanceINOUTStatus, EmployeeImage
-//                    )
-//                )
-
-
-            } else {
-                Toast.makeText(
-                    this@StaffDashBoardActivity, "Enable Your Location Please!!", Toast.LENGTH_LONG
-                ).show()
-            }
-        } else {
-            Toast.makeText(
-                this@StaffDashBoardActivity, "Take your selfie please!", Toast.LENGTH_LONG
-            ).show()
-        }
-    }
-
-
-    override fun dispatchTakePictureIntent() {
-        permissionsBuilder(Manifest.permission.CAMERA).build().send {
-            when (it.first()) {
-                is PermissionStatus.Denied.Permanently -> {}
-                is PermissionStatus.Denied.ShouldShowRationale -> {}
-                is PermissionStatus.Granted -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
-                }
-
-                is PermissionStatus.RequestRequired -> {
-                    photoEasy.startActivityForResult(this@StaffDashBoardActivity)
-
-                }
-            }
-
-        }
-
-    }
 
     private fun bitmapToFile(bitmap: Bitmap): Uri {
         // Get the context wrapper
@@ -1576,15 +1224,6 @@ class StaffDashBoardActivity() : BaseActivity<StaffDashboardBinding?>(), View.On
         }
     }
 
-    override fun onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed()
-            return
-        }
-        doubleBackToExitPressedOnce = true
-        Toast.makeText(this, R.string.exist_app, Toast.LENGTH_SHORT).show()
-        Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 3000)
-    }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View, position: Int, id: Long) {
         view.findViewById<TextView>(R.id.tv_status).setOnClickListener {
